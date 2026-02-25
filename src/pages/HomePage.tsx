@@ -1,0 +1,812 @@
+import { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
+import { motion } from 'framer-motion';
+import { ArrowRight, Car, Wrench, DollarSign, Shield, Users, Award, ChevronDown } from 'lucide-react';
+import { useLanguage } from '../contexts/LanguageContext';
+import { useTheme } from '../contexts/ThemeContext';
+import { useCounter } from '../hooks/useCounter';
+import { useAnimationOnScroll } from '../hooks/useAnimationOnScroll';
+import { Button } from '../components/ui/Button';
+import { Card } from '../components/ui/Card';
+import { ImageCarousel } from '../components/ImageCarousel';
+import { supabase } from '../lib/supabase';
+import type { Vehicle, Testimonial } from '../types';
+import { formatPrice } from '../utils/format';
+import { VehicleViewer360 } from '../components/3d/VehicleViewer360';
+import { ARViewer } from '../components/3d/ARViewer';
+import { InteractiveVehicleComparison } from '../components/3d/InteractiveVehicleComparison';
+import { VirtualShowroomTour } from '../components/3d/VirtualShowroomTour';
+
+export const HomePage = () => {
+  const { t, language } = useLanguage();
+  const { theme } = useTheme();
+  const [featuredVehicles, setFeaturedVehicles] = useState<Vehicle[]>([]);
+  const [testimonials, setTestimonials] = useState<Testimonial[]>([]);
+  const [showcaseVehicle, setShowcaseVehicle] = useState<'prado' | 'yaris'>('prado');
+  const [stats] = useState({
+    vehicles: 150,
+    customers: 500,
+    years: 10,
+    satisfaction: 98,
+  });
+
+  useEffect(() => {
+    fetchFeaturedVehicles();
+    fetchTestimonials();
+  }, []);
+
+  const fetchFeaturedVehicles = async () => {
+    const { data } = await supabase
+      .from('vehicles')
+      .select(`
+        *,
+        images:vehicle_images(*)
+      `)
+      .eq('is_featured', true)
+      .eq('is_available', true)
+      .limit(6);
+
+    if (data) setFeaturedVehicles(data);
+  };
+
+  const fetchTestimonials = async () => {
+    const { data } = await supabase
+      .from('testimonials')
+      .select('*')
+      .eq('is_approved', true)
+      .eq('is_featured', true)
+      .limit(3);
+
+    if (data) setTestimonials(data);
+  };
+
+  const scrollToContent = () => {
+    window.scrollTo({ top: window.innerHeight, behavior: 'smooth' });
+  };
+
+  return (
+    <motion.div 
+      className="min-h-screen"
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      transition={{ duration: 0.5 }}
+    >
+      {/* HERO SECTION WITH TEXT REVEAL */}
+      <section className="relative h-screen flex items-center justify-center overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-br from-black via-gray-900 to-black">
+          <div className="absolute inset-0 bg-[url('https://images.pexels.com/photos/3802510/pexels-photo-3802510.jpeg?auto=compress&cs=tinysrgb&w=1920')] bg-cover bg-center opacity-30"></div>
+        </div>
+
+        <div className="relative z-10 container mx-auto px-4 text-center">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 0.2 }}
+          >
+            <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold text-white mb-6">
+              {t('hero.title').split('').map((char, index) => (
+                <motion.span
+                  key={index}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.05, delay: 0.05 * index }}
+                  className="inline-block"
+                >
+                  {char === ' ' ? '\u00A0' : char}
+                </motion.span>
+              ))}
+            </h1>
+          </motion.div>
+
+          <motion.p 
+            className="text-xl md:text-2xl text-gray-300 mb-12 max-w-2xl mx-auto"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 0.8 }}
+          >
+            {t('hero.subtitle')}
+          </motion.p>
+
+          <motion.div 
+            className="flex flex-col sm:flex-row gap-4 justify-center"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 1.2 }}
+          >
+            <motion.div
+              whileHover={{ y: -5 }}
+              whileTap={{ scale: 0.95 }}
+              transition={{ type: 'spring', stiffness: 400, damping: 10 }}
+            >
+              <Link to="/inventory">
+                <Button size="lg" className="w-full sm:w-auto">
+                  {t('hero.browse')}
+                  <ArrowRight className="ml-2 h-5 w-5" />
+                </Button>
+              </Link>
+            </motion.div>
+            <motion.div
+              whileHover={{ y: -5 }}
+              whileTap={{ scale: 0.95 }}
+              transition={{ type: 'spring', stiffness: 400, damping: 10 }}
+            >
+              <Link to="/services">
+                <Button size="lg" variant="outline" className="w-full sm:w-auto bg-white/10 backdrop-blur-sm border-white text-white hover:bg-white">
+                  {t('hero.book_service')}
+                </Button>
+              </Link>
+            </motion.div>
+            <motion.div
+              whileHover={{ y: -5 }}
+              whileTap={{ scale: 0.95 }}
+              transition={{ type: 'spring', stiffness: 400, damping: 10 }}
+            >
+              <Link to="/sell">
+                <Button size="lg" variant="secondary" className="w-full sm:w-auto">
+                  {t('hero.sell')}
+                </Button>
+              </Link>
+            </motion.div>
+          </motion.div>
+        </div>
+
+        <motion.button
+          onClick={scrollToContent}
+          className="absolute bottom-8 left-1/2 transform -translate-x-1/2 text-white"
+          animate={{ y: [0, 10, 0] }}
+          transition={{ duration: 2, repeat: Infinity }}
+        >
+          <ChevronDown className="h-8 w-8" />
+        </motion.button>
+      </section>
+
+      {/* STATS SECTION WITH ANIMATED COUNTERS */}
+      <motion.section 
+        className={`py-20 ${theme === 'dark' ? 'bg-gray-800' : 'bg-white'}`}
+        initial={{ opacity: 0 }}
+        whileInView={{ opacity: 1 }}
+        transition={{ duration: 0.6 }}
+        viewport={{ once: true }}
+      >
+        <div className="container mx-auto px-4">
+          <motion.div 
+            className="text-center mb-16"
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
+            viewport={{ once: true }}
+          >
+            <h2 className={`text-4xl font-bold mb-4 ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
+              {language === 'en' ? 'By The Numbers' : 'সংখ্যায়'}
+            </h2>
+          </motion.div>
+
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
+            {[
+              { value: 150, label: language === 'en' ? 'Vehicles' : 'গাড়ি', icon: Car },
+              { value: 500, label: language === 'en' ? 'Happy Customers' : 'সন্তুষ্ট গ্রাহক', icon: Users },
+              { value: 10, label: language === 'en' ? 'Years Experience' : 'বছরের অভিজ্ঞতা', icon: Award },
+              { value: 98, label: language === 'en' ? 'Satisfaction %' : 'সন্তুষ্টি %', icon: Shield },
+            ].map((stat, index) => {
+              const { ref, isInView } = useAnimationOnScroll(0.1);
+              const count = useCounter({ end: stat.value, duration: 2000, shouldStart: isInView });
+
+              return (
+                <motion.div
+                  key={index}
+                  ref={ref}
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.6, delay: index * 0.1 }}
+                  viewport={{ once: true }}
+                  className={`text-center p-6 rounded-xl ${theme === 'dark' ? 'bg-gray-700' : 'bg-gray-50'}`}
+                  whileHover={{ y: -5, boxShadow: '0 10px 30px rgba(0,0,0,0.1)' }}
+                >
+                  <stat.icon className={`h-12 w-12 mx-auto mb-4 ${theme === 'dark' ? 'text-blue-400' : 'text-blue-600'}`} />
+                  <div className={`text-4xl font-bold mb-2 ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
+                    {count}{stat.value >= 100 ? '+' : ''}
+                  </div>
+                  <div className={theme === 'dark' ? 'text-gray-300' : 'text-gray-600'}>{stat.label}</div>
+                </motion.div>
+              );
+            })}
+          </div>
+        </div>
+      </motion.section>
+
+      {/* FEATURED VEHICLES WITH CARD LIFT EFFECTS */}
+      {featuredVehicles.length > 0 && (
+        <motion.section 
+          className={`py-20 ${theme === 'dark' ? 'bg-gray-900' : 'bg-gray-50'}`}
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
+          transition={{ duration: 0.6 }}
+          viewport={{ once: true }}
+        >
+          <div className="container mx-auto px-4">
+            <motion.div 
+              className="text-center mb-16"
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6 }}
+              viewport={{ once: true }}
+            >
+              <h2 className={`text-4xl font-bold mb-4 ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
+                {language === 'en' ? 'Featured Vehicles' : 'বৈশিষ্ট্যযুক্ত গাড়ি'}
+              </h2>
+            </motion.div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+              {featuredVehicles.map((vehicle, index) => (
+                <motion.div
+                  key={vehicle.id}
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.6, delay: index * 0.1 }}
+                  viewport={{ once: true }}
+                  whileHover={{ y: -10 }}
+                >
+                  <Link to={`/vehicles/${vehicle.id}`}>
+                    <Card className={`overflow-hidden cursor-pointer transition-all ${theme === 'dark' ? 'hover:shadow-lg' : 'hover:shadow-xl'}`}>
+                      <div className="relative h-64 overflow-hidden">
+                        <motion.img
+                          src={vehicle.images?.[0]?.url || 'https://images.pexels.com/photos/3964962/pexels-photo-3964962.jpeg'}
+                          alt={vehicle.title}
+                          className="w-full h-full object-contain"
+                          whileHover={{ scale: 1.15 }}
+                          transition={{ duration: 0.3 }}
+                        />
+                      </div>
+                      <div className="p-6">
+                        <h3 className={`text-xl font-bold mb-2 ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
+                          {language === 'en' ? vehicle.title : vehicle.title_bn || vehicle.title}
+                        </h3>
+                        <div className={`flex items-center justify-between mb-4 ${theme === 'dark' ? 'text-gray-300' : 'text-gray-600'}`}>
+                          <span>{vehicle.year}</span>
+                          <span>{formatPrice(vehicle.price)}</span>
+                        </div>
+                        <p className={`text-sm ${theme === 'dark' ? 'text-gray-400' : 'text-gray-500'}`}>
+                          {language === 'en' ? vehicle.description : vehicle.description_bn || vehicle.description}
+                        </p>
+                      </div>
+                    </Card>
+                  </Link>
+                </motion.div>
+              ))}
+            </div>
+          </div>
+        </motion.section>
+      )}
+
+      {/* CAROUSEL SHOWCASE WITH FLIP ANIMATIONS */}
+      <motion.section 
+        className={`py-20 relative overflow-hidden ${theme === 'dark' ? 'bg-gradient-to-br from-gray-900 to-gray-800' : 'bg-gradient-to-br from-blue-50 to-indigo-50'}`}
+        initial={{ opacity: 0 }}
+        whileInView={{ opacity: 1 }}
+        transition={{ duration: 0.6 }}
+        viewport={{ once: true }}
+      >
+        {/* Background decoration */}
+        <div className={`absolute top-0 right-0 w-96 h-96 rounded-full blur-3xl opacity-10 ${theme === 'dark' ? 'bg-blue-500' : 'bg-blue-300'}`} />
+        
+        <div className="container mx-auto px-4 relative z-10">
+          <motion.div 
+            className="text-center mb-16"
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
+            viewport={{ once: true }}
+          >
+            <h2 className={`text-4xl font-bold mb-4 ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
+              {language === 'en' ? 'Explore Our Premium Collection' : 'আমাদের প্রিমিয়াম সংগ্রহ অন্বেষণ করুন'}
+            </h2>
+            <p className={`text-lg ${theme === 'dark' ? 'text-gray-300' : 'text-gray-600'}`}>
+              {language === 'en' 
+                ? 'Stunning 360° views of each vehicle with interactive carousel' 
+                : 'প্রতিটি গাড়ির অসাধারণ 360° ভিউ ইন্টারেক্টিভ ক্যারোসেলের সাথে'}
+            </p>
+          </motion.div>
+
+          {/* Main Carousel with Flip Cards */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+            {/* Left side - Large carousel with curved styling */}
+            <motion.div
+              initial={{ opacity: 0, x: -50 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.6 }}
+              viewport={{ once: true }}
+              className="flex justify-center"
+            >
+              <div className="relative w-full max-w-md">
+                {/* Curved background frame */}
+                <div className={`absolute inset-0 bg-gradient-to-br ${theme === 'dark' ? 'from-blue-900/20 to-purple-900/20' : 'from-blue-200/30 to-purple-200/30'} rounded-3xl blur-2xl`} />
+                
+                {/* Main carousel container with curved styling */}
+                <div className={`relative rounded-3xl overflow-hidden shadow-2xl border-4 ${theme === 'dark' ? 'border-blue-500/30' : 'border-blue-300/50'} backdrop-blur-sm`}>
+                  <ImageCarousel
+                    images={showcaseVehicle === 'prado' ? [
+                      { url: 'https://images.pexels.com/photos/36318402/pexels-photo-36318402.png', alt: 'Prado Front' },
+                      { url: 'https://images.pexels.com/photos/36318403/pexels-photo-36318403.png', alt: 'Prado Side' },
+                      { url: 'https://images.pexels.com/photos/36318404/pexels-photo-36318404.png', alt: 'Prado Rear' },
+                      { url: 'https://images.pexels.com/photos/36318405/pexels-photo-36318405.png', alt: 'Prado Back' },
+                    ] : [
+                      { url: 'https://images.pexels.com/photos/36319317/pexels-photo-36319317.png', alt: 'Yaris Cross Front' },
+                      { url: 'https://images.pexels.com/photos/36319316/pexels-photo-36319316.png', alt: 'Yaris Cross Side' },
+                      { url: 'https://images.pexels.com/photos/36319315/pexels-photo-36319315.png', alt: 'Yaris Cross Rear' },
+                      { url: 'https://images.pexels.com/photos/36319314/pexels-photo-36319314.png', alt: 'Yaris Cross Back' },
+                    ]}
+                    autoPlay={true}
+                    autoPlayInterval={4000}
+                    showIndicators={true}
+                    showArrows={true}
+                    height="h-96"
+                  />
+                </div>
+
+                {/* Vehicle selector buttons */}
+                <div className="flex gap-3 mt-6 justify-center">
+                  <motion.button
+                    onClick={() => setShowcaseVehicle('prado')}
+                    className={`px-6 py-2 rounded-full font-semibold transition-all ${
+                      showcaseVehicle === 'prado'
+                        ? theme === 'dark' ? 'bg-blue-600 text-white shadow-lg shadow-blue-500/50' : 'bg-blue-500 text-white shadow-lg shadow-blue-400/50'
+                        : theme === 'dark' ? 'bg-gray-700 text-gray-300 hover:bg-gray-600' : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+                    }`}
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                  >
+                    {language === 'en' ? 'Toyota Prado' : 'টয়োটা প্রাডো'}
+                  </motion.button>
+                  <motion.button
+                    onClick={() => setShowcaseVehicle('yaris')}
+                    className={`px-6 py-2 rounded-full font-semibold transition-all ${
+                      showcaseVehicle === 'yaris'
+                        ? theme === 'dark' ? 'bg-amber-600 text-white shadow-lg shadow-amber-500/50' : 'bg-amber-500 text-white shadow-lg shadow-amber-400/50'
+                        : theme === 'dark' ? 'bg-gray-700 text-gray-300 hover:bg-gray-600' : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+                    }`}
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                  >
+                    {language === 'en' ? 'Toyota Yaris Cross' : 'টয়োটা ইয়ারিস ক্রস'}
+                  </motion.button>
+                </div>
+
+                {/* Decorative elements */}
+                <motion.div
+                  className={`absolute -bottom-6 -left-6 w-24 h-24 rounded-full ${theme === 'dark' ? 'bg-blue-500/20' : 'bg-blue-300/30'}`}
+                  animate={{ y: [0, 20, 0], x: [0, -10, 0] }}
+                  transition={{ duration: 4, repeat: Infinity }}
+                />
+                <motion.div
+                  className={`absolute -top-6 -right-6 w-32 h-32 rounded-full ${theme === 'dark' ? 'bg-purple-500/20' : 'bg-purple-300/30'}`}
+                  animate={{ y: [0, -20, 0], x: [0, 10, 0] }}
+                  transition={{ duration: 5, repeat: Infinity }}
+                />
+              </div>
+            </motion.div>
+
+            {/* Right side - Flip card gallery */}
+            <motion.div
+              initial={{ opacity: 0, x: 50 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.6, delay: 0.2 }}
+              viewport={{ once: true }}
+            >
+              <div className="space-y-6">
+                {/* Flip card 1 - Toyota Prado */}
+                <motion.div
+                  className="h-40 cursor-pointer perspective"
+                  whileHover={{ rotateY: 180 }}
+                  transition={{ duration: 0.6 }}
+                  style={{ transformStyle: 'preserve-3d' }}
+                >
+                  <motion.div
+                    className={`relative w-full h-full rounded-2xl p-6 flex flex-col justify-between overflow-hidden ${theme === 'dark' ? 'bg-gradient-to-br from-blue-900 to-blue-800' : 'bg-gradient-to-br from-blue-500 to-blue-600'}`}
+                    initial={{ rotateY: 0 }}
+                    style={{ backfaceVisibility: 'hidden' }}
+                  >
+                    <div>
+                      <h3 className="text-white font-bold text-xl">{language === 'en' ? 'Toyota Prado' : 'টয়োটা প্রাডো'}</h3>
+                      <p className="text-blue-100 text-sm mt-2">{language === 'en' ? 'Premium 7-Seater SUV' : 'প্রিমিয়াম 7-সিটার এসইউভি'}</p>
+                    </div>
+                    <div className="text-white text-lg font-bold">৳ 72,00,000</div>
+                  </motion.div>
+                </motion.div>
+
+                {/* Flip card 2 - Honda CR-V */}
+                <motion.div
+                  className="h-40 cursor-pointer perspective"
+                  whileHover={{ rotateY: 180 }}
+                  transition={{ duration: 0.6 }}
+                  style={{ transformStyle: 'preserve-3d' }}
+                >
+                  <motion.div
+                    className={`relative w-full h-full rounded-2xl p-6 flex flex-col justify-between overflow-hidden ${theme === 'dark' ? 'bg-gradient-to-br from-purple-900 to-purple-800' : 'bg-gradient-to-br from-purple-500 to-purple-600'}`}
+                    style={{ backfaceVisibility: 'hidden' }}
+                  >
+                    <div>
+                      <h3 className="text-white font-bold text-xl">{language === 'en' ? 'Honda CR-V' : 'হোন্ডা CR-V'}</h3>
+                      <p className="text-purple-100 text-sm mt-2">{language === 'en' ? 'Reliable Family SUV' : 'নির্ভরযোগ্য পারিবারিক এসইউভি'}</p>
+                    </div>
+                    <div className="text-white text-lg font-bold">৳ 42,00,000</div>
+                  </motion.div>
+                </motion.div>
+
+                {/* Flip card 3 - Toyota Civic */}
+                <motion.div
+                  className="h-40 cursor-pointer perspective"
+                  whileHover={{ rotateY: 180 }}
+                  transition={{ duration: 0.6 }}
+                  style={{ transformStyle: 'preserve-3d' }}
+                >
+                  <motion.div
+                    className={`relative w-full h-full rounded-2xl p-6 flex flex-col justify-between overflow-hidden ${theme === 'dark' ? 'bg-gradient-to-br from-green-900 to-green-800' : 'bg-gradient-to-br from-green-500 to-green-600'}`}
+                    style={{ backfaceVisibility: 'hidden' }}
+                  >
+                    <div>
+                      <h3 className="text-white font-bold text-xl">{language === 'en' ? 'Honda Civic' : 'হোন্ডা সিভিক'}</h3>
+                      <p className="text-green-100 text-sm mt-2">{language === 'en' ? 'Sporty Sedan' : 'স্পোর্টি সেডান'}</p>
+                    </div>
+                    <div className="text-white text-lg font-bold">৳ 32,00,000</div>
+                  </motion.div>
+                </motion.div>
+
+                {/* Flip card 4 - Toyota Yaris Cross */}
+                <motion.div
+                  className="h-40 cursor-pointer perspective"
+                  whileHover={{ rotateY: 180 }}
+                  transition={{ duration: 0.6 }}
+                  style={{ transformStyle: 'preserve-3d' }}
+                >
+                  <motion.div
+                    className={`relative w-full h-full rounded-2xl p-6 flex flex-col justify-between overflow-hidden ${theme === 'dark' ? 'bg-gradient-to-br from-amber-900 to-amber-800' : 'bg-gradient-to-br from-amber-500 to-amber-600'}`}
+                    style={{ backfaceVisibility: 'hidden' }}
+                  >
+                    <div>
+                      <h3 className="text-white font-bold text-xl">{language === 'en' ? 'Toyota Yaris Cross' : 'টয়োটা ইয়ারিস ক্রস'}</h3>
+                      <p className="text-amber-100 text-sm mt-2">{language === 'en' ? 'Compact Hybrid Crossover' : 'কম্পাক্ট হাইব্রিড ক্রসওভার'}</p>
+                    </div>
+                    <div className="text-white text-lg font-bold">৳ 38,00,000</div>
+                  </motion.div>
+                </motion.div>
+              </div>
+            </motion.div>
+          </div>
+
+          {/* Call-to-action */}
+          <motion.div
+            className="text-center mt-12"
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.4 }}
+            viewport={{ once: true }}
+          >
+            <Link to="/inventory">
+              <motion.div
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+              >
+                <Button size="lg" className="bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800">
+                  {language === 'en' ? 'View All Vehicles' : 'সমস্ত গাড়ি দেখুন'}
+                  <ArrowRight className="ml-2 h-5 w-5" />
+                </Button>
+              </motion.div>
+            </Link>
+          </motion.div>
+        </div>
+      </motion.section>
+
+      {/* WHY CHOOSE US SECTION */}
+      <motion.section 
+        className={`py-20 ${theme === 'dark' ? 'bg-gray-800' : 'bg-white'}`}
+        initial={{ opacity: 0 }}
+        whileInView={{ opacity: 1 }}
+        transition={{ duration: 0.6 }}
+        viewport={{ once: true }}
+      >
+        <div className="container mx-auto px-4">
+          <motion.div 
+            className="text-center mb-16"
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
+            viewport={{ once: true }}
+          >
+            <h2 className={`text-4xl font-bold mb-4 ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
+              {language === 'en' ? 'Why Choose Auto Spark BD?' : 'কেন অটো স্পার্ক বিডি বেছে নেবেন?'}
+            </h2>
+          </motion.div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            {[
+              {
+                icon: Car,
+                title: language === 'en' ? 'Premium Selection' : 'প্রিমিয়াম নির্বাচন',
+                description: language === 'en' ? 'Carefully curated collection of luxury and premium vehicles' : 'বিলাসবহুল এবং প্রিমিয়াম গাড়ির সাবধানে নির্বাচিত সংগ্রহ',
+              },
+              {
+                icon: Shield,
+                title: language === 'en' ? 'Quality Assurance' : 'মান নিশ্চিতকরণ',
+                description: language === 'en' ? 'Thorough inspection and certification for every vehicle' : 'প্রতিটি গাড়ির জন্য পুঙ্খানুপুঙ্খ পরিদর্শন এবং সার্টিফিকেশন',
+              },
+              {
+                icon: Wrench,
+                title: language === 'en' ? 'Expert Service' : 'বিশেষজ্ঞ সেবা',
+                description: language === 'en' ? 'State-of-the-art service center with experienced technicians' : 'অভিজ্ঞ প্রযুক্তিবিদদের সাথে অত্যাধুনিক সার্ভিস সেন্টার',
+              },
+            ].map((feature, index) => (
+              <motion.div
+                key={index}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: index * 0.1 }}
+                viewport={{ once: true }}
+                whileHover={{ y: -10 }}
+              >
+                <Card className={`p-8 text-center ${theme === 'dark' ? 'hover:shadow-lg' : 'hover:shadow-xl'}`}>
+                  <motion.div
+                    whileHover={{ scale: 1.1, rotate: 5 }}
+                    transition={{ type: 'spring', stiffness: 300, damping: 20 }}
+                  >
+                    <feature.icon className={`h-16 w-16 mx-auto mb-4 ${theme === 'dark' ? 'text-blue-400' : 'text-blue-600'}`} />
+                  </motion.div>
+                  <h3 className={`text-xl font-bold mb-3 ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>{feature.title}</h3>
+                  <p className={`leading-relaxed ${theme === 'dark' ? 'text-gray-300' : 'text-gray-600'}`}>{feature.description}</p>
+                </Card>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </motion.section>
+
+      {testimonials.length > 0 && (
+        <motion.section 
+          className={`py-20 ${theme === 'dark' ? 'bg-gray-900' : 'bg-gray-50'}`}
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
+          transition={{ duration: 0.6 }}
+          viewport={{ once: true }}
+        >
+          <div className="container mx-auto px-4">
+            <motion.div 
+              className="text-center mb-12"
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6 }}
+              viewport={{ once: true }}
+            >
+              <h2 className={`text-4xl font-bold mb-4 ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
+                {language === 'en' ? 'What Our Customers Say' : 'আমাদের গ্রাহকরা কি বলেন'}
+              </h2>
+            </motion.div>
+
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+              {testimonials.map((testimonial: any, index: number) => (
+                <motion.div
+                  key={testimonial.id}
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.6, delay: index * 0.1 }}
+                  viewport={{ once: true }}
+                  whileHover={{ y: -5 }}
+                >
+                  <Card className="p-6">
+                    <div className="flex items-center mb-4">
+                      {[...Array(testimonial.rating)].map((_, i) => (
+                        <motion.div key={i} initial={{ opacity: 0, scale: 0 }} animate={{ opacity: 1, scale: 1 }} transition={{ delay: 0.1 * i }}>
+                          <svg className="h-5 w-5 text-yellow-400 fill-current" viewBox="0 0 20 20">
+                            <path d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z" />
+                          </svg>
+                        </motion.div>
+                      ))}
+                    </div>
+                    <p className={`mb-4 leading-relaxed ${theme === 'dark' ? 'text-gray-300' : 'text-gray-700'}`}>
+                      {language === 'en' ? testimonial.review_en : testimonial.review_bn || testimonial.review_en}
+                    </p>
+                    <div className="flex items-center">
+                      <div className={`h-12 w-12 rounded-full flex items-center justify-center font-semibold ${theme === 'dark' ? 'bg-gray-700 text-gray-200' : 'bg-gray-200 text-gray-600'}`}>
+                        {testimonial.customer_name.charAt(0)}
+                      </div>
+                      <div className="ml-3">
+                        <div className={`font-semibold ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
+                          {language === 'en' ? testimonial.customer_name : testimonial.customer_name_bn || testimonial.customer_name}
+                        </div>
+                        {testimonial.vehicle_purchased && (
+                          <div className={`text-sm ${theme === 'dark' ? 'text-gray-400' : 'text-gray-500'}`}>{testimonial.vehicle_purchased}</div>
+                        )}
+                      </div>
+                    </div>
+                  </Card>
+                </motion.div>
+              ))}
+            </div>
+          </div>
+        </motion.section>
+      )}
+
+      {/* 3D & Interactive Elements Section */}
+      <section className={`py-20 bg-gradient-to-b ${theme === 'dark' ? 'from-gray-800 to-gray-900' : 'from-white to-gray-50'}`}>
+        <div className="container mx-auto px-4">
+          {/* Section Header */}
+          <motion.div 
+            className="text-center mb-16"
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
+            viewport={{ once: true }}
+          >
+            <h2 className={`text-4xl font-bold mb-4 ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
+              {language === 'en' ? '3D Interactive Experience' : '3D ইন্টারেক্টিভ অভিজ্ঞতা'}
+            </h2>
+            <p className={`max-w-2xl mx-auto text-lg ${theme === 'dark' ? 'text-gray-300' : 'text-gray-600'}`}>
+              {language === 'en' 
+                ? 'Explore our vehicles with cutting-edge 3D visualization and interactive tools' 
+                : 'অত্যাধুনিক 3D ভিজুয়ালাইজেশন এবং ইন্টারেক্টিভ সরঞ্জামগুলির সাথে আমাদের গাড়িগুলি অন্বেষণ করুন'}
+            </p>
+          </motion.div>
+
+          {/* 1. 360° Vehicle Viewer */}
+          <motion.div 
+            className="mb-20"
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
+            viewport={{ once: true }}
+          >
+            <div className="mb-6">
+              <h3 className={`text-2xl font-bold mb-2 ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
+                {language === 'en' ? '360° Vehicle Viewer' : '360° গাড়ি দর্শক'}
+              </h3>
+              <p className={theme === 'dark' ? 'text-gray-300' : 'text-gray-600'}>
+                {language === 'en' 
+                  ? 'Rotate and inspect vehicles from every angle with our interactive 3D viewer'
+                  : 'আমাদের ইন্টারেক্টিভ 3D ভিউয়ার দিয়ে প্রতিটি কোণ থেকে গাড়িগুলি ঘোরান এবং পরিদর্শন করুন'}
+              </p>
+            </div>
+            <VehicleViewer360 />
+          </motion.div>
+
+          {/* 2. Augmented Reality Viewer */}
+          <motion.div 
+            className="mb-20"
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.1 }}
+            viewport={{ once: true }}
+          >
+            <div className="mb-6">
+              <h3 className={`text-2xl font-bold mb-2 ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
+                {language === 'en' ? 'Augmented Reality (AR) Preview' : 'অগমেন্টেড রিয়েলিটি (AR) প্রিভিউ'}
+              </h3>
+              <p className={theme === 'dark' ? 'text-gray-300' : 'text-gray-600'}>
+                {language === 'en' 
+                  ? 'Visualize how a car looks in your space using your device camera'
+                  : 'আপনার ডিভাইস ক্যামেরা ব্যবহার করে একটি গাড়ি আপনার স্থানে কীভাবে দেখায় তা কল্পনা করুন'}
+              </p>
+            </div>
+            <ARViewer />
+          </motion.div>
+
+          {/* 3. Interactive Vehicle Comparison */}
+          <motion.div 
+            className="mb-20"
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.2 }}
+            viewport={{ once: true }}
+          >
+            <div className="mb-6">
+              <h3 className={`text-2xl font-bold mb-2 ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
+                {language === 'en' ? 'Interactive Vehicle Comparison' : 'ইন্টারেক্টিভ গাড়ি তুলনা'}
+              </h3>
+              <p className={theme === 'dark' ? 'text-gray-300' : 'text-gray-600'}>
+                {language === 'en' 
+                  ? 'Compare multiple vehicles side-by-side with detailed specifications'
+                  : 'বিস্তারিত স্পেসিফিকেশন সহ একাধিক গাড়ি পাশাপাশি তুলনা করুন'}
+              </p>
+            </div>
+            <InteractiveVehicleComparison />
+          </motion.div>
+
+          {/* 4. Virtual Showroom Tour */}
+          <motion.div 
+            className="mb-20"
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.3 }}
+            viewport={{ once: true }}
+          >
+            <div className="mb-6">
+              <h3 className={`text-2xl font-bold mb-2 ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
+                {language === 'en' ? 'Virtual Showroom Tour' : 'ভার্চুয়াল শোরুম ট্যুর'}
+              </h3>
+              <p className={theme === 'dark' ? 'text-gray-300' : 'text-gray-600'}>
+                {language === 'en' 
+                  ? 'Take a guided tour of our showroom and service facilities in 360°'
+                  : '360° এ আমাদের শোরুম এবং পরিষেবা সুবিধাগুলির একটি গাইডেড ট্যুর করুন'}
+              </p>
+            </div>
+            <VirtualShowroomTour />
+          </motion.div>
+
+          {/* CTA for Interactive Experience */}
+          <motion.div 
+            className="bg-gradient-to-r from-blue-600 to-blue-800 rounded-2xl p-8 text-center text-white"
+            initial={{ opacity: 0, scale: 0.9 }}
+            whileInView={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.6 }}
+            viewport={{ once: true }}
+            whileHover={{ boxShadow: '0 20px 40px rgba(37, 99, 235, 0.3)' }}
+          >
+            <h3 className="text-2xl font-bold mb-4">
+              {language === 'en' ? 'Ready to Explore?' : 'অন্বেষণ করতে প্রস্তুত?'}
+            </h3>
+            <p className="mb-6 text-blue-100">
+              {language === 'en' 
+                ? 'Use these interactive tools to find your perfect vehicle'
+                : 'আপনার নিখুঁত গাড়ি খুঁজে পেতে এই ইন্টারেক্টিভ সরঞ্জামগুলি ব্যবহার করুন'}
+            </p>
+            <motion.div
+              whileHover={{ y: -5 }}
+              whileTap={{ scale: 0.95 }}
+            >
+              <Link to="/inventory">
+                <Button size="lg" className="w-full sm:w-auto bg-white text-blue-600 hover:bg-gray-100">
+                  {language === 'en' ? 'View Full Inventory' : 'সম্পূর্ণ ইনভেন্টরি দেখুন'}
+                  <ArrowRight className="ml-2 h-5 w-5" />
+                </Button>
+              </Link>
+            </motion.div>
+          </motion.div>
+        </div>
+      </section>
+
+      {/* CTA SECTION */}
+      <motion.section 
+        className={`py-20 bg-gradient-to-r from-blue-600 to-blue-800`}
+        initial={{ opacity: 0 }}
+        whileInView={{ opacity: 1 }}
+        transition={{ duration: 0.6 }}
+        viewport={{ once: true }}
+      >
+        <div className="container mx-auto px-4 text-center">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
+            viewport={{ once: true }}
+          >
+            <h2 className="text-4xl font-bold text-white mb-6">
+              {language === 'en' ? 'Ready to Find Your Dream Car?' : 'আপনার স্বপ্নের গাড়ি খুঁজে পেতে প্রস্তুত?'}
+            </h2>
+            <p className="text-xl text-blue-100 mb-8 max-w-2xl mx-auto">
+              {language === 'en' ? 'Browse our extensive inventory or visit our showroom in Rajshahi' : 'আমাদের বিস্তৃত ইনভেন্টরি ব্রাউজ করুন বা রাজশাহীতে আমাদের শোরুম পরিদর্শন করুন'}
+            </p>
+            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+              <motion.div
+                whileHover={{ y: -5 }}
+                whileTap={{ scale: 0.95 }}
+              >
+                <Link to="/inventory">
+                  <Button size="lg" className="w-full sm:w-auto bg-white text-blue-600 hover:bg-gray-100">
+                    {language === 'en' ? 'Browse Inventory' : 'ইনভেন্টরি ব্রাউজ করুন'}
+                  </Button>
+                </Link>
+              </motion.div>
+              <motion.div
+                whileHover={{ y: -5 }}
+                whileTap={{ scale: 0.95 }}
+              >
+                <Link to="/contact">
+                  <Button size="lg" variant="outline" className="w-full sm:w-auto border-white text-white hover:bg-white/10">
+                    {language === 'en' ? 'Contact Us' : 'যোগাযোগ করুন'}
+                  </Button>
+                </Link>
+              </motion.div>
+            </div>
+          </motion.div>
+        </div>
+      </motion.section>
+    </motion.div>  );
+};
