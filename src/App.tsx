@@ -11,11 +11,14 @@ import { AboutPage } from './pages/AboutPage';
 import { SellCarPage } from './pages/SellCarPage';
 import { ContactPage } from './pages/ContactPage';
 
+// GitHub Pages basename - use '/autospark' in production, '/' in development
+const basename = import.meta.env.BASE_URL;
+
 function App() {
   return (
     <ThemeProvider>
       <LanguageProvider>
-        <Router>
+        <Router basename={basename}>
           <Layout>
             <Routes>
               <Route path="/" element={<HomePage />} />

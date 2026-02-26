@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <link rel="icon" type="image/svg+xml" href="/autospark/vite.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Auto Spark BD - Exclusive Cars in Rajshahi | Premium Car Dealership</title>
     <meta name="description" content="North Bengal's leading premium car showroom in Rajshahi. Browse exclusive luxury vehicles, expert service center, and genuine accessories. Your trusted car dealer since 2014." />
@@ -16,6 +16,27 @@
     <meta name="twitter:description" content="North Bengal's leading premium car showroom" />
     <meta name="twitter:image" content="https://images.pexels.com/photos/3802510/pexels-photo-3802510.jpeg" />
     <meta name="theme-color" content="#0E0E0E" />
+    <!-- GitHub Pages SPA Redirect Handler -->
+    <script type="text/javascript">
+      // Handle SPA routing for GitHub Pages
+      (function() {
+        var redirect = sessionStorage.redirect;
+        delete sessionStorage.redirect;
+        if (redirect && redirect !== location.href) {
+          history.replaceState(null, null, redirect);
+        }
+      })();
+      
+      // Parse the redirect from 404.html
+      (function() {
+        var query = window.location.search;
+        if (query && query.startsWith('?/')) {
+          var path = query.slice(2).split('&')[0];
+          var newUrl = window.location.origin + '/autospark/' + path + window.location.hash;
+          window.history.replaceState(null, null, newUrl);
+        }
+      })();
+    </script>
   </head>
   <body>
     <div id="root"></div>
