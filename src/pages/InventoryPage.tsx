@@ -8,7 +8,8 @@ import { Button } from '../components/ui/Button';
 import { Card } from '../components/ui/Card';
 import { ImageCarousel } from '../components/ImageCarousel';
 import { useSeedPradoImages } from '../hooks/useSeedPradoImages';
-import { supabase } from '../lib/supabase';
+import { useSeedChrImages } from '../hooks/useSeedChrImages';
+import { ALL_VEHICLES } from '../hooks/vehicleDataAll';
 import type { Vehicle } from '../types';
 import { formatPrice } from '../utils/format';
 
@@ -21,8 +22,9 @@ export const InventoryPage = () => {
   const [showFilters, setShowFilters] = useState(false);
   const [loading, setLoading] = useState(true);
 
-  // Seed Prado images automatically
+  // Seed vehicle images automatically
   useSeedPradoImages();
+  useSeedChrImages();
 
   const [filters, setFilters] = useState({
     search: '',
@@ -46,122 +48,9 @@ export const InventoryPage = () => {
     setLoading(true);
     
     // MOCK DATA - Since Supabase is in dummy mode during dev
-    const mockVehicles = [
-      {
-        id: '1',
-        brand_name: 'Toyota',
-        model: 'Prado',
-        title: 'Toyota Prado 2023',
-        title_bn: 'টয়োটা প্রাডো ২০২৩',
-        year: 2023,
-        price: 7200000,
-        mileage: 15000,
-        fuel_type: 'Petrol',
-        transmission: 'Automatic',
-        engine_capacity: '2.7L V6',
-        color_exterior: 'White',
-        description: 'Premium 7-seater SUV with advanced features',
-        description_bn: 'উন্নত বৈশিষ্ট্য সহ প্রিমিয়াম 7-সিটার এসইউভি',
-        stock_number: 'PRADO-001',
-        is_available: true,
-        images: [
-          { image_url: 'https://images.pexels.com/photos/36318402/pexels-photo-36318402.png', url: 'https://images.pexels.com/photos/36318402/pexels-photo-36318402.png' },
-          { image_url: 'https://images.pexels.com/photos/36318403/pexels-photo-36318403.png', url: 'https://images.pexels.com/photos/36318403/pexels-photo-36318403.png' },
-          { image_url: 'https://images.pexels.com/photos/36318404/pexels-photo-36318404.png', url: 'https://images.pexels.com/photos/36318404/pexels-photo-36318404.png' },
-          { image_url: 'https://images.pexels.com/photos/36318405/pexels-photo-36318405.png', url: 'https://images.pexels.com/photos/36318405/pexels-photo-36318405.png' },
-        ]
-      },
-      {
-        id: '2',
-        brand_name: 'Honda',
-        model: 'Civic',
-        title: 'Honda Civic 2023',
-        title_bn: 'হোন্ডা সিভিক ২০২৩',
-        year: 2023,
-        price: 3200000,
-        mileage: 5000,
-        fuel_type: 'Petrol',
-        transmission: 'Automatic',
-        engine_capacity: '1.8L',
-        color_exterior: 'Blue',
-        description: 'Sporty sedan with modern technology',
-        description_bn: 'আধুনিক প্রযুক্তি সহ স্পোর্টি সেডান',
-        stock_number: 'CIVIC-001',
-        is_available: true,
-        images: [
-          { image_url: 'https://images.pexels.com/photos/3769173/pexels-photo-3769173.jpeg?auto=compress&cs=tinysrgb&w=800', url: 'https://images.pexels.com/photos/3769173/pexels-photo-3769173.jpeg?auto=compress&cs=tinysrgb&w=800' },
-        ]
-      },
-      {
-        id: '3',
-        brand_name: 'Toyota',
-        model: 'Corolla Cross',
-        title: 'Toyota Corolla Cross 2023',
-        title_bn: 'টয়োটা করোলা ক্রস ২০২৩',
-        year: 2023,
-        price: 2800000,
-        mileage: 3000,
-        fuel_type: 'Hybrid',
-        transmission: 'CVT',
-        engine_capacity: '1.8L Hybrid',
-        color_exterior: 'Silver',
-        description: 'Eco-friendly compact crossover',
-        description_bn: 'পরিবেশ বান্ধব কমপ্যাক্ট ক্রসওভার',
-        stock_number: 'CCROSS-001',
-        is_available: true,
-        images: [
-          { image_url: 'https://images.pexels.com/photos/3839293/pexels-photo-3839293.jpeg?auto=compress&cs=tinysrgb&w=800', url: 'https://images.pexels.com/photos/3839293/pexels-photo-3839293.jpeg?auto=compress&cs=tinysrgb&w=800' },
-        ]
-      },
-      {
-        id: '4',
-        brand_name: 'Honda',
-        model: 'CR-V',
-        title: 'Honda CR-V 2023',
-        title_bn: 'হোন্ডা CR-V ২০२३',
-        year: 2023,
-        price: 4200000,
-        mileage: 8000,
-        fuel_type: 'Petrol',
-        transmission: 'Automatic',
-        engine_capacity: '1.5L Turbo',
-        color_exterior: 'Black',
-        description: 'Reliable family SUV with spacious interior',
-        description_bn: 'নির্ভরযোগ্য পারিবারিক এসইউভি বিস্তৃত অভ্যন্তরীণ সহ',
-        stock_number: 'CRV-001',
-        is_available: true,
-        images: [
-          { image_url: 'https://images.pexels.com/photos/3807518/pexels-photo-3807518.jpeg?auto=compress&cs=tinysrgb&w=800', url: 'https://images.pexels.com/photos/3807518/pexels-photo-3807518.jpeg?auto=compress&cs=tinysrgb&w=800' },
-        ]
-      },
-      {
-        id: '5',
-        brand_name: 'Toyota',
-        model: 'Yaris Cross',
-        title: 'Toyota Yaris Cross 2023',
-        title_bn: 'টয়োটা ইয়ারিস ক্রস २०२३',
-        year: 2023,
-        price: 3800000,
-        mileage: 4500,
-        fuel_type: 'Hybrid',
-        transmission: 'CVT',
-        engine_capacity: '1.5L Hybrid',
-        color_exterior: 'Pearl White',
-        description: 'Compact crossover with excellent fuel efficiency',
-        description_bn: 'চমৎকার জ্বালানি দক্ষতা সহ কম্পাক্ট ক্রসওভার',
-        stock_number: 'YARISCROSS-001',
-        is_available: true,
-        images: [
-          { image_url: 'https://images.pexels.com/photos/36319317/pexels-photo-36319317.png', url: 'https://images.pexels.com/photos/36319317/pexels-photo-36319317.png' },
-          { image_url: 'https://images.pexels.com/photos/36319316/pexels-photo-36319316.png', url: 'https://images.pexels.com/photos/36319316/pexels-photo-36319316.png' },
-          { image_url: 'https://images.pexels.com/photos/36319315/pexels-photo-36319315.png', url: 'https://images.pexels.com/photos/36319315/pexels-photo-36319315.png' },
-          { image_url: 'https://images.pexels.com/photos/36319314/pexels-photo-36319314.png', url: 'https://images.pexels.com/photos/36319314/pexels-photo-36319314.png' },
-        ]
-      },
-    ];
-
-    setVehicles(mockVehicles);
-    setFilteredVehicles(mockVehicles);
+    
+    setVehicles(ALL_VEHICLES);
+    setFilteredVehicles(ALL_VEHICLES);
     setLoading(false);
   };
 
