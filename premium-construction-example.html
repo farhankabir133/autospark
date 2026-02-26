@@ -1,0 +1,852 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Premium Construction Company - Building Excellence">
+  <title>BuildCo - Premium Construction & Architecture</title>
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <!-- CSS -->
+  <style>
+    /* ============================================
+       CSS VARIABLES & RESET
+       ============================================ */
+
+    :root {
+      --color-primary: #1a1a1a;
+      --color-secondary: #ffffff;
+      --color-text: #333333;
+      --color-text-light: #666666;
+      --color-border: #e0e0e0;
+      --color-accent: #0066cc;
+
+      --spacing-xs: 0.5rem;
+      --spacing-sm: 1rem;
+      --spacing-md: 1.5rem;
+      --spacing-lg: 2rem;
+      --spacing-xl: 3rem;
+
+      --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      --font-size-base: 1rem;
+      --font-size-lg: 1.125rem;
+
+      --transition-base: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      font-family: var(--font-sans);
+      font-size: var(--font-size-base);
+      color: var(--color-text);
+      background-color: var(--color-secondary);
+      line-height: 1.6;
+    }
+
+    /* ============================================
+       LAYOUT
+       ============================================ */
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 var(--spacing-lg);
+    }
+
+    /* ============================================
+       HEADER & NAVIGATION
+       ============================================ */
+
+    header {
+      position: sticky;
+      top: 0;
+      background-color: var(--color-secondary);
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+      z-index: 50;
+    }
+
+    .nav-wrapper {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: var(--spacing-md) 0;
+    }
+
+    .logo {
+      font-size: 1.5rem;
+      font-weight: 700;
+    }
+
+    .nav-desktop {
+      display: flex;
+      gap: var(--spacing-xl);
+    }
+
+    .nav-link {
+      position: relative;
+      text-decoration: none;
+      color: var(--color-text);
+      transition: color var(--transition-base);
+    }
+
+    .nav-link::after {
+      content: '';
+      position: absolute;
+      bottom: -4px;
+      left: 0;
+      width: 0;
+      height: 2px;
+      background-color: var(--color-primary);
+      transition: width var(--transition-base);
+    }
+
+    .nav-link:hover::after,
+    .nav-link.active::after {
+      width: 100%;
+    }
+
+    .menu-toggle {
+      display: none;
+      flex-direction: column;
+      gap: 6px;
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: var(--spacing-sm);
+    }
+
+    .menu-toggle span {
+      width: 24px;
+      height: 2px;
+      background-color: var(--color-primary);
+      transition: all var(--transition-base);
+    }
+
+    /* ============================================
+       BUTTONS
+       ============================================ */
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: var(--spacing-sm);
+      padding: 12px 28px;
+      font-size: 1rem;
+      font-weight: 600;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: all var(--transition-base);
+      text-decoration: none;
+      will-change: transform, box-shadow;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .btn-primary {
+      background-color: var(--color-primary);
+      color: var(--color-secondary);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    }
+
+    .btn-primary:hover {
+      background-color: #333333;
+      transform: translateY(-2px);
+      box-shadow: 0 12px 24px rgba(0, 0, 0, 0.15);
+    }
+
+    .btn-primary:active {
+      transform: translateY(0);
+    }
+
+    .btn-secondary {
+      background-color: transparent;
+      color: var(--color-primary);
+      border: 2px solid var(--color-primary);
+      box-shadow: none;
+    }
+
+    .btn-secondary:hover {
+      background-color: var(--color-primary);
+      color: var(--color-secondary);
+    }
+
+    /* ============================================
+       HERO SECTION
+       ============================================ */
+
+    .hero {
+      padding: 120px 0;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      background: linear-gradient(135deg, #f5f5f5 0%, #ffffff 100%);
+    }
+
+    .hero h1 {
+      font-size: clamp(2.5rem, 5vw, 4rem);
+      font-weight: 700;
+      line-height: 1.1;
+      margin-bottom: var(--spacing-lg);
+      animation: fadeInUp 0.4s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+      opacity: 0;
+    }
+
+    .hero p {
+      font-size: 1.25rem;
+      color: var(--color-text-light);
+      margin-bottom: var(--spacing-xl);
+      animation: fadeInUp 0.4s cubic-bezier(0.4, 0, 0.2, 1) forwards 0.1s;
+      opacity: 0;
+    }
+
+    .hero .btn {
+      animation: fadeInUp 0.4s cubic-bezier(0.4, 0, 0.2, 1) forwards 0.2s;
+      opacity: 0;
+    }
+
+    /* ============================================
+       SECTIONS
+       ============================================ */
+
+    section {
+      padding: var(--spacing-xl) 0;
+    }
+
+    .section-title {
+      font-size: 2.25rem;
+      font-weight: 700;
+      margin-bottom: var(--spacing-xl);
+      text-align: center;
+    }
+
+    /* ============================================
+       CARDS
+       ============================================ */
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: var(--spacing-lg);
+      margin-bottom: var(--spacing-xl);
+    }
+
+    .card {
+      background-color: var(--color-secondary);
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+      transition: all var(--transition-base);
+      will-change: transform, box-shadow;
+    }
+
+    .card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 12px 24px rgba(0, 0, 0, 0.12);
+    }
+
+    .card-image {
+      width: 100%;
+      height: 250px;
+      overflow: hidden;
+      background-color: #f0f0f0;
+    }
+
+    .card-image img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform var(--transition-base);
+    }
+
+    .card:hover .card-image img {
+      transform: scale(1.05);
+    }
+
+    .card-content {
+      padding: var(--spacing-lg);
+    }
+
+    .card h3 {
+      font-size: 1.25rem;
+      margin-bottom: var(--spacing-sm);
+    }
+
+    .card p {
+      color: var(--color-text-light);
+      margin-bottom: var(--spacing-md);
+    }
+
+    /* ============================================
+       FORM
+       ============================================ */
+
+    .contact-section {
+      background-color: #f9f9f9;
+      padding: var(--spacing-xl) 0;
+    }
+
+    .contact-form {
+      max-width: 600px;
+      margin: 0 auto;
+    }
+
+    .form-group {
+      margin-bottom: var(--spacing-lg);
+    }
+
+    .form-input,
+    .form-textarea {
+      width: 100%;
+      padding: 12px 16px;
+      border: 2px solid var(--color-border);
+      border-radius: 6px;
+      font-family: inherit;
+      font-size: 1rem;
+      transition: all var(--transition-base);
+      resize: vertical;
+    }
+
+    .form-input:focus,
+    .form-textarea:focus {
+      outline: none;
+      border-color: var(--color-primary);
+      box-shadow: 0 0 0 3px rgba(26, 26, 26, 0.1);
+    }
+
+    /* ============================================
+       ANIMATIONS
+       ============================================ */
+
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes slideInUp {
+      from {
+        opacity: 0;
+        transform: translateY(40px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes slideInLeft {
+      from {
+        opacity: 0;
+        transform: translateX(-40px);
+      }
+      to {
+        opacity: 1;
+        transform: translateX(0);
+      }
+    }
+
+    @keyframes slideInRight {
+      from {
+        opacity: 0;
+        transform: translateX(40px);
+      }
+      to {
+        opacity: 1;
+        transform: translateX(0);
+      }
+    }
+
+    @keyframes scaleIn {
+      from {
+        opacity: 0;
+        transform: scale(0.95);
+      }
+      to {
+        opacity: 1;
+        transform: scale(1);
+      }
+    }
+
+    .scroll-animate {
+      opacity: 0;
+      transform: translateY(40px);
+    }
+
+    .scroll-animate.visible {
+      animation: slideInUp 0.6s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+    }
+
+    .scroll-animate-left {
+      opacity: 0;
+      transform: translateX(-40px);
+    }
+
+    .scroll-animate-left.visible {
+      animation: slideInLeft 0.6s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+    }
+
+    .scroll-animate-right {
+      opacity: 0;
+      transform: translateX(40px);
+    }
+
+    .scroll-animate-right.visible {
+      animation: slideInRight 0.6s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+    }
+
+    .scroll-animate-scale {
+      opacity: 0;
+      transform: scale(0.95);
+    }
+
+    .scroll-animate-scale.visible {
+      animation: scaleIn 0.6s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+    }
+
+    .scroll-animate-stagger > * {
+      opacity: 0;
+      transform: translateY(40px);
+      animation: slideInUp 0.6s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+    }
+
+    .scroll-animate-stagger.visible > *:nth-child(1) { animation-delay: 0ms; }
+    .scroll-animate-stagger.visible > *:nth-child(2) { animation-delay: 80ms; }
+    .scroll-animate-stagger.visible > *:nth-child(3) { animation-delay: 160ms; }
+    .scroll-animate-stagger.visible > *:nth-child(4) { animation-delay: 240ms; }
+    .scroll-animate-stagger.visible > *:nth-child(5) { animation-delay: 320ms; }
+
+    /* ============================================
+       MOBILE MENU
+       ============================================ */
+
+    .mobile-menu {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 280px;
+      height: 100vh;
+      background-color: var(--color-secondary);
+      box-shadow: 2px 0 12px rgba(0, 0, 0, 0.15);
+      z-index: 100;
+      transform: translateX(-100%);
+      transition: transform var(--transition-base);
+      padding: var(--spacing-lg);
+      display: none;
+      flex-direction: column;
+      gap: var(--spacing-md);
+    }
+
+    .mobile-menu.active {
+      transform: translateX(0);
+    }
+
+    .menu-backdrop {
+      position: fixed;
+      inset: 0;
+      background-color: rgba(0, 0, 0, 0);
+      transition: background-color var(--transition-base);
+      z-index: 99;
+      pointer-events: none;
+    }
+
+    .menu-backdrop.active {
+      background-color: rgba(0, 0, 0, 0.5);
+      pointer-events: auto;
+    }
+
+    /* ============================================
+       FOOTER
+       ============================================ */
+
+    footer {
+      background-color: var(--color-primary);
+      color: var(--color-secondary);
+      padding: var(--spacing-xl) 0;
+      text-align: center;
+    }
+
+    /* ============================================
+       RESPONSIVE
+       ============================================ */
+
+    @media (max-width: 768px) {
+      .nav-desktop {
+        display: none;
+      }
+
+      .menu-toggle {
+        display: flex;
+      }
+
+      .mobile-menu {
+        display: flex;
+      }
+
+      .hero {
+        padding: 80px 0;
+      }
+
+      .section-title {
+        font-size: 1.75rem;
+      }
+
+      .grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      * {
+        animation-duration: 0.01ms !important;
+        transition-duration: 0.01ms !important;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- HEADER -->
+  <header>
+    <div class="container">
+      <div class="nav-wrapper">
+        <div class="logo">
+          <a href="/" class="nav-link">BuildCo</a>
+        </div>
+
+        <nav class="nav-desktop">
+          <a href="#home" class="nav-link active">Home</a>
+          <a href="#projects" class="nav-link">Projects</a>
+          <a href="#services" class="nav-link">Services</a>
+          <a href="#contact" class="nav-link">Contact</a>
+        </nav>
+
+        <button class="menu-toggle" data-menu-toggle>
+          <span></span>
+          <span></span>
+          <span></span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- MOBILE MENU -->
+  <div class="menu-backdrop"></div>
+  <nav class="mobile-menu">
+    <a href="#home" class="nav-link">Home</a>
+    <a href="#projects" class="nav-link">Projects</a>
+    <a href="#services" class="nav-link">Services</a>
+    <a href="#contact" class="nav-link">Contact</a>
+  </nav>
+
+  <main>
+    <!-- HERO SECTION -->
+    <section class="hero" id="home">
+      <div class="container">
+        <h1>Building Tomorrow's Vision</h1>
+        <p>Innovative architectural solutions for modern construction</p>
+        <a href="#projects" class="btn btn-primary">Explore Our Work</a>
+      </div>
+    </section>
+
+    <!-- PROJECTS SECTION -->
+    <section id="projects">
+      <div class="container">
+        <h2 class="section-title scroll-animate">Featured Projects</h2>
+        
+        <div class="grid scroll-animate-stagger">
+          <article class="card">
+            <div class="card-image">
+              <img src="https://images.unsplash.com/photo-1486325212027-8081e485255e?w=500&h=300&fit=crop" 
+                   alt="Modern Office Complex">
+            </div>
+            <div class="card-content">
+              <h3>Modern Office Complex</h3>
+              <p>Contemporary workspace design with sustainable features and cutting-edge amenities.</p>
+              <a href="#" class="nav-link">View Project →</a>
+            </div>
+          </article>
+
+          <article class="card">
+            <div class="card-image">
+              <img src="https://images.unsplash.com/photo-1512717776877-1d63773c06eb?w=500&h=300&fit=crop" 
+                   alt="Residential Tower">
+            </div>
+            <div class="card-content">
+              <h3>Residential Tower</h3>
+              <p>Luxury living spaces with premium amenities and panoramic city views.</p>
+              <a href="#" class="nav-link">View Project →</a>
+            </div>
+          </article>
+
+          <article class="card">
+            <div class="card-image">
+              <img src="https://images.unsplash.com/photo-1563258365-ba0c86e8ca8b?w=500&h=300&fit=crop" 
+                   alt="Shopping District">
+            </div>
+            <div class="card-content">
+              <h3>Shopping District</h3>
+              <p>Mixed-use development with retail, dining, and entertainment spaces.</p>
+              <a href="#" class="nav-link">View Project →</a>
+            </div>
+          </article>
+
+          <article class="card">
+            <div class="card-image">
+              <img src="https://images.unsplash.com/photo-1518640467387-7a27d0e45ae6?w=500&h=300&fit=crop" 
+                   alt="Cultural Center">
+            </div>
+            <div class="card-content">
+              <h3>Cultural Center</h3>
+              <p>Architectural landmark designed for community engagement and events.</p>
+              <a href="#" class="nav-link">View Project →</a>
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- SERVICES SECTION -->
+    <section id="services">
+      <div class="container">
+        <h2 class="section-title scroll-animate">Our Services</h2>
+        
+        <div class="grid scroll-animate-stagger">
+          <div class="card scroll-animate-left">
+            <div class="card-content">
+              <h3>Architectural Design</h3>
+              <p>Innovative design solutions that blend aesthetics with functionality and sustainability.</p>
+              <ul style="margin: var(--spacing-md) 0; padding-left: var(--spacing-lg);">
+                <li>Conceptual Design</li>
+                <li>3D Visualization</li>
+                <li>Sustainability Planning</li>
+              </ul>
+              <a href="#" class="btn btn-secondary">Learn More</a>
+            </div>
+          </div>
+
+          <div class="card scroll-animate-right">
+            <div class="card-content">
+              <h3>Project Management</h3>
+              <p>Expert oversight from planning through completion, ensuring quality and timely delivery.</p>
+              <ul style="margin: var(--spacing-md) 0; padding-left: var(--spacing-lg);">
+                <li>Budget Management</li>
+                <li>Timeline Optimization</li>
+                <li>Quality Assurance</li>
+              </ul>
+              <a href="#" class="btn btn-secondary">Learn More</a>
+            </div>
+          </div>
+
+          <div class="card scroll-animate-left">
+            <div class="card-content">
+              <h3>Construction Services</h3>
+              <p>Professional construction teams delivering excellence in every project phase.</p>
+              <ul style="margin: var(--spacing-md) 0; padding-left: var(--spacing-lg);">
+                <li>Site Management</li>
+                <li>Safety Compliance</li>
+                <li>Material Sourcing</li>
+              </ul>
+              <a href="#" class="btn btn-secondary">Learn More</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- STATS SECTION -->
+    <section style="background-color: #f9f9f9; padding: var(--spacing-xl) 0;">
+      <div class="container">
+        <div class="grid scroll-animate-stagger">
+          <div class="card scroll-animate-scale" style="text-align: center;">
+            <div class="card-content">
+              <div style="font-size: 2.5rem; font-weight: 700; color: var(--color-primary);">250+</div>
+              <p style="font-size: 1.1rem; color: var(--color-text-light);">Projects Completed</p>
+            </div>
+          </div>
+          <div class="card scroll-animate-scale" style="text-align: center;">
+            <div class="card-content">
+              <div style="font-size: 2.5rem; font-weight: 700; color: var(--color-primary);">15+</div>
+              <p style="font-size: 1.1rem; color: var(--color-text-light);">Years of Excellence</p>
+            </div>
+          </div>
+          <div class="card scroll-animate-scale" style="text-align: center;">
+            <div class="card-content">
+              <div style="font-size: 2.5rem; font-weight: 700; color: var(--color-primary);">500M+</div>
+              <p style="font-size: 1.1rem; color: var(--color-text-light);">Square Feet Built</p>
+            </div>
+          </div>
+          <div class="card scroll-animate-scale" style="text-align: center;">
+            <div class="card-content">
+              <div style="font-size: 2.5rem; font-weight: 700; color: var(--color-primary);">98%</div>
+              <p style="font-size: 1.1rem; color: var(--color-text-light);">Client Satisfaction</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- CONTACT SECTION -->
+    <section class="contact-section" id="contact">
+      <div class="container">
+        <h2 class="section-title scroll-animate">Start Your Project</h2>
+        
+        <form class="contact-form scroll-animate" method="POST" action="https://formspree.io/f/YOUR_FORM_ID">
+          <div class="form-group">
+            <input 
+              type="text" 
+              class="form-input" 
+              name="name"
+              placeholder="Your Name" 
+              required
+            >
+          </div>
+          <div class="form-group">
+            <input 
+              type="email" 
+              class="form-input" 
+              name="email"
+              placeholder="Email Address" 
+              required
+            >
+          </div>
+          <div class="form-group">
+            <textarea 
+              class="form-textarea" 
+              name="message"
+              placeholder="Tell us about your project..." 
+              rows="5"
+              required
+            ></textarea>
+          </div>
+          <button type="submit" class="btn btn-primary" style="width: 100%;">Send Inquiry</button>
+        </form>
+      </div>
+    </section>
+  </main>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="container">
+      <p>&copy; 2024 BuildCo. All rights reserved.</p>
+    </div>
+  </footer>
+
+  <!-- ANIMATIONS SCRIPT -->
+  <script>
+    (function() {
+      'use strict';
+
+      const features = {
+        intersectionObserver: 'IntersectionObserver' in window,
+        prefersReducedMotion: window.matchMedia('(prefers-reduced-motion: reduce)').matches
+      };
+
+      function initScrollAnimations() {
+        if (!features.intersectionObserver) {
+          document.querySelectorAll('.scroll-animate, .scroll-animate-left, .scroll-animate-right, .scroll-animate-scale, .scroll-animate-stagger')
+            .forEach(el => el.classList.add('visible'));
+          return;
+        }
+
+        const observer = new IntersectionObserver((entries) => {
+          entries.forEach(entry => {
+            if (entry.isIntersecting) {
+              entry.target.classList.add('visible');
+              observer.unobserve(entry.target);
+            }
+          });
+        }, { threshold: 0.1, rootMargin: '0px 0px -50px 0px' });
+
+        document.querySelectorAll('.scroll-animate, .scroll-animate-left, .scroll-animate-right, .scroll-animate-scale, .scroll-animate-stagger')
+          .forEach(el => observer.observe(el));
+      }
+
+      function initNavigationLinks() {
+        const links = document.querySelectorAll('.nav-link');
+        const currentPath = window.location.pathname;
+
+        links.forEach(link => {
+          const href = link.getAttribute('href');
+          if (href === currentPath || href === window.location.pathname + '/') {
+            link.classList.add('active');
+          }
+        });
+      }
+
+      function initMobileMenu() {
+        const toggle = document.querySelector('[data-menu-toggle]');
+        const menu = document.querySelector('.mobile-menu');
+        const backdrop = document.querySelector('.menu-backdrop');
+        const links = document.querySelectorAll('.mobile-menu a');
+
+        if (!toggle || !menu) return;
+
+        const closeMenu = () => {
+          menu.classList.remove('active');
+          backdrop?.classList.remove('active');
+          document.body.style.overflow = '';
+        };
+
+        const openMenu = () => {
+          menu.classList.add('active');
+          backdrop?.classList.add('active');
+          document.body.style.overflow = 'hidden';
+        };
+
+        toggle.addEventListener('click', () => {
+          menu.classList.contains('active') ? closeMenu() : openMenu();
+        });
+
+        backdrop?.addEventListener('click', closeMenu);
+
+        links.forEach(link => {
+          link.addEventListener('click', closeMenu);
+        });
+
+        document.addEventListener('keydown', (e) => {
+          if (e.key === 'Escape' && menu.classList.contains('active')) {
+            closeMenu();
+          }
+        });
+      }
+
+      function init() {
+        if (document.readyState === 'loading') {
+          document.addEventListener('DOMContentLoaded', () => {
+            initScrollAnimations();
+            initNavigationLinks();
+            initMobileMenu();
+            console.log('✓ Animation System Initialized');
+          });
+        } else {
+          initScrollAnimations();
+          initNavigationLinks();
+          initMobileMenu();
+          console.log('✓ Animation System Initialized');
+        }
+      }
+
+      init();
+    })();
+  </script>
+</body>
+</html>
