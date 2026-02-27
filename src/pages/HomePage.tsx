@@ -14,8 +14,6 @@ import type { Vehicle, Testimonial } from '../types';
 import { formatPrice } from '../utils/format';
 import { VehicleViewer360Enhanced } from '../components/3d/VehicleViewer360Enhanced';
 import { ARViewerEnhanced } from '../components/3d/ARViewerEnhanced';
-import { InteractiveVehicleComparison } from '../components/3d/InteractiveVehicleComparison';
-import { VirtualShowroomTour } from '../components/3d/VirtualShowroomTour';
 import CarFocusCarousel, { carSlides, CarFocusCarouselHandle } from '../components/CarFocusCarousel';
 import { ParallaxBackground } from '../components/ParallaxBackground';
 import { VehicleSpecCardBack } from '../components/VehicleSpecCardBack';
@@ -2149,48 +2147,6 @@ export const HomePage = () => {
             <ARViewerEnhanced />
           </motion.div>
 
-          {/* 3. Interactive Vehicle Comparison */}
-          <motion.div 
-            className="mb-20"
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.2 }}
-            viewport={{ once: true }}
-          >
-            <div className="mb-6">
-              <h3 className={`text-2xl font-bold mb-2 ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
-                {language === 'en' ? 'Interactive Vehicle Comparison' : 'ইন্টারেক্টিভ গাড়ি তুলনা'}
-              </h3>
-              <p className={theme === 'dark' ? 'text-gray-300' : 'text-gray-600'}>
-                {language === 'en' 
-                  ? 'Compare multiple vehicles side-by-side with detailed specifications'
-                  : 'বিস্তারিত স্পেসিফিকেশন সহ একাধিক গাড়ি পাশাপাশি তুলনা করুন'}
-              </p>
-            </div>
-            <InteractiveVehicleComparison />
-          </motion.div>
-
-          {/* 4. Virtual Showroom Tour */}
-          <motion.div 
-            className="mb-20"
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.3 }}
-            viewport={{ once: true }}
-          >
-            <div className="mb-6">
-              <h3 className={`text-2xl font-bold mb-2 ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
-                {language === 'en' ? 'Virtual Showroom Tour' : 'ভার্চুয়াল শোরুম ট্যুর'}
-              </h3>
-              <p className={theme === 'dark' ? 'text-gray-300' : 'text-gray-600'}>
-                {language === 'en' 
-                  ? 'Take a guided tour of our showroom and service facilities in 360°'
-                  : '360° এ আমাদের শোরুম এবং পরিষেবা সুবিধাগুলির একটি গাইডেড ট্যুর করুন'}
-              </p>
-            </div>
-            <VirtualShowroomTour />
-          </motion.div>
-
           {/* CTA for Interactive Experience */}
           <motion.div 
             className="bg-gradient-to-r from-blue-600 to-blue-800 rounded-2xl p-8 text-center text-white"
@@ -2222,6 +2178,166 @@ export const HomePage = () => {
           </motion.div>
         </div>
       </section>
+
+      {/* GOOGLE MAPS LOCATION SECTION - Interactive with Animations */}
+      <motion.section
+        className="py-20 bg-gradient-to-b from-gray-50 to-white dark:from-gray-900 dark:to-gray-800"
+        initial={{ opacity: 0 }}
+        whileInView={{ opacity: 1 }}
+        transition={{ duration: 0.6 }}
+        viewport={{ once: true }}
+      >
+        <div className="container mx-auto px-4">
+          {/* Section Header */}
+          <motion.div
+            className="text-center mb-16"
+            initial={{ opacity: 0, y: -20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
+            viewport={{ once: true }}
+          >
+            <h2 className="text-4xl md:text-5xl font-bold mb-6 bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
+              {language === 'en' ? 'Visit Our Showroom' : 'আমাদের শোরুম পরিদর্শন করুন'}
+            </h2>
+            <p className="text-xl text-gray-600 dark:text-gray-300 max-w-2xl mx-auto">
+              {language === 'en' 
+                ? 'Located in the heart of Rajshahi. Experience our vehicles in person and take a test drive today.'
+                : 'রাজশাহীর কেন্দ্রে অবস্থিত। আমাদের গাড়িগুলি সরাসরি অনুভব করুন এবং আজই টেস্ট ড্রাইভ নিন।'}
+            </p>
+          </motion.div>
+
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12">
+            {/* Location Info Cards */}
+            <motion.div
+              className="flex flex-col gap-6"
+              initial={{ opacity: 0, x: -50 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.6 }}
+              viewport={{ once: true }}
+            >
+              {/* Address Card */}
+              <motion.div
+                className="bg-white dark:bg-gray-800 rounded-2xl p-8 shadow-lg border border-gray-200 dark:border-gray-700 hover:shadow-2xl transition-all"
+                whileHover={{ y: -10 }}
+              >
+                <div className="flex items-start gap-4 mb-4">
+                  <div className="w-12 h-12 bg-blue-100 dark:bg-blue-900 rounded-lg flex items-center justify-center flex-shrink-0">
+                    <svg className="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                    </svg>
+                  </div>
+                  <div>
+                    <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-2">
+                      {language === 'en' ? 'Address' : 'ঠিকানা'}
+                    </h3>
+                    <p className="text-gray-600 dark:text-gray-300">Auto Spark, Rajshahi</p>
+                    <p className="text-gray-600 dark:text-gray-300">Bangladesh</p>
+                  </div>
+                </div>
+              </motion.div>
+
+              {/* Hours Card */}
+              <motion.div
+                className="bg-white dark:bg-gray-800 rounded-2xl p-8 shadow-lg border border-gray-200 dark:border-gray-700 hover:shadow-2xl transition-all"
+                whileHover={{ y: -10 }}
+                transition={{ delay: 0.1 }}
+              >
+                <div className="flex items-start gap-4 mb-4">
+                  <div className="w-12 h-12 bg-green-100 dark:bg-green-900 rounded-lg flex items-center justify-center flex-shrink-0">
+                    <svg className="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                  </div>
+                  <div className="flex-1">
+                    <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-3">
+                      {language === 'en' ? 'Business Hours' : 'ব্যবসায়িক সময়'}
+                    </h3>
+                    <div className="space-y-1 text-sm">
+                      <p className="text-gray-600 dark:text-gray-300">{language === 'en' ? 'Monday - Friday' : 'সোমবার - শুক্রবার'}: 9:00 AM - 6:00 PM</p>
+                      <p className="text-gray-600 dark:text-gray-300">{language === 'en' ? 'Saturday' : 'শনিবার'}: 10:00 AM - 5:00 PM</p>
+                      <p className="text-gray-600 dark:text-gray-300">{language === 'en' ? 'Sunday' : 'রবিবার'}: {language === 'en' ? 'Closed' : 'বন্ধ'}</p>
+                    </div>
+                  </div>
+                </div>
+              </motion.div>
+
+              {/* Contact Card */}
+              <motion.div
+                className="bg-white dark:bg-gray-800 rounded-2xl p-8 shadow-lg border border-gray-200 dark:border-gray-700 hover:shadow-2xl transition-all"
+                whileHover={{ y: -10 }}
+                transition={{ delay: 0.2 }}
+              >
+                <div className="flex items-start gap-4 mb-4">
+                  <div className="w-12 h-12 bg-purple-100 dark:bg-purple-900 rounded-lg flex items-center justify-center flex-shrink-0">
+                    <svg className="w-6 h-6 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                    </svg>
+                  </div>
+                  <div>
+                    <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-2">
+                      {language === 'en' ? 'Contact' : 'যোগাযোগ'}
+                    </h3>
+                    <p className="text-gray-600 dark:text-gray-300">📞 +880 1234 567890</p>
+                    <p className="text-gray-600 dark:text-gray-300">✉️ info@autospark.com</p>
+                  </div>
+                </div>
+              </motion.div>
+
+              {/* CTA Button */}
+              <motion.div
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+              >
+                <a
+                  href="https://www.google.com/maps/place/Auto+Spark/@24.3744264,88.6135805,17z/data=!3m1!4b1!4m6!3m5!1s0x39fbeffd47dfded9:0x46c8c45692f9a6c1!8m2!3d24.3744264!4d88.6135805!16s%2Fg%2F11p75sk5c5?entry=ttu&g_ep=EgoyMDI2MDIyNS4wIKXMDSoASAFQAw%3D%3D"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="block w-full bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-bold py-4 rounded-xl hover:shadow-xl transition-all text-center"
+                >
+                  {language === 'en' ? '📍 Get Directions on Google Maps' : '📍 গুগল ম্যাপে দিকনির্দেশনা পান'}
+                </a>
+              </motion.div>
+            </motion.div>
+
+            {/* Google Maps Embed - Right Side */}
+            <motion.div
+              className="relative rounded-2xl overflow-hidden shadow-2xl h-full min-h-[500px]"
+              initial={{ opacity: 0, scale: 0.95 }}
+              whileInView={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.8 }}
+              viewport={{ once: true }}
+              style={{
+                boxShadow: '0 20px 50px rgba(59, 130, 246, 0.2)'
+              }}
+            >
+              {/* Animated Border */}
+              <motion.div
+                className="absolute -inset-0.5 rounded-2xl opacity-30 pointer-events-none"
+                style={{
+                  backgroundImage: 'linear-gradient(45deg, #3B82F6, #6366F1, #3B82F6)',
+                  backgroundPosition: '200% 0',
+                }}
+                animate={{
+                  backgroundPosition: ['200% 0', '0 0', '200% 0'],
+                }}
+                transition={{ duration: 4, repeat: Infinity }}
+              />
+
+              {/* Google Maps Iframe */}
+              <iframe
+                title="Auto Spark Location Map"
+                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3644.7574123456!2d88.6135805!3d24.3744264!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x39fbeffd47dfded9%3A0x46c8c45692f9a6c1!2sAuto%20Spark!5e0!3m2!1sen!2sbd!4v1234567890123"
+                width="100%"
+                height="100%"
+                style={{ border: 0, minHeight: '500px' }}
+                allowFullScreen
+                loading="lazy"
+                referrerPolicy="no-referrer-when-downgrade"
+              />
+            </motion.div>
+          </div>
+        </div>
+      </motion.section>
 
       {/* CTA SECTION */}
       <motion.section 

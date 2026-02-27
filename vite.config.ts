@@ -4,8 +4,9 @@ import react from '@vitejs/plugin-react';
 // https://vitejs.dev/config/
 export default defineConfig({
   plugins: [react()],
-  // GitHub Pages deployment - set base to repo name
-  base: '/autospark/',
+  // GitHub Pages deployment - set base to repo name for production
+  // Use '/' for development, '/autospark/' for production
+  base: process.env.NODE_ENV === 'production' ? '/autospark/' : '/',
   optimizeDeps: {
     exclude: ['lucide-react'],
   },

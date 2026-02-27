@@ -10,6 +10,7 @@ import { AccessoriesPage } from './pages/AccessoriesPage';
 import { AboutPage } from './pages/AboutPage';
 import { SellCarPage } from './pages/SellCarPage';
 import { ContactPage } from './pages/ContactPage';
+import { VehicleExperiencePage } from './pages/VehicleExperiencePage';
 
 // GitHub Pages basename - use '/autospark' in production, '/' in development
 const basename = import.meta.env.BASE_URL;
@@ -24,6 +25,7 @@ function App() {
               <Route path="/" element={<HomePage />} />
               <Route path="/inventory" element={<InventoryPage />} />
               <Route path="/vehicle/:id" element={<VehicleDetailsPage />} />
+              <Route path="/experience" element={<VehicleExperiencePage />} />
               <Route path="/services" element={<ServicesPage />} />
               <Route path="/accessories" element={<AccessoriesPage />} />
               <Route path="/about" element={<AboutPage />} />
