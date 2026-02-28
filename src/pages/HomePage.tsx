@@ -33,7 +33,7 @@ import { FloatingParticlesBackground } from '../components/FloatingParticlesBack
 import { EnhancedSkeleton } from '../components/EnhancedSkeleton';
 import { CarouselPlaceholder } from '../components/CarouselPlaceholder';
 import { ImageLoadingProgress } from '../components/ImageLoadingProgress';
-import { DesertHighwayScene } from '../components/DesertHighwayScene';
+import { VideoHero } from '../components/VideoHero';
 
 export const HomePage = () => {
   const { t, language } = useLanguage();
@@ -181,8 +181,8 @@ export const HomePage = () => {
     >
       {/* HERO SECTION WITH TEXT REVEAL */}
       <section className="relative h-screen flex items-center justify-center overflow-hidden">
-        {/* Cinematic Desert Highway Scene - Premium 3D Experience */}
-        <DesertHighwayScene />
+        {/* Cinematic Video Hero - Premium Experience */}
+        <VideoHero videoId="JOVY3hD4nLM" />
         
         {/* Overlay gradient for text readability */}
         <div className={`absolute inset-0 ${
