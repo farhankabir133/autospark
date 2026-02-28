@@ -12,8 +12,9 @@ import { ImageCarousel } from '../components/ImageCarousel';
 import { supabase } from '../lib/supabase';
 import type { Vehicle, Testimonial } from '../types';
 import { formatPrice } from '../utils/format';
-import { VehicleViewer360Enhanced } from '../components/3d/VehicleViewer360Enhanced';
-import { ARViewerEnhanced } from '../components/3d/ARViewerEnhanced';
+// Temporarily disabled due to React Three Fiber version compatibility issue
+// import { CarViewerShowcase } from '../components/3d/CarViewer';
+// import { ARViewerEnhanced } from '../components/3d/ARViewerEnhanced';
 import CarFocusCarousel, { carSlides, CarFocusCarouselHandle } from '../components/CarFocusCarousel';
 import { ParallaxBackground } from '../components/ParallaxBackground';
 import { VehicleSpecCardBack } from '../components/VehicleSpecCardBack';
@@ -32,6 +33,7 @@ import { FloatingParticlesBackground } from '../components/FloatingParticlesBack
 import { EnhancedSkeleton } from '../components/EnhancedSkeleton';
 import { CarouselPlaceholder } from '../components/CarouselPlaceholder';
 import { ImageLoadingProgress } from '../components/ImageLoadingProgress';
+import { DesertHighwayScene } from '../components/DesertHighwayScene';
 
 export const HomePage = () => {
   const { t, language } = useLanguage();
@@ -179,9 +181,15 @@ export const HomePage = () => {
     >
       {/* HERO SECTION WITH TEXT REVEAL */}
       <section className="relative h-screen flex items-center justify-center overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-br from-black via-gray-900 to-black">
-          <div className="absolute inset-0 bg-[url('https://images.pexels.com/photos/3802510/pexels-photo-3802510.jpeg?auto=compress&cs=tinysrgb&w=1920')] bg-cover bg-center opacity-30"></div>
-        </div>
+        {/* Cinematic Desert Highway Scene - Premium 3D Experience */}
+        <DesertHighwayScene />
+        
+        {/* Overlay gradient for text readability */}
+        <div className={`absolute inset-0 ${
+          theme === 'dark' 
+            ? 'bg-gradient-to-b from-black/40 via-transparent to-black/60' 
+            : 'bg-gradient-to-b from-white/30 via-transparent to-white/40'
+        }`} />
 
         <div className="relative z-10 container mx-auto px-4 text-center">
           <motion.div
@@ -189,7 +197,9 @@ export const HomePage = () => {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.2 }}
           >
-            <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold text-white mb-6">
+            <h1 className={`text-5xl md:text-6xl lg:text-7xl font-bold mb-6 ${
+              theme === 'dark' ? 'text-white' : 'text-gray-900'
+            }`}>
               {t('hero.title').split('').map((char, index) => (
                 <motion.span
                   key={index}
@@ -205,7 +215,9 @@ export const HomePage = () => {
           </motion.div>
 
           <motion.p 
-            className="text-xl md:text-2xl text-gray-300 mb-12 max-w-2xl mx-auto"
+            className={`text-xl md:text-2xl mb-12 max-w-2xl mx-auto ${
+              theme === 'dark' ? 'text-gray-300' : 'text-gray-700'
+            }`}
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.8 }}
@@ -2105,7 +2117,8 @@ export const HomePage = () => {
             </p>
           </motion.div>
 
-          {/* 1. 360° Vehicle Viewer */}
+          {/* 1. 360° Vehicle Viewer - Temporarily disabled due to R3F compatibility issue */}
+          {/* 
           <motion.div 
             className="mb-20"
             initial={{ opacity: 0, y: 20 }}
@@ -2115,18 +2128,20 @@ export const HomePage = () => {
           >
             <div className="mb-6">
               <h3 className={`text-2xl font-bold mb-2 ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
-                {language === 'en' ? '360° Vehicle Viewer' : '360° গাড়ি দর্শক'}
+                {language === 'en' ? '3D Vehicle Viewer' : '3D গাড়ি দর্শক'}
               </h3>
               <p className={theme === 'dark' ? 'text-gray-300' : 'text-gray-600'}>
                 {language === 'en' 
-                  ? 'Rotate and inspect vehicles from every angle with our interactive 3D viewer'
-                  : 'আমাদের ইন্টারেক্টিভ 3D ভিউয়ার দিয়ে প্রতিটি কোণ থেকে গাড়িগুলি ঘোরান এবং পরিদর্শন করুন'}
+                  ? 'Explore our vehicles in stunning 3D - rotate, zoom, and customize colors'
+                  : 'আমাদের গাড়িগুলি অত্যাশ্চর্য 3D তে অন্বেষণ করুন - ঘোরান, জুম করুন এবং রং কাস্টমাইজ করুন'}
               </p>
             </div>
-            <VehicleViewer360Enhanced />
+            <CarViewerShowcase theme={theme} language={language} />
           </motion.div>
+          */}
 
-          {/* 2. Augmented Reality Viewer */}
+          {/* 2. Augmented Reality Viewer - Temporarily disabled */}
+          {/*
           <motion.div 
             className="mb-20"
             initial={{ opacity: 0, y: 20 }}
@@ -2146,6 +2161,7 @@ export const HomePage = () => {
             </div>
             <ARViewerEnhanced />
           </motion.div>
+          */}
 
           {/* CTA for Interactive Experience */}
           <motion.div 

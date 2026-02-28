@@ -2,16 +2,20 @@ import { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { ChevronLeft, ChevronRight, Phone, MessageCircle, Calculator, Fuel, Settings, Calendar, Gauge } from 'lucide-react';
 import { useLanguage } from '../contexts/LanguageContext';
+import { useTheme } from '../contexts/ThemeContext';
 import { Button } from '../components/ui/Button';
 import { Card } from '../components/ui/Card';
 import { supabase } from '../lib/supabase';
+import { ALL_VEHICLES } from '../hooks/vehicleDataAll';
 import type { Vehicle } from '../types';
 import { formatPrice, calculateEMI } from '../utils/format';
 
 export const VehicleDetailsPage = () => {
   const { id } = useParams<{ id: string }>();
   const { t, language } = useLanguage();
+  const { theme } = useTheme();
   const [vehicle, setVehicle] = useState<Vehicle | null>(null);
+  const [loading, setLoading] = useState(true);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [showEMICalculator, setShowEMICalculator] = useState(false);
   const [emiParams, setEmiParams] = useState({
@@ -23,39 +27,52 @@ export const VehicleDetailsPage = () => {
   useEffect(() => {
     if (id) {
       fetchVehicle();
-      incrementViewCount();
     }
   }, [id]);
 
   const fetchVehicle = async () => {
-    const { data } = await supabase
-      .from('vehicles')
-      .select(`
-        *,
-        images:vehicle_images(*),
-        features:vehicle_features(*)
-      `)
-      .eq('id', id)
-      .single();
-
-    if (data) {
-      setVehicle(data);
+    setLoading(true);
+    
+    // First, try to find the vehicle in local mock data
+    const localVehicle = ALL_VEHICLES.find(v => v.id === id);
+    
+    if (localVehicle) {
+      setVehicle(localVehicle);
+      setLoading(false);
+      return;
     }
-  };
+    
+    // Fallback to Supabase if not found locally
+    try {
+      const { data } = await supabase
+        .from('vehicles')
+        .select(`
+          *,
+          images:vehicle_images(*),
+          features:vehicle_features(*)
+        `)
+        .eq('id', id)
+        .single();
 
-  const incrementViewCount = async () => {
-    await supabase.rpc('increment', { row_id: id });
+      if (data) {
+        setVehicle(data);
+      }
+    } catch (error) {
+      console.error('Error fetching vehicle:', error);
+    }
+    
+    setLoading(false);
   };
 
   const nextImage = () => {
-    if (vehicle?.images) {
-      setCurrentImageIndex((prev) => (prev + 1) % vehicle.images.length);
+    if (vehicle?.images && vehicle.images.length > 0) {
+      setCurrentImageIndex((prev) => (prev + 1) % vehicle.images!.length);
     }
   };
 
   const prevImage = () => {
-    if (vehicle?.images) {
-      setCurrentImageIndex((prev) => (prev - 1 + vehicle.images.length) % vehicle.images.length);
+    if (vehicle?.images && vehicle.images.length > 0) {
+      setCurrentImageIndex((prev) => (prev - 1 + vehicle.images!.length) % vehicle.images!.length);
     }
   };
 
@@ -65,12 +82,14 @@ export const VehicleDetailsPage = () => {
     return calculateEMI(loanAmount, emiParams.interestRate, emiParams.years);
   };
 
-  if (!vehicle) {
+  const isDark = theme === 'dark';
+
+  if (loading || !vehicle) {
     return (
-      <div className="min-h-screen flex items-center justify-center pt-20">
+      <div className={`min-h-screen flex items-center justify-center pt-20 ${isDark ? 'bg-gray-900' : 'bg-gray-50'}`}>
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
-          <p>{t('common.loading')}</p>
+          <p className={isDark ? 'text-gray-300' : 'text-gray-600'}>{t('common.loading')}</p>
         </div>
       </div>
     );
@@ -80,7 +99,7 @@ export const VehicleDetailsPage = () => {
   const currentImage = images[currentImageIndex]?.image_url || 'https://images.pexels.com/photos/3802508/pexels-photo-3802508.jpeg?auto=compress&cs=tinysrgb&w=1200';
 
   return (
-    <div className="min-h-screen bg-gray-50 pt-20">
+    <div className={`min-h-screen pt-20 ${isDark ? 'bg-gray-900' : 'bg-gray-50'}`}>
       <div className="container mx-auto px-4 py-8">
         <Link to="/inventory" className="inline-flex items-center text-blue-600 hover:text-blue-700 mb-6">
           <ChevronLeft className="h-5 w-5 mr-1" />
@@ -135,44 +154,44 @@ export const VehicleDetailsPage = () => {
           </div>
 
           <div>
-            <div className="bg-white rounded-lg shadow-md p-6">
-              <div className="text-sm text-gray-500 mb-2">
+            <div className={`rounded-lg shadow-md p-6 ${isDark ? 'bg-gray-800' : 'bg-white'}`}>
+              <div className={`text-sm mb-2 ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>
                 {t('vehicle.stock')}: {vehicle.stock_number}
               </div>
-              <h1 className="text-3xl font-bold text-gray-900 mb-2">
+              <h1 className={`text-3xl font-bold mb-2 ${isDark ? 'text-white' : 'text-gray-900'}`}>
                 {vehicle.brand_name} {vehicle.model}
               </h1>
               <div className="text-4xl font-bold text-blue-600 mb-6">
                 {formatPrice(vehicle.price, language)}
               </div>
 
-              <div className="grid grid-cols-2 gap-4 mb-6 pb-6 border-b border-gray-200">
+              <div className={`grid grid-cols-2 gap-4 mb-6 pb-6 border-b ${isDark ? 'border-gray-700' : 'border-gray-200'}`}>
                 <div className="flex items-center space-x-3">
-                  <Calendar className="h-5 w-5 text-gray-400" />
+                  <Calendar className={`h-5 w-5 ${isDark ? 'text-gray-500' : 'text-gray-400'}`} />
                   <div>
-                    <div className="text-sm text-gray-500">{t('vehicle.year')}</div>
-                    <div className="font-semibold">{vehicle.year}</div>
+                    <div className={`text-sm ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>{t('vehicle.year')}</div>
+                    <div className={`font-semibold ${isDark ? 'text-white' : 'text-gray-900'}`}>{vehicle.year}</div>
                   </div>
                 </div>
                 <div className="flex items-center space-x-3">
-                  <Gauge className="h-5 w-5 text-gray-400" />
+                  <Gauge className={`h-5 w-5 ${isDark ? 'text-gray-500' : 'text-gray-400'}`} />
                   <div>
-                    <div className="text-sm text-gray-500">{t('vehicle.mileage')}</div>
-                    <div className="font-semibold">{vehicle.mileage.toLocaleString()} km</div>
+                    <div className={`text-sm ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>{t('vehicle.mileage')}</div>
+                    <div className={`font-semibold ${isDark ? 'text-white' : 'text-gray-900'}`}>{vehicle.mileage.toLocaleString()} km</div>
                   </div>
                 </div>
                 <div className="flex items-center space-x-3">
-                  <Fuel className="h-5 w-5 text-gray-400" />
+                  <Fuel className={`h-5 w-5 ${isDark ? 'text-gray-500' : 'text-gray-400'}`} />
                   <div>
-                    <div className="text-sm text-gray-500">{t('vehicle.fuel')}</div>
-                    <div className="font-semibold">{vehicle.fuel_type}</div>
+                    <div className={`text-sm ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>{t('vehicle.fuel')}</div>
+                    <div className={`font-semibold ${isDark ? 'text-white' : 'text-gray-900'}`}>{vehicle.fuel_type}</div>
                   </div>
                 </div>
                 <div className="flex items-center space-x-3">
-                  <Settings className="h-5 w-5 text-gray-400" />
+                  <Settings className={`h-5 w-5 ${isDark ? 'text-gray-500' : 'text-gray-400'}`} />
                   <div>
-                    <div className="text-sm text-gray-500">{t('vehicle.transmission')}</div>
-                    <div className="font-semibold">{vehicle.transmission}</div>
+                    <div className={`text-sm ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>{t('vehicle.transmission')}</div>
+                    <div className={`font-semibold ${isDark ? 'text-white' : 'text-gray-900'}`}>{vehicle.transmission}</div>
                   </div>
                 </div>
               </div>
@@ -266,21 +285,21 @@ export const VehicleDetailsPage = () => {
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           <div className="lg:col-span-2">
-            <Card className="p-6 mb-6">
-              <h2 className="text-2xl font-bold text-gray-900 mb-4">{language === 'en' ? 'Description' : 'বিবরণ'}</h2>
-              <p className="text-gray-700 leading-relaxed whitespace-pre-line">
+            <Card className={`p-6 mb-6 ${isDark ? 'bg-gray-800' : ''}`}>
+              <h2 className={`text-2xl font-bold mb-4 ${isDark ? 'text-white' : 'text-gray-900'}`}>{language === 'en' ? 'Description' : 'বিবরণ'}</h2>
+              <p className={`leading-relaxed whitespace-pre-line ${isDark ? 'text-gray-300' : 'text-gray-700'}`}>
                 {language === 'en' ? vehicle.description_en : vehicle.description_bn || vehicle.description_en}
               </p>
             </Card>
 
             {vehicle.features && vehicle.features.length > 0 && (
-              <Card className="p-6">
-                <h2 className="text-2xl font-bold text-gray-900 mb-4">{t('vehicle.features')}</h2>
+              <Card className={`p-6 ${isDark ? 'bg-gray-800' : ''}`}>
+                <h2 className={`text-2xl font-bold mb-4 ${isDark ? 'text-white' : 'text-gray-900'}`}>{t('vehicle.features')}</h2>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                   {vehicle.features.map((feature) => (
                     <div key={feature.id} className="flex items-center space-x-2">
                       <div className="h-2 w-2 bg-blue-600 rounded-full"></div>
-                      <span className="text-gray-700">
+                      <span className={isDark ? 'text-gray-300' : 'text-gray-700'}>
                         {language === 'en' ? feature.feature_en : feature.feature_bn}
                       </span>
                     </div>
@@ -291,8 +310,8 @@ export const VehicleDetailsPage = () => {
           </div>
 
           <div>
-            <Card className="p-6">
-              <h2 className="text-xl font-bold text-gray-900 mb-4">{t('vehicle.specifications')}</h2>
+            <Card className={`p-6 ${isDark ? 'bg-gray-800' : ''}`}>
+              <h2 className={`text-xl font-bold mb-4 ${isDark ? 'text-white' : 'text-gray-900'}`}>{t('vehicle.specifications')}</h2>
               <dl className="space-y-3">
                 {[
                   { label: t('vehicle.year'), value: vehicle.year },
@@ -306,9 +325,9 @@ export const VehicleDetailsPage = () => {
                   { label: language === 'en' ? 'Exterior Color' : 'বাহ্যিক রঙ', value: vehicle.color_exterior },
                   { label: language === 'en' ? 'Interior Color' : 'অভ্যন্তরীণ রঙ', value: vehicle.color_interior },
                 ].map((spec) => spec.value && (
-                  <div key={spec.label} className="flex justify-between py-2 border-b border-gray-200">
-                    <dt className="text-gray-600">{spec.label}</dt>
-                    <dd className="font-semibold text-gray-900">{spec.value}</dd>
+                  <div key={spec.label} className={`flex justify-between py-2 border-b ${isDark ? 'border-gray-700' : 'border-gray-200'}`}>
+                    <dt className={isDark ? 'text-gray-400' : 'text-gray-600'}>{spec.label}</dt>
+                    <dd className={`font-semibold ${isDark ? 'text-white' : 'text-gray-900'}`}>{spec.value}</dd>
                   </div>
                 ))}
               </dl>
