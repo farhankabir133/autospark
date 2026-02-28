@@ -34,6 +34,7 @@ import { EnhancedSkeleton } from '../components/EnhancedSkeleton';
 import { CarouselPlaceholder } from '../components/CarouselPlaceholder';
 import { ImageLoadingProgress } from '../components/ImageLoadingProgress';
 import { VideoHero } from '../components/VideoHero';
+import { HeroText } from '../components/HeroText';
 
 export const HomePage = () => {
   const { t, language } = useLanguage();
@@ -185,51 +186,25 @@ export const HomePage = () => {
         <VideoHero videoId="JOVY3hD4nLM" />
         
         {/* Overlay gradient for text readability */}
-        <div className={`absolute inset-0 ${
+        <div className={`absolute inset-0 pointer-events-none ${
           theme === 'dark' 
-            ? 'bg-gradient-to-b from-black/40 via-transparent to-black/60' 
-            : 'bg-gradient-to-b from-white/30 via-transparent to-white/40'
+            ? 'bg-gradient-to-b from-black/30 via-transparent to-black/50' 
+            : 'bg-gradient-to-b from-white/20 via-transparent to-white/30'
         }`} />
 
         <div className="relative z-10 container mx-auto px-4 text-center">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.2 }}
-          >
-            <h1 className={`text-5xl md:text-6xl lg:text-7xl font-bold mb-6 ${
-              theme === 'dark' ? 'text-white' : 'text-gray-900'
-            }`}>
-              {t('hero.title').split('').map((char, index) => (
-                <motion.span
-                  key={index}
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.05, delay: 0.05 * index }}
-                  className="inline-block"
-                >
-                  {char === ' ' ? '\u00A0' : char}
-                </motion.span>
-              ))}
-            </h1>
-          </motion.div>
+          {/* Premium Hero Text with Glass Effect */}
+          <HeroText 
+            title={t('hero.title')}
+            subtitle={t('hero.subtitle')}
+          />
 
-          <motion.p 
-            className={`text-xl md:text-2xl mb-12 max-w-2xl mx-auto ${
-              theme === 'dark' ? 'text-gray-300' : 'text-gray-700'
-            }`}
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.8 }}
-          >
-            {t('hero.subtitle')}
-          </motion.p>
-
+          {/* CTA Buttons */}
           <motion.div 
-            className="flex flex-col sm:flex-row gap-4 justify-center"
+            className="flex flex-col sm:flex-row gap-4 justify-center mt-8 md:mt-12"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 1.2 }}
+            transition={{ duration: 0.8, delay: 2.5 }}
           >
             <motion.div
               whileHover={{ y: -5 }}
