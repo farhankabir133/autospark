@@ -16,6 +16,34 @@
     <meta name="twitter:description" content="North Bengal's leading premium car showroom" />
     <meta name="twitter:image" content="https://images.pexels.com/photos/3802510/pexels-photo-3802510.jpeg" />
     <meta name="theme-color" content="#0E0E0E" />
+    
+    <!-- Performance: Preconnect to critical third-party origins -->
+    <link rel="preconnect" href="https://www.youtube.com" crossorigin />
+    <link rel="preconnect" href="https://www.google.com" crossorigin />
+    <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="preconnect" href="https://images.pexels.com" crossorigin />
+    <link rel="dns-prefetch" href="https://www.youtube.com" />
+    <link rel="dns-prefetch" href="https://i.ytimg.com" />
+    
+    <!-- Performance: Preload critical fonts with font-display swap -->
+    <link rel="preload" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" as="style" onload="this.onload=null;this.rel='stylesheet'" />
+    <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" /></noscript>
+    
+    <!-- Critical CSS for above-the-fold content -->
+    <style>
+      /* Critical CSS - prevents layout shift */
+      *,*::before,*::after{box-sizing:border-box}
+      html{line-height:1.5;-webkit-text-size-adjust:100%;font-family:Inter,system-ui,-apple-system,sans-serif}
+      body{margin:0;background:#0f0f0f;color:#fff}
+      #root{min-height:100vh}
+      /* Hero section placeholder to prevent CLS */
+      .hero-placeholder{position:relative;width:100%;height:100vh;background:#0a0a0a;display:flex;align-items:center;justify-content:center}
+      /* Skeleton loading animation */
+      @keyframes shimmer{0%{background-position:-200% 0}100%{background-position:200% 0}}
+      .skeleton{background:linear-gradient(90deg,#1a1a1a 25%,#2a2a2a 50%,#1a1a1a 75%);background-size:200% 100%;animation:shimmer 1.5s infinite}
+    </style>
+
     <!-- GitHub Pages SPA Redirect Handler -->
     <script type="text/javascript">
       // Handle SPA routing for GitHub Pages

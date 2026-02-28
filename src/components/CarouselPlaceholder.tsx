@@ -27,7 +27,7 @@ export const CarouselPlaceholder = ({
 
   return (
     <motion.div
-      className={`relative w-full h-96 rounded-3xl overflow-hidden ${
+      className={`relative w-full h-[500px] md:h-[600px] lg:h-[700px] rounded-3xl overflow-hidden ${
         theme === 'dark' ? 'bg-gray-800' : 'bg-gray-100'
       } border ${theme === 'dark' ? 'border-gray-700' : 'border-gray-200'}`}
       initial={{ opacity: 0 }}

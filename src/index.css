@@ -1,5 +1,5 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@300;400;500;600;700&display=swap');
+/* Fonts are now loaded via index.html with font-display: swap for better performance */
+/* Fallback font import for Hind Siliguri (Bengali) - loaded async */
 
 @tailwind base;
 @tailwind components;
@@ -12,12 +12,23 @@
 
   body {
     @apply font-sans antialiased;
-    font-family: 'Inter', 'Hind Siliguri', sans-serif;
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    /* Prevent layout shift with font fallback */
+    font-display: swap;
   }
 
   [lang="bn"], [lang="bn"] * {
-    font-family: 'Hind Siliguri', sans-serif;
+    font-family: 'Hind Siliguri', 'Noto Sans Bengali', sans-serif;
   }
+}
+
+/* Load Bengali font asynchronously */
+@font-face {
+  font-family: 'Hind Siliguri';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('https://fonts.gstatic.com/s/hindsiliguri/v12/ijwTs5juQtsyLLR5jN4cxBEofJvQxuk0Nig.woff2') format('woff2');
 }
 
 @layer utilities {
@@ -64,5 +75,25 @@
 
   .prose p {
     margin-bottom: 1rem;
+  }
+  
+  /* GPU-accelerated animations to avoid layout shifts */
+  .gpu-accelerated {
+    transform: translateZ(0);
+    will-change: transform, opacity;
+  }
+  
+  /* Contain paint to prevent layout shifts */
+  .contain-paint {
+    contain: paint;
+  }
+  
+  /* Aspect ratio containers to prevent CLS */
+  .aspect-video {
+    aspect-ratio: 16 / 9;
+  }
+  
+  .aspect-square {
+    aspect-ratio: 1 / 1;
   }
 }

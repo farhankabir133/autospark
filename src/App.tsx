@@ -1,16 +1,26 @@
+import { lazy, Suspense } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { LanguageProvider } from './contexts/LanguageContext';
 import { ThemeProvider } from './contexts/ThemeContext';
 import { Layout } from './components/Layout';
-import { HomePage } from './pages/HomePage';
-import { InventoryPage } from './pages/InventoryPage';
-import { VehicleDetailsPage } from './pages/VehicleDetailsPage';
-import { ServicesPage } from './pages/ServicesPage';
-import { AccessoriesPage } from './pages/AccessoriesPage';
-import { AboutPage } from './pages/AboutPage';
-import { SellCarPage } from './pages/SellCarPage';
-import { ContactPage } from './pages/ContactPage';
-import { VehicleExperiencePage } from './pages/VehicleExperiencePage';
+
+// Lazy load pages for better code splitting and performance
+const HomePage = lazy(() => import('./pages/HomePage').then(m => ({ default: m.HomePage })));
+const InventoryPage = lazy(() => import('./pages/InventoryPage').then(m => ({ default: m.InventoryPage })));
+const VehicleDetailsPage = lazy(() => import('./pages/VehicleDetailsPage').then(m => ({ default: m.VehicleDetailsPage })));
+const ServicesPage = lazy(() => import('./pages/ServicesPage').then(m => ({ default: m.ServicesPage })));
+const AccessoriesPage = lazy(() => import('./pages/AccessoriesPage').then(m => ({ default: m.AccessoriesPage })));
+const AboutPage = lazy(() => import('./pages/AboutPage').then(m => ({ default: m.AboutPage })));
+const SellCarPage = lazy(() => import('./pages/SellCarPage').then(m => ({ default: m.SellCarPage })));
+const ContactPage = lazy(() => import('./pages/ContactPage').then(m => ({ default: m.ContactPage })));
+const VehicleExperiencePage = lazy(() => import('./pages/VehicleExperiencePage').then(m => ({ default: m.VehicleExperiencePage })));
+
+// Minimal loading fallback to prevent CLS
+const PageLoader = () => (
+  <div className="min-h-screen bg-black flex items-center justify-center">
+    <div className="w-8 h-8 border-2 border-blue-500 border-t-transparent rounded-full animate-spin" />
+  </div>
+);
 
 // GitHub Pages basename - use '/autospark' in production, '/' in development
 const basename = import.meta.env.BASE_URL;
@@ -21,17 +31,19 @@ function App() {
       <LanguageProvider>
         <Router basename={basename}>
           <Layout>
-            <Routes>
-              <Route path="/" element={<HomePage />} />
-              <Route path="/inventory" element={<InventoryPage />} />
-              <Route path="/vehicle/:id" element={<VehicleDetailsPage />} />
-              <Route path="/experience" element={<VehicleExperiencePage />} />
-              <Route path="/services" element={<ServicesPage />} />
-              <Route path="/accessories" element={<AccessoriesPage />} />
-              <Route path="/about" element={<AboutPage />} />
-              <Route path="/sell" element={<SellCarPage />} />
-              <Route path="/contact" element={<ContactPage />} />
-            </Routes>
+            <Suspense fallback={<PageLoader />}>
+              <Routes>
+                <Route path="/" element={<HomePage />} />
+                <Route path="/inventory" element={<InventoryPage />} />
+                <Route path="/vehicle/:id" element={<VehicleDetailsPage />} />
+                <Route path="/experience" element={<VehicleExperiencePage />} />
+                <Route path="/services" element={<ServicesPage />} />
+                <Route path="/accessories" element={<AccessoriesPage />} />
+                <Route path="/about" element={<AboutPage />} />
+                <Route path="/sell" element={<SellCarPage />} />
+                <Route path="/contact" element={<ContactPage />} />
+              </Routes>
+            </Suspense>
           </Layout>
         </Router>
       </LanguageProvider>
