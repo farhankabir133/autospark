@@ -1,0 +1,1 @@
+const r=(o,n="en")=>{const t=o.toLocaleString("en-BD");return n==="bn"?`৳${t}`:`BDT ${t}`},s=(o,n,t)=>{const a=n/12/100,c=t*12,e=o*a*Math.pow(1+a,c)/(Math.pow(1+a,c)-1);return Math.round(e)};export{s as c,r as f};
