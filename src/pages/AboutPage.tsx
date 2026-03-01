@@ -1,90 +1,531 @@
-import { Award, Shield, Users, TrendingUp } from 'lucide-react';
+import { Award, Shield, Users, TrendingUp, Target, Eye, Star, Car, CheckCircle, Quote, Phone, Mail, Linkedin, Facebook } from 'lucide-react';
 import { useLanguage } from '../contexts/LanguageContext';
+import { useTheme } from '../contexts/ThemeContext';
 import { Card } from '../components/ui/Card';
+import { motion } from 'framer-motion';
+import { Link } from 'react-router-dom';
 
 export const AboutPage = () => {
   const { language } = useLanguage();
+  const { theme } = useTheme();
+
+  // Company Statistics
+  const stats = [
+    { value: '12+', label: language === 'en' ? 'Years of Excellence' : 'বছরের অভিজ্ঞতা' },
+    { value: '2500+', label: language === 'en' ? 'Vehicles Sold' : 'গাড়ি বিক্রি' },
+    { value: '5000+', label: language === 'en' ? 'Happy Customers' : 'সন্তুষ্ট গ্রাহক' },
+    { value: '98%', label: language === 'en' ? 'Satisfaction Rate' : 'সন্তুষ্টির হার' },
+  ];
+
+  // Company Values
+  const values = [
+    {
+      icon: Award,
+      title: language === 'en' ? 'Premium Quality' : 'প্রিমিয়াম মান',
+      description: language === 'en' ? 'We handpick only the finest vehicles that meet our rigorous standards' : 'আমরা শুধুমাত্র সেরা গাড়ি নির্বাচন করি যা আমাদের কঠোর মানদণ্ড পূরণ করে',
+    },
+    {
+      icon: Shield,
+      title: language === 'en' ? 'Trust & Transparency' : 'বিশ্বাস ও স্বচ্ছতা',
+      description: language === 'en' ? 'Complete vehicle history, fair pricing, and honest dealings' : 'সম্পূর্ণ গাড়ির ইতিহাস, সঠিক মূল্য এবং সৎ লেনদেন',
+    },
+    {
+      icon: Users,
+      title: language === 'en' ? 'Customer First' : 'গ্রাহক প্রথম',
+      description: language === 'en' ? 'Personalized service tailored to your unique needs and preferences' : 'আপনার অনন্য চাহিদা অনুযায়ী ব্যক্তিগত সেবা',
+    },
+    {
+      icon: TrendingUp,
+      title: language === 'en' ? 'Market Leadership' : 'বাজার নেতৃত্ব',
+      description: language === 'en' ? "North Bengal's most trusted name in premium automobiles" : 'উত্তরবঙ্গের প্রিমিয়াম গাড়িতে সবচেয়ে বিশ্বস্ত নাম',
+    },
+  ];
+
+  // Company Timeline/Milestones
+  const milestones = [
+    {
+      year: '2014',
+      title: language === 'en' ? 'Foundation' : 'প্রতিষ্ঠা',
+      description: language === 'en' ? 'Auto Spark BD was established in Rajshahi with a vision to revolutionize the premium car market' : 'প্রিমিয়াম গাড়ির বাজারে বিপ্লব আনার লক্ষ্যে রাজশাহীতে অটো স্পার্ক বিডি প্রতিষ্ঠিত হয়',
+    },
+    {
+      year: '2016',
+      title: language === 'en' ? 'Service Center Launch' : 'সার্ভিস সেন্টার উদ্বোধন',
+      description: language === 'en' ? 'Opened state-of-the-art service center with certified technicians' : 'সার্টিফাইড টেকনিশিয়ানদের সাথে অত্যাধুনিক সার্ভিস সেন্টার চালু',
+    },
+    {
+      year: '2018',
+      title: language === 'en' ? 'Regional Expansion' : 'আঞ্চলিক সম্প্রসারণ',
+      description: language === 'en' ? 'Became the leading premium car dealer across North Bengal region' : 'উত্তরবঙ্গ জুড়ে শীর্ষস্থানীয় প্রিমিয়াম গাড়ি বিক্রেতা হয়ে উঠল',
+    },
+    {
+      year: '2020',
+      title: language === 'en' ? '1000+ Cars Milestone' : '১০০০+ গাড়ি বিক্রি',
+      description: language === 'en' ? 'Celebrated selling over 1000 premium vehicles to satisfied customers' : 'সন্তুষ্ট গ্রাহকদের কাছে ১০০০+ প্রিমিয়াম গাড়ি বিক্রি উদযাপন',
+    },
+    {
+      year: '2023',
+      title: language === 'en' ? 'Digital Transformation' : 'ডিজিটাল রূপান্তর',
+      description: language === 'en' ? 'Launched online platform for seamless car buying experience' : 'নিরবচ্ছিন্ন গাড়ি কেনার অভিজ্ঞতার জন্য অনলাইন প্ল্যাটফর্ম চালু',
+    },
+    {
+      year: '2026',
+      title: language === 'en' ? 'Excellence Continues' : 'উৎকর্ষতা অব্যাহত',
+      description: language === 'en' ? 'Continuing to set new standards in premium automotive retail' : 'প্রিমিয়াম অটোমোটিভ রিটেইলে নতুন মান স্থাপন অব্যাহত',
+    },
+  ];
+
+  // Customer Testimonials
+  const testimonials = [
+    {
+      name: language === 'en' ? 'Rahman Ahmed' : 'রহমান আহমেদ',
+      role: language === 'en' ? 'Business Owner' : 'ব্যবসার মালিক',
+      image: 'https://images.pexels.com/photos/2379004/pexels-photo-2379004.jpeg?auto=compress&cs=tinysrgb&w=300',
+      quote: language === 'en' 
+        ? 'Auto Spark BD made my dream of owning a Land Cruiser come true. Their professionalism and attention to detail is unmatched in the region.'
+        : 'অটো স্পার্ক বিডি আমার ল্যান্ড ক্রুজার কেনার স্বপ্ন পূরণ করেছে। তাদের পেশাদারিত্ব এবং বিস্তারিত মনোযোগ এই অঞ্চলে অতুলনীয়।',
+    },
+    {
+      name: language === 'en' ? 'Dr. Fatima Khan' : 'ডা. ফাতিমা খান',
+      role: language === 'en' ? 'Medical Professional' : 'চিকিৎসা পেশাজীবী',
+      image: 'https://images.pexels.com/photos/3796217/pexels-photo-3796217.jpeg?auto=compress&cs=tinysrgb&w=300',
+      quote: language === 'en'
+        ? 'Excellent service from start to finish. The team helped me find the perfect car within my budget. Highly recommended!'
+        : 'শুরু থেকে শেষ পর্যন্ত চমৎকার সেবা। টিম আমার বাজেটের মধ্যে নিখুঁত গাড়ি খুঁজে পেতে সাহায্য করেছে।',
+    },
+    {
+      name: language === 'en' ? 'Kamal Hossain' : 'কামাল হোসেন',
+      role: language === 'en' ? 'Government Official' : 'সরকারি কর্মকর্তা',
+      image: 'https://images.pexels.com/photos/1222271/pexels-photo-1222271.jpeg?auto=compress&cs=tinysrgb&w=300',
+      quote: language === 'en'
+        ? 'I have purchased three vehicles from Auto Spark BD over the years. Their after-sales service keeps me coming back.'
+        : 'আমি বছরের পর বছর অটো স্পার্ক বিডি থেকে তিনটি গাড়ি কিনেছি। তাদের বিক্রয়োত্তর সেবা আমাকে বারবার ফিরিয়ে আনে।',
+    },
+  ];
+
+  // Animation variants
+  const fadeInUp = {
+    hidden: { opacity: 0, y: 30 },
+    visible: { opacity: 1, y: 0, transition: { duration: 0.6 } },
+  };
+
+  const staggerContainer = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: { staggerChildren: 0.1 },
+    },
+  };
 
   return (
-    <div className="min-h-screen bg-gray-50 pt-20">
-      <div className="relative h-96 bg-gradient-to-r from-gray-900 to-black">
-        <div className="absolute inset-0 bg-[url('https://images.pexels.com/photos/1409999/pexels-photo-1409999.jpeg?auto=compress&cs=tinysrgb&w=1920')] bg-cover bg-center opacity-30"></div>
+    <div className={`min-h-screen ${theme === 'dark' ? 'bg-transparent' : 'bg-gray-50'} pt-20`}>
+      {/* Hero Section */}
+      <div className="relative h-[500px] bg-gradient-to-r from-[#0D0D0D] to-[#1a1a1a]">
+        <div className="absolute inset-0 bg-[url('https://images.pexels.com/photos/1409999/pexels-photo-1409999.jpeg?auto=compress&cs=tinysrgb&w=1920')] bg-cover bg-center opacity-20"></div>
+        <div className="absolute inset-0 bg-gradient-to-t from-[#0D0D0D] via-transparent to-transparent"></div>
         <div className="relative container mx-auto px-4 h-full flex items-center">
-          <div>
-            <h1 className="text-5xl font-bold text-white mb-4">
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8 }}
+            className="max-w-3xl"
+          >
+            <span className="inline-block px-4 py-2 bg-[#C00000]/20 text-[#FF1A1A] rounded-full text-sm font-medium mb-4 border border-[#C00000]/30">
+              {language === 'en' ? 'Established 2014' : 'প্রতিষ্ঠিত ২০১৪'}
+            </span>
+            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-6">
               {language === 'en' ? 'About Auto Spark BD' : 'অটো স্পার্ক বিডি সম্পর্কে'}
             </h1>
-            <p className="text-xl text-gray-300 max-w-2xl">
+            <p className="text-xl text-gray-300 max-w-2xl leading-relaxed">
               {language === 'en'
-                ? 'Leading the premium automotive market in North Bengal since 2014'
-                : '২০১৪ সাল থেকে উত্তরবঙ্গের প্রিমিয়াম অটোমোটিভ বাজারে নেতৃত্ব দিচ্ছে'}
+                ? "North Bengal's premier destination for luxury and premium automobiles. Where passion meets excellence."
+                : 'উত্তরবঙ্গের বিলাসবহুল এবং প্রিমিয়াম গাড়ির প্রধান গন্তব্য। যেখানে আবেগ উৎকর্ষতার সাথে মিলিত হয়।'}
             </p>
-          </div>
+          </motion.div>
         </div>
       </div>
 
-      <div className="container mx-auto px-4 py-16">
-        <div className="max-w-4xl mx-auto mb-16">
-          <Card className="p-8">
-            <h2 className="text-3xl font-bold text-gray-900 mb-4">
-              {language === 'en' ? 'Our Story' : 'আমাদের কাহিনী'}
+      {/* Statistics Section */}
+      <div className="relative -mt-16 z-10">
+        <div className="container mx-auto px-4">
+          <motion.div
+            variants={staggerContainer}
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true }}
+            className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6"
+          >
+            {stats.map((stat, index) => (
+              <motion.div
+                key={index}
+                variants={fadeInUp}
+                className={`${theme === 'dark' ? 'bg-gray-900 border-gray-800' : 'bg-white border-gray-200'} rounded-2xl p-6 text-center shadow-xl border backdrop-blur-sm`}
+              >
+                <div className="text-3xl md:text-4xl font-bold text-[#C00000] mb-2">{stat.value}</div>
+                <div className={`text-sm ${theme === 'dark' ? 'text-gray-400' : 'text-gray-600'}`}>{stat.label}</div>
+              </motion.div>
+            ))}
+          </motion.div>
+        </div>
+      </div>
+
+      <div className="container mx-auto px-4 py-20">
+        {/* Our Story Section */}
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.6 }}
+          className="max-w-5xl mx-auto mb-20"
+        >
+          <div className="text-center mb-12">
+            <span className="text-[#C00000] font-semibold text-sm uppercase tracking-wider">
+              {language === 'en' ? 'Our Journey' : 'আমাদের যাত্রা'}
+            </span>
+            <h2 className={`text-3xl md:text-4xl font-bold ${theme === 'dark' ? 'text-white' : 'text-gray-900'} mt-2`}>
+              {language === 'en' ? 'The Auto Spark Story' : 'অটো স্পার্ক কাহিনী'}
             </h2>
-            <div className="prose prose-lg text-gray-700 leading-relaxed space-y-4">
-              <p>
-                {language === 'en'
-                  ? 'Auto Spark BD was founded in 2014 with a vision to bring world-class automotive sales and service to Rajshahi. What started as a small showroom has grown into the leading premium car dealership in North Bengal.'
-                  : 'অটো স্পার্ক বিডি ২০১৪ সালে রাজশাহীতে বিশ্বমানের অটোমোটিভ বিক্রয় এবং সেবা নিয়ে আসার লক্ষ্যে প্রতিষ্ঠিত হয়েছিল। যা একটি ছোট শোরুম হিসাবে শুরু হয়েছিল তা উত্তরবঙ্গের শীর্ষস্থানীয় প্রিমিয়াম গাড়ির ডিলারশিপে পরিণত হয়েছে।'}
-              </p>
-              <p>
-                {language === 'en'
-                  ? 'We specialize in premium and luxury vehicles, offering a curated selection of the finest automobiles from around the world. Our state-of-the-art service center ensures that your vehicle receives expert care from certified technicians.'
-                  : 'আমরা প্রিমিয়াম এবং বিলাসবহুল গাড়িতে বিশেষজ্ঞ, বিশ্বজুড়ে সেরা অটোমোবাইলের একটি নির্বাচিত সংগ্রহ অফার করি। আমাদের অত্যাধুনিক সার্ভিস সেন্টার নিশ্চিত করে যে আপনার গাড়ি সার্টিফাইড টেকনিশিয়ানদের কাছ থেকে বিশেষজ্ঞ যত্ন পায়।'}
-              </p>
+          </div>
+          <Card className={`p-8 md:p-12 ${theme === 'dark' ? 'bg-gray-900/50 border-gray-800' : 'bg-white'}`}>
+            <div className="grid md:grid-cols-2 gap-8 items-center">
+              <div>
+                <img
+                  src="https://images.pexels.com/photos/3184291/pexels-photo-3184291.jpeg?auto=compress&cs=tinysrgb&w=800"
+                  alt="Auto Spark BD Showroom"
+                  className="rounded-xl shadow-lg w-full h-72 object-cover"
+                />
+              </div>
+              <div className={`prose prose-lg ${theme === 'dark' ? 'text-gray-300' : 'text-gray-700'} leading-relaxed space-y-4`}>
+                <p>
+                  {language === 'en'
+                    ? 'Auto Spark BD was founded in 2014 with a singular vision: to bring world-class automotive excellence to Rajshahi and the greater North Bengal region. What began as a modest showroom driven by passion has evolved into the region\'s most trusted name in premium automobiles.'
+                    : 'অটো স্পার্ক বিডি ২০১৪ সালে একটি একক দৃষ্টিভঙ্গি নিয়ে প্রতিষ্ঠিত হয়েছিল: রাজশাহী এবং বৃহত্তর উত্তরবঙ্গ অঞ্চলে বিশ্বমানের অটোমোটিভ উৎকর্ষতা নিয়ে আসা।'}
+                </p>
+                <p>
+                  {language === 'en'
+                    ? 'We specialize in premium and luxury vehicles, meticulously curating a selection of the finest automobiles from around the world. Every vehicle in our collection undergoes rigorous inspection to ensure it meets our exacting standards.'
+                    : 'আমরা প্রিমিয়াম এবং বিলাসবহুল গাড়িতে বিশেষজ্ঞ, বিশ্বজুড়ে সেরা অটোমোবাইলের একটি যত্নশীল সংগ্রহ অফার করি।'}
+                </p>
+              </div>
             </div>
           </Card>
-        </div>
+        </motion.div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-16">
-          {[
-            {
-              icon: Award,
-              title: language === 'en' ? 'Premium Quality' : 'প্রিমিয়াম মান',
-              description: language === 'en' ? 'Only the finest vehicles' : 'শুধুমাত্র সেরা গাড়ি',
-            },
-            {
-              icon: Shield,
-              title: language === 'en' ? 'Trusted Service' : 'বিশ্বস্ত সেবা',
-              description: language === 'en' ? 'Expert care & warranty' : 'বিশেষজ্ঞ যত্ন এবং ওয়ারেন্টি',
-            },
-            {
-              icon: Users,
-              title: language === 'en' ? 'Customer First' : 'গ্রাহক প্রথম',
-              description: language === 'en' ? 'Personalized experience' : 'ব্যক্তিগত অভিজ্ঞতা',
-            },
-            {
-              icon: TrendingUp,
-              title: language === 'en' ? 'Market Leader' : 'বাজার নেতা',
-              description: language === 'en' ? 'North Bengal\'s #1' : 'উত্তরবঙ্গের #১',
-            },
-          ].map((value, index) => (
-            <Card key={index} className="p-6 text-center">
-              <value.icon className="h-12 w-12 text-blue-600 mx-auto mb-4" />
-              <h3 className="text-xl font-bold text-gray-900 mb-2">{value.title}</h3>
-              <p className="text-gray-600">{value.description}</p>
+        {/* Mission & Vision Section */}
+        <motion.div
+          variants={staggerContainer}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true }}
+          className="grid md:grid-cols-2 gap-8 mb-20"
+        >
+          <motion.div variants={fadeInUp}>
+            <Card className={`p-8 h-full ${theme === 'dark' ? 'bg-gray-900/50 border-gray-800' : 'bg-white'} relative overflow-hidden`}>
+              <div className="absolute top-0 right-0 w-32 h-32 bg-[#C00000]/10 rounded-full -mr-16 -mt-16"></div>
+              <div className="relative">
+                <div className="w-14 h-14 bg-[#C00000]/10 rounded-xl flex items-center justify-center mb-6">
+                  <Target className="w-7 h-7 text-[#C00000]" />
+                </div>
+                <h3 className={`text-2xl font-bold ${theme === 'dark' ? 'text-white' : 'text-gray-900'} mb-4`}>
+                  {language === 'en' ? 'Our Mission' : 'আমাদের মিশন'}
+                </h3>
+                <p className={`${theme === 'dark' ? 'text-gray-400' : 'text-gray-600'} leading-relaxed`}>
+                  {language === 'en'
+                    ? 'To provide an unparalleled automotive experience by offering premium vehicles, exceptional service, and building lasting relationships with our customers. We strive to make luxury accessible while maintaining the highest standards of quality and integrity.'
+                    : 'প্রিমিয়াম গাড়ি, ব্যতিক্রমী সেবা প্রদান এবং আমাদের গ্রাহকদের সাথে স্থায়ী সম্পর্ক গড়ে তোলার মাধ্যমে একটি অতুলনীয় অটোমোটিভ অভিজ্ঞতা প্রদান করা।'}
+                </p>
+              </div>
             </Card>
-          ))}
-        </div>
+          </motion.div>
+          <motion.div variants={fadeInUp}>
+            <Card className={`p-8 h-full ${theme === 'dark' ? 'bg-gray-900/50 border-gray-800' : 'bg-white'} relative overflow-hidden`}>
+              <div className="absolute top-0 right-0 w-32 h-32 bg-[#C00000]/10 rounded-full -mr-16 -mt-16"></div>
+              <div className="relative">
+                <div className="w-14 h-14 bg-[#C00000]/10 rounded-xl flex items-center justify-center mb-6">
+                  <Eye className="w-7 h-7 text-[#C00000]" />
+                </div>
+                <h3 className={`text-2xl font-bold ${theme === 'dark' ? 'text-white' : 'text-gray-900'} mb-4`}>
+                  {language === 'en' ? 'Our Vision' : 'আমাদের ভিশন'}
+                </h3>
+                <p className={`${theme === 'dark' ? 'text-gray-400' : 'text-gray-600'} leading-relaxed`}>
+                  {language === 'en'
+                    ? 'To be the most trusted and admired automotive brand in Bangladesh, setting new benchmarks in customer satisfaction, vehicle quality, and after-sales excellence. We envision expanding our presence while staying true to our core values.'
+                    : 'বাংলাদেশে সবচেয়ে বিশ্বস্ত এবং প্রশংসিত অটোমোটিভ ব্র্যান্ড হওয়া, গ্রাহক সন্তুষ্টি, গাড়ির মান এবং বিক্রয়োত্তর উৎকর্ষতায় নতুন মানদণ্ড স্থাপন করা।'}
+                </p>
+              </div>
+            </Card>
+          </motion.div>
+        </motion.div>
 
-        <Card className="p-8 bg-gradient-to-r from-blue-600 to-blue-700 text-white text-center">
-          <h2 className="text-3xl font-bold mb-4">
-            {language === 'en' ? 'Why Choose Us?' : 'কেন আমাদের নির্বাচন করবেন?'}
-          </h2>
-          <p className="text-xl text-blue-100 max-w-3xl mx-auto">
-            {language === 'en'
-              ? 'With over a decade of experience, we understand the needs of discerning customers who demand excellence. From sales to after-sales service, we are committed to delivering an exceptional experience.'
-              : 'এক দশকের বেশি অভিজ্ঞতার সাথে, আমরা বিচক্ষণ গ্রাহকদের চাহিদা বুঝি যারা উৎকর্ষতা দাবি করেন। বিক্রয় থেকে বিক্রয়োত্তর সেবা পর্যন্ত, আমরা একটি ব্যতিক্রমী অভিজ্ঞতা প্রদানে প্রতিশ্রুতিবদ্ধ।'}
-          </p>
-        </Card>
+        {/* Founder/Owner Section */}
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.6 }}
+          className="mb-20"
+        >
+          <div className="text-center mb-12">
+            <span className="text-[#C00000] font-semibold text-sm uppercase tracking-wider">
+              {language === 'en' ? 'Leadership' : 'নেতৃত্ব'}
+            </span>
+            <h2 className={`text-3xl md:text-4xl font-bold ${theme === 'dark' ? 'text-white' : 'text-gray-900'} mt-2`}>
+              {language === 'en' ? 'Meet Our Founder' : 'আমাদের প্রতিষ্ঠাতার সাথে পরিচিত হন'}
+            </h2>
+          </div>
+          
+          <Card className={`p-8 md:p-12 ${theme === 'dark' ? 'bg-gradient-to-br from-gray-900 to-gray-950 border-gray-800' : 'bg-gradient-to-br from-white to-gray-50'} overflow-hidden relative`}>
+            <div className="absolute top-0 right-0 w-64 h-64 bg-[#C00000]/5 rounded-full -mr-32 -mt-32"></div>
+            <div className="absolute bottom-0 left-0 w-48 h-48 bg-[#C00000]/5 rounded-full -ml-24 -mb-24"></div>
+            
+            <div className="grid md:grid-cols-3 gap-8 items-center relative">
+              {/* Founder Image */}
+              <div className="md:col-span-1">
+                <div className="relative">
+                  <div className="absolute inset-0 bg-gradient-to-br from-[#C00000] to-[#8B0000] rounded-2xl transform rotate-3"></div>
+                  <img
+                    src="https://images.pexels.com/photos/36365285/pexels-photo-36365285.png"
+                    alt="Founder - Auto Spark BD"
+                    className="relative rounded-2xl w-full h-80 object-cover object-top shadow-2xl transform -rotate-0 hover:rotate-0 transition-transform duration-500"
+                  />
+                  <div className="absolute -bottom-4 -right-4 bg-[#C00000] text-white px-4 py-2 rounded-lg shadow-lg">
+                    <span className="font-bold">{language === 'en' ? 'CEO & Founder' : 'সিইও এবং প্রতিষ্ঠাতা'}</span>
+                  </div>
+                </div>
+              </div>
+              
+              {/* Founder Info */}
+              <div className="md:col-span-2 space-y-6">
+                <div>
+                  <h3 className={`text-3xl font-bold ${theme === 'dark' ? 'text-white' : 'text-gray-900'} mb-2`}>
+                    {language === 'en' ? 'A.B.M. Raihanul Amin' : 'এ.বি.এম. রায়হানুল আমিন'}
+                  </h3>
+                  <p className="text-[#C00000] font-semibold text-lg">
+                    {language === 'en' ? 'Founder & Managing Director' : 'প্রতিষ্ঠাতা এবং ব্যবস্থাপনা পরিচালক'}
+                  </p>
+                </div>
+                
+                <div className={`${theme === 'dark' ? 'text-gray-300' : 'text-gray-600'} space-y-4 leading-relaxed`}>
+                  <p>
+                    {language === 'en'
+                      ? 'With over two decades of experience in the automotive industry, Mohammad Abdul Karim founded Auto Spark BD with a passion for bringing world-class vehicles to his hometown of Rajshahi. His vision was simple yet ambitious: to create a dealership that prioritizes customer trust and vehicle quality above all else.'
+                      : 'অটোমোটিভ শিল্পে দুই দশকেরও বেশি অভিজ্ঞতার সাথে, মোহাম্মদ আব্দুল করিম তার জন্মস্থান রাজশাহীতে বিশ্বমানের গাড়ি আনার আবেগ নিয়ে অটো স্পার্ক বিডি প্রতিষ্ঠা করেন।'}
+                  </p>
+                  <p>
+                    {language === 'en'
+                      ? '"Every car we sell carries our reputation. That\'s why we never compromise on quality or customer service. Our success is measured not just in sales, but in the lasting relationships we build with every customer."'
+                      : '"আমরা যে প্রতিটি গাড়ি বিক্রি করি তা আমাদের সুনাম বহন করে। এজন্য আমরা মান বা গ্রাহক সেবায় কখনো আপস করি না।"'}
+                  </p>
+                </div>
+                
+                {/* Founder's Achievements */}
+                <div className="flex flex-wrap gap-4 pt-4">
+                  <div className={`flex items-center gap-2 px-4 py-2 ${theme === 'dark' ? 'bg-gray-800' : 'bg-gray-100'} rounded-lg`}>
+                    <CheckCircle className="w-5 h-5 text-[#C00000]" />
+                    <span className={`text-sm ${theme === 'dark' ? 'text-gray-300' : 'text-gray-700'}`}>
+                      {language === 'en' ? '20+ Years Experience' : '২০+ বছরের অভিজ্ঞতা'}
+                    </span>
+                  </div>
+                  <div className={`flex items-center gap-2 px-4 py-2 ${theme === 'dark' ? 'bg-gray-800' : 'bg-gray-100'} rounded-lg`}>
+                    <CheckCircle className="w-5 h-5 text-[#C00000]" />
+                    <span className={`text-sm ${theme === 'dark' ? 'text-gray-300' : 'text-gray-700'}`}>
+                      {language === 'en' ? 'Industry Pioneer' : 'শিল্প অগ্রদূত'}
+                    </span>
+                  </div>
+                  <div className={`flex items-center gap-2 px-4 py-2 ${theme === 'dark' ? 'bg-gray-800' : 'bg-gray-100'} rounded-lg`}>
+                    <CheckCircle className="w-5 h-5 text-[#C00000]" />
+                    <span className={`text-sm ${theme === 'dark' ? 'text-gray-300' : 'text-gray-700'}`}>
+                      {language === 'en' ? 'Community Leader' : 'সম্প্রদায়ের নেতা'}
+                    </span>
+                  </div>
+                </div>
+                
+                {/* Social Links */}
+                <div className="flex gap-4 pt-4">
+                  <a href="#" className="w-10 h-10 bg-[#C00000]/10 hover:bg-[#C00000] text-[#C00000] hover:text-white rounded-lg flex items-center justify-center transition-colors">
+                    <Facebook className="w-5 h-5" />
+                  </a>
+                  <a href="#" className="w-10 h-10 bg-[#C00000]/10 hover:bg-[#C00000] text-[#C00000] hover:text-white rounded-lg flex items-center justify-center transition-colors">
+                    <Linkedin className="w-5 h-5" />
+                  </a>
+                  <a href="mailto:founder@autosparkbd.com" className="w-10 h-10 bg-[#C00000]/10 hover:bg-[#C00000] text-[#C00000] hover:text-white rounded-lg flex items-center justify-center transition-colors">
+                    <Mail className="w-5 h-5" />
+                  </a>
+                </div>
+              </div>
+            </div>
+          </Card>
+        </motion.div>
+
+        {/* Company Values */}
+        <motion.div
+          variants={staggerContainer}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true }}
+          className="mb-20"
+        >
+          <div className="text-center mb-12">
+            <span className="text-[#C00000] font-semibold text-sm uppercase tracking-wider">
+              {language === 'en' ? 'What We Stand For' : 'আমরা কিসের পক্ষে দাঁড়াই'}
+            </span>
+            <h2 className={`text-3xl md:text-4xl font-bold ${theme === 'dark' ? 'text-white' : 'text-gray-900'} mt-2`}>
+              {language === 'en' ? 'Our Core Values' : 'আমাদের মূল মূল্যবোধ'}
+            </h2>
+          </div>
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            {values.map((value, index) => (
+              <motion.div key={index} variants={fadeInUp}>
+                <Card className={`p-6 text-center h-full ${theme === 'dark' ? 'bg-gray-900/50 border-gray-800 hover:border-[#C00000]/50' : 'bg-white hover:border-[#C00000]/30'} transition-all duration-300 hover:shadow-lg hover:shadow-[#C00000]/10`}>
+                  <div className="w-16 h-16 bg-[#C00000]/10 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                    <value.icon className="h-8 w-8 text-[#C00000]" />
+                  </div>
+                  <h3 className={`text-xl font-bold ${theme === 'dark' ? 'text-white' : 'text-gray-900'} mb-3`}>{value.title}</h3>
+                  <p className={`${theme === 'dark' ? 'text-gray-400' : 'text-gray-600'} text-sm leading-relaxed`}>{value.description}</p>
+                </Card>
+              </motion.div>
+            ))}
+          </div>
+        </motion.div>
+
+        {/* Timeline Section */}
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.6 }}
+          className="mb-20"
+        >
+          <div className="text-center mb-12">
+            <span className="text-[#C00000] font-semibold text-sm uppercase tracking-wider">
+              {language === 'en' ? 'Our Journey' : 'আমাদের যাত্রা'}
+            </span>
+            <h2 className={`text-3xl md:text-4xl font-bold ${theme === 'dark' ? 'text-white' : 'text-gray-900'} mt-2`}>
+              {language === 'en' ? 'Milestones & Achievements' : 'মাইলফলক এবং অর্জন'}
+            </h2>
+          </div>
+          
+          <div className="relative">
+            {/* Timeline Line */}
+            <div className="absolute left-4 md:left-1/2 top-0 bottom-0 w-0.5 bg-gradient-to-b from-[#C00000] via-[#C00000]/50 to-transparent transform md:-translate-x-1/2"></div>
+            
+            {milestones.map((milestone, index) => (
+              <motion.div
+                key={index}
+                initial={{ opacity: 0, x: index % 2 === 0 ? -30 : 30 }}
+                whileInView={{ opacity: 1, x: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.5, delay: index * 0.1 }}
+                className={`relative flex items-center mb-8 ${index % 2 === 0 ? 'md:flex-row' : 'md:flex-row-reverse'}`}
+              >
+                <div className={`w-full md:w-5/12 ${index % 2 === 0 ? 'md:pr-12 md:text-right' : 'md:pl-12'} pl-12 md:pl-0`}>
+                  <Card className={`p-6 ${theme === 'dark' ? 'bg-gray-900/50 border-gray-800' : 'bg-white'}`}>
+                    <span className="text-[#C00000] font-bold text-lg">{milestone.year}</span>
+                    <h4 className={`text-xl font-bold ${theme === 'dark' ? 'text-white' : 'text-gray-900'} mt-1 mb-2`}>{milestone.title}</h4>
+                    <p className={`${theme === 'dark' ? 'text-gray-400' : 'text-gray-600'} text-sm`}>{milestone.description}</p>
+                  </Card>
+                </div>
+                
+                {/* Timeline Dot */}
+                <div className="absolute left-4 md:left-1/2 w-4 h-4 bg-[#C00000] rounded-full transform md:-translate-x-1/2 border-4 border-white dark:border-gray-950 shadow-lg"></div>
+                
+                <div className="hidden md:block w-5/12"></div>
+              </motion.div>
+            ))}
+          </div>
+        </motion.div>
+
+        {/* Testimonials Section */}
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.6 }}
+          className="mb-20"
+        >
+          <div className="text-center mb-12">
+            <span className="text-[#C00000] font-semibold text-sm uppercase tracking-wider">
+              {language === 'en' ? 'Testimonials' : 'প্রশংসাপত্র'}
+            </span>
+            <h2 className={`text-3xl md:text-4xl font-bold ${theme === 'dark' ? 'text-white' : 'text-gray-900'} mt-2`}>
+              {language === 'en' ? 'What Our Customers Say' : 'আমাদের গ্রাহকরা কি বলেন'}
+            </h2>
+          </div>
+          
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {testimonials.map((testimonial, index) => (
+              <motion.div
+                key={index}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.5, delay: index * 0.1 }}
+              >
+                <Card className={`p-6 h-full ${theme === 'dark' ? 'bg-gray-900/50 border-gray-800' : 'bg-white'} relative`}>
+                  <Quote className="absolute top-4 right-4 w-10 h-10 text-[#C00000]/10" />
+                  <div className="flex items-center gap-4 mb-4">
+                    <img
+                      src={testimonial.image}
+                      alt={testimonial.name}
+                      className="w-14 h-14 rounded-full object-cover border-2 border-[#C00000]/30"
+                    />
+                    <div>
+                      <h4 className={`font-bold ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>{testimonial.name}</h4>
+                      <p className="text-[#C00000] text-sm">{testimonial.role}</p>
+                    </div>
+                  </div>
+                  <div className="flex gap-1 mb-3">
+                    {[...Array(5)].map((_, i) => (
+                      <Star key={i} className="w-4 h-4 text-yellow-500 fill-yellow-500" />
+                    ))}
+                  </div>
+                  <p className={`${theme === 'dark' ? 'text-gray-400' : 'text-gray-600'} text-sm leading-relaxed italic`}>
+                    "{testimonial.quote}"
+                  </p>
+                </Card>
+              </motion.div>
+            ))}
+          </div>
+        </motion.div>
+
+        {/* Why Choose Us CTA */}
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.6 }}
+        >
+          <Card className="p-8 md:p-12 bg-gradient-to-r from-[#C00000] to-[#8B0000] text-white text-center relative overflow-hidden">
+            <div className="absolute inset-0 bg-[url('https://images.pexels.com/photos/3802510/pexels-photo-3802510.jpeg?auto=compress&cs=tinysrgb&w=1920')] bg-cover bg-center opacity-10"></div>
+            <div className="relative">
+              <h2 className="text-3xl md:text-4xl font-bold mb-4">
+                {language === 'en' ? 'Ready to Find Your Dream Car?' : 'আপনার স্বপ্নের গাড়ি খুঁজতে প্রস্তুত?'}
+              </h2>
+              <p className="text-xl text-white/90 max-w-3xl mx-auto mb-8">
+                {language === 'en'
+                  ? 'With over a decade of experience, we understand the needs of discerning customers who demand excellence. Visit our showroom or browse our inventory online.'
+                  : 'এক দশকের বেশি অভিজ্ঞতার সাথে, আমরা বিচক্ষণ গ্রাহকদের চাহিদা বুঝি যারা উৎকর্ষতা দাবি করেন।'}
+              </p>
+              <div className="flex flex-col sm:flex-row gap-4 justify-center">
+                <Link
+                  to="/inventory"
+                  className="inline-flex items-center justify-center px-8 py-4 bg-white text-[#C00000] font-semibold rounded-lg hover:bg-gray-100 transition-colors shadow-lg"
+                >
+                  <Car className="w-5 h-5 mr-2" />
+                  {language === 'en' ? 'Browse Inventory' : 'ইনভেন্টরি দেখুন'}
+                </Link>
+                <Link
+                  to="/contact"
+                  className="inline-flex items-center justify-center px-8 py-4 bg-transparent border-2 border-white text-white font-semibold rounded-lg hover:bg-white/10 transition-colors"
+                >
+                  <Phone className="w-5 h-5 mr-2" />
+                  {language === 'en' ? 'Contact Us' : 'যোগাযোগ করুন'}
+                </Link>
+              </div>
+            </div>
+          </Card>
+        </motion.div>
       </div>
     </div>
   );

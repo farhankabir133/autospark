@@ -1,8 +1,9 @@
-import { lazy, Suspense } from 'react';
+import { lazy, Suspense, useState, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { LanguageProvider } from './contexts/LanguageContext';
 import { ThemeProvider } from './contexts/ThemeContext';
 import { Layout } from './components/Layout';
+import { SplashScreen } from './components/SplashScreen';
 
 // Lazy load pages for better code splitting and performance
 const HomePage = lazy(() => import('./pages/HomePage').then(m => ({ default: m.HomePage })));
@@ -17,8 +18,8 @@ const VehicleExperiencePage = lazy(() => import('./pages/VehicleExperiencePage')
 
 // Minimal loading fallback to prevent CLS
 const PageLoader = () => (
-  <div className="min-h-screen bg-black flex items-center justify-center">
-    <div className="w-8 h-8 border-2 border-blue-500 border-t-transparent rounded-full animate-spin" />
+  <div className="min-h-screen bg-[#050505] flex items-center justify-center">
+    <div className="w-8 h-8 border-2 border-[#C00000] border-t-transparent rounded-full animate-spin" />
   </div>
 );
 
@@ -26,9 +27,31 @@ const PageLoader = () => (
 const basename = import.meta.env.BASE_URL;
 
 function App() {
+  const [showSplash, setShowSplash] = useState(true);
+  const [isFirstVisit, setIsFirstVisit] = useState(true);
+
+  useEffect(() => {
+    // Check if user has visited before in this session
+    const hasVisited = sessionStorage.getItem('hasVisitedAutoSpark');
+    if (hasVisited) {
+      setIsFirstVisit(false);
+      setShowSplash(false);
+    }
+  }, []);
+
+  const handleSplashComplete = () => {
+    setShowSplash(false);
+    sessionStorage.setItem('hasVisitedAutoSpark', 'true');
+  };
+
   return (
     <ThemeProvider>
       <LanguageProvider>
+        {/* Premium Splash Screen - Only on first visit */}
+        {isFirstVisit && showSplash && (
+          <SplashScreen onComplete={handleSplashComplete} duration={2800} />
+        )}
+        
         <Router basename={basename}>
           <Layout>
             <Suspense fallback={<PageLoader />}>

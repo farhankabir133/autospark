@@ -602,7 +602,7 @@ const ServicesPage: React.FC = () => {
   ];
 
   return (
-    <div className={`min-h-screen ${isDark ? 'bg-gray-900' : 'bg-gray-50'}`}>
+    <div className={`min-h-screen ${isDark ? 'bg-transparent' : 'bg-gray-50'}`}>
       {/* Hero Section - Ultra Premium Workshop Scene */}
       <section className={`relative min-h-[85vh] flex items-center justify-center overflow-hidden ${
         isDark 
@@ -1317,7 +1317,7 @@ const ServicesPage: React.FC = () => {
       </section>
 
       {/* Services Section */}
-      <section className={`py-20 ${isDark ? 'bg-gray-900' : 'bg-gray-50'}`}>
+      <section className={`py-20 ${isDark ? 'bg-transparent' : 'bg-gray-50'}`}>
         <div className="container mx-auto px-4">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
@@ -1581,7 +1581,7 @@ const ServicesPage: React.FC = () => {
       )}
 
       {/* Technicians Section */}
-      <section className={`py-20 ${isDark ? 'bg-gray-900' : 'bg-white'}`}>
+      <section className={`py-20 ${isDark ? 'bg-transparent' : 'bg-white'}`}>
         <div className="container mx-auto px-4">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
@@ -1729,7 +1729,7 @@ const ServicesPage: React.FC = () => {
       </section>
 
       {/* FAQ Section */}
-      <section className={`py-20 ${isDark ? 'bg-gray-900' : 'bg-white'}`}>
+      <section className={`py-20 ${isDark ? 'bg-transparent' : 'bg-white'}`}>
         <div className="container mx-auto px-4">
           <motion.div
             initial={{ opacity: 0, y: 30 }}

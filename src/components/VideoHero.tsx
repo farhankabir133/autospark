@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState, useCallback, memo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Play, Volume2, VolumeX, Music, Music2 } from 'lucide-react';
+import { Play, Volume2, VolumeX, Music2, Headphones } from 'lucide-react';
 
 interface VideoHeroProps {
   videoId?: string;
@@ -11,18 +11,30 @@ interface VideoHeroProps {
 const getYouTubeThumbnail = (videoId: string) => 
   `https://img.youtube.com/vi/${videoId}/maxresdefault.jpg`;
 
-// Memoized component for performance
+/**
+ * VideoHero Component
+ * 
+ * Browser autoplay policy requires videos to start muted.
+ * This component:
+ * 1. Starts video MUTED (to allow autoplay)
+ * 2. Shows prominent "Enable Sound" button
+ * 3. When clicked, reloads video WITH sound
+ */
 export const VideoHero: React.FC<VideoHeroProps> = memo(({ 
   videoId = 'JOVY3hD4nLM',
   className = '' 
 }) => {
   const containerRef = useRef<HTMLDivElement>(null);
+  const iframeRef = useRef<HTMLIFrameElement>(null);
+  
   const [shouldLoadVideo, setShouldLoadVideo] = useState(false);
   const [isVideoReady, setIsVideoReady] = useState(false);
-  // Sound is ON by default
-  const [isMuted, setIsMuted] = useState(false);
+  const [isMuted, setIsMuted] = useState(true); // Start muted for autoplay
+  const [hasUserInteracted, setHasUserInteracted] = useState(false);
+  const [showSoundPrompt, setShowSoundPrompt] = useState(true);
   const [thumbnailLoaded, setThumbnailLoaded] = useState(false);
   const [isHoveringMute, setIsHoveringMute] = useState(false);
+  const [iframeKey, setIframeKey] = useState(0); // Key to force iframe reload
 
   // Intersection Observer for lazy loading
   useEffect(() => {
@@ -55,12 +67,35 @@ export const VideoHero: React.FC<VideoHeroProps> = memo(({
     setTimeout(() => setIsVideoReady(true), 500);
   }, []);
 
-  // Toggle mute with animation feedback
-  const toggleMute = useCallback(() => {
-    setIsMuted(prev => !prev);
+  // Enable sound - this requires user interaction
+  const enableSound = useCallback(() => {
+    setIsMuted(false);
+    setHasUserInteracted(true);
+    setShowSoundPrompt(false);
+    // Force iframe reload with sound enabled
+    setIframeKey(prev => prev + 1);
   }, []);
 
-  // YouTube embed URL - Sound ON by default (mute=0)
+  // Toggle mute
+  const toggleMute = useCallback(() => {
+    const newMutedState = !isMuted;
+    setIsMuted(newMutedState);
+    setHasUserInteracted(true);
+    // Reload iframe with new mute state
+    setIframeKey(prev => prev + 1);
+  }, [isMuted]);
+
+  // Hide sound prompt after 10 seconds if user doesn't interact
+  useEffect(() => {
+    if (showSoundPrompt && isVideoReady) {
+      const timer = setTimeout(() => {
+        setShowSoundPrompt(false);
+      }, 15000);
+      return () => clearTimeout(timer);
+    }
+  }, [showSoundPrompt, isVideoReady]);
+
+  // YouTube embed URL - mute based on state
   const embedUrl = `https://www.youtube.com/embed/${videoId}?autoplay=1&mute=${isMuted ? 1 : 0}&loop=1&playlist=${videoId}&controls=0&showinfo=0&rel=0&modestbranding=1&playsinline=1&enablejsapi=1`;
 
   return (
@@ -108,7 +143,7 @@ export const VideoHero: React.FC<VideoHeroProps> = memo(({
         )}
       </AnimatePresence>
 
-      {/* YouTube Video - Sound ON by default */}
+      {/* YouTube Video */}
       {shouldLoadVideo && (
         <div 
           className="absolute z-[2]"
@@ -123,6 +158,8 @@ export const VideoHero: React.FC<VideoHeroProps> = memo(({
           }}
         >
           <iframe
+            key={iframeKey}
+            ref={iframeRef}
             src={embedUrl}
             title="AutoSpark Video Background"
             className="absolute inset-0 w-full h-full"
@@ -166,11 +203,124 @@ export const VideoHero: React.FC<VideoHeroProps> = memo(({
         </div>
       </div>
 
-      {/* 🎵 PUNCHY MUTE BUTTON - Always Visible */}
+      {/* 🔊 PROMINENT "ENABLE SOUND" PROMPT - Shows when video is ready but muted */}
       <AnimatePresence>
-        {isVideoReady && (
+        {isVideoReady && isMuted && showSoundPrompt && !hasUserInteracted && (
           <motion.div
-            className="absolute bottom-6 right-6 md:bottom-8 md:right-8 z-20"
+            className="absolute inset-0 z-30 flex items-center justify-center"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.5 }}
+          >
+            {/* Backdrop to draw attention */}
+            <motion.div 
+              className="absolute inset-0 bg-black/30 backdrop-blur-[2px]"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+            />
+
+            {/* Enable Sound Button */}
+            <motion.button
+              className="relative group"
+              onClick={enableSound}
+              initial={{ scale: 0.8, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.8, opacity: 0 }}
+              transition={{ type: 'spring', stiffness: 300, damping: 20 }}
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+            >
+              {/* Pulsing Ring */}
+              <motion.div
+                className="absolute inset-0 rounded-full"
+                animate={{
+                  boxShadow: [
+                    '0 0 0 0 rgba(192, 0, 0, 0.7)',
+                    '0 0 0 30px rgba(192, 0, 0, 0)',
+                  ],
+                }}
+                transition={{ duration: 1.5, repeat: Infinity }}
+              />
+
+              {/* Button Container */}
+              <div className="relative px-8 py-5 md:px-12 md:py-6 rounded-full bg-gradient-to-r from-[#8B0000] via-[#C00000] to-[#FF1A1A] shadow-2xl">
+                {/* Inner glow */}
+                <div className="absolute inset-[2px] rounded-full bg-black/20 backdrop-blur-sm" />
+                
+                {/* Content */}
+                <div className="relative flex items-center gap-4 text-white">
+                  {/* Animated Headphones Icon */}
+                  <motion.div
+                    animate={{ 
+                      rotate: [0, -10, 10, -10, 0],
+                      scale: [1, 1.1, 1],
+                    }}
+                    transition={{ duration: 2, repeat: Infinity }}
+                  >
+                    <Headphones className="w-7 h-7 md:w-8 md:h-8" />
+                  </motion.div>
+
+                  <div className="text-left">
+                    <div className="text-lg md:text-xl font-bold tracking-wide">
+                      🔊 Enable Sound
+                    </div>
+                    <div className="text-xs md:text-sm text-white/70">
+                      Click to experience with audio
+                    </div>
+                  </div>
+
+                  {/* Sound Waves */}
+                  <div className="flex items-center gap-0.5 ml-2">
+                    {[0, 1, 2, 3].map((i) => (
+                      <motion.div
+                        key={i}
+                        className="w-1 bg-white rounded-full"
+                        animate={{
+                          height: ['8px', '24px', '8px'],
+                        }}
+                        transition={{
+                          duration: 0.6,
+                          repeat: Infinity,
+                          delay: i * 0.15,
+                        }}
+                      />
+                    ))}
+                  </div>
+                </div>
+              </div>
+
+              {/* Skip text */}
+              <motion.p
+                className="absolute -bottom-10 left-1/2 -translate-x-1/2 text-white/50 text-sm whitespace-nowrap"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 2 }}
+              >
+                Or continue without sound
+              </motion.p>
+            </motion.button>
+
+            {/* Skip Button */}
+            <motion.button
+              className="absolute bottom-8 left-1/2 -translate-x-1/2 px-4 py-2 text-white/60 hover:text-white text-sm transition-colors"
+              onClick={() => setShowSoundPrompt(false)}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 1.5 }}
+            >
+              Continue without sound →
+            </motion.button>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* 🎵 MUTE/UNMUTE BUTTON - Always visible after user interacts or prompt dismissed */}
+      <AnimatePresence>
+        {isVideoReady && (hasUserInteracted || !showSoundPrompt) && (
+          <motion.div
+            className="absolute bottom-6 left-6 md:bottom-8 md:left-8 z-20"
             initial={{ opacity: 0, scale: 0.5, y: 20 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
             transition={{ 
@@ -196,9 +346,9 @@ export const VideoHero: React.FC<VideoHeroProps> = memo(({
                   boxShadow: isMuted 
                     ? '0 0 0 0 rgba(239, 68, 68, 0)' 
                     : [
-                        '0 0 0 0 rgba(59, 130, 246, 0.6)',
-                        '0 0 0 15px rgba(59, 130, 246, 0)',
-                        '0 0 0 0 rgba(59, 130, 246, 0.6)',
+                        '0 0 0 0 rgba(192, 0, 0, 0.6)',
+                        '0 0 0 15px rgba(192, 0, 0, 0)',
+                        '0 0 0 0 rgba(192, 0, 0, 0.6)',
                       ],
                 }}
                 transition={{ 
@@ -214,7 +364,7 @@ export const VideoHero: React.FC<VideoHeroProps> = memo(({
                 animate={{
                   background: isMuted 
                     ? 'linear-gradient(135deg, #374151 0%, #1f2937 100%)'
-                    : 'linear-gradient(135deg, #3b82f6 0%, #8b5cf6 50%, #ec4899 100%)',
+                    : 'linear-gradient(135deg, #8B0000 0%, #C00000 50%, #FF1A1A 100%)',
                 }}
                 transition={{ duration: 0.3 }}
               >
@@ -310,7 +460,7 @@ export const VideoHero: React.FC<VideoHeroProps> = memo(({
                           </>
                         ) : (
                           <>
-                            <Music className="w-4 h-4 text-pink-400" />
+                            <Volume2 className="w-4 h-4 text-pink-400" />
                             <span>Mute Sound</span>
                           </>
                         )}
@@ -359,7 +509,7 @@ export const VideoHero: React.FC<VideoHeroProps> = memo(({
 
       {/* Sound Status Indicator - Top Right */}
       <AnimatePresence>
-        {isVideoReady && !isMuted && (
+        {isVideoReady && !isMuted && !showSoundPrompt && (
           <motion.div
             className="absolute top-20 md:top-24 right-4 md:right-8 z-20"
             initial={{ opacity: 0, x: 20 }}
@@ -367,13 +517,13 @@ export const VideoHero: React.FC<VideoHeroProps> = memo(({
             exit={{ opacity: 0, x: 20 }}
             transition={{ type: 'spring', stiffness: 300, damping: 20 }}
           >
-            <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-gradient-to-r from-blue-500/20 to-purple-500/20 backdrop-blur-sm border border-white/10">
+            <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-gradient-to-r from-[#C00000]/20 to-[#FF1A1A]/20 backdrop-blur-sm border border-white/10">
               {/* Animated Equalizer Bars */}
               <div className="flex items-end gap-0.5 h-4">
                 {[0, 1, 2, 3, 4].map((i) => (
                   <motion.div
                     key={i}
-                    className="w-1 bg-gradient-to-t from-blue-400 to-purple-400 rounded-full"
+                    className="w-1 bg-gradient-to-t from-[#C00000] to-[#FF1A1A] rounded-full"
                     animate={{
                       height: ['30%', '100%', '50%', '80%', '30%'],
                     }}

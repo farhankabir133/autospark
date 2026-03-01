@@ -1,6 +1,7 @@
 import { ReactNode } from 'react';
 import { Header } from './Header';
 import { Footer } from './Footer';
+import { DarkModeBackground } from './DarkModeBackground';
 import { MessageCircle } from 'lucide-react';
 import { useTheme } from '../contexts/ThemeContext';
 
@@ -15,10 +16,13 @@ export const Layout = ({ children }: LayoutProps) => {
 
   return (
     <div className={`min-h-screen flex flex-col transition-colors duration-300 ${
-      theme === 'dark' ? 'bg-gray-900 text-white' : 'bg-white text-gray-900'
+      theme === 'dark' ? 'bg-transparent text-white' : 'bg-transparent text-gray-900'
     }`}>
+      {/* Premium Animated Background with rays - visible in both modes */}
+      <DarkModeBackground />
+      
       <Header />
-      <main className="flex-grow">{children}</main>
+      <main className="flex-grow relative z-10">{children}</main>
       <Footer />
 
       <a

@@ -1,12 +1,14 @@
 import { useState } from 'react';
 import { Upload, DollarSign } from 'lucide-react';
 import { useLanguage } from '../contexts/LanguageContext';
+import { useTheme } from '../contexts/ThemeContext';
 import { Button } from '../components/ui/Button';
 import { Card } from '../components/ui/Card';
 import { supabase } from '../lib/supabase';
 
 export const SellCarPage = () => {
   const { t, language } = useLanguage();
+  const { theme } = useTheme();
   const [formData, setFormData] = useState({
     customerName: '',
     customerEmail: '',

@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Menu, X, Car, Moon, Sun, Globe, Phone, Search } from 'lucide-react';
+import { Menu, X, Moon, Sun, Globe, Search } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useLanguage } from '../contexts/LanguageContext';
 import { useTheme } from '../contexts/ThemeContext';
@@ -17,6 +17,12 @@ export const GlassmorphismNavbar = () => {
   useEffect(() => {
     setActiveLink(location.pathname);
   }, [location.pathname]);
+
+  // Determine which logo to show based on current page
+  const isServicesOrAccessories = location.pathname === '/services' || location.pathname === '/accessories';
+  const currentLogo = isServicesOrAccessories 
+    ? `${import.meta.env.BASE_URL}logo/logoassc.svg`
+    : `${import.meta.env.BASE_URL}logo/logoAS3.svg`;
 
   useEffect(() => {
     const handleScroll = () => {
@@ -125,20 +131,41 @@ export const GlassmorphismNavbar = () => {
                 className="flex items-center space-x-2 sm:space-x-3 group"
                 onClick={() => setIsMobileMenuOpen(false)}
               >
-                <div className={`p-2 rounded-lg transition-all duration-300 ${
-                  theme === 'dark'
-                    ? 'bg-gradient-to-br from-blue-500 to-cyan-500 group-hover:shadow-lg group-hover:shadow-blue-500/50'
-                    : 'bg-gradient-to-br from-blue-600 to-cyan-600 group-hover:shadow-lg group-hover:shadow-blue-600/50'
-                }`}>
-                  <Car className="h-5 w-5 sm:h-6 sm:w-6 text-white" />
-                </div>
+                {/* Animated Logo Container */}
+                <motion.div 
+                  className="relative"
+                  whileHover={{ rotate: [0, -5, 5, 0] }}
+                  transition={{ duration: 0.5 }}
+                >
+                  {/* Glow effect behind logo */}
+                  <motion.div
+                    className="absolute inset-0 rounded-full blur-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+                    style={{
+                      background: 'radial-gradient(circle, rgba(192, 0, 0, 0.7) 0%, rgba(255, 26, 26, 0.3) 50%, transparent 70%)',
+                      transform: 'scale(2)'
+                    }}
+                  />
+                  {/* Logo Image - Crystal clear zoomed view */}
+                  <motion.img
+                    src={currentLogo}
+                    alt="Auto Spark BD"
+                    className="h-16 w-16 sm:h-20 sm:w-20 lg:h-24 lg:w-24 relative z-10 drop-shadow-[0_0_8px_rgba(192,0,0,0.5)]"
+                    initial={{ opacity: 0, scale: 0.5, rotate: -180 }}
+                    animate={{ opacity: 1, scale: 1, rotate: 0 }}
+                    transition={{ 
+                      duration: 0.8, 
+                      ease: [0.16, 1, 0.3, 1],
+                      delay: 0.2 
+                    }}
+                  />
+                </motion.div>
                 <div>
                   <span className={`text-lg sm:text-xl lg:text-2xl font-bold tracking-tight transition-colors ${
                     theme === 'dark' ? 'text-white' : 'text-gray-900'
                   }`}>
                     {t('site.title')}
                   </span>
-                  <div className={`text-xs sm:hidden ${theme === 'dark' ? 'text-cyan-400' : 'text-blue-600'}`}>
+                  <div className={`text-xs sm:hidden ${theme === 'dark' ? 'text-[#FF1A1A]' : 'text-[#C00000]'}`}>
                     Premium Cars
                   </div>
                 </div>
@@ -163,8 +190,8 @@ export const GlassmorphismNavbar = () => {
                     className={`px-4 py-2 rounded-lg text-sm font-medium transition-all duration-300 relative ${
                       activeLink === link.to
                         ? theme === 'dark'
-                          ? 'text-cyan-400'
-                          : 'text-blue-600'
+                          ? 'text-[#FF1A1A]'
+                          : 'text-[#C00000]'
                         : theme === 'dark'
                         ? 'text-gray-300 hover:text-white'
                         : 'text-gray-700 hover:text-gray-900'
@@ -178,8 +205,8 @@ export const GlassmorphismNavbar = () => {
                         layoutId="activeIndicator"
                         className={`absolute inset-0 rounded-lg -z-10 ${
                           theme === 'dark'
-                            ? 'bg-cyan-500/20 backdrop-blur-md border border-cyan-500/30'
-                            : 'bg-blue-500/20 backdrop-blur-md border border-blue-500/30'
+                            ? 'bg-[#C00000]/20 backdrop-blur-md border border-[#C00000]/30'
+                            : 'bg-[#C00000]/10 backdrop-blur-md border border-[#C00000]/30'
                         }`}
                         transition={{ duration: 0.3 }}
                       />
@@ -198,8 +225,8 @@ export const GlassmorphismNavbar = () => {
                 onClick={() => AudioManager.playClick()}
                 className={`hidden md:flex p-2 rounded-lg transition-all ${
                   theme === 'dark'
-                    ? 'hover:bg-gray-700/50 text-gray-400 hover:text-cyan-400'
-                    : 'hover:bg-gray-100/50 text-gray-600 hover:text-blue-600'
+                    ? 'hover:bg-gray-700/50 text-gray-400 hover:text-[#FF1A1A]'
+                    : 'hover:bg-gray-100/50 text-gray-600 hover:text-[#C00000]'
                 }`}
                 aria-label="Search"
               >
@@ -232,8 +259,8 @@ export const GlassmorphismNavbar = () => {
                 onClick={toggleLanguage}
                 className={`p-2 rounded-lg transition-all ${
                   theme === 'dark'
-                    ? 'hover:bg-gray-700/50 text-cyan-400'
-                    : 'hover:bg-gray-100/50 text-blue-600'
+                    ? 'hover:bg-gray-700/50 text-[#FF1A1A]'
+                    : 'hover:bg-gray-100/50 text-[#C00000]'
                 }`}
                 aria-label="Toggle language"
               >
@@ -247,8 +274,8 @@ export const GlassmorphismNavbar = () => {
                 onClick={() => AudioManager.playButtonClick()}
                 className={`hidden sm:flex px-4 py-2 rounded-lg font-semibold text-sm transition-all ${
                   theme === 'dark'
-                    ? 'bg-gradient-to-r from-cyan-500 to-blue-500 hover:from-cyan-600 hover:to-blue-600 text-white shadow-lg shadow-cyan-500/30'
-                    : 'bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white shadow-lg shadow-blue-600/30'
+                    ? 'bg-gradient-to-r from-[#C00000] to-[#FF1A1A] hover:from-[#8B0000] hover:to-[#C00000] text-white shadow-lg shadow-[#C00000]/30'
+                    : 'bg-gradient-to-r from-[#C00000] to-[#8B0000] hover:from-[#8B0000] hover:to-[#600000] text-white shadow-lg shadow-[#C00000]/30'
                 }`}
               >
                 {t('nav.contact')}
@@ -322,8 +349,8 @@ export const GlassmorphismNavbar = () => {
                         className={`block px-4 py-3 rounded-lg transition-all ${
                           activeLink === link.to
                             ? theme === 'dark'
-                              ? 'bg-cyan-500/30 border border-cyan-500/50 text-cyan-400'
-                              : 'bg-blue-500/30 border border-blue-500/50 text-blue-600'
+                              ? 'bg-[#C00000]/30 border border-[#C00000]/50 text-[#FF1A1A]'
+                              : 'bg-[#C00000]/20 border border-[#C00000]/50 text-[#C00000]'
                             : theme === 'dark'
                             ? 'text-gray-300 hover:bg-gray-700/30 hover:text-white'
                             : 'text-gray-700 hover:bg-gray-100/30 hover:text-gray-900'
@@ -345,8 +372,8 @@ export const GlassmorphismNavbar = () => {
                     }}
                     className={`w-full px-4 py-3 rounded-lg font-semibold text-sm transition-all mt-4 ${
                       theme === 'dark'
-                        ? 'bg-gradient-to-r from-cyan-500 to-blue-500 hover:from-cyan-600 hover:to-blue-600 text-white'
-                        : 'bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white'
+                        ? 'bg-gradient-to-r from-[#C00000] to-[#FF1A1A] hover:from-[#8B0000] hover:to-[#C00000] text-white'
+                        : 'bg-gradient-to-r from-[#C00000] to-[#8B0000] hover:from-[#8B0000] hover:to-[#600000] text-white'
                     }`}
                   >
                     {language === 'en' ? 'Book Test Drive' : 'টেস্ট ড্রাইভ বুক করুন'}
@@ -364,8 +391,8 @@ export const GlassmorphismNavbar = () => {
         transition={{ duration: 0.3 }}
         className={`h-px bg-gradient-to-r ${
           theme === 'dark'
-            ? 'from-transparent via-cyan-500 to-transparent'
-            : 'from-transparent via-blue-500 to-transparent'
+            ? 'from-transparent via-[#C00000] to-transparent'
+            : 'from-transparent via-[#C00000] to-transparent'
         }`}
       />
     </motion.header>

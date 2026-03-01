@@ -5,6 +5,57 @@
 @tailwind components;
 @tailwind utilities;
 
+/* =============================================
+   BRAND IDENTITY: Bold Red & Black
+   Light Mode & Dark Mode Support
+   ============================================= */
+
+:root {
+  /* Brand Primary Colors */
+  --brand-red: #C00000;
+  --brand-red-light: #FF1A1A;
+  --brand-red-dark: #8B0000;
+  --brand-red-glow: #FF3333;
+  --brand-black: #0D0D0D;
+  --brand-black-light: #111111;
+  
+  /* Light Mode Colors */
+  --bg-primary: #FFFFFF;
+  --bg-secondary: #F8F8F8;
+  --bg-tertiary: #F0F0F0;
+  --text-primary: #0D0D0D;
+  --text-secondary: #333333;
+  --text-muted: #666666;
+  --border-color: #E5E5E5;
+  --accent: var(--brand-red);
+  --accent-hover: var(--brand-red-light);
+  
+  /* Shadows */
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.1);
+  --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.1);
+  --shadow-lg: 0 10px 25px rgba(0, 0, 0, 0.15);
+  --shadow-glow: 0 0 20px rgba(192, 0, 0, 0.3);
+}
+
+.dark {
+  /* Dark Mode Colors - Premium Red-Black Theme */
+  --bg-primary: #050505;
+  --bg-secondary: #0a0a0a;
+  --bg-tertiary: #0f0f0f;
+  --text-primary: #FFFFFF;
+  --text-secondary: #E5E5E5;
+  --text-muted: #999999;
+  --border-color: #1a1a1a;
+  --accent: var(--brand-red);
+  --accent-hover: var(--brand-red-light);
+  
+  /* Dark Mode Shadows with red glow */
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.5);
+  --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.6);
+  --shadow-lg: 0 10px 25px rgba(0, 0, 0, 0.7);
+  --shadow-glow: 0 0 30px rgba(192, 0, 0, 0.4);
+}
+
 @layer base {
   * {
     @apply scroll-smooth;
@@ -13,12 +64,39 @@
   body {
     @apply font-sans antialiased;
     font-family: 'Inter', system-ui, -apple-system, sans-serif;
-    /* Prevent layout shift with font fallback */
     font-display: swap;
+    background-color: var(--bg-primary);
+    color: var(--text-primary);
+    transition: background-color 0.3s ease, color 0.3s ease;
   }
 
   [lang="bn"], [lang="bn"] * {
     font-family: 'Hind Siliguri', 'Noto Sans Bengali', sans-serif;
+  }
+  
+  /* Selection color with brand red */
+  ::selection {
+    background-color: var(--brand-red);
+    color: white;
+  }
+  
+  /* Scrollbar styling */
+  ::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+  
+  ::-webkit-scrollbar-track {
+    background: var(--bg-secondary);
+  }
+  
+  ::-webkit-scrollbar-thumb {
+    background: var(--brand-red);
+    border-radius: 4px;
+  }
+  
+  ::-webkit-scrollbar-thumb:hover {
+    background: var(--brand-red-light);
   }
 }
 

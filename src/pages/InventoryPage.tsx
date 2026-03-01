@@ -823,7 +823,7 @@ export const InventoryPage = () => {
   const isDark = theme === 'dark';
 
   return (
-    <div className={`min-h-screen ${isDark ? 'bg-gray-900' : 'bg-gray-50'} pt-20`}>
+    <div className={`min-h-screen ${isDark ? 'bg-transparent' : 'bg-gray-50'} pt-20`}>
       {/* ========================================== */}
       {/* ENHANCED HEADER SECTION */}
       {/* ========================================== */}

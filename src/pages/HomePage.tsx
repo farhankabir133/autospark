@@ -34,7 +34,7 @@ import { EnhancedSkeleton } from '../components/EnhancedSkeleton';
 import { CarouselPlaceholder } from '../components/CarouselPlaceholder';
 import { ImageLoadingProgress } from '../components/ImageLoadingProgress';
 import { VideoHero } from '../components/VideoHero';
-import { HeroText } from '../components/HeroText';
+import { TypewriterText } from '../components/TypewriterText';
 
 export const HomePage = () => {
   const { t, language } = useLanguage();
@@ -180,31 +180,31 @@ export const HomePage = () => {
       exit={{ opacity: 0 }}
       transition={{ duration: 0.5 }}
     >
-      {/* HERO SECTION WITH TEXT REVEAL */}
+      {/* HERO SECTION WITH VIDEO */}
       <section className="relative h-screen flex items-center justify-center overflow-hidden">
         {/* Cinematic Video Hero - Premium Experience */}
         <VideoHero videoId="JOVY3hD4nLM" />
-        
-        {/* Overlay gradient for text readability */}
-        <div className={`absolute inset-0 pointer-events-none ${
-          theme === 'dark' 
-            ? 'bg-gradient-to-b from-black/30 via-transparent to-black/50' 
-            : 'bg-gradient-to-b from-white/20 via-transparent to-white/30'
-        }`} />
 
-        <div className="relative z-10 container mx-auto px-4 text-center">
-          {/* Premium Hero Text with Glass Effect */}
-          <HeroText 
-            title={t('hero.title')}
-            subtitle={t('hero.subtitle')}
+        {/* Typewriter Text - Positioned at top, subtle and non-blocking */}
+        <div className="absolute top-24 md:top-32 left-0 right-0 z-10 flex justify-center pointer-events-none">
+          <TypewriterText 
+            texts={[
+              language === 'en' ? 'Exclusive Cars in Rajshahi' : 'রাজশাহীতে এক্সক্লুসিভ গাড়ি',
+              language === 'en' ? "North Bengal's Leading Premium Car Showroom" : 'উত্তরবঙ্গের শীর্ষস্থানীয় প্রিমিয়াম কার শোরুম'
+            ]}
+            typingSpeed={60}
+            deletingSpeed={30}
+            pauseDuration={3500}
           />
+        </div>
 
-          {/* CTA Buttons */}
+        {/* CTA Buttons - Positioned at bottom */}
+        <div className="absolute bottom-20 left-0 right-0 z-10">
           <motion.div 
-            className="flex flex-col sm:flex-row gap-4 justify-center mt-8 md:mt-12"
+            className="flex flex-col sm:flex-row gap-4 justify-center px-4"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 2.5 }}
+            transition={{ duration: 0.8, delay: 1 }}
           >
             <motion.div
               whileHover={{ y: -5 }}
@@ -267,7 +267,7 @@ export const HomePage = () => {
       </div>
 
       {/* PREMIUM COLLECTION - CLICKABLE CAR GRID */}
-      <section className={`py-20 ${theme === 'dark' ? 'bg-gray-900' : 'bg-gray-50'}`}>
+      <section className={`py-20 ${theme === 'dark' ? 'bg-transparent' : 'bg-gray-50'}`}>
         <div className="container mx-auto px-4">
           <motion.div 
             className="text-center mb-12"
@@ -381,7 +381,7 @@ export const HomePage = () => {
       </section>
 
       {/* FEATURED VEHICLES WITH ENHANCED FLIP CARDS */}
-      <section className={`py-20 ${theme === 'dark' ? 'bg-gray-900' : 'bg-gray-50'}`}>
+      <section className={`py-20 ${theme === 'dark' ? 'bg-transparent' : 'bg-gray-50'}`}>
         <div className="container mx-auto px-4">
           <motion.div 
             className="text-center mb-12"
@@ -488,7 +488,7 @@ export const HomePage = () => {
 
       {/* STATS SECTION WITH ANIMATED COUNTERS */}
       <motion.section 
-        className={`py-20 ${theme === 'dark' ? 'bg-gray-800' : 'bg-white'}`}
+        className={`py-20 ${theme === 'dark' ? 'bg-black/20' : 'bg-white'}`}
         initial={{ opacity: 0 }}
         whileInView={{ opacity: 1 }}
         transition={{ duration: 0.6 }}
@@ -541,7 +541,7 @@ export const HomePage = () => {
       </motion.section>
 
       {/* VEHICLE GALLERY WITH BADGES AND COMPARISON */}
-      <section className={`py-20 ${theme === 'dark' ? 'bg-gray-800' : 'bg-white'}`}>
+      <section className={`py-20 ${theme === 'dark' ? 'bg-black/20' : 'bg-white'}`}>
         <div className="container mx-auto px-4">
           <motion.div 
             className="text-center mb-16"
@@ -635,7 +635,7 @@ export const HomePage = () => {
       {/* FEATURED VEHICLES WITH CARD LIFT EFFECTS */}
       {featuredVehicles.length > 0 && (
         <motion.section 
-          className={`py-20 ${theme === 'dark' ? 'bg-gray-900' : 'bg-gray-50'}`}
+          className={`py-20 ${theme === 'dark' ? 'bg-transparent' : 'bg-gray-50'}`}
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
           transition={{ duration: 0.6 }}
@@ -1945,7 +1945,7 @@ export const HomePage = () => {
 
       {/* WHY CHOOSE US SECTION */}
       <motion.section 
-        className={`py-20 ${theme === 'dark' ? 'bg-gray-800' : 'bg-white'}`}
+        className={`py-20 ${theme === 'dark' ? 'bg-black/20' : 'bg-white'}`}
         initial={{ opacity: 0 }}
         whileInView={{ opacity: 1 }}
         transition={{ duration: 0.6 }}
@@ -2008,7 +2008,7 @@ export const HomePage = () => {
 
       {testimonials.length > 0 && (
         <motion.section 
-          className={`py-20 ${theme === 'dark' ? 'bg-gray-900' : 'bg-gray-50'}`}
+          className={`py-20 ${theme === 'dark' ? 'bg-transparent' : 'bg-gray-50'}`}
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
           transition={{ duration: 0.6 }}

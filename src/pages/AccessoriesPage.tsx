@@ -2151,7 +2151,7 @@ export const AccessoriesPage: React.FC = () => {
   ], []);
 
   return (
-    <div className={`min-h-screen ${isDark ? 'bg-gray-900' : 'bg-gray-50'}`}>
+    <div className={`min-h-screen ${isDark ? 'bg-transparent' : 'bg-gray-50'}`}>
       {/* Ultra Premium Hero Section */}
       <section className={`relative min-h-[70vh] flex items-center justify-center overflow-hidden ${
         isDark 
