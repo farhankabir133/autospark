@@ -483,12 +483,12 @@ export const AboutPage = () => {
                       </motion.div>
                     </div>
                     <div className="text-center md:text-right flex-1">
-                      <span className="text-[#C00000] font-bold text-xs sm:text-sm">💻 Tech Lead</span>
+                      <span className="text-[#C00000] font-bold text-xs sm:text-sm">💻 Lead Engineer</span>
                       <h4 className={`text-lg sm:text-xl font-bold ${theme === 'dark' ? 'text-white' : 'text-gray-900'} mt-1`}>
                         {language === 'en' ? 'Farhan Kabir' : 'ফারহান কবির'}
                       </h4>
                       <p className="text-[#C00000] font-semibold text-xs sm:text-sm mb-2">
-                        {language === 'en' ? 'Lead Developer' : 'প্রধান ডেভেলপার'}
+                        {language === 'en' ? 'Lead Engineer / Lead Developer' : 'প্রধান প্রকৌশলী / প্রধান ডেভেলপার'}
                       </p>
                       <p className={`${theme === 'dark' ? 'text-gray-400' : 'text-gray-600'} text-xs sm:text-sm`}>
                         {language === 'en' 
