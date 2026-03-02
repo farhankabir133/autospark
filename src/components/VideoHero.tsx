@@ -2,6 +2,55 @@ import { useEffect, useRef, useState, useCallback, memo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Play, Volume2, VolumeX, Music2, Headphones } from 'lucide-react';
 
+// Declare YouTube IFrame API types
+declare global {
+  interface Window {
+    YT: {
+      Player: new (elementId: string, options: YTPlayerOptions) => YTPlayer;
+      PlayerState: {
+        PLAYING: number;
+        PAUSED: number;
+        ENDED: number;
+        BUFFERING: number;
+      };
+    };
+    onYouTubeIframeAPIReady: () => void;
+  }
+}
+
+interface YTPlayerOptions {
+  videoId: string;
+  playerVars?: {
+    autoplay?: number;
+    mute?: number;
+    loop?: number;
+    playlist?: string;
+    controls?: number;
+    showinfo?: number;
+    rel?: number;
+    modestbranding?: number;
+    playsinline?: number;
+    iv_load_policy?: number;
+    disablekb?: number;
+    fs?: number;
+    origin?: string;
+  };
+  events?: {
+    onReady?: (event: { target: YTPlayer }) => void;
+    onStateChange?: (event: { data: number; target: YTPlayer }) => void;
+    onError?: (event: { data: number }) => void;
+  };
+}
+
+interface YTPlayer {
+  playVideo: () => void;
+  pauseVideo: () => void;
+  mute: () => void;
+  unMute: () => void;
+  isMuted: () => boolean;
+  destroy: () => void;
+}
+
 interface VideoHeroProps {
   videoId?: string;
   className?: string;
@@ -11,48 +60,201 @@ interface VideoHeroProps {
 const getYouTubeThumbnail = (videoId: string) => 
   `https://img.youtube.com/vi/${videoId}/maxresdefault.jpg`;
 
+// Load YouTube IFrame API script
+const loadYouTubeAPI = (): Promise<void> => {
+  return new Promise((resolve) => {
+    if (window.YT && window.YT.Player) {
+      resolve();
+      return;
+    }
+
+    const existingScript = document.getElementById('youtube-iframe-api');
+    if (existingScript) {
+      // Script is loading, wait for it
+      const checkYT = setInterval(() => {
+        if (window.YT && window.YT.Player) {
+          clearInterval(checkYT);
+          resolve();
+        }
+      }, 100);
+      return;
+    }
+
+    const script = document.createElement('script');
+    script.id = 'youtube-iframe-api';
+    script.src = 'https://www.youtube.com/iframe_api';
+    script.async = true;
+    
+    window.onYouTubeIframeAPIReady = () => {
+      resolve();
+    };
+    
+    document.head.appendChild(script);
+  });
+};
+
 /**
  * VideoHero Component
  * 
+ * Uses YouTube IFrame Player API for reliable mobile autoplay.
  * Browser autoplay policy requires videos to start muted.
- * This component:
- * 1. Starts video MUTED (to allow autoplay)
- * 2. Shows prominent "Enable Sound" button
- * 3. When clicked, reloads video WITH sound
  */
 export const VideoHero: React.FC<VideoHeroProps> = memo(({ 
-  videoId = 'JOVY3hD4nLM',
+  videoId = 'hittSjzZtPg',
   className = '' 
 }) => {
   const containerRef = useRef<HTMLDivElement>(null);
-  const iframeRef = useRef<HTMLIFrameElement>(null);
+  const playerRef = useRef<YTPlayer | null>(null);
+  const playerContainerId = useRef(`yt-player-${Math.random().toString(36).substr(2, 9)}`);
   
-  const [shouldLoadVideo, setShouldLoadVideo] = useState(false);
   const [isVideoReady, setIsVideoReady] = useState(false);
-  const [isMuted, setIsMuted] = useState(true); // Start muted for autoplay
+  const [isMuted, setIsMuted] = useState(true);
   const [hasUserInteracted, setHasUserInteracted] = useState(false);
   const [showSoundPrompt, setShowSoundPrompt] = useState(true);
   const [thumbnailLoaded, setThumbnailLoaded] = useState(false);
   const [isHoveringMute, setIsHoveringMute] = useState(false);
-  const [iframeKey, setIframeKey] = useState(0); // Key to force iframe reload
+  const [apiLoaded, setApiLoaded] = useState(false);
 
-  // Intersection Observer for lazy loading
+  // Load YouTube IFrame API and initialize player
   useEffect(() => {
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          setTimeout(() => setShouldLoadVideo(true), 100);
-          observer.disconnect();
-        }
-      },
-      { threshold: 0.1, rootMargin: '50px' }
-    );
+    let isMounted = true;
+    let retryCount = 0;
+    const maxRetries = 3;
+    
+    const initPlayer = async () => {
+      await loadYouTubeAPI();
+      if (!isMounted) return;
+      
+      setApiLoaded(true);
+      
+      // Create the player
+      if (window.YT && window.YT.Player) {
+        playerRef.current = new window.YT.Player(playerContainerId.current, {
+          videoId: videoId,
+          playerVars: {
+            autoplay: 1,
+            mute: 1, // MUST be muted for mobile autoplay
+            loop: 1,
+            playlist: videoId,
+            controls: 0,
+            showinfo: 0,
+            rel: 0,
+            modestbranding: 1,
+            playsinline: 1, // Critical for iOS
+            iv_load_policy: 3,
+            disablekb: 1,
+            fs: 0,
+            origin: window.location.origin, // Required for some mobile browsers
+          },
+          events: {
+            onReady: (event) => {
+              // Force play on ready - multiple attempts for mobile
+              const player = event.target;
+              player.mute(); // Ensure muted
+              player.playVideo();
+              
+              // Retry playing after delays (helps with mobile)
+              setTimeout(() => {
+                if (player && isMounted) {
+                  player.playVideo();
+                }
+              }, 500);
+              
+              setTimeout(() => {
+                if (player && isMounted) {
+                  player.playVideo();
+                  setIsVideoReady(true);
+                }
+              }, 1000);
+            },
+            onStateChange: (event) => {
+              const player = event.target;
+              
+              // Video started playing
+              if (event.data === window.YT.PlayerState.PLAYING) {
+                setIsVideoReady(true);
+                retryCount = 0;
+              }
+              
+              // If video pauses or ends, try to play again
+              if (event.data === window.YT.PlayerState.PAUSED || 
+                  event.data === window.YT.PlayerState.ENDED) {
+                player.playVideo();
+              }
+              
+              // Handle buffering - if stuck, retry
+              if (event.data === window.YT.PlayerState.BUFFERING) {
+                setTimeout(() => {
+                  if (player && isMounted && retryCount < maxRetries) {
+                    player.playVideo();
+                    retryCount++;
+                  }
+                }, 2000);
+              }
+            },
+            onError: () => {
+              // On error, still show as ready to hide loading state
+              setIsVideoReady(true);
+            }
+          }
+        });
+      }
+    };
 
-    if (containerRef.current) {
-      observer.observe(containerRef.current);
-    }
+    initPlayer();
 
-    return () => observer.disconnect();
+    return () => {
+      isMounted = false;
+      if (playerRef.current) {
+        playerRef.current.destroy();
+      }
+    };
+  }, [videoId]);
+
+  // Handle visibility change - resume video when user returns to tab
+  useEffect(() => {
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === 'visible' && playerRef.current) {
+        // Try to resume playback when page becomes visible
+        playerRef.current.playVideo();
+      }
+    };
+
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+    return () => {
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+    };
+  }, []);
+
+  // Handle page focus - also try to play on focus (helps mobile)
+  useEffect(() => {
+    const handleFocus = () => {
+      if (playerRef.current) {
+        playerRef.current.playVideo();
+      }
+    };
+
+    window.addEventListener('focus', handleFocus);
+    return () => {
+      window.removeEventListener('focus', handleFocus);
+    };
+  }, []);
+
+  // Handle dynamic viewport height for mobile browsers (address bar hide/show)
+  useEffect(() => {
+    const setVhProperty = () => {
+      const vh = window.innerHeight * 0.01;
+      document.documentElement.style.setProperty('--vh-fix', `${vh * 100}px`);
+    };
+
+    setVhProperty();
+    window.addEventListener('resize', setVhProperty);
+    window.addEventListener('orientationchange', setVhProperty);
+
+    return () => {
+      window.removeEventListener('resize', setVhProperty);
+      window.removeEventListener('orientationchange', setVhProperty);
+    };
   }, []);
 
   // Preload thumbnail
@@ -62,30 +264,30 @@ export const VideoHero: React.FC<VideoHeroProps> = memo(({
     img.src = getYouTubeThumbnail(videoId);
   }, [videoId]);
 
-  // Handle video ready state
-  const handleVideoLoad = useCallback(() => {
-    setTimeout(() => setIsVideoReady(true), 500);
-  }, []);
-
-  // Enable sound - this requires user interaction
+  // Enable sound - uses YouTube API
   const enableSound = useCallback(() => {
+    if (playerRef.current) {
+      playerRef.current.unMute();
+    }
     setIsMuted(false);
     setHasUserInteracted(true);
     setShowSoundPrompt(false);
-    // Force iframe reload with sound enabled
-    setIframeKey(prev => prev + 1);
   }, []);
 
-  // Toggle mute
+  // Toggle mute using YouTube API
   const toggleMute = useCallback(() => {
-    const newMutedState = !isMuted;
-    setIsMuted(newMutedState);
+    if (playerRef.current) {
+      if (isMuted) {
+        playerRef.current.unMute();
+      } else {
+        playerRef.current.mute();
+      }
+    }
+    setIsMuted(!isMuted);
     setHasUserInteracted(true);
-    // Reload iframe with new mute state
-    setIframeKey(prev => prev + 1);
   }, [isMuted]);
 
-  // Hide sound prompt after 10 seconds if user doesn't interact
+  // Hide sound prompt after 15 seconds
   useEffect(() => {
     if (showSoundPrompt && isVideoReady) {
       const timer = setTimeout(() => {
@@ -95,14 +297,16 @@ export const VideoHero: React.FC<VideoHeroProps> = memo(({
     }
   }, [showSoundPrompt, isVideoReady]);
 
-  // YouTube embed URL - mute based on state
-  const embedUrl = `https://www.youtube.com/embed/${videoId}?autoplay=1&mute=${isMuted ? 1 : 0}&loop=1&playlist=${videoId}&controls=0&showinfo=0&rel=0&modestbranding=1&playsinline=1&enablejsapi=1`;
-
   return (
     <div 
       ref={containerRef}
       className={`absolute inset-0 w-full h-full overflow-hidden contain-paint ${className}`}
-      style={{ minHeight: '100vh', minWidth: '100vw' }}
+      style={{
+        minHeight: '100vh', 
+        minWidth: '100vw',
+        height: 'var(--vh-fix, 100vh)',
+        width: '100vw',
+      }}
     >
       {/* Base Background */}
       <div className="absolute inset-0 bg-black" aria-hidden="true" />
@@ -130,12 +334,9 @@ export const VideoHero: React.FC<VideoHeroProps> = memo(({
             transition={{ duration: 0.5 }}
           >
             <motion.div
-              className="w-20 h-20 rounded-full bg-white/10 backdrop-blur-sm flex items-center justify-center cursor-pointer"
+              className="w-20 h-20 rounded-full bg-white/10 backdrop-blur-sm flex items-center justify-center"
               animate={{ scale: [1, 1.05, 1] }}
               transition={{ duration: 2, repeat: Infinity, ease: 'easeInOut' }}
-              onClick={() => setShouldLoadVideo(true)}
-              role="button"
-              aria-label="Play video"
             >
               <Play className="w-8 h-8 text-white ml-1" />
             </motion.div>
@@ -143,30 +344,27 @@ export const VideoHero: React.FC<VideoHeroProps> = memo(({
         )}
       </AnimatePresence>
 
-      {/* YouTube Video */}
-      {shouldLoadVideo && (
+      {/* YouTube Video Container - Using IFrame API */}
+      {apiLoaded && (
         <div 
           className="absolute z-[2]"
           style={{
             top: '50%',
             left: '50%',
             transform: 'translate(-50%, -50%)',
-            width: 'max(100vw, 177.78vh)',
-            height: 'max(100vh, 56.25vw)',
+            width: 'max(100vw, calc(100vh * 16 / 9))',
+            height: 'max(100vh, calc(100vw * 9 / 16))',
+            minWidth: '100vw',
+            minHeight: '100vh',
             opacity: isVideoReady ? 1 : 0,
             transition: 'opacity 0.5s ease-out',
+            pointerEvents: 'none',
           }}
         >
-          <iframe
-            key={iframeKey}
-            ref={iframeRef}
-            src={embedUrl}
-            title="AutoSpark Video Background"
+          <div 
+            id={playerContainerId.current}
             className="absolute inset-0 w-full h-full"
-            style={{ border: 'none', pointerEvents: 'none' }}
-            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-            loading="lazy"
-            onLoad={handleVideoLoad}
+            style={{ pointerEvents: 'none' }}
           />
         </div>
       )}

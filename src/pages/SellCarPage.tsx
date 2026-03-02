@@ -54,17 +54,17 @@ export const SellCarPage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 pt-20">
-      <div className="bg-gradient-to-r from-gray-900 to-black text-white py-16">
-        <div className="container mx-auto px-4 text-center">
-          <h1 className="text-5xl font-bold mb-4">{t('sell.title')}</h1>
-          <p className="text-xl text-gray-300">{t('sell.subtitle')}</p>
+    <div className={`min-h-screen pt-20 ${theme === 'dark' ? 'bg-transparent' : 'bg-gray-50'}`}>
+      <div className="bg-gradient-to-r from-[#0D0D0D] to-[#1a0a0a] text-white py-12 sm:py-16">
+        <div className="container mx-auto px-3 sm:px-4 md:px-6 text-center">
+          <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-4">{t('sell.title')}</h1>
+          <p className="text-lg sm:text-xl text-gray-300">{t('sell.subtitle')}</p>
         </div>
       </div>
 
-      <div className="container mx-auto px-4 py-12">
+      <div className="container mx-auto px-3 sm:px-4 md:px-6 py-8 sm:py-12">
         <div className="max-w-4xl mx-auto">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6 md:gap-8 mb-8 sm:mb-12">
             {[
               {
                 icon: DollarSign,
@@ -82,22 +82,22 @@ export const SellCarPage = () => {
                 description: language === 'en' ? 'Get paid immediately' : 'অবিলম্বে অর্থ প্রদান পান',
               },
             ].map((feature, index) => (
-              <Card key={index} className="p-6 text-center">
-                <feature.icon className="h-12 w-12 text-blue-600 mx-auto mb-4" />
-                <h3 className="text-lg font-bold text-gray-900 mb-2">{feature.title}</h3>
-                <p className="text-gray-600 text-sm">{feature.description}</p>
+              <Card key={index} className={`p-4 sm:p-6 text-center ${theme === 'dark' ? 'bg-black/30 backdrop-blur-sm border-gray-800' : ''}`}>
+                <feature.icon className={`h-10 w-10 sm:h-12 sm:w-12 mx-auto mb-3 sm:mb-4 ${theme === 'dark' ? 'text-[#FF1A1A]' : 'text-[#C00000]'}`} />
+                <h3 className={`text-base sm:text-lg font-bold mb-2 ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>{feature.title}</h3>
+                <p className={`text-xs sm:text-sm ${theme === 'dark' ? 'text-gray-400' : 'text-gray-600'}`}>{feature.description}</p>
               </Card>
             ))}
           </div>
 
-          <Card className="p-8">
-            <h2 className="text-2xl font-bold text-gray-900 mb-6">
+          <Card className={`p-4 sm:p-6 md:p-8 ${theme === 'dark' ? 'bg-black/30 backdrop-blur-sm border-gray-800' : ''}`}>
+            <h2 className={`text-xl sm:text-2xl font-bold mb-4 sm:mb-6 ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
               {t('sell.valuation')}
             </h2>
             <form onSubmit={handleSubmit} className="space-y-4">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className={`block text-sm font-medium mb-2 ${theme === 'dark' ? 'text-gray-300' : 'text-gray-700'}`}>
                     {t('form.name')} *
                   </label>
                   <input
@@ -105,11 +105,11 @@ export const SellCarPage = () => {
                     required
                     value={formData.customerName}
                     onChange={(e) => setFormData({ ...formData, customerName: e.target.value })}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-600 focus:border-transparent"
+                    className={`w-full px-3 sm:px-4 py-2 border rounded-lg focus:ring-2 focus:ring-[#C00000] focus:border-transparent ${theme === 'dark' ? 'bg-black/50 border-gray-700 text-white' : 'border-gray-300'}`}
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className={`block text-sm font-medium mb-2 ${theme === 'dark' ? 'text-gray-300' : 'text-gray-700'}`}>
                     {t('form.email')} *
                   </label>
                   <input
@@ -117,13 +117,13 @@ export const SellCarPage = () => {
                     required
                     value={formData.customerEmail}
                     onChange={(e) => setFormData({ ...formData, customerEmail: e.target.value })}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-600 focus:border-transparent"
+                    className={`w-full px-3 sm:px-4 py-2 border rounded-lg focus:ring-2 focus:ring-[#C00000] focus:border-transparent ${theme === 'dark' ? 'bg-black/50 border-gray-700 text-white' : 'border-gray-300'}`}
                   />
                 </div>
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className={`block text-sm font-medium mb-2 ${theme === 'dark' ? 'text-gray-300' : 'text-gray-700'}`}>
                   {t('form.phone')} *
                 </label>
                 <input
@@ -131,13 +131,13 @@ export const SellCarPage = () => {
                   required
                   value={formData.customerPhone}
                   onChange={(e) => setFormData({ ...formData, customerPhone: e.target.value })}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-600 focus:border-transparent"
+                  className={`w-full px-3 sm:px-4 py-2 border rounded-lg focus:ring-2 focus:ring-[#C00000] focus:border-transparent ${theme === 'dark' ? 'bg-black/50 border-gray-700 text-white' : 'border-gray-300'}`}
                 />
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className={`block text-sm font-medium mb-2 ${theme === 'dark' ? 'text-gray-300' : 'text-gray-700'}`}>
                     {t('filter.brand')} *
                   </label>
                   <input
@@ -145,11 +145,11 @@ export const SellCarPage = () => {
                     required
                     value={formData.vehicleBrand}
                     onChange={(e) => setFormData({ ...formData, vehicleBrand: e.target.value })}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-600 focus:border-transparent"
+                    className={`w-full px-3 sm:px-4 py-2 border rounded-lg focus:ring-2 focus:ring-[#C00000] focus:border-transparent ${theme === 'dark' ? 'bg-black/50 border-gray-700 text-white' : 'border-gray-300'}`}
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className={`block text-sm font-medium mb-2 ${theme === 'dark' ? 'text-gray-300' : 'text-gray-700'}`}>
                     {t('filter.model')} *
                   </label>
                   <input
@@ -157,11 +157,11 @@ export const SellCarPage = () => {
                     required
                     value={formData.vehicleModel}
                     onChange={(e) => setFormData({ ...formData, vehicleModel: e.target.value })}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-600 focus:border-transparent"
+                    className={`w-full px-3 sm:px-4 py-2 border rounded-lg focus:ring-2 focus:ring-[#C00000] focus:border-transparent ${theme === 'dark' ? 'bg-black/50 border-gray-700 text-white' : 'border-gray-300'}`}
                   />
                 </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                <div className="sm:col-span-2 md:col-span-1">
+                  <label className={`block text-sm font-medium mb-2 ${theme === 'dark' ? 'text-gray-300' : 'text-gray-700'}`}>
                     {t('vehicle.year')} *
                   </label>
                   <input
@@ -171,14 +171,14 @@ export const SellCarPage = () => {
                     onChange={(e) => setFormData({ ...formData, vehicleYear: parseInt(e.target.value) })}
                     min="1990"
                     max={new Date().getFullYear()}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-600 focus:border-transparent"
+                    className={`w-full px-3 sm:px-4 py-2 border rounded-lg focus:ring-2 focus:ring-[#C00000] focus:border-transparent ${theme === 'dark' ? 'bg-black/50 border-gray-700 text-white' : 'border-gray-300'}`}
                   />
                 </div>
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className={`block text-sm font-medium mb-2 ${theme === 'dark' ? 'text-gray-300' : 'text-gray-700'}`}>
                     {t('vehicle.mileage')} (km) *
                   </label>
                   <input
@@ -186,17 +186,17 @@ export const SellCarPage = () => {
                     required
                     value={formData.mileage}
                     onChange={(e) => setFormData({ ...formData, mileage: parseInt(e.target.value) })}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-600 focus:border-transparent"
+                    className={`w-full px-3 sm:px-4 py-2 border rounded-lg focus:ring-2 focus:ring-[#C00000] focus:border-transparent ${theme === 'dark' ? 'bg-black/50 border-gray-700 text-white' : 'border-gray-300'}`}
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className={`block text-sm font-medium mb-2 ${theme === 'dark' ? 'text-gray-300' : 'text-gray-700'}`}>
                     {t('vehicle.condition')} *
                   </label>
                   <select
                     value={formData.condition}
                     onChange={(e) => setFormData({ ...formData, condition: e.target.value })}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-600 focus:border-transparent"
+                    className={`w-full px-3 sm:px-4 py-2 border rounded-lg focus:ring-2 focus:ring-[#C00000] focus:border-transparent ${theme === 'dark' ? 'bg-black/50 border-gray-700 text-white' : 'border-gray-300'}`}
                   >
                     <option value="excellent">{language === 'en' ? 'Excellent' : 'চমৎকার'}</option>
                     <option value="good">{language === 'en' ? 'Good' : 'ভালো'}</option>
@@ -207,7 +207,7 @@ export const SellCarPage = () => {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className={`block text-sm font-medium mb-2 ${theme === 'dark' ? 'text-gray-300' : 'text-gray-700'}`}>
                   {t('form.message')}
                 </label>
                 <textarea
@@ -215,7 +215,7 @@ export const SellCarPage = () => {
                   value={formData.description}
                   onChange={(e) => setFormData({ ...formData, description: e.target.value })}
                   placeholder={language === 'en' ? 'Tell us more about your vehicle...' : 'আপনার গাড়ি সম্পর্কে আরও বলুন...'}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-600 focus:border-transparent"
+                  className={`w-full px-3 sm:px-4 py-2 border rounded-lg focus:ring-2 focus:ring-[#C00000] focus:border-transparent ${theme === 'dark' ? 'bg-black/50 border-gray-700 text-white placeholder-gray-500' : 'border-gray-300'}`}
                 ></textarea>
               </div>
 

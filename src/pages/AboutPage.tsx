@@ -133,10 +133,10 @@ export const AboutPage = () => {
             <span className="inline-block px-4 py-2 bg-[#C00000]/20 text-[#FF1A1A] rounded-full text-sm font-medium mb-4 border border-[#C00000]/30">
               {language === 'en' ? 'Established 2014' : 'প্রতিষ্ঠিত ২০১৪'}
             </span>
-            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-6">
+            <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-4 sm:mb-6">
               {language === 'en' ? 'About Auto Spark BD' : 'অটো স্পার্ক বিডি সম্পর্কে'}
             </h1>
-            <p className="text-xl text-gray-300 max-w-2xl leading-relaxed">
+            <p className="text-base sm:text-lg md:text-xl text-gray-300 max-w-2xl leading-relaxed">
               {language === 'en'
                 ? "North Bengal's premier destination for luxury and premium automobiles. Where passion meets excellence."
                 : 'উত্তরবঙ্গের বিলাসবহুল এবং প্রিমিয়াম গাড়ির প্রধান গন্তব্য। যেখানে আবেগ উৎকর্ষতার সাথে মিলিত হয়।'}
@@ -395,20 +395,20 @@ export const AboutPage = () => {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.6 }}
-          className="mb-20"
+          className="mb-16 sm:mb-20"
         >
-          <div className="text-center mb-12">
-            <span className="text-[#C00000] font-semibold text-sm uppercase tracking-wider">
+          <div className="text-center mb-8 sm:mb-12">
+            <span className="text-[#C00000] font-semibold text-xs sm:text-sm uppercase tracking-wider">
               {language === 'en' ? 'Our Journey' : 'আমাদের যাত্রা'}
             </span>
-            <h2 className={`text-3xl md:text-4xl font-bold ${theme === 'dark' ? 'text-white' : 'text-gray-900'} mt-2`}>
+            <h2 className={`text-2xl sm:text-3xl md:text-4xl font-bold ${theme === 'dark' ? 'text-white' : 'text-gray-900'} mt-2`}>
               {language === 'en' ? 'Milestones & Achievements' : 'মাইলফলক এবং অর্জন'}
             </h2>
           </div>
           
           <div className="relative">
             {/* Timeline Line */}
-            <div className="absolute left-4 md:left-1/2 top-0 bottom-0 w-0.5 bg-gradient-to-b from-[#C00000] via-[#C00000]/50 to-transparent transform md:-translate-x-1/2"></div>
+            <div className="absolute left-3 sm:left-4 md:left-1/2 top-0 bottom-0 w-0.5 bg-gradient-to-b from-[#C00000] via-[#C00000]/50 to-transparent transform md:-translate-x-1/2"></div>
             
             {milestones.map((milestone, index) => (
               <motion.div
@@ -417,22 +417,285 @@ export const AboutPage = () => {
                 whileInView={{ opacity: 1, x: 0 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.5, delay: index * 0.1 }}
-                className={`relative flex items-center mb-8 ${index % 2 === 0 ? 'md:flex-row' : 'md:flex-row-reverse'}`}
+                className={`relative flex items-center mb-6 sm:mb-8 ${index % 2 === 0 ? 'md:flex-row' : 'md:flex-row-reverse'}`}
               >
-                <div className={`w-full md:w-5/12 ${index % 2 === 0 ? 'md:pr-12 md:text-right' : 'md:pl-12'} pl-12 md:pl-0`}>
-                  <Card className={`p-6 ${theme === 'dark' ? 'bg-gray-900/50 border-gray-800' : 'bg-white'}`}>
-                    <span className="text-[#C00000] font-bold text-lg">{milestone.year}</span>
-                    <h4 className={`text-xl font-bold ${theme === 'dark' ? 'text-white' : 'text-gray-900'} mt-1 mb-2`}>{milestone.title}</h4>
-                    <p className={`${theme === 'dark' ? 'text-gray-400' : 'text-gray-600'} text-sm`}>{milestone.description}</p>
+                <div className={`w-full md:w-5/12 ${index % 2 === 0 ? 'md:pr-12 md:text-right' : 'md:pl-12'} pl-8 sm:pl-12 md:pl-0`}>
+                  <Card className={`p-4 sm:p-6 ${theme === 'dark' ? 'bg-gray-900/50 border-gray-800' : 'bg-white'}`}>
+                    <span className="text-[#C00000] font-bold text-base sm:text-lg">{milestone.year}</span>
+                    <h4 className={`text-lg sm:text-xl font-bold ${theme === 'dark' ? 'text-white' : 'text-gray-900'} mt-1 mb-2`}>{milestone.title}</h4>
+                    <p className={`${theme === 'dark' ? 'text-gray-400' : 'text-gray-600'} text-xs sm:text-sm`}>{milestone.description}</p>
                   </Card>
                 </div>
                 
                 {/* Timeline Dot */}
-                <div className="absolute left-4 md:left-1/2 w-4 h-4 bg-[#C00000] rounded-full transform md:-translate-x-1/2 border-4 border-white dark:border-gray-950 shadow-lg"></div>
+                <div className="absolute left-1 sm:left-2 md:left-1/2 w-3 h-3 sm:w-4 sm:h-4 bg-[#C00000] rounded-full transform md:-translate-x-1/2 border-2 sm:border-4 border-white dark:border-gray-950 shadow-lg"></div>
                 
                 <div className="hidden md:block w-5/12"></div>
               </motion.div>
             ))}
+          </div>
+        </motion.div>
+
+        {/* Meet Our Experts Section - Timeline Style */}
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.6 }}
+          className="mb-16 sm:mb-20"
+        >
+          <div className="text-center mb-8 sm:mb-12">
+            <span className="text-[#C00000] font-semibold text-xs sm:text-sm uppercase tracking-wider">
+              {language === 'en' ? 'The People Behind Our Success' : 'আমাদের সাফল্যের পেছনের মানুষ'}
+            </span>
+            <h2 className={`text-2xl sm:text-3xl md:text-4xl font-bold ${theme === 'dark' ? 'text-white' : 'text-gray-900'} mt-2`}>
+              {language === 'en' ? 'Meet Our Experts' : 'আমাদের বিশেষজ্ঞদের সাথে পরিচিত হন'}
+            </h2>
+          </div>
+
+          <div className="relative">
+            {/* Timeline Line */}
+            <div className="absolute left-3 sm:left-4 md:left-1/2 top-0 bottom-0 w-0.5 bg-gradient-to-b from-[#C00000] via-[#C00000]/50 to-transparent transform md:-translate-x-1/2"></div>
+            
+            {/* Expert 1 - Farhan Kabir (Left) */}
+            <motion.div
+              initial={{ opacity: 0, x: -30 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.5, delay: 0.1 }}
+              className="relative flex items-center mb-6 sm:mb-8 md:flex-row"
+            >
+              <div className="w-full md:w-5/12 md:pr-12 md:text-right pl-8 sm:pl-12 md:pl-0">
+                <Card className={`p-4 sm:p-6 ${theme === 'dark' ? 'bg-gray-900/50 border-gray-800' : 'bg-white'} overflow-hidden group hover:shadow-xl transition-all duration-300`}>
+                  <div className="flex flex-col md:flex-row-reverse md:items-center gap-4">
+                    <div className="relative w-36 h-36 sm:w-44 sm:h-44 md:w-52 md:h-52 mx-auto md:mx-0 flex-shrink-0">
+                      <img
+                        src="https://images.pexels.com/photos/34067041/pexels-photo-34067041.png"
+                        alt="Farhan Kabir"
+                        className="w-full h-full rounded-full object-cover border-3 border-[#C00000]/30 group-hover:border-[#C00000] transition-colors duration-300"
+                      />
+                      <motion.div 
+                        className="absolute -top-1 -right-1 bg-[#C00000] text-white p-1.5 rounded-full text-xs shadow-lg"
+                        animate={{ scale: [1, 1.1, 1] }}
+                        transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+                      >
+                        💻
+                      </motion.div>
+                    </div>
+                    <div className="text-center md:text-right flex-1">
+                      <span className="text-[#C00000] font-bold text-xs sm:text-sm">💻 Tech Lead</span>
+                      <h4 className={`text-lg sm:text-xl font-bold ${theme === 'dark' ? 'text-white' : 'text-gray-900'} mt-1`}>
+                        {language === 'en' ? 'Farhan Kabir' : 'ফারহান কবির'}
+                      </h4>
+                      <p className="text-[#C00000] font-semibold text-xs sm:text-sm mb-2">
+                        {language === 'en' ? 'Lead Developer' : 'প্রধান ডেভেলপার'}
+                      </p>
+                      <p className={`${theme === 'dark' ? 'text-gray-400' : 'text-gray-600'} text-xs sm:text-sm`}>
+                        {language === 'en' 
+                          ? 'Driving digital innovation and creating seamless experiences for our customers.'
+                          : 'ডিজিটাল উদ্ভাবন চালনা এবং গ্রাহকদের জন্য নিরবচ্ছিন্ন অভিজ্ঞতা তৈরি করছেন।'}
+                      </p>
+                      <div className="flex justify-center md:justify-end gap-2 mt-3">
+                        <a href="#" className="w-8 h-8 rounded-full bg-[#C00000]/10 flex items-center justify-center hover:bg-[#C00000] hover:text-white transition-colors">
+                          <Linkedin className="w-4 h-4" />
+                        </a>
+                        <a href="#" className="w-8 h-8 rounded-full bg-[#C00000]/10 flex items-center justify-center hover:bg-[#C00000] hover:text-white transition-colors">
+                          <Facebook className="w-4 h-4" />
+                        </a>
+                        <a href="#" className="w-8 h-8 rounded-full bg-[#C00000]/10 flex items-center justify-center hover:bg-[#C00000] hover:text-white transition-colors">
+                          <Mail className="w-4 h-4" />
+                        </a>
+                      </div>
+                    </div>
+                  </div>
+                </Card>
+              </div>
+              
+              {/* Timeline Dot */}
+              <div className="absolute left-1 sm:left-2 md:left-1/2 w-3 h-3 sm:w-4 sm:h-4 bg-[#C00000] rounded-full transform md:-translate-x-1/2 border-2 sm:border-4 border-white dark:border-gray-950 shadow-lg"></div>
+              
+              <div className="hidden md:block w-5/12"></div>
+            </motion.div>
+
+            {/* Expert 2 - Abu Hasan (Right) */}
+            <motion.div
+              initial={{ opacity: 0, x: 30 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.5, delay: 0.2 }}
+              className="relative flex items-center mb-6 sm:mb-8 md:flex-row-reverse"
+            >
+              <div className="w-full md:w-5/12 md:pl-12 pl-8 sm:pl-12 md:text-left">
+                <Card className={`p-4 sm:p-6 ${theme === 'dark' ? 'bg-gray-900/50 border-gray-800' : 'bg-white'} overflow-hidden group hover:shadow-xl transition-all duration-300`}>
+                  <div className="flex flex-col md:flex-row md:items-center gap-4">
+                    <div className="relative w-36 h-36 sm:w-44 sm:h-44 md:w-52 md:h-52 mx-auto md:mx-0 flex-shrink-0">
+                      <img
+                        src="https://images.pexels.com/photos/3184611/pexels-photo-3184611.jpeg?auto=compress&cs=tinysrgb&w=400"
+                        alt="Abu Hasan"
+                        className="w-full h-full rounded-full object-cover border-3 border-[#C00000]/30 group-hover:border-[#C00000] transition-colors duration-300"
+                      />
+                      <motion.div 
+                        className="absolute -top-1 -right-1 bg-[#C00000] text-white p-1.5 rounded-full text-xs shadow-lg"
+                        animate={{ scale: [1, 1.1, 1] }}
+                        transition={{ duration: 2, repeat: Infinity, ease: "easeInOut", delay: 0.3 }}
+                      >
+                        👔
+                      </motion.div>
+                    </div>
+                    <div className="text-center md:text-left flex-1">
+                      <span className="text-[#C00000] font-bold text-xs sm:text-sm">👔 Leadership</span>
+                      <h4 className={`text-lg sm:text-xl font-bold ${theme === 'dark' ? 'text-white' : 'text-gray-900'} mt-1`}>
+                        {language === 'en' ? 'Abu Hasan' : 'আবু হাসান'}
+                      </h4>
+                      <p className="text-[#C00000] font-semibold text-xs sm:text-sm mb-2">
+                        {language === 'en' ? 'General Manager' : 'জেনারেল ম্যানেজার'}
+                      </p>
+                      <p className={`${theme === 'dark' ? 'text-gray-400' : 'text-gray-600'} text-xs sm:text-sm`}>
+                        {language === 'en' 
+                          ? 'Leading our operations with strategic vision and excellence in customer service.'
+                          : 'কৌশলগত দৃষ্টিভঙ্গি এবং গ্রাহক সেবায় উৎকর্ষতার সাথে আমাদের কার্যক্রম পরিচালনা করছেন।'}
+                      </p>
+                      <div className="flex justify-center md:justify-start gap-2 mt-3">
+                        <a href="#" className="w-8 h-8 rounded-full bg-[#C00000]/10 flex items-center justify-center hover:bg-[#C00000] hover:text-white transition-colors">
+                          <Linkedin className="w-4 h-4" />
+                        </a>
+                        <a href="#" className="w-8 h-8 rounded-full bg-[#C00000]/10 flex items-center justify-center hover:bg-[#C00000] hover:text-white transition-colors">
+                          <Facebook className="w-4 h-4" />
+                        </a>
+                        <a href="#" className="w-8 h-8 rounded-full bg-[#C00000]/10 flex items-center justify-center hover:bg-[#C00000] hover:text-white transition-colors">
+                          <Phone className="w-4 h-4" />
+                        </a>
+                      </div>
+                    </div>
+                  </div>
+                </Card>
+              </div>
+              
+              {/* Timeline Dot */}
+              <div className="absolute left-1 sm:left-2 md:left-1/2 w-3 h-3 sm:w-4 sm:h-4 bg-[#C00000] rounded-full transform md:-translate-x-1/2 border-2 sm:border-4 border-white dark:border-gray-950 shadow-lg"></div>
+              
+              <div className="hidden md:block w-5/12"></div>
+            </motion.div>
+
+            {/* Expert 3 - Sohan Ahmed (Left) */}
+            <motion.div
+              initial={{ opacity: 0, x: -30 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.5, delay: 0.3 }}
+              className="relative flex items-center mb-6 sm:mb-8 md:flex-row"
+            >
+              <div className="w-full md:w-5/12 md:pr-12 md:text-right pl-8 sm:pl-12 md:pl-0">
+                <Card className={`p-4 sm:p-6 ${theme === 'dark' ? 'bg-gray-900/50 border-gray-800' : 'bg-white'} overflow-hidden group hover:shadow-xl transition-all duration-300`}>
+                  <div className="flex flex-col md:flex-row-reverse md:items-center gap-4">
+                    <div className="relative w-36 h-36 sm:w-44 sm:h-44 md:w-52 md:h-52 mx-auto md:mx-0 flex-shrink-0">
+                      <img
+                        src="https://images.pexels.com/photos/1516680/pexels-photo-1516680.jpeg?auto=compress&cs=tinysrgb&w=400"
+                        alt="Sohan Ahmed"
+                        className="w-full h-full rounded-full object-cover border-3 border-[#C00000]/30 group-hover:border-[#C00000] transition-colors duration-300"
+                      />
+                      <motion.div 
+                        className="absolute -top-1 -right-1 bg-[#C00000] text-white p-1.5 rounded-full text-xs shadow-lg"
+                        animate={{ scale: [1, 1.1, 1] }}
+                        transition={{ duration: 2, repeat: Infinity, ease: "easeInOut", delay: 0.6 }}
+                      >
+                        🚗
+                      </motion.div>
+                    </div>
+                    <div className="text-center md:text-right flex-1">
+                      <span className="text-[#C00000] font-bold text-xs sm:text-sm">🚗 Sales Expert</span>
+                      <h4 className={`text-lg sm:text-xl font-bold ${theme === 'dark' ? 'text-white' : 'text-gray-900'} mt-1`}>
+                        {language === 'en' ? 'Sohan Ahmed' : 'সোহান আহমেদ'}
+                      </h4>
+                      <p className="text-[#C00000] font-semibold text-xs sm:text-sm mb-2">
+                        {language === 'en' ? 'Senior Sales Executive' : 'সিনিয়র সেলস এক্সিকিউটিভ'}
+                      </p>
+                      <p className={`${theme === 'dark' ? 'text-gray-400' : 'text-gray-600'} text-xs sm:text-sm`}>
+                        {language === 'en' 
+                          ? 'Helping customers find their perfect vehicle with personalized guidance.'
+                          : 'ব্যক্তিগত নির্দেশনার মাধ্যমে গ্রাহকদের তাদের নিখুঁত গাড়ি খুঁজে পেতে সাহায্য করছেন।'}
+                      </p>
+                      <div className="flex justify-center md:justify-end gap-2 mt-3">
+                        <a href="#" className="w-8 h-8 rounded-full bg-[#C00000]/10 flex items-center justify-center hover:bg-[#C00000] hover:text-white transition-colors">
+                          <Linkedin className="w-4 h-4" />
+                        </a>
+                        <a href="#" className="w-8 h-8 rounded-full bg-[#C00000]/10 flex items-center justify-center hover:bg-[#C00000] hover:text-white transition-colors">
+                          <Facebook className="w-4 h-4" />
+                        </a>
+                        <a href="#" className="w-8 h-8 rounded-full bg-[#C00000]/10 flex items-center justify-center hover:bg-[#C00000] hover:text-white transition-colors">
+                          <Phone className="w-4 h-4" />
+                        </a>
+                      </div>
+                    </div>
+                  </div>
+                </Card>
+              </div>
+              
+              {/* Timeline Dot */}
+              <div className="absolute left-1 sm:left-2 md:left-1/2 w-3 h-3 sm:w-4 sm:h-4 bg-[#C00000] rounded-full transform md:-translate-x-1/2 border-2 sm:border-4 border-white dark:border-gray-950 shadow-lg"></div>
+              
+              <div className="hidden md:block w-5/12"></div>
+            </motion.div>
+
+            {/* Expert 4 - Amir Rahman (Right) */}
+            <motion.div
+              initial={{ opacity: 0, x: 30 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.5, delay: 0.4 }}
+              className="relative flex items-center mb-6 sm:mb-8 md:flex-row-reverse"
+            >
+              <div className="w-full md:w-5/12 md:pl-12 pl-8 sm:pl-12 md:text-left">
+                <Card className={`p-4 sm:p-6 ${theme === 'dark' ? 'bg-gray-900/50 border-gray-800' : 'bg-white'} overflow-hidden group hover:shadow-xl transition-all duration-300`}>
+                  <div className="flex flex-col md:flex-row md:items-center gap-4">
+                    <div className="relative w-36 h-36 sm:w-44 sm:h-44 md:w-52 md:h-52 mx-auto md:mx-0 flex-shrink-0">
+                      <img
+                        src="https://images.pexels.com/photos/8961065/pexels-photo-8961065.jpeg?auto=compress&cs=tinysrgb&w=400"
+                        alt="Amir Rahman"
+                        className="w-full h-full rounded-full object-cover border-3 border-[#C00000]/30 group-hover:border-[#C00000] transition-colors duration-300"
+                      />
+                      <motion.div 
+                        className="absolute -top-1 -right-1 bg-[#C00000] text-white p-1.5 rounded-full text-xs shadow-lg"
+                        animate={{ scale: [1, 1.1, 1] }}
+                        transition={{ duration: 2, repeat: Infinity, ease: "easeInOut", delay: 0.9 }}
+                      >
+                        🔧
+                      </motion.div>
+                    </div>
+                    <div className="text-center md:text-left flex-1">
+                      <span className="text-[#C00000] font-bold text-xs sm:text-sm">🔧 Tech Expert</span>
+                      <h4 className={`text-lg sm:text-xl font-bold ${theme === 'dark' ? 'text-white' : 'text-gray-900'} mt-1`}>
+                        {language === 'en' ? 'Amir Rahman' : 'আমির রহমান'}
+                      </h4>
+                      <p className="text-[#C00000] font-semibold text-xs sm:text-sm mb-2">
+                        {language === 'en' ? 'Senior Technician' : 'সিনিয়র টেকনিশিয়ান'}
+                      </p>
+                      <p className={`${theme === 'dark' ? 'text-gray-400' : 'text-gray-600'} text-xs sm:text-sm`}>
+                        {language === 'en' 
+                          ? 'Ensuring every vehicle meets our rigorous quality and safety standards.'
+                          : 'প্রতিটি গাড়ি আমাদের কঠোর মান এবং নিরাপত্তা মানদণ্ড পূরণ করছে তা নিশ্চিত করছেন।'}
+                      </p>
+                      <div className="flex justify-center md:justify-start gap-2 mt-3">
+                        <a href="#" className="w-8 h-8 rounded-full bg-[#C00000]/10 flex items-center justify-center hover:bg-[#C00000] hover:text-white transition-colors">
+                          <Linkedin className="w-4 h-4" />
+                        </a>
+                        <a href="#" className="w-8 h-8 rounded-full bg-[#C00000]/10 flex items-center justify-center hover:bg-[#C00000] hover:text-white transition-colors">
+                          <Facebook className="w-4 h-4" />
+                        </a>
+                        <a href="#" className="w-8 h-8 rounded-full bg-[#C00000]/10 flex items-center justify-center hover:bg-[#C00000] hover:text-white transition-colors">
+                          <Phone className="w-4 h-4" />
+                        </a>
+                      </div>
+                    </div>
+                  </div>
+                </Card>
+              </div>
+              
+              {/* Timeline Dot */}
+              <div className="absolute left-1 sm:left-2 md:left-1/2 w-3 h-3 sm:w-4 sm:h-4 bg-[#C00000] rounded-full transform md:-translate-x-1/2 border-2 sm:border-4 border-white dark:border-gray-950 shadow-lg"></div>
+              
+              <div className="hidden md:block w-5/12"></div>
+            </motion.div>
           </div>
         </motion.div>
 

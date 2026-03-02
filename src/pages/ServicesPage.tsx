@@ -602,9 +602,9 @@ const ServicesPage: React.FC = () => {
   ];
 
   return (
-    <div className={`min-h-screen ${isDark ? 'bg-transparent' : 'bg-gray-50'}`}>
+    <div className={`min-h-screen pt-16 sm:pt-20 ${isDark ? 'bg-transparent' : 'bg-gray-50'}`}>
       {/* Hero Section - Ultra Premium Workshop Scene */}
-      <section className={`relative min-h-[85vh] flex items-center justify-center overflow-hidden ${
+      <section className={`relative min-h-[60vh] sm:min-h-[70vh] lg:min-h-[85vh] flex items-center justify-center overflow-hidden ${
         isDark 
           ? 'bg-gradient-to-br from-slate-950 via-blue-950/30 to-slate-950' 
           : 'bg-gradient-to-br from-slate-100 via-blue-50 to-white'

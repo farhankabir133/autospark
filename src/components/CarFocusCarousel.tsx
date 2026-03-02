@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback, forwardRef, useImperativeHandle } from 'react';
+import { useState, useEffect, useCallback, useRef, forwardRef, useImperativeHandle } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ChevronLeft, ChevronRight, Sparkles } from 'lucide-react';
 import { Link } from 'react-router-dom';
@@ -319,6 +319,31 @@ const CarFocusCarousel = forwardRef<CarFocusCarouselHandle, CarFocusCarouselProp
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [handlePrev, handleNext]);
 
+  // Touch / swipe support
+  const touchStartX = useRef<number | null>(null);
+  const touchStartY = useRef<number | null>(null);
+
+  const onTouchStart = useCallback((e: React.TouchEvent) => {
+    touchStartX.current = e.touches[0].clientX;
+    touchStartY.current = e.touches[0].clientY;
+  }, []);
+
+  const onTouchEnd = useCallback(
+    (e: React.TouchEvent) => {
+      if (touchStartX.current === null || touchStartY.current === null) return;
+      const dx = e.changedTouches[0].clientX - touchStartX.current;
+      const dy = e.changedTouches[0].clientY - touchStartY.current;
+      // Only register horizontal swipe when it dominates vertical movement
+      if (Math.abs(dx) > 50 && Math.abs(dx) > Math.abs(dy) * 1.2) {
+        if (dx < 0) handleNext();
+        else handlePrev();
+      }
+      touchStartX.current = null;
+      touchStartY.current = null;
+    },
+    [handleNext, handlePrev]
+  );
+
   // Get visible cars with positions - Show more cars for wider spread (14 total cars)
   const getVisibleCars = () => {
     const visible = [];
@@ -487,11 +512,13 @@ const CarFocusCarousel = forwardRef<CarFocusCarouselHandle, CarFocusCarouselProp
 
       {/* 3D Carousel Container - WIDER */}
       <div 
-        className="relative h-[500px] md:h-[600px] lg:h-[700px] mx-auto max-w-[1600px]"
+        className="relative h-[500px] md:h-[600px] lg:h-[700px] mx-auto max-w-[1600px] touch-pan-y"
         style={{ 
           perspective: '1600px',
           perspectiveOrigin: '50% 35%',
         }}
+        onTouchStart={onTouchStart}
+        onTouchEnd={onTouchEnd}
       >
         {/* Cars Container */}
         <div className="absolute inset-0 flex items-center justify-center">

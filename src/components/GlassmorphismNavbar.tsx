@@ -119,7 +119,7 @@ export const GlassmorphismNavbar = () => {
     >
       {/* Glassmorphic background */}
       <div className={`${isScrolled ? glassBackgroundScrolled : glassBackground} transition-all duration-300`}>
-        <nav className="container mx-auto px-4 sm:px-6 lg:px-8 py-4 lg:py-5">
+        <nav className="max-w-7xl mx-auto px-3 sm:px-4 lg:px-6 py-3 lg:py-4">
           <div className="flex items-center justify-between">
             {/* Logo Section */}
             <motion.div
@@ -149,7 +149,7 @@ export const GlassmorphismNavbar = () => {
                   <motion.img
                     src={currentLogo}
                     alt="Auto Spark BD"
-                    className="h-16 w-16 sm:h-20 sm:w-20 lg:h-24 lg:w-24 relative z-10 drop-shadow-[0_0_8px_rgba(192,0,0,0.5)]"
+                    className="h-12 w-12 sm:h-14 sm:w-14 lg:h-16 lg:w-16 relative z-10 drop-shadow-[0_0_8px_rgba(192,0,0,0.5)]"
                     initial={{ opacity: 0, scale: 0.5, rotate: -180 }}
                     animate={{ opacity: 1, scale: 1, rotate: 0 }}
                     transition={{ 
@@ -160,7 +160,7 @@ export const GlassmorphismNavbar = () => {
                   />
                 </motion.div>
                 <div>
-                  <span className={`text-lg sm:text-xl lg:text-2xl font-bold tracking-tight transition-colors ${
+                  <span className={`text-base sm:text-lg lg:text-xl font-bold tracking-tight transition-colors ${
                     theme === 'dark' ? 'text-white' : 'text-gray-900'
                   }`}>
                     {t('site.title')}
@@ -173,7 +173,7 @@ export const GlassmorphismNavbar = () => {
             </motion.div>
 
             {/* Desktop Navigation */}
-            <div className="hidden lg:flex items-center space-x-1">
+            <div className="hidden lg:flex items-center space-x-0.5">
               {navLinks.map((link, index) => (
                 <motion.div
                   key={link.to}
@@ -187,7 +187,7 @@ export const GlassmorphismNavbar = () => {
                   <Link
                     to={link.to}
                     onClick={() => handleNavClick(link.to)}
-                    className={`px-4 py-2 rounded-lg text-sm font-medium transition-all duration-300 relative ${
+                    className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-all duration-300 relative ${
                       activeLink === link.to
                         ? theme === 'dark'
                           ? 'text-[#FF1A1A]'
@@ -217,20 +217,20 @@ export const GlassmorphismNavbar = () => {
             </div>
 
             {/* Right Controls */}
-            <div className="flex items-center space-x-2 sm:space-x-3">
+            <div className="flex items-center space-x-1 sm:space-x-2">
               {/* Search Button - Desktop */}
               <motion.button
                 whileHover={{ scale: 1.1 }}
                 whileTap={{ scale: 0.95 }}
                 onClick={() => AudioManager.playClick()}
-                className={`hidden md:flex p-2 rounded-lg transition-all ${
+                className={`hidden md:flex p-1.5 rounded-lg transition-all ${
                   theme === 'dark'
                     ? 'hover:bg-gray-700/50 text-gray-400 hover:text-[#FF1A1A]'
                     : 'hover:bg-gray-100/50 text-gray-600 hover:text-[#C00000]'
                 }`}
                 aria-label="Search"
               >
-                <Search className="h-5 w-5" />
+                <Search className="h-4 w-4" />
               </motion.button>
 
               {/* Theme Toggle */}
@@ -238,7 +238,7 @@ export const GlassmorphismNavbar = () => {
                 whileHover={{ scale: 1.1, rotate: 20 }}
                 whileTap={{ scale: 0.95 }}
                 onClick={handleToggleTheme}
-                className={`p-2 rounded-lg transition-all ${
+                className={`p-1.5 rounded-lg transition-all ${
                   theme === 'dark'
                     ? 'hover:bg-gray-700/50 text-yellow-400'
                     : 'hover:bg-gray-100/50 text-gray-800'
@@ -246,9 +246,9 @@ export const GlassmorphismNavbar = () => {
                 aria-label="Toggle dark mode"
               >
                 {theme === 'dark' ? (
-                  <Sun className="h-5 w-5" />
+                  <Sun className="h-4 w-4" />
                 ) : (
-                  <Moon className="h-5 w-5" />
+                  <Moon className="h-4 w-4" />
                 )}
               </motion.button>
 
@@ -257,14 +257,14 @@ export const GlassmorphismNavbar = () => {
                 whileHover={{ scale: 1.1 }}
                 whileTap={{ scale: 0.95 }}
                 onClick={toggleLanguage}
-                className={`p-2 rounded-lg transition-all ${
+                className={`p-1.5 rounded-lg transition-all ${
                   theme === 'dark'
                     ? 'hover:bg-gray-700/50 text-[#FF1A1A]'
                     : 'hover:bg-gray-100/50 text-[#C00000]'
                 }`}
                 aria-label="Toggle language"
               >
-                <Globe className="h-5 w-5" />
+                <Globe className="h-4 w-4" />
               </motion.button>
 
               {/* CTA Button - Desktop */}
@@ -272,7 +272,7 @@ export const GlassmorphismNavbar = () => {
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
                 onClick={() => AudioManager.playButtonClick()}
-                className={`hidden sm:flex px-4 py-2 rounded-lg font-semibold text-sm transition-all ${
+                className={`hidden sm:flex px-3 py-1.5 rounded-lg font-semibold text-xs transition-all ${
                   theme === 'dark'
                     ? 'bg-gradient-to-r from-[#C00000] to-[#FF1A1A] hover:from-[#8B0000] hover:to-[#C00000] text-white shadow-lg shadow-[#C00000]/30'
                     : 'bg-gradient-to-r from-[#C00000] to-[#8B0000] hover:from-[#8B0000] hover:to-[#600000] text-white shadow-lg shadow-[#C00000]/30'

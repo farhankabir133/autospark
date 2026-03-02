@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef } from 'react';
+import { useEffect, useState, useRef, lazy, Suspense } from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { ArrowRight, Car, Wrench, Shield, Users, Award, ChevronDown, Zap, Fuel } from 'lucide-react';
@@ -31,10 +31,22 @@ import { AnimatedComparisonSlider } from '../components/AnimatedComparisonSlider
 import { FilterAnimations } from '../components/FilterAnimations';
 import { FloatingParticlesBackground } from '../components/FloatingParticlesBackground';
 import { EnhancedSkeleton } from '../components/EnhancedSkeleton';
+import { UnicornBackground } from '../components/UnicornBackground';
 import { CarouselPlaceholder } from '../components/CarouselPlaceholder';
 import { ImageLoadingProgress } from '../components/ImageLoadingProgress';
-import { VideoHero } from '../components/VideoHero';
-import { TypewriterText } from '../components/TypewriterText';
+
+// Lazy load 3D component for better performance
+const CarShowcase3D = lazy(() => import('../components/3d/CarShowcase3D'));
+
+// 3D Showcase loading fallback
+const CarShowcase3DFallback = () => (
+  <div className="w-full h-dvh bg-gradient-to-b from-black via-[#0a0a0a] to-black flex items-center justify-center">
+    <div className="flex flex-col items-center">
+      <div className="w-16 h-16 border-4 border-[#C00000] border-t-transparent rounded-full animate-spin" />
+      <p className="mt-4 text-white/60 text-sm tracking-widest uppercase">Loading 3D Experience</p>
+    </div>
+  </div>
+);
 
 export const HomePage = () => {
   const { t, language } = useLanguage();
@@ -180,28 +192,17 @@ export const HomePage = () => {
       exit={{ opacity: 0 }}
       transition={{ duration: 0.5 }}
     >
-      {/* HERO SECTION WITH VIDEO */}
-      <section className="relative h-screen flex items-center justify-center overflow-hidden">
-        {/* Cinematic Video Hero - Premium Experience */}
-        <VideoHero videoId="JOVY3hD4nLM" />
+      {/* HERO SECTION WITH 3D CAR SHOWCASE */}
+      <section className="relative h-dvh flex items-center justify-center overflow-hidden">
+        {/* 3D Car Showcase - Interactive Experience */}
+        <Suspense fallback={<CarShowcase3DFallback />}>
+          <CarShowcase3D />
+        </Suspense>
 
-        {/* Typewriter Text - Positioned at top, subtle and non-blocking */}
-        <div className="absolute top-24 md:top-32 left-0 right-0 z-10 flex justify-center pointer-events-none">
-          <TypewriterText 
-            texts={[
-              language === 'en' ? 'Exclusive Cars in Rajshahi' : 'রাজশাহীতে এক্সক্লুসিভ গাড়ি',
-              language === 'en' ? "North Bengal's Leading Premium Car Showroom" : 'উত্তরবঙ্গের শীর্ষস্থানীয় প্রিমিয়াম কার শোরুম'
-            ]}
-            typingSpeed={60}
-            deletingSpeed={30}
-            pauseDuration={3500}
-          />
-        </div>
-
-        {/* CTA Buttons - Positioned at bottom */}
-        <div className="absolute bottom-20 left-0 right-0 z-10">
+        {/* CTA Buttons - Positioned above color picker */}
+        <div className="absolute bottom-28 sm:bottom-24 md:bottom-20 left-0 right-0 z-20">
           <motion.div 
-            className="flex flex-col sm:flex-row gap-4 justify-center px-4"
+            className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center px-4"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 1 }}
@@ -245,7 +246,7 @@ export const HomePage = () => {
 
         <motion.button
           onClick={scrollToContent}
-          className="absolute bottom-8 left-1/2 transform -translate-x-1/2 text-white"
+          className="absolute bottom-8 left-1/2 transform -translate-x-1/2 text-white hidden sm:block"
           animate={{ y: [0, 10, 0] }}
           transition={{ duration: 2, repeat: Infinity }}
         >
@@ -267,7 +268,7 @@ export const HomePage = () => {
       </div>
 
       {/* PREMIUM COLLECTION - CLICKABLE CAR GRID */}
-      <section className={`py-20 ${theme === 'dark' ? 'bg-transparent' : 'bg-gray-50'}`}>
+      <section className={`py-12 md:py-20 ${theme === 'dark' ? 'bg-transparent' : 'bg-gray-50'}`}>
         <div className="container mx-auto px-4">
           <motion.div 
             className="text-center mb-12"
@@ -279,7 +280,7 @@ export const HomePage = () => {
             <span className={`text-sm font-semibold uppercase tracking-wider ${theme === 'dark' ? 'text-blue-400' : 'text-blue-600'}`}>
               {language === 'en' ? 'Browse Our Collection' : 'আমাদের সংগ্রহ দেখুন'}
             </span>
-            <h2 className={`text-4xl md:text-5xl font-bold mt-2 mb-4 ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
+            <h2 className={`text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold mt-2 mb-4 ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
               {language === 'en' ? 'Premium Collection' : 'প্রিমিয়াম সংগ্রহ'}
             </h2>
             <p className={`text-lg max-w-2xl mx-auto ${theme === 'dark' ? 'text-gray-400' : 'text-gray-600'}`}>
@@ -381,8 +382,13 @@ export const HomePage = () => {
       </section>
 
       {/* FEATURED VEHICLES WITH ENHANCED FLIP CARDS */}
-      <section className={`py-20 ${theme === 'dark' ? 'bg-transparent' : 'bg-gray-50'}`}>
-        <div className="container mx-auto px-4">
+      <section className={`py-12 md:py-20 relative overflow-hidden ${theme === 'dark' ? 'bg-[#0a0a0a]' : 'bg-[#0a0a0a]'}`}>
+        {/* Unicorn Studio Animated Background - full section */}
+        <div className="absolute inset-0 pointer-events-none">
+          <UnicornBackground width="100%" height="100%" />
+        </div>
+        
+        <div className="container mx-auto px-4 relative z-10">
           <motion.div 
             className="text-center mb-12"
             initial={{ opacity: 0, y: 20 }}
@@ -390,13 +396,13 @@ export const HomePage = () => {
             transition={{ duration: 0.6 }}
             viewport={{ once: true }}
           >
-            <span className={`text-sm font-semibold uppercase tracking-wider ${theme === 'dark' ? 'text-blue-400' : 'text-blue-600'}`}>
+            <span className="text-sm font-semibold uppercase tracking-wider text-blue-400">
               {language === 'en' ? 'Interactive Showcase' : 'ইন্টারঅ্যাক্টিভ প্রদর্শনী'}
             </span>
-            <h2 className={`text-4xl md:text-5xl font-bold mt-2 mb-4 ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
+            <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold mt-2 mb-4 text-white drop-shadow-lg">
               {language === 'en' ? 'Featured Vehicles' : 'বৈশিষ্ট্যযুক্ত গাড়ি'}
             </h2>
-            <p className={`text-lg max-w-2xl mx-auto ${theme === 'dark' ? 'text-gray-400' : 'text-gray-600'}`}>
+            <p className="text-lg max-w-2xl mx-auto text-gray-300">
               {language === 'en' 
                 ? 'Experience our premium collection with interactive 3D flip cards. Click to flip and explore detailed specifications.'
                 : 'ইন্টারঅ্যাক্টিভ 3D ফ্লিপ কার্ড দিয়ে আমাদের প্রিমিয়াম সংগ্রহ অনুভব করুন৷ বিস্তারিত স্পেসিফিকেশন অন্বেষণ করতে ক্লিক করুন।'}
@@ -410,56 +416,56 @@ export const HomePage = () => {
             </div>
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 justify-items-center">
-              {carSlides.slice(0, 3).map((car, index) => (
+              {carSlides.slice(0, 3).map((car) => (
                 <EnhancedFlipCard
                   key={car.id}
                   frontContent={
                     <div className="flex flex-col h-full">
                       <img
-                        src={car.imageUrl}
+                        src={car.image}
                         alt={car.model}
                         className="w-full h-48 object-cover rounded-lg mb-4"
                       />
-                      <h3 className={`text-xl font-bold mb-2 ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
+                      <h3 className="text-xl font-bold mb-2 text-white">
                         {car.brand} {car.model}
                       </h3>
-                      <p className={`text-sm mb-2 ${theme === 'dark' ? 'text-gray-400' : 'text-gray-600'}`}>
+                      <p className="text-sm mb-2 text-gray-300">
                         {car.year} • {car.bodyType}
                       </p>
-                      <p className={`text-lg font-bold mt-auto ${theme === 'dark' ? 'text-green-400' : 'text-green-600'}`}>
+                      <p className="text-lg font-bold mt-auto text-green-400">
                         {car.price}
                       </p>
                     </div>
                   }
                   backContent={
                     <div className="space-y-4">
-                      <h3 className={`text-lg font-bold ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
+                      <h3 className="text-lg font-bold text-white">
                         {language === 'en' ? 'Specifications' : 'স্পেসিফিকেশন'}
                       </h3>
                       <div className="space-y-2">
-                        <div className={`flex justify-between text-sm ${theme === 'dark' ? 'text-gray-300' : 'text-gray-700'}`}>
+                        <div className="flex justify-between text-sm text-gray-300">
                           <span>{language === 'en' ? 'Engine' : 'ইঞ্জিন'}</span>
-                          <span className="font-semibold">2.4L Petrol</span>
+                          <span className="font-semibold">{car.features[0]}</span>
                         </div>
-                        <div className={`flex justify-between text-sm ${theme === 'dark' ? 'text-gray-300' : 'text-gray-700'}`}>
-                          <span>{language === 'en' ? 'Power' : 'শক্তি'}</span>
-                          <span className="font-semibold">175 HP</span>
+                        <div className="flex justify-between text-sm text-gray-300">
+                          <span>{language === 'en' ? 'Type' : 'টাইপ'}</span>
+                          <span className="font-semibold">{car.bodyType}</span>
                         </div>
-                        <div className={`flex justify-between text-sm ${theme === 'dark' ? 'text-gray-300' : 'text-gray-700'}`}>
-                          <span>{language === 'en' ? 'Transmission' : 'ট্রান্সমিশন'}</span>
-                          <span className="font-semibold">Automatic</span>
+                        <div className="flex justify-between text-sm text-gray-300">
+                          <span>{language === 'en' ? 'Color' : 'রঙ'}</span>
+                          <span className="font-semibold">{car.color}</span>
                         </div>
-                        <div className={`flex justify-between text-sm ${theme === 'dark' ? 'text-gray-300' : 'text-gray-700'}`}>
-                          <span>{language === 'en' ? 'Mileage' : 'মাইলেজ'}</span>
-                          <span className="font-semibold">14 km/l</span>
+                        <div className="flex justify-between text-sm text-gray-300">
+                          <span>{language === 'en' ? 'Year' : 'সন'}</span>
+                          <span className="font-semibold">{car.year}</span>
                         </div>
-                        <div className={`flex justify-between text-sm ${theme === 'dark' ? 'text-gray-300' : 'text-gray-700'}`}>
-                          <span>{language === 'en' ? 'Seating' : 'আসন'}</span>
-                          <span className="font-semibold">5 Persons</span>
+                        <div className="flex justify-between text-sm text-gray-300">
+                          <span>{language === 'en' ? 'Features' : 'বৈশিষ্ট্য'}</span>
+                          <span className="font-semibold">{car.features[1]}</span>
                         </div>
-                        <div className={`flex justify-between text-sm ${theme === 'dark' ? 'text-gray-300' : 'text-gray-700'}`}>
-                          <span>{language === 'en' ? '0-100 km/h' : '0-100 কিমি/ঘণ্টা'}</span>
-                          <span className="font-semibold">8.5s</span>
+                        <div className="flex justify-between text-sm text-gray-300">
+                          <span>{language === 'en' ? 'Price' : 'মূল্য'}</span>
+                          <span className="font-semibold text-green-400">{car.price}</span>
                         </div>
                       </div>
                       <motion.button
@@ -488,7 +494,7 @@ export const HomePage = () => {
 
       {/* STATS SECTION WITH ANIMATED COUNTERS */}
       <motion.section 
-        className={`py-20 ${theme === 'dark' ? 'bg-black/20' : 'bg-white'}`}
+        className={`py-12 md:py-20 ${theme === 'dark' ? 'bg-black/20' : 'bg-white'}`}
         initial={{ opacity: 0 }}
         whileInView={{ opacity: 1 }}
         transition={{ duration: 0.6 }}
@@ -502,7 +508,7 @@ export const HomePage = () => {
             transition={{ duration: 0.6 }}
             viewport={{ once: true }}
           >
-            <h2 className={`text-4xl font-bold mb-4 ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
+            <h2 className={`text-2xl sm:text-3xl md:text-4xl font-bold mb-4 ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
               {language === 'en' ? 'By The Numbers' : 'সংখ্যায়'}
             </h2>
           </motion.div>
@@ -529,7 +535,7 @@ export const HomePage = () => {
                   whileHover={{ y: -5, boxShadow: '0 10px 30px rgba(0,0,0,0.1)' }}
                 >
                   <stat.icon className={`h-12 w-12 mx-auto mb-4 ${theme === 'dark' ? 'text-blue-400' : 'text-blue-600'}`} />
-                  <div className={`text-4xl font-bold mb-2 ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
+                  <div className={`text-2xl sm:text-3xl md:text-4xl font-bold mb-2 ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
                     {count}{stat.value >= 100 ? '+' : ''}
                   </div>
                   <div className={theme === 'dark' ? 'text-gray-300' : 'text-gray-600'}>{stat.label}</div>
@@ -541,7 +547,7 @@ export const HomePage = () => {
       </motion.section>
 
       {/* VEHICLE GALLERY WITH BADGES AND COMPARISON */}
-      <section className={`py-20 ${theme === 'dark' ? 'bg-black/20' : 'bg-white'}`}>
+      <section className={`py-12 md:py-20 ${theme === 'dark' ? 'bg-black/20' : 'bg-white'}`}>
         <div className="container mx-auto px-4">
           <motion.div 
             className="text-center mb-16"
@@ -553,7 +559,7 @@ export const HomePage = () => {
             <span className={`text-sm font-semibold uppercase tracking-wider ${theme === 'dark' ? 'text-blue-400' : 'text-blue-600'}`}>
               {language === 'en' ? 'Find Your Perfect Match' : 'আপনার নিখুঁত ম্যাচ খুঁজুন'}
             </span>
-            <h2 className={`text-4xl md:text-5xl font-bold mt-2 mb-4 ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
+            <h2 className={`text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold mt-2 mb-4 ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
               {language === 'en' ? 'Available Models' : 'উপলব্ধ মডেল'}
             </h2>
             <p className={`text-lg max-w-2xl mx-auto ${theme === 'dark' ? 'text-gray-400' : 'text-gray-600'}`}>
@@ -635,7 +641,7 @@ export const HomePage = () => {
       {/* FEATURED VEHICLES WITH CARD LIFT EFFECTS */}
       {featuredVehicles.length > 0 && (
         <motion.section 
-          className={`py-20 ${theme === 'dark' ? 'bg-transparent' : 'bg-gray-50'}`}
+          className={`py-12 md:py-20 ${theme === 'dark' ? 'bg-transparent' : 'bg-gray-50'}`}
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
           transition={{ duration: 0.6 }}
@@ -649,7 +655,7 @@ export const HomePage = () => {
               transition={{ duration: 0.6 }}
               viewport={{ once: true }}
             >
-              <h2 className={`text-4xl font-bold mb-4 ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
+              <h2 className={`text-2xl sm:text-3xl md:text-4xl font-bold mb-4 ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
                 {language === 'en' ? 'Featured Vehicles' : 'বৈশিষ্ট্যযুক্ত গাড়ি'}
               </h2>
             </motion.div>
@@ -770,7 +776,7 @@ export const HomePage = () => {
 
       {/* CAROUSEL SHOWCASE WITH FLIP ANIMATIONS & PARALLAX */}
       <motion.section 
-        className={`py-20 relative overflow-hidden ${theme === 'dark' ? 'bg-gradient-to-br from-gray-900 to-gray-800' : 'bg-gradient-to-br from-blue-50 to-indigo-50'}`}
+        className={`py-12 md:py-20 relative overflow-hidden ${theme === 'dark' ? 'bg-gradient-to-br from-gray-900 to-gray-800' : 'bg-gradient-to-br from-blue-50 to-indigo-50'}`}
         initial={{ opacity: 0 }}
         whileInView={{ opacity: 1 }}
         transition={{ duration: 0.6 }}
@@ -794,7 +800,7 @@ export const HomePage = () => {
             transition={{ duration: 0.6 }}
             viewport={{ once: true }}
           >
-            <h2 className={`text-4xl font-bold mb-4 ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
+            <h2 className={`text-2xl sm:text-3xl md:text-4xl font-bold mb-4 ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
               {language === 'en' ? 'Explore Our Premium Collection' : 'আমাদের প্রিমিয়াম সংগ্রহ অন্বেষণ করুন'}
             </h2>
             <p className={`text-lg ${theme === 'dark' ? 'text-gray-300' : 'text-gray-600'}`}>
@@ -1238,7 +1244,7 @@ export const HomePage = () => {
 
       {/* FEATURE 7: INTERACTIVE COLOR CUSTOMIZER */}
       <motion.section
-        className={`py-20 relative overflow-hidden ${
+        className={`py-12 md:py-20 relative overflow-hidden ${
           theme === 'dark'
             ? 'bg-gradient-to-br from-gray-900 to-gray-850'
             : 'bg-gradient-to-br from-white to-gray-50'
@@ -1256,7 +1262,7 @@ export const HomePage = () => {
             transition={{ duration: 0.6 }}
             viewport={{ once: true }}
           >
-            <h2 className={`text-4xl font-bold mb-4 ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
+            <h2 className={`text-2xl sm:text-3xl md:text-4xl font-bold mb-4 ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
               {language === 'en' ? 'Personalize Your Vehicle' : 'আপনার গাড়ি ব্যক্তিগতকৃত করুন'}
             </h2>
             <p className={`text-lg ${theme === 'dark' ? 'text-gray-300' : 'text-gray-600'}`}>
@@ -1459,7 +1465,7 @@ export const HomePage = () => {
 
       {/* FEATURE 8: MORPHING SHAPE TRANSITIONS */}
       <motion.section
-        className={`py-20 relative overflow-hidden ${
+        className={`py-12 md:py-20 relative overflow-hidden ${
           theme === 'dark'
             ? 'bg-gradient-to-br from-gray-850 to-gray-900'
             : 'bg-gradient-to-br from-gray-50 to-white'
@@ -1477,7 +1483,7 @@ export const HomePage = () => {
             transition={{ duration: 0.6 }}
             viewport={{ once: true }}
           >
-            <h2 className={`text-4xl font-bold mb-4 ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
+            <h2 className={`text-2xl sm:text-3xl md:text-4xl font-bold mb-4 ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
               {language === 'en' ? 'Morphing Showcase' : 'আকৃতি-পরিবর্তনকারী শোকেস'}
             </h2>
             <p className={`text-lg ${theme === 'dark' ? 'text-gray-300' : 'text-gray-600'}`}>
@@ -1572,7 +1578,7 @@ export const HomePage = () => {
 
       {/* FEATURE 9: SCROLL-TRIGGERED NUMBER COUNTERS */}
       <motion.section
-        className={`py-20 relative overflow-hidden ${
+        className={`py-12 md:py-20 relative overflow-hidden ${
           theme === 'dark'
             ? 'bg-gradient-to-br from-gray-900 to-gray-850'
             : 'bg-gradient-to-br from-white to-gray-50'
@@ -1590,7 +1596,7 @@ export const HomePage = () => {
             transition={{ duration: 0.6 }}
             viewport={{ once: true }}
           >
-            <h2 className={`text-4xl font-bold mb-4 ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
+            <h2 className={`text-2xl sm:text-3xl md:text-4xl font-bold mb-4 ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
               {language === 'en' ? 'Why Choose Us' : 'কেন আমাদের বেছে নিন'}
             </h2>
             <p className={`text-lg ${theme === 'dark' ? 'text-gray-300' : 'text-gray-600'}`}>
@@ -1652,7 +1658,7 @@ export const HomePage = () => {
 
       {/* FEATURE 10: ANIMATED COMPARISON SLIDER (BEFORE/AFTER) */}
       <motion.section
-        className={`py-20 relative overflow-hidden ${
+        className={`py-12 md:py-20 relative overflow-hidden ${
           theme === 'dark'
             ? 'bg-gradient-to-br from-gray-850 to-gray-900'
             : 'bg-gradient-to-br from-gray-50 to-white'
@@ -1670,7 +1676,7 @@ export const HomePage = () => {
             transition={{ duration: 0.6 }}
             viewport={{ once: true }}
           >
-            <h2 className={`text-4xl font-bold mb-4 ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
+            <h2 className={`text-2xl sm:text-3xl md:text-4xl font-bold mb-4 ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
               {language === 'en' ? 'Standard vs Premium Comparison' : 'স্ট্যান্ডার্ড বনাম প্রিমিয়াম তুলনা'}
             </h2>
             <p className={`text-lg ${theme === 'dark' ? 'text-gray-300' : 'text-gray-600'}`}>
@@ -1823,7 +1829,7 @@ export const HomePage = () => {
 
       {/* PERFORMANCE METRICS SECTION */}
       <motion.section
-        className={`py-20 relative overflow-hidden ${
+        className={`py-12 md:py-20 relative overflow-hidden ${
           theme === 'dark'
             ? 'bg-gradient-to-br from-gray-800 via-gray-900 to-black'
             : 'bg-gradient-to-br from-gray-50 via-white to-gray-50'
@@ -1841,7 +1847,7 @@ export const HomePage = () => {
             transition={{ duration: 0.6 }}
             viewport={{ once: true }}
           >
-            <h2 className={`text-4xl font-bold mb-4 ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
+            <h2 className={`text-2xl sm:text-3xl md:text-4xl font-bold mb-4 ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
               {language === 'en' ? 'Performance Overview' : 'পারফরম্যান্স ওভারভিউ'}
             </h2>
             <p className={`text-lg ${theme === 'dark' ? 'text-gray-300' : 'text-gray-600'}`}>
@@ -1945,7 +1951,7 @@ export const HomePage = () => {
 
       {/* WHY CHOOSE US SECTION */}
       <motion.section 
-        className={`py-20 ${theme === 'dark' ? 'bg-black/20' : 'bg-white'}`}
+        className={`py-12 md:py-20 ${theme === 'dark' ? 'bg-black/20' : 'bg-white'}`}
         initial={{ opacity: 0 }}
         whileInView={{ opacity: 1 }}
         transition={{ duration: 0.6 }}
@@ -1959,7 +1965,7 @@ export const HomePage = () => {
             transition={{ duration: 0.6 }}
             viewport={{ once: true }}
           >
-            <h2 className={`text-4xl font-bold mb-4 ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
+            <h2 className={`text-2xl sm:text-3xl md:text-4xl font-bold mb-4 ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
               {language === 'en' ? 'Why Choose Auto Spark BD?' : 'কেন অটো স্পার্ক বিডি বেছে নেবেন?'}
             </h2>
           </motion.div>
@@ -2008,7 +2014,7 @@ export const HomePage = () => {
 
       {testimonials.length > 0 && (
         <motion.section 
-          className={`py-20 ${theme === 'dark' ? 'bg-transparent' : 'bg-gray-50'}`}
+          className={`py-12 md:py-20 ${theme === 'dark' ? 'bg-transparent' : 'bg-gray-50'}`}
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
           transition={{ duration: 0.6 }}
@@ -2022,7 +2028,7 @@ export const HomePage = () => {
               transition={{ duration: 0.6 }}
               viewport={{ once: true }}
             >
-              <h2 className={`text-4xl font-bold mb-4 ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
+              <h2 className={`text-2xl sm:text-3xl md:text-4xl font-bold mb-4 ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
                 {language === 'en' ? 'What Our Customers Say' : 'আমাদের গ্রাহকরা কি বলেন'}
               </h2>
             </motion.div>
@@ -2072,7 +2078,7 @@ export const HomePage = () => {
       )}
 
       {/* 3D & Interactive Elements Section */}
-      <section className={`py-20 bg-gradient-to-b ${theme === 'dark' ? 'from-gray-800 to-gray-900' : 'from-white to-gray-50'}`}>
+      <section className={`py-12 md:py-20 bg-gradient-to-b ${theme === 'dark' ? 'from-gray-800 to-gray-900' : 'from-white to-gray-50'}`}>
         <div className="container mx-auto px-4">
           {/* Section Header */}
           <motion.div 
@@ -2082,7 +2088,7 @@ export const HomePage = () => {
             transition={{ duration: 0.6 }}
             viewport={{ once: true }}
           >
-            <h2 className={`text-4xl font-bold mb-4 ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
+            <h2 className={`text-2xl sm:text-3xl md:text-4xl font-bold mb-4 ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
               {language === 'en' ? '3D Interactive Experience' : '3D ইন্টারেক্টিভ অভিজ্ঞতা'}
             </h2>
             <p className={`max-w-2xl mx-auto text-lg ${theme === 'dark' ? 'text-gray-300' : 'text-gray-600'}`}>
@@ -2172,7 +2178,7 @@ export const HomePage = () => {
 
       {/* GOOGLE MAPS LOCATION SECTION - Interactive with Animations */}
       <motion.section
-        className="py-20 bg-gradient-to-b from-gray-50 to-white dark:from-gray-900 dark:to-gray-800"
+        className="py-12 md:py-20 bg-gradient-to-b from-gray-50 to-white dark:from-gray-900 dark:to-gray-800"
         initial={{ opacity: 0 }}
         whileInView={{ opacity: 1 }}
         transition={{ duration: 0.6 }}
@@ -2187,7 +2193,7 @@ export const HomePage = () => {
             transition={{ duration: 0.6 }}
             viewport={{ once: true }}
           >
-            <h2 className="text-4xl md:text-5xl font-bold mb-6 bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
+            <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold mb-6 bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
               {language === 'en' ? 'Visit Our Showroom' : 'আমাদের শোরুম পরিদর্শন করুন'}
             </h2>
             <p className="text-xl text-gray-600 dark:text-gray-300 max-w-2xl mx-auto">
@@ -2332,7 +2338,7 @@ export const HomePage = () => {
 
       {/* CTA SECTION */}
       <motion.section 
-        className={`py-20 bg-gradient-to-r from-blue-600 to-blue-800`}
+        className={`py-12 md:py-20 bg-gradient-to-r from-blue-600 to-blue-800`}
         initial={{ opacity: 0 }}
         whileInView={{ opacity: 1 }}
         transition={{ duration: 0.6 }}
@@ -2345,7 +2351,7 @@ export const HomePage = () => {
             transition={{ duration: 0.6 }}
             viewport={{ once: true }}
           >
-            <h2 className="text-4xl font-bold text-white mb-6">
+            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-white mb-6">
               {language === 'en' ? 'Ready to Find Your Dream Car?' : 'আপনার স্বপ্নের গাড়ি খুঁজে পেতে প্রস্তুত?'}
             </h2>
             <p className="text-xl text-blue-100 mb-8 max-w-2xl mx-auto">
