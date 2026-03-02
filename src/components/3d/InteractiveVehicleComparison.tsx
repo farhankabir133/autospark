@@ -102,7 +102,7 @@ export const InteractiveVehicleComparison: React.FC<InteractiveVehicleComparison
       id: '4',
       name: 'Civic',
       brand: 'Honda',
-      image: 'https://images.pexels.com/photos/3769173/pexels-photo-3769173.jpeg?auto=compress&cs=tinysrgb&w=800&h=600&dpr=1',
+      image: 'https://images.pexels.com/photos/17653852/pexels-photo-17653852.jpeg?auto=compress&cs=tinysrgb&w=800&h=600&dpr=1',
       price: 3200000,
       specs: {
         engine: '1.8L i-VTEC Petrol',
@@ -159,7 +159,7 @@ export const InteractiveVehicleComparison: React.FC<InteractiveVehicleComparison
       id: '7',
       name: 'CR-V',
       brand: 'Honda',
-      image: 'https://images.pexels.com/photos/3807518/pexels-photo-3807518.jpeg?auto=compress&cs=tinysrgb&w=800&h=600&dpr=1',
+      image: 'https://images.pexels.com/photos/13885915/pexels-photo-13885915.jpeg?auto=compress&cs=tinysrgb&w=800&h=600&dpr=1',
       price: 4200000,
       specs: {
         engine: '1.5L Turbo Petrol',

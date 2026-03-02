@@ -289,12 +289,12 @@ const vehicleData = [
     price: '৳ 32,00,000',
     type: 'Sedan',
     exteriorImages: [
-      'https://images.pexels.com/photos/3769173/pexels-photo-3769173.jpeg?auto=compress&cs=tinysrgb&w=1200',
+      'https://images.pexels.com/photos/17653852/pexels-photo-17653852.jpeg?auto=compress&cs=tinysrgb&w=1200',
     ],
     interiorImage: 'https://images.pexels.com/photos/1104768/pexels-photo-1104768.jpeg?auto=compress&cs=tinysrgb&w=1200',
     colors: [
-      { name: 'Blue', hex: '#4169E1', image: 'https://images.pexels.com/photos/3769173/pexels-photo-3769173.jpeg?auto=compress&cs=tinysrgb&w=1200' },
-      { name: 'Red', hex: '#DC143C', image: 'https://images.pexels.com/photos/3769173/pexels-photo-3769173.jpeg?auto=compress&cs=tinysrgb&w=1200' },
+      { name: 'Blue', hex: '#4169E1', image: 'https://images.pexels.com/photos/17653852/pexels-photo-17653852.jpeg?auto=compress&cs=tinysrgb&w=1200' },
+      { name: 'Red', hex: '#DC143C', image: 'https://images.pexels.com/photos/17653852/pexels-photo-17653852.jpeg?auto=compress&cs=tinysrgb&w=1200' },
     ],
     hotspots: [
       { id: 1, x: 18, y: 40, label: 'LED Headlights', description: 'Jewel-eye LED headlights' },
@@ -311,12 +311,12 @@ const vehicleData = [
     price: '৳ 42,00,000',
     type: 'Compact SUV',
     exteriorImages: [
-      'https://images.pexels.com/photos/3807518/pexels-photo-3807518.jpeg?auto=compress&cs=tinysrgb&w=1200',
+      'https://images.pexels.com/photos/13885915/pexels-photo-13885915.jpeg?auto=compress&cs=tinysrgb&w=1200',
     ],
     interiorImage: 'https://images.pexels.com/photos/1104768/pexels-photo-1104768.jpeg?auto=compress&cs=tinysrgb&w=1200',
     colors: [
-      { name: 'Black', hex: '#1a1a1a', image: 'https://images.pexels.com/photos/3807518/pexels-photo-3807518.jpeg?auto=compress&cs=tinysrgb&w=1200' },
-      { name: 'White', hex: '#FFFFFF', image: 'https://images.pexels.com/photos/3807518/pexels-photo-3807518.jpeg?auto=compress&cs=tinysrgb&w=1200' },
+      { name: 'Black', hex: '#1a1a1a', image: 'https://images.pexels.com/photos/13885915/pexels-photo-13885915.jpeg?auto=compress&cs=tinysrgb&w=1200' },
+      { name: 'White', hex: '#FFFFFF', image: 'https://images.pexels.com/photos/13885915/pexels-photo-13885915.jpeg?auto=compress&cs=tinysrgb&w=1200' },
     ],
     hotspots: [
       { id: 1, x: 18, y: 42, label: 'LED Headlights', description: 'Auto-dimming LED headlights' },

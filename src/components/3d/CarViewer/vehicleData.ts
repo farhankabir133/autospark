@@ -338,7 +338,7 @@ export const VEHICLES: VehicleModelData[] = [
     price: '৳ 52,00,000',
     modelPath: '/models/honda-civic.glb',
     placeholderPath: '/models/placeholders/sedan-placeholder.glb',
-    fallbackImage: 'https://images.pexels.com/photos/3769173/pexels-photo-3769173.jpeg?auto=compress&cs=tinysrgb&w=1200',
+    fallbackImage: 'https://images.pexels.com/photos/17653852/pexels-photo-17653852.jpeg?auto=compress&cs=tinysrgb&w=1200',
     colors: [
       COMMON_COLORS.pearlWhite,
       COMMON_COLORS.attitudeBlack,
@@ -376,7 +376,7 @@ export const VEHICLES: VehicleModelData[] = [
     price: '৳ 68,00,000',
     modelPath: '/models/honda-crv.glb',
     placeholderPath: '/models/placeholders/suv-placeholder.glb',
-    fallbackImage: 'https://images.pexels.com/photos/3807518/pexels-photo-3807518.jpeg?auto=compress&cs=tinysrgb&w=1200',
+    fallbackImage: 'https://images.pexels.com/photos/13885915/pexels-photo-13885915.jpeg?auto=compress&cs=tinysrgb&w=1200',
     colors: [
       COMMON_COLORS.platinumWhite,
       COMMON_COLORS.midnightBlack,
