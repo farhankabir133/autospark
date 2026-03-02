@@ -193,64 +193,46 @@ export const HomePage = () => {
       transition={{ duration: 0.5 }}
     >
       {/* HERO SECTION WITH 3D CAR SHOWCASE */}
-      <section className="relative h-dvh flex items-center justify-center overflow-hidden">
+      <section className="relative h-dvh overflow-hidden">
         {/* 3D Car Showcase - Interactive Experience */}
         <Suspense fallback={<CarShowcase3DFallback />}>
-          <CarShowcase3D />
+          <CarShowcase3D
+            ctaButtons={
+              <motion.div 
+                className="flex flex-row gap-2 sm:gap-3 justify-center"
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.8, delay: 1 }}
+              >
+                <Link to="/inventory">
+                  <Button size="sm" className="text-xs sm:text-sm md:text-base md:px-6 md:py-3">
+                    {t('hero.browse')}
+                    <ArrowRight className="ml-1.5 h-3.5 w-3.5 md:h-5 md:w-5" />
+                  </Button>
+                </Link>
+                <Link to="/services">
+                  <Button size="sm" variant="outline" className="text-xs sm:text-sm md:text-base md:px-6 md:py-3 bg-white/10 backdrop-blur-sm border-white text-white hover:bg-white">
+                    {t('hero.book_service')}
+                  </Button>
+                </Link>
+                <Link to="/sell">
+                  <Button size="sm" variant="secondary" className="text-xs sm:text-sm md:text-base md:px-6 md:py-3">
+                    {t('hero.sell')}
+                  </Button>
+                </Link>
+              </motion.div>
+            }
+          />
         </Suspense>
 
-        {/* CTA Buttons - Positioned above color picker */}
-        <div className="absolute bottom-28 sm:bottom-24 md:bottom-20 left-0 right-0 z-20">
-          <motion.div 
-            className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center px-4"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 1 }}
-          >
-            <motion.div
-              whileHover={{ y: -5 }}
-              whileTap={{ scale: 0.95 }}
-              transition={{ type: 'spring', stiffness: 400, damping: 10 }}
-            >
-              <Link to="/inventory">
-                <Button size="lg" className="w-full sm:w-auto">
-                  {t('hero.browse')}
-                  <ArrowRight className="ml-2 h-5 w-5" />
-                </Button>
-              </Link>
-            </motion.div>
-            <motion.div
-              whileHover={{ y: -5 }}
-              whileTap={{ scale: 0.95 }}
-              transition={{ type: 'spring', stiffness: 400, damping: 10 }}
-            >
-              <Link to="/services">
-                <Button size="lg" variant="outline" className="w-full sm:w-auto bg-white/10 backdrop-blur-sm border-white text-white hover:bg-white">
-                  {t('hero.book_service')}
-                </Button>
-              </Link>
-            </motion.div>
-            <motion.div
-              whileHover={{ y: -5 }}
-              whileTap={{ scale: 0.95 }}
-              transition={{ type: 'spring', stiffness: 400, damping: 10 }}
-            >
-              <Link to="/sell">
-                <Button size="lg" variant="secondary" className="w-full sm:w-auto">
-                  {t('hero.sell')}
-                </Button>
-              </Link>
-            </motion.div>
-          </motion.div>
-        </div>
-
+        {/* Scroll hint — desktop only */}
         <motion.button
           onClick={scrollToContent}
-          className="absolute bottom-8 left-1/2 transform -translate-x-1/2 text-white hidden sm:block"
-          animate={{ y: [0, 10, 0] }}
+          className="absolute bottom-2 left-1/2 transform -translate-x-1/2 text-white/40 z-10 hidden md:block"
+          animate={{ y: [0, 8, 0] }}
           transition={{ duration: 2, repeat: Infinity }}
         >
-          <ChevronDown className="h-8 w-8" />
+          <ChevronDown className="h-6 w-6" />
         </motion.button>
       </section>
 

@@ -242,13 +242,16 @@ function FerrariModel({ color }: { color: string }) {
 }
 
 // Responsive camera — widens FOV and pulls back on mobile
+// On mobile portrait, position the camera to frame the car in the CENTER of the viewport
 function ResponsiveCamera() {
   const { camera, size } = useThree();
   useEffect(() => {
     const cam = camera as THREE.PerspectiveCamera;
+    const isPortrait = size.height > size.width;
     if (size.width < 640) {
-      cam.fov = 55;
-      cam.position.set(5, 2, -5.5);
+      // Phone portrait — pull back more, raise slightly so car sits in middle
+      cam.fov = isPortrait ? 48 : 55;
+      cam.position.set(isPortrait ? 5.5 : 5, isPortrait ? 1.8 : 2, isPortrait ? -6 : -5.5);
     } else if (size.width < 1024) {
       cam.fov = 45;
       cam.position.set(4.5, 1.6, -5);
@@ -257,7 +260,7 @@ function ResponsiveCamera() {
       cam.position.set(4.25, 1.4, -4.5);
     }
     cam.updateProjectionMatrix();
-  }, [camera, size.width]);
+  }, [camera, size.width, size.height]);
   return null;
 }
 
@@ -412,7 +415,7 @@ function useTypewriter(texts: string[], typingSpeed = 60, deletingSpeed = 30, pa
 }
 
 // Main export
-export default function CarShowcase3D() {
+export default function CarShowcase3D({ ctaButtons }: { ctaButtons?: React.ReactNode }) {
   const [selectedColorIndex, setSelectedColorIndex] = useState(0);
   const selectedColor = CAR_COLORS[selectedColorIndex];
   const isMobile = useIsMobile();
@@ -450,60 +453,76 @@ export default function CarShowcase3D() {
       {/* ── Overlay UI ── */}
       <div className="absolute inset-0 pointer-events-none">
 
-        {/* ─── TOP BAR ─── */}
-        <div className="absolute top-0 left-0 right-0 z-10 flex items-start justify-between px-6 pt-6 md:px-10 md:pt-8">
-          {/* Brand */}
-          <div className="flex items-center gap-3">
-            <div className="w-1 h-10 bg-gradient-to-b from-red-600 to-red-900 rounded-full" />
-            <div>
-              <h1 className="text-xl md:text-2xl font-bold text-white tracking-wider leading-none">
-                AUTO<span className="text-red-600">SPARK</span>
-              </h1>
-              <p className="text-[9px] text-gray-500 tracking-[0.3em] uppercase mt-0.5">
-                Premium Automobiles
-              </p>
+        {/* ─────────────────────────────────────
+             MOBILE LAYOUT  (< 768px / md)
+             Top: compact brand + headline
+             Center: OPEN for 3D car
+             Bottom: slim CTA row → color picker
+           ───────────────────────────────────── */}
+
+        {/* ─── TOP SECTION (mobile: brand + text compact | desktop: brand bar) ─── */}
+        <div className="absolute top-0 left-0 right-0 z-10">
+          {/* Brand bar — always visible */}
+          <div className="flex items-start justify-between px-4 pt-4 md:px-10 md:pt-8">
+            <div className="flex items-center gap-2 md:gap-3">
+              <div className="w-1 h-8 md:h-10 bg-gradient-to-b from-red-600 to-red-900 rounded-full" />
+              <div>
+                <h1 className="text-base md:text-2xl font-bold text-white tracking-wider leading-none">
+                  AUTO<span className="text-red-600">SPARK</span>
+                </h1>
+                <p className="text-[8px] md:text-[9px] text-gray-500 tracking-[0.3em] uppercase mt-0.5">
+                  Premium Automobiles
+                </p>
+              </div>
+            </div>
+            <div className="text-right">
+              <p className="text-gray-500 text-[9px] md:text-[10px] tracking-widest uppercase">Featured</p>
+              <h2 className="text-white text-sm md:text-lg font-light tracking-wider leading-tight">
+                Ferrari <span className="font-bold">458 Italia</span>
+              </h2>
             </div>
           </div>
 
-          {/* Car name */}
-          <div className="text-right">
-            <p className="text-gray-500 text-[10px] tracking-widest uppercase">Featured</p>
-            <h2 className="text-white text-base md:text-lg font-light tracking-wider leading-tight">
-              Ferrari <span className="font-bold">458 Italia</span>
+          {/* Hero headline + typewriter — on MOBILE: compact below brand; on DESKTOP: left-centered */}
+          <div className="md:hidden px-4 mt-2">
+            <h2 className="text-2xl font-black text-white tracking-tight leading-[0.95]">
+              EXPERIENCE{' '}
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-red-500 via-red-600 to-red-800">
+                EXCELLENCE
+              </span>
             </h2>
+            <div className="flex items-center mt-1.5 min-h-[20px]">
+              <span className="text-xs font-light text-white/70 tracking-wide">
+                {typewriterText}
+              </span>
+              <span className="ml-0.5 inline-block w-[2px] h-3.5 bg-red-600 rounded-full animate-pulse" />
+            </div>
           </div>
         </div>
 
-        {/* ─── LEFT SIDE — Hero Text + Typewriter (vertically centered) ─── */}
-        <div className="absolute left-4 sm:left-6 md:left-10 top-1/2 -translate-y-1/2 z-10 max-w-[calc(100vw-2rem)] sm:max-w-[320px] md:max-w-sm lg:max-w-md">
-          {/* Main headline */}
-          <h2 className="text-3xl md:text-5xl lg:text-6xl font-black text-white tracking-tight leading-[0.95] mb-4">
+        {/* ─── DESKTOP ONLY — LEFT SIDE Hero Text (vertically centered) ─── */}
+        <div className="absolute left-10 top-1/2 -translate-y-1/2 z-10 max-w-sm lg:max-w-md hidden md:block">
+          <h2 className="text-5xl lg:text-6xl font-black text-white tracking-tight leading-[0.95] mb-4">
             EXPERIENCE
             <br />
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-red-500 via-red-600 to-red-800">
               EXCELLENCE
             </span>
           </h2>
-
-          {/* Divider line */}
           <div className="w-12 h-[2px] bg-gradient-to-r from-red-600 to-transparent mb-4" />
-
-          {/* Typewriter text */}
-          <div className="flex items-center min-h-[28px] md:min-h-[32px] mb-4">
-            <span className="text-sm md:text-base lg:text-lg font-light text-white/80 tracking-wide">
+          <div className="flex items-center min-h-[32px] mb-4">
+            <span className="text-base lg:text-lg font-light text-white/80 tracking-wide">
               {typewriterText}
             </span>
-            <span className="ml-0.5 inline-block w-[2px] h-4 md:h-5 bg-red-600 rounded-full animate-pulse" />
+            <span className="ml-0.5 inline-block w-[2px] h-5 bg-red-600 rounded-full animate-pulse" />
           </div>
-
-          {/* Interaction hint */}
-          <p className="text-gray-600 text-[10px] md:text-xs tracking-wider">
+          <p className="text-gray-600 text-xs tracking-wider">
             Drag to rotate &bull; Scroll to zoom
           </p>
         </div>
 
-        {/* ─── RIGHT SIDE — Specs (vertically centered, lower) ─── */}
-        <div className="absolute right-6 md:right-10 top-1/2 -translate-y-[30%] z-10 hidden lg:flex flex-col gap-2 items-end">
+        {/* ─── RIGHT SIDE — Specs (desktop only) ─── */}
+        <div className="absolute right-10 top-1/2 -translate-y-[30%] z-10 hidden lg:flex flex-col gap-2 items-end">
           {[
             { label: 'Engine', value: '4.5L V8' },
             { label: 'Power', value: '570 HP' },
@@ -520,39 +539,49 @@ export default function CarShowcase3D() {
           ))}
         </div>
 
-        {/* ─── BOTTOM CENTER — Color Selector ─── */}
-        <div className="absolute bottom-6 md:bottom-8 left-1/2 -translate-x-1/2 pointer-events-auto z-10 max-w-[calc(100vw-2rem)]">
-          <div className="flex items-center gap-3 md:gap-6 bg-black/60 backdrop-blur-xl px-4 py-3 md:px-8 md:py-4 rounded-2xl border border-white/10 shadow-2xl overflow-x-auto">
-            <span className="text-gray-500 text-[10px] uppercase tracking-widest hidden md:block flex-shrink-0">
-              Color
-            </span>
-            <div className="flex gap-2 md:gap-3 flex-shrink-0">
-              {CAR_COLORS.map((colorOption, index) => (
-                <button
-                  key={colorOption.name}
-                  onClick={() => setSelectedColorIndex(index)}
-                  className={`w-7 h-7 md:w-8 md:h-8 rounded-full transition-all duration-300 border-2 ${
-                    selectedColorIndex === index
-                      ? 'border-white scale-125 shadow-lg shadow-white/20'
-                      : 'border-transparent hover:scale-110 hover:border-white/30'
-                  }`}
-                  style={{ backgroundColor: colorOption.color }}
-                  title={colorOption.name}
-                />
-              ))}
+        {/* ─── BOTTOM ZONE — CTA buttons + color picker ─── */}
+        <div className="absolute bottom-0 left-0 right-0 z-10 flex flex-col items-center gap-2 pb-4 md:pb-6">
+          {/* CTA buttons — injected from parent */}
+          {ctaButtons && (
+            <div className="pointer-events-auto w-full px-4 md:px-0">
+              {ctaButtons}
             </div>
-            <span className="text-white text-sm font-medium min-w-[100px] text-right hidden md:block flex-shrink-0">
-              {selectedColor.name}
-            </span>
+          )}
+
+          {/* Color Selector */}
+          <div className="pointer-events-auto max-w-[calc(100vw-2rem)]">
+            <div className="flex items-center gap-2 md:gap-6 bg-black/60 backdrop-blur-xl px-3 py-2 md:px-8 md:py-4 rounded-2xl border border-white/10 shadow-2xl overflow-x-auto">
+              <span className="text-gray-500 text-[10px] uppercase tracking-widest hidden md:block flex-shrink-0">
+                Color
+              </span>
+              <div className="flex gap-1.5 md:gap-3 flex-shrink-0">
+                {CAR_COLORS.map((colorOption, index) => (
+                  <button
+                    key={colorOption.name}
+                    onClick={() => setSelectedColorIndex(index)}
+                    className={`w-6 h-6 md:w-8 md:h-8 rounded-full transition-all duration-300 border-2 ${
+                      selectedColorIndex === index
+                        ? 'border-white scale-125 shadow-lg shadow-white/20'
+                        : 'border-transparent hover:scale-110 hover:border-white/30'
+                    }`}
+                    style={{ backgroundColor: colorOption.color }}
+                    title={colorOption.name}
+                  />
+                ))}
+              </div>
+              <span className="text-white text-sm font-medium min-w-[100px] text-right hidden md:block flex-shrink-0">
+                {selectedColor.name}
+              </span>
+            </div>
           </div>
         </div>
 
         {/* ─── Corner accents ─── */}
-        <div className="absolute top-0 right-0 w-32 h-32 opacity-20">
+        <div className="absolute top-0 right-0 w-32 h-32 opacity-20 hidden md:block">
           <div className="absolute top-6 right-6 w-16 h-[1px] bg-gradient-to-l from-red-600 to-transparent" />
           <div className="absolute top-6 right-6 w-[1px] h-16 bg-gradient-to-b from-red-600 to-transparent" />
         </div>
-        <div className="absolute bottom-0 left-0 w-32 h-32 opacity-20">
+        <div className="absolute bottom-0 left-0 w-32 h-32 opacity-20 hidden md:block">
           <div className="absolute bottom-6 left-6 w-16 h-[1px] bg-gradient-to-r from-red-600 to-transparent" />
           <div className="absolute bottom-6 left-6 w-[1px] h-16 bg-gradient-to-t from-red-600 to-transparent" />
         </div>
