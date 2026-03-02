@@ -176,9 +176,9 @@ export const AboutPage = () => {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.6 }}
-          className="max-w-5xl mx-auto mb-20"
+          className="max-w-5xl mx-auto mb-12"
         >
-          <div className="text-center mb-12">
+          <div className="text-center mb-6">
             <span className="text-[#C00000] font-semibold text-sm uppercase tracking-wider">
               {language === 'en' ? 'Our Journey' : 'আমাদের যাত্রা'}
             </span>
@@ -217,7 +217,7 @@ export const AboutPage = () => {
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true }}
-          className="grid md:grid-cols-2 gap-8 mb-20"
+          className="grid md:grid-cols-2 gap-8 mb-12"
         >
           <motion.div variants={fadeInUp}>
             <Card className={`p-8 h-full ${theme === 'dark' ? 'bg-gray-900/50 border-gray-800' : 'bg-white'} relative overflow-hidden`}>
@@ -263,9 +263,9 @@ export const AboutPage = () => {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.6 }}
-          className="mb-20"
+          className="mb-12"
         >
-          <div className="text-center mb-12">
+          <div className="text-center mb-6">
             <span className="text-[#C00000] font-semibold text-sm uppercase tracking-wider">
               {language === 'en' ? 'Leadership' : 'নেতৃত্ব'}
             </span>
@@ -363,9 +363,9 @@ export const AboutPage = () => {
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true }}
-          className="mb-20"
+          className="mb-12"
         >
-          <div className="text-center mb-12">
+          <div className="text-center mb-6">
             <span className="text-[#C00000] font-semibold text-sm uppercase tracking-wider">
               {language === 'en' ? 'What We Stand For' : 'আমরা কিসের পক্ষে দাঁড়াই'}
             </span>
@@ -395,7 +395,7 @@ export const AboutPage = () => {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.6 }}
-          className="mb-16 sm:mb-20"
+          className="mb-16 sm:mb-12"
         >
           <div className="text-center mb-8 sm:mb-12">
             <span className="text-[#C00000] font-semibold text-xs sm:text-sm uppercase tracking-wider">
@@ -442,7 +442,7 @@ export const AboutPage = () => {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.6 }}
-          className="mb-16 sm:mb-20"
+          className="mb-16 sm:mb-12"
         >
           <div className="text-center mb-8 sm:mb-12">
             <span className="text-[#C00000] font-semibold text-xs sm:text-sm uppercase tracking-wider">
@@ -705,9 +705,9 @@ export const AboutPage = () => {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.6 }}
-          className="mb-20"
+          className="mb-12"
         >
-          <div className="text-center mb-12">
+          <div className="text-center mb-6">
             <span className="text-[#C00000] font-semibold text-sm uppercase tracking-wider">
               {language === 'en' ? 'Testimonials' : 'প্রশংসাপত্র'}
             </span>

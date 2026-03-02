@@ -13,7 +13,7 @@ export const VehicleExperiencePage = () => {
       <div className="container mx-auto px-4 lg:px-8">
         {/* Page Header */}
         <motion.div
-          className="text-center mb-16"
+          className="text-center mb-8"
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
@@ -34,7 +34,7 @@ export const VehicleExperiencePage = () => {
 
         {/* Interactive Vehicle Comparison Section */}
         <motion.div 
-          className="mb-20"
+          className="mb-12"
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.1 }}
@@ -84,7 +84,7 @@ export const VehicleExperiencePage = () => {
 
         {/* Virtual Showroom Tour Section */}
         <motion.div 
-          className="mb-20"
+          className="mb-12"
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.1 }}

@@ -251,10 +251,10 @@ export const HomePage = () => {
       </div>
 
       {/* PREMIUM COLLECTION - CLICKABLE CAR GRID */}
-      <section className={`py-12 md:py-20 ${theme === 'dark' ? 'bg-transparent' : 'bg-gray-50'}`}>
+      <section className={`py-8 md:py-12 ${theme === 'dark' ? 'bg-transparent' : 'bg-gray-50'}`}>
         <div className="container mx-auto px-4">
           <motion.div 
-            className="text-center mb-12"
+            className="text-center mb-6"
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
@@ -366,7 +366,7 @@ export const HomePage = () => {
       </section>
 
       {/* FEATURED VEHICLES WITH ENHANCED FLIP CARDS */}
-      <section className={`py-12 md:py-20 relative overflow-hidden ${theme === 'dark' ? 'bg-[#0a0a0a]' : 'bg-[#0a0a0a]'}`}>
+      <section className={`py-8 md:py-12 relative overflow-hidden ${theme === 'dark' ? 'bg-[#0a0a0a]' : 'bg-[#0a0a0a]'}`}>
         {/* Unicorn Studio Animated Background - full section */}
         <div className="absolute inset-0 pointer-events-none">
           <UnicornBackground width="100%" height="100%" />
@@ -374,7 +374,7 @@ export const HomePage = () => {
         
         <div className="container mx-auto px-4 relative z-10">
           <motion.div 
-            className="text-center mb-12"
+            className="text-center mb-6"
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
@@ -479,7 +479,7 @@ export const HomePage = () => {
 
       {/* STATS SECTION WITH ANIMATED COUNTERS */}
       <motion.section 
-        className={`py-12 md:py-20 ${theme === 'dark' ? 'bg-black/20' : 'bg-white'}`}
+        className={`py-8 md:py-12 ${theme === 'dark' ? 'bg-black/20' : 'bg-white'}`}
         initial={{ opacity: 0 }}
         whileInView={{ opacity: 1 }}
         transition={{ duration: 0.6 }}
@@ -487,7 +487,7 @@ export const HomePage = () => {
       >
         <div className="container mx-auto px-4">
           <motion.div 
-            className="text-center mb-16"
+            className="text-center mb-8"
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
@@ -532,10 +532,10 @@ export const HomePage = () => {
       </motion.section>
 
       {/* VEHICLE GALLERY WITH BADGES AND COMPARISON */}
-      <section className={`py-12 md:py-20 ${theme === 'dark' ? 'bg-black/20' : 'bg-white'}`}>
+      <section className={`py-8 md:py-12 ${theme === 'dark' ? 'bg-black/20' : 'bg-white'}`}>
         <div className="container mx-auto px-4">
           <motion.div 
-            className="text-center mb-16"
+            className="text-center mb-8"
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
@@ -626,7 +626,7 @@ export const HomePage = () => {
       {/* FEATURED VEHICLES WITH CARD LIFT EFFECTS */}
       {featuredVehicles.length > 0 && (
         <motion.section 
-          className={`py-12 md:py-20 ${theme === 'dark' ? 'bg-transparent' : 'bg-gray-50'}`}
+          className={`py-8 md:py-12 ${theme === 'dark' ? 'bg-transparent' : 'bg-gray-50'}`}
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
           transition={{ duration: 0.6 }}
@@ -634,7 +634,7 @@ export const HomePage = () => {
         >
           <div className="container mx-auto px-4">
             <motion.div 
-              className="text-center mb-16"
+              className="text-center mb-8"
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6 }}
@@ -689,7 +689,7 @@ export const HomePage = () => {
 
       {/* FEATURE 13: FILTER/SORT ANIMATIONS */}
       <motion.section
-        className={`py-10 md:py-16 relative overflow-hidden ${
+        className={`py-6 md:py-10 relative overflow-hidden ${
           theme === 'dark'
             ? 'bg-gradient-to-br from-gray-900 to-gray-850'
             : 'bg-gradient-to-br from-white to-gray-50'
@@ -701,7 +701,7 @@ export const HomePage = () => {
       >
         <div className="container mx-auto px-4">
           <motion.div
-            className="text-center mb-10"
+            className="text-center mb-6"
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
@@ -761,7 +761,7 @@ export const HomePage = () => {
 
       {/* CAROUSEL SHOWCASE WITH FLIP ANIMATIONS & PARALLAX */}
       <motion.section 
-        className={`py-12 md:py-20 relative overflow-hidden ${theme === 'dark' ? 'bg-gradient-to-br from-gray-900 to-gray-800' : 'bg-gradient-to-br from-blue-50 to-indigo-50'}`}
+        className={`py-8 md:py-12 relative overflow-hidden ${theme === 'dark' ? 'bg-gradient-to-br from-gray-900 to-gray-800' : 'bg-gradient-to-br from-blue-50 to-indigo-50'}`}
         initial={{ opacity: 0 }}
         whileInView={{ opacity: 1 }}
         transition={{ duration: 0.6 }}
@@ -779,7 +779,7 @@ export const HomePage = () => {
         
         <div className="container mx-auto px-4 relative z-10">
           <motion.div 
-            className="text-center mb-16"
+            className="text-center mb-8"
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
@@ -796,7 +796,7 @@ export const HomePage = () => {
           </motion.div>
 
           {/* Main Carousel with Flip Cards */}
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
             {/* Left side - Large carousel with curved styling */}
             <motion.div
               initial={{ opacity: 0, x: -50 }}
@@ -1230,7 +1230,7 @@ export const HomePage = () => {
 
       {/* FEATURE 7: INTERACTIVE COLOR CUSTOMIZER */}
       <motion.section
-        className={`py-12 md:py-20 relative overflow-hidden ${
+        className={`py-8 md:py-12 relative overflow-hidden ${
           theme === 'dark'
             ? 'bg-gradient-to-br from-gray-900 to-gray-850'
             : 'bg-gradient-to-br from-white to-gray-50'
@@ -1242,7 +1242,7 @@ export const HomePage = () => {
       >
         <div className="container mx-auto px-4">
           <motion.div
-            className="text-center mb-16"
+            className="text-center mb-8"
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
@@ -1451,7 +1451,7 @@ export const HomePage = () => {
 
       {/* FEATURE 8: MORPHING SHAPE TRANSITIONS */}
       <motion.section
-        className={`py-12 md:py-20 relative overflow-hidden ${
+        className={`py-8 md:py-12 relative overflow-hidden ${
           theme === 'dark'
             ? 'bg-gradient-to-br from-gray-850 to-gray-900'
             : 'bg-gradient-to-br from-gray-50 to-white'
@@ -1463,7 +1463,7 @@ export const HomePage = () => {
       >
         <div className="container mx-auto px-4">
           <motion.div
-            className="text-center mb-16"
+            className="text-center mb-8"
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
@@ -1479,7 +1479,7 @@ export const HomePage = () => {
             </p>
           </motion.div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
             {/* Blob Morphing */}
             <motion.div
               initial={{ opacity: 0, x: -20 }}
@@ -1564,7 +1564,7 @@ export const HomePage = () => {
 
       {/* FEATURE 9: SCROLL-TRIGGERED NUMBER COUNTERS */}
       <motion.section
-        className={`py-12 md:py-20 relative overflow-hidden ${
+        className={`py-8 md:py-12 relative overflow-hidden ${
           theme === 'dark'
             ? 'bg-gradient-to-br from-gray-900 to-gray-850'
             : 'bg-gradient-to-br from-white to-gray-50'
@@ -1576,7 +1576,7 @@ export const HomePage = () => {
       >
         <div className="container mx-auto px-4">
           <motion.div
-            className="text-center mb-16"
+            className="text-center mb-8"
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
@@ -1644,7 +1644,7 @@ export const HomePage = () => {
 
       {/* FEATURE 10: ANIMATED COMPARISON SLIDER (BEFORE/AFTER) */}
       <motion.section
-        className={`py-12 md:py-20 relative overflow-hidden ${
+        className={`py-8 md:py-12 relative overflow-hidden ${
           theme === 'dark'
             ? 'bg-gradient-to-br from-gray-850 to-gray-900'
             : 'bg-gradient-to-br from-gray-50 to-white'
@@ -1656,7 +1656,7 @@ export const HomePage = () => {
       >
         <div className="container mx-auto px-4">
           <motion.div
-            className="text-center mb-16"
+            className="text-center mb-8"
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
@@ -1674,7 +1674,7 @@ export const HomePage = () => {
 
           {/* Harrier Standard vs Premium Comparison */}
           <motion.div
-            className="mb-12"
+            className="mb-8"
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.1 }}
@@ -1815,7 +1815,7 @@ export const HomePage = () => {
 
       {/* PERFORMANCE METRICS SECTION */}
       <motion.section
-        className={`py-12 md:py-20 relative overflow-hidden ${
+        className={`py-8 md:py-12 relative overflow-hidden ${
           theme === 'dark'
             ? 'bg-gradient-to-br from-gray-800 via-gray-900 to-black'
             : 'bg-gradient-to-br from-gray-50 via-white to-gray-50'
@@ -1827,7 +1827,7 @@ export const HomePage = () => {
       >
         <div className="container mx-auto px-4">
           <motion.div
-            className="text-center mb-16"
+            className="text-center mb-8"
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
@@ -1937,7 +1937,7 @@ export const HomePage = () => {
 
       {/* WHY CHOOSE US SECTION */}
       <motion.section 
-        className={`py-12 md:py-20 ${theme === 'dark' ? 'bg-black/20' : 'bg-white'}`}
+        className={`py-8 md:py-12 ${theme === 'dark' ? 'bg-black/20' : 'bg-white'}`}
         initial={{ opacity: 0 }}
         whileInView={{ opacity: 1 }}
         transition={{ duration: 0.6 }}
@@ -1945,7 +1945,7 @@ export const HomePage = () => {
       >
         <div className="container mx-auto px-4">
           <motion.div 
-            className="text-center mb-16"
+            className="text-center mb-8"
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
@@ -2000,7 +2000,7 @@ export const HomePage = () => {
 
       {testimonials.length > 0 && (
         <motion.section 
-          className={`py-12 md:py-20 ${theme === 'dark' ? 'bg-transparent' : 'bg-gray-50'}`}
+          className={`py-8 md:py-12 ${theme === 'dark' ? 'bg-transparent' : 'bg-gray-50'}`}
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
           transition={{ duration: 0.6 }}
@@ -2008,7 +2008,7 @@ export const HomePage = () => {
         >
           <div className="container mx-auto px-4">
             <motion.div 
-              className="text-center mb-12"
+              className="text-center mb-6"
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6 }}
@@ -2064,11 +2064,11 @@ export const HomePage = () => {
       )}
 
       {/* 3D & Interactive Elements Section */}
-      <section className={`py-12 md:py-20 bg-gradient-to-b ${theme === 'dark' ? 'from-gray-800 to-gray-900' : 'from-white to-gray-50'}`}>
+      <section className={`py-8 md:py-12 bg-gradient-to-b ${theme === 'dark' ? 'from-gray-800 to-gray-900' : 'from-white to-gray-50'}`}>
         <div className="container mx-auto px-4">
           {/* Section Header */}
           <motion.div 
-            className="text-center mb-16"
+            className="text-center mb-8"
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
@@ -2087,7 +2087,7 @@ export const HomePage = () => {
           {/* 1. 360° Vehicle Viewer - Temporarily disabled due to R3F compatibility issue */}
           {/* 
           <motion.div 
-            className="mb-20"
+            className="mb-8"
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
@@ -2110,7 +2110,7 @@ export const HomePage = () => {
           {/* 2. Augmented Reality Viewer - Temporarily disabled */}
           {/*
           <motion.div 
-            className="mb-20"
+            className="mb-8"
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.1 }}
@@ -2164,7 +2164,7 @@ export const HomePage = () => {
 
       {/* GOOGLE MAPS LOCATION SECTION - Interactive with Animations */}
       <motion.section
-        className="py-12 md:py-20 bg-gradient-to-b from-gray-50 to-white dark:from-gray-900 dark:to-gray-800"
+        className="py-8 md:py-12 bg-gradient-to-b from-gray-50 to-white dark:from-gray-900 dark:to-gray-800"
         initial={{ opacity: 0 }}
         whileInView={{ opacity: 1 }}
         transition={{ duration: 0.6 }}
@@ -2173,7 +2173,7 @@ export const HomePage = () => {
         <div className="container mx-auto px-4">
           {/* Section Header */}
           <motion.div
-            className="text-center mb-16"
+            className="text-center mb-8"
             initial={{ opacity: 0, y: -20 }}
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
@@ -2189,7 +2189,7 @@ export const HomePage = () => {
             </p>
           </motion.div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-8">
             {/* Location Info Cards */}
             <motion.div
               className="flex flex-col gap-6"
@@ -2324,7 +2324,7 @@ export const HomePage = () => {
 
       {/* CTA SECTION */}
       <motion.section 
-        className={`py-12 md:py-20 bg-gradient-to-r from-blue-600 to-blue-800`}
+        className={`py-8 md:py-12 bg-gradient-to-r from-blue-600 to-blue-800`}
         initial={{ opacity: 0 }}
         whileInView={{ opacity: 1 }}
         transition={{ duration: 0.6 }}
