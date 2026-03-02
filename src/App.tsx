@@ -49,7 +49,7 @@ function App() {
       <LanguageProvider>
         {/* Premium Splash Screen - Only on first visit */}
         {isFirstVisit && showSplash && (
-          <SplashScreen onComplete={handleSplashComplete} duration={2800} />
+          <SplashScreen onComplete={handleSplashComplete} duration={1800} />
         )}
         
         <Router basename={basename}>

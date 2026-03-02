@@ -408,7 +408,7 @@ const BodyTypeSelector: React.FC<{
   counts: Record<string, number>;
 }> = ({ selected, onChange, theme, language, counts }) => {
   return (
-    <div className="grid grid-cols-3 gap-2">
+    <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
       {BODY_TYPES.map((bodyType) => {
         const isSelected = selected === bodyType.id;
         const count = counts[bodyType.id] || 0;
@@ -872,7 +872,7 @@ export const InventoryPage = () => {
         <div className="relative z-10 py-16 px-4">
           <div className="container mx-auto text-center">
             <motion.h1 
-              className="text-4xl md:text-6xl font-bold text-white mb-4"
+              className="text-2xl sm:text-3xl md:text-4xl lg:text-6xl font-bold text-white mb-4"
               initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6 }}

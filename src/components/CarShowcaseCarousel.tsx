@@ -160,7 +160,7 @@ export const CarShowcaseCarousel = ({ className = '' }: CarShowcaseCarouselProps
         <span className="inline-block px-4 py-1.5 text-xs font-semibold tracking-wider text-blue-400 uppercase bg-blue-500/10 rounded-full border border-blue-500/20 mb-4">
           Featured Collection
         </span>
-        <h2 className="text-4xl md:text-5xl font-bold text-white mb-3">
+        <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-white mb-3">
           Premium Showroom
         </h2>
         <p className="text-gray-400 text-lg max-w-2xl mx-auto">

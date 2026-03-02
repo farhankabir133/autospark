@@ -116,7 +116,7 @@ export const CarViewerShowcase: React.FC<CarViewerShowcaseProps> = ({
               {language === 'en' ? '3D Experience' : '3D অভিজ্ঞতা'}
             </span>
           </div>
-          <h2 className={`text-4xl md:text-5xl font-bold mb-4 ${isDark ? 'text-white' : 'text-gray-900'}`}>
+          <h2 className={`text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold mb-4 ${isDark ? 'text-white' : 'text-gray-900'}`}>
             {title || t.title}
           </h2>
           <p className={`text-lg max-w-2xl mx-auto ${isDark ? 'text-gray-300' : 'text-gray-600'}`}>

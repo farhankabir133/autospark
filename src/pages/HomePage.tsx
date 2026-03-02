@@ -228,6 +228,7 @@ export const HomePage = () => {
         {/* Scroll hint — desktop only */}
         <motion.button
           onClick={scrollToContent}
+          aria-label="Scroll to content"
           className="absolute bottom-2 left-1/2 transform -translate-x-1/2 text-white/40 z-10 hidden md:block"
           animate={{ y: [0, 8, 0] }}
           transition={{ duration: 2, repeat: Infinity }}
@@ -305,6 +306,7 @@ export const HomePage = () => {
                     src={car.image}
                     alt={`${car.brand} ${car.model}`}
                     className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+                    loading="lazy"
                   />
                   <div className={`absolute inset-0 bg-gradient-to-t ${
                     theme === 'dark' ? 'from-gray-800' : 'from-white'
@@ -407,6 +409,7 @@ export const HomePage = () => {
                         src={car.image}
                         alt={car.model}
                         className="w-full h-48 object-cover rounded-lg mb-4"
+                        loading="lazy"
                       />
                       <h3 className="text-xl font-bold mb-2 text-white">
                         {car.brand} {car.model}
@@ -686,7 +689,7 @@ export const HomePage = () => {
 
       {/* FEATURE 13: FILTER/SORT ANIMATIONS */}
       <motion.section
-        className={`py-16 relative overflow-hidden ${
+        className={`py-10 md:py-16 relative overflow-hidden ${
           theme === 'dark'
             ? 'bg-gradient-to-br from-gray-900 to-gray-850'
             : 'bg-gradient-to-br from-white to-gray-50'
@@ -1157,6 +1160,7 @@ export const HomePage = () => {
                             src={vehicle.image} 
                             alt={vehicle.name}
                             className="w-full h-full object-cover"
+                            loading="lazy"
                           />
                           {/* Year badge */}
                           <span className="absolute top-1 left-1 px-1.5 py-0.5 text-[9px] font-bold bg-white/90 text-gray-800 rounded">

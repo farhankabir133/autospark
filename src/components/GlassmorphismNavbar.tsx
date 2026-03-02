@@ -119,7 +119,7 @@ export const GlassmorphismNavbar = () => {
     >
       {/* Glassmorphic background */}
       <div className={`${isScrolled ? glassBackgroundScrolled : glassBackground} transition-all duration-300`}>
-        <nav className="max-w-7xl mx-auto px-3 sm:px-4 lg:px-6 py-3 lg:py-4">
+        <nav aria-label="Main navigation" className="max-w-7xl mx-auto px-3 sm:px-4 lg:px-6 py-3 lg:py-4">
           <div className="flex items-center justify-between">
             {/* Logo Section */}
             <motion.div

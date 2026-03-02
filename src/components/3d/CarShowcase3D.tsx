@@ -455,7 +455,8 @@ export default function CarShowcase3D({ ctaButtons }: { ctaButtons?: React.React
 
         {/* ─────────────────────────────────────
              MOBILE LAYOUT  (< 768px / md)
-             Top: compact brand + headline
+             Top: compact brand bar
+             Upper-third: headline + typewriter
              Center: OPEN for 3D car
              Bottom: slim CTA row → color picker
            ───────────────────────────────────── */}
@@ -483,20 +484,22 @@ export default function CarShowcase3D({ ctaButtons }: { ctaButtons?: React.React
             </div>
           </div>
 
-          {/* Hero headline + typewriter — on MOBILE: compact below brand; on DESKTOP: left-centered */}
-          <div className="md:hidden px-4 mt-2">
-            <h2 className="text-2xl font-black text-white tracking-tight leading-[0.95]">
-              EXPERIENCE{' '}
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-red-500 via-red-600 to-red-800">
-                EXCELLENCE
-              </span>
-            </h2>
-            <div className="flex items-center mt-1.5 min-h-[20px]">
-              <span className="text-xs font-light text-white/70 tracking-wide">
-                {typewriterText}
-              </span>
-              <span className="ml-0.5 inline-block w-[2px] h-3.5 bg-red-600 rounded-full animate-pulse" />
-            </div>
+        </div>
+
+        {/* ─── MOBILE ONLY — Hero headline + typewriter (independently positioned) ─── */}
+        <div className="absolute left-0 right-0 top-[22%] z-10 px-5 md:hidden">
+          <h2 className="text-[1.65rem] font-black text-white tracking-tight leading-[1]">
+            EXPERIENCE{' '}
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-red-500 via-red-600 to-red-800">
+              EXCELLENCE
+            </span>
+          </h2>
+          <div className="w-8 h-[2px] bg-gradient-to-r from-red-600 to-transparent mt-2 mb-1.5" />
+          <div className="flex items-center min-h-[20px] max-w-full">
+            <span className="text-[11px] font-light text-white/80 tracking-wide truncate">
+              {typewriterText}
+            </span>
+            <span className="ml-0.5 inline-block w-[2px] h-3.5 bg-red-600 rounded-full animate-pulse flex-shrink-0" />
           </div>
         </div>
 
@@ -550,7 +553,12 @@ export default function CarShowcase3D({ ctaButtons }: { ctaButtons?: React.React
 
           {/* Color Selector */}
           <div className="pointer-events-auto max-w-[calc(100vw-2rem)]">
-            <div className="flex items-center gap-2 md:gap-6 bg-black/60 backdrop-blur-xl px-3 py-2 md:px-8 md:py-4 rounded-2xl border border-white/10 shadow-2xl overflow-x-auto">
+            <div
+              className="flex items-center gap-2 md:gap-6 bg-black/60 backdrop-blur-xl px-3 py-2 md:px-8 md:py-4 rounded-2xl border border-white/10 shadow-2xl overflow-x-auto scrollbar-hide"
+              role="radiogroup"
+              aria-label="Select car color"
+              style={{ WebkitOverflowScrolling: 'touch', scrollbarWidth: 'none', msOverflowStyle: 'none' }}
+            >
               <span className="text-gray-500 text-[10px] uppercase tracking-widest hidden md:block flex-shrink-0">
                 Color
               </span>
@@ -559,7 +567,10 @@ export default function CarShowcase3D({ ctaButtons }: { ctaButtons?: React.React
                   <button
                     key={colorOption.name}
                     onClick={() => setSelectedColorIndex(index)}
-                    className={`w-6 h-6 md:w-8 md:h-8 rounded-full transition-all duration-300 border-2 ${
+                    aria-label={`Select ${colorOption.name} color`}
+                    aria-checked={selectedColorIndex === index}
+                    role="radio"
+                    className={`w-7 h-7 md:w-8 md:h-8 rounded-full transition-all duration-300 border-2 flex-shrink-0 ${
                       selectedColorIndex === index
                         ? 'border-white scale-125 shadow-lg shadow-white/20'
                         : 'border-transparent hover:scale-110 hover:border-white/30'

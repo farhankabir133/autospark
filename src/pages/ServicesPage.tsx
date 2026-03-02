@@ -1179,7 +1179,7 @@ const ServicesPage: React.FC = () => {
               Premium Auto Services
             </span>
 
-            <h1 className={`text-5xl md:text-7xl font-bold mb-6 ${isDark ? 'text-white' : 'text-gray-900'}`}>
+            <h1 className={`text-3xl sm:text-4xl md:text-5xl lg:text-7xl font-bold mb-6 ${isDark ? 'text-white' : 'text-gray-900'}`}>
               Professional Care
               <br />
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-500 to-purple-600">
@@ -1499,7 +1499,7 @@ const ServicesPage: React.FC = () => {
                   </h3>
                   
                   <div className="mb-6">
-                    <span className={`text-5xl font-bold ${isDark ? 'text-white' : 'text-gray-900'}`}>
+                    <span className={`text-3xl sm:text-4xl md:text-5xl font-bold ${isDark ? 'text-white' : 'text-gray-900'}`}>
                       {pkg.price}
                     </span>
                     <span className={`text-lg ${isDark ? 'text-gray-400' : 'text-gray-500'}`}> BDT</span>
@@ -1899,7 +1899,7 @@ const ServicesPage: React.FC = () => {
                     </h3>
 
                     {/* Time Slots */}
-                    <div className="grid grid-cols-4 gap-3">
+                    <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
                       {timeSlots.map((slot, i) => (
                         <button
                           key={i}

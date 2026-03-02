@@ -2017,7 +2017,7 @@ const QuickViewModal: React.FC<{
                 </div>
 
                 {/* Quick Info */}
-                <div className="grid grid-cols-3 gap-4 pt-4">
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-4">
                   <div className={`flex items-center gap-2 text-sm ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>
                     <Truck size={16} />
                     <span>Free Shipping</span>
@@ -2968,7 +2968,7 @@ export const AccessoriesPage: React.FC = () => {
               Premium Motor Oils & Accessories
             </span>
 
-            <h1 className={`text-5xl md:text-7xl font-bold mb-6 ${isDark ? 'text-white' : 'text-gray-900'}`}>
+            <h1 className={`text-3xl sm:text-4xl md:text-5xl lg:text-7xl font-bold mb-6 ${isDark ? 'text-white' : 'text-gray-900'}`}>
               Service Your
               <br />
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-500 via-orange-500 to-red-500">

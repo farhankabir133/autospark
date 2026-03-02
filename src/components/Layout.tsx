@@ -18,7 +18,7 @@ export const Layout = ({ children }: LayoutProps) => {
       theme === 'dark' ? 'bg-[#0a0a0a] text-white' : 'bg-gray-50 text-gray-900'
     }`}>
       <Header />
-      <main className="flex-grow relative z-10">{children}</main>
+      <main id="main-content" className="flex-grow relative z-10">{children}</main>
       <Footer />
 
       <a

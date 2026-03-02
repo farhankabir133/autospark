@@ -20,7 +20,7 @@ interface SplashScreenProps {
  */
 export const SplashScreen: React.FC<SplashScreenProps> = memo(({
   onComplete,
-  duration = 2500
+  duration = 1800
 }) => {
   const [isVisible, setIsVisible] = useState(true);
   const [progress, setProgress] = useState(0);
@@ -80,9 +80,9 @@ export const SplashScreen: React.FC<SplashScreenProps> = memo(({
             transition={{ duration: 3, repeat: Infinity }}
           />
 
-          {/* Floating particles */}
+          {/* Floating particles — reduced for performance */}
           <div className="absolute inset-0 pointer-events-none">
-            {[...Array(20)].map((_, i) => (
+            {[...Array(6)].map((_, i) => (
               <motion.div
                 key={i}
                 className="absolute w-1 h-1 bg-[#C00000]/50 rounded-full"
@@ -106,9 +106,9 @@ export const SplashScreen: React.FC<SplashScreenProps> = memo(({
             ))}
           </div>
 
-          {/* Light rays */}
+          {/* Light rays — reduced for performance */}
           <div className="absolute inset-0 overflow-hidden">
-            {[...Array(6)].map((_, i) => (
+            {[...Array(3)].map((_, i) => (
               <motion.div
                 key={i}
                 className="absolute top-1/2 left-1/2 w-[1px] h-[200%] bg-gradient-to-b from-transparent via-[#C00000]/10 to-transparent"

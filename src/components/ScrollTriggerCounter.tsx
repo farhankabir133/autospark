@@ -141,7 +141,7 @@ export const ScrollTriggerCounter = ({
         {/* Counter value with odometer effect */}
         <div className="mb-4">
           <motion.div
-            className={`text-5xl font-bold ${textColor} font-mono`}
+            className={`text-3xl sm:text-4xl md:text-5xl font-bold ${textColor} font-mono`}
             key={displayValue}
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
