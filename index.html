@@ -27,8 +27,10 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link rel="preconnect" href="https://images.pexels.com" crossorigin />
+    <link rel="preconnect" href="https://threejs.org" crossorigin />
     <link rel="dns-prefetch" href="https://images.pexels.com" />
     <link rel="dns-prefetch" href="https://cdn.jsdelivr.net" />
+    <link rel="dns-prefetch" href="https://www.gstatic.com" />
     
     <!-- Performance: Preload critical fonts with font-display swap -->
     <link rel="preload" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" as="style" onload="this.onload=null;this.rel='stylesheet'" />
@@ -81,22 +83,24 @@
       (function(){var r=sessionStorage.redirect;delete sessionStorage.redirect;if(r&&r!==location.href)history.replaceState(null,null,r)})();
       (function(){var q=location.search;if(q&&q.startsWith("?/")){var p=q.slice(2).split("&")[0];history.replaceState(null,null,location.origin+"/autospark/"+p+location.hash)}})();
     </script>
-    <script type="module" crossorigin src="/autospark/assets/js/index-DEMb49wE.js"></script>
+    <script type="module" crossorigin src="/autospark/assets/js/index-Cq_Qadin.js"></script>
     <link rel="modulepreload" crossorigin href="/autospark/assets/js/react-vendor-CNRN5RT9.js">
     <link rel="modulepreload" crossorigin href="/autospark/assets/js/three-DwMUHstb.js">
     <link rel="modulepreload" crossorigin href="/autospark/assets/js/router-DnYZUjJW.js">
-    <link rel="modulepreload" crossorigin href="/autospark/assets/js/framer-motion-C5qQUQlO.js">
+    <link rel="modulepreload" crossorigin href="/autospark/assets/js/framer-motion-TNDpOAKq.js">
     <link rel="modulepreload" crossorigin href="/autospark/assets/js/icons-C9DzdZzX.js">
-    <link rel="stylesheet" crossorigin href="/autospark/assets/index-CocvaMsx.css">
+    <link rel="stylesheet" crossorigin href="/autospark/assets/index-DNisdb2H.css">
   </head>
   <body>
     <!-- Skip to content link for accessibility (keyboard nav) -->
     <a href="#main-content" class="skip-link">Skip to content</a>
     <div id="root"></div>
     
-    <!-- Unicorn Studio — loaded after main content (non-blocking) -->
+    <!-- Unicorn Studio — desktop only (≥768px), non-blocking -->
     <script defer>
-      !function(){var u=window.UnicornStudio;if(u&&u.init){u.init()}else{window.UnicornStudio={isInitialized:!1};var i=document.createElement("script");i.src="https://cdn.jsdelivr.net/gh/hiunicornstudio/unicornstudio.js@v2.0.5/dist/unicornStudio.umd.js";i.defer=true;i.onload=function(){UnicornStudio.init()};(document.head||document.body).appendChild(i)}}();
+      if(window.matchMedia('(min-width: 768px)').matches){
+        !function(){var u=window.UnicornStudio;if(u&&u.init){u.init()}else{window.UnicornStudio={isInitialized:!1};var i=document.createElement("script");i.src="https://cdn.jsdelivr.net/gh/hiunicornstudio/unicornstudio.js@v2.0.5/dist/unicornStudio.umd.js";i.defer=true;i.onload=function(){UnicornStudio.init()};(document.head||document.body).appendChild(i)}}();
+      }
     </script>
   </body>
 </html>
