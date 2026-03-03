@@ -7,7 +7,6 @@ import {
   Html,
   MeshReflectorMaterial,
   Stars,
-  Preload,
   useProgress,
   PerformanceMonitor
 } from '@react-three/drei';
@@ -403,7 +402,7 @@ function MidReflectiveFloor() {
 
 // Scene — tier-aware rendering
 function Scene({ selectedColor, tier }: { selectedColor: string; tier: DeviceTier }) {
-  const { gl } = useThree();
+  const { gl, invalidate } = useThree();
   const [degraded, setDegraded] = useState(false);
 
   // Dynamically downgrade if FPS drops below threshold
@@ -413,6 +412,11 @@ function Scene({ selectedColor, tier }: { selectedColor: string; tier: DeviceTie
     gl.toneMapping = THREE.ACESFilmicToneMapping;
     gl.toneMappingExposure = 0.85;
   }, [gl]);
+
+  // Invalidate frame when color changes (needed for frameloop: 'demand')
+  useEffect(() => {
+    invalidate();
+  }, [selectedColor, invalidate]);
 
   return (
     <>
@@ -448,8 +452,17 @@ function Scene({ selectedColor, tier }: { selectedColor: string; tier: DeviceTie
       <pointLight position={[0, 10, 0]} intensity={0.5} />
       {effectiveTier === 'high' && <pointLight position={[5, 3, 5]} intensity={0.3} color="#ff6600" />}
 
-      {/* Environment map for reflections */}
-      <Environment preset="city" />
+      {/* Environment map for reflections — skip on low-tier to avoid heavy HDR download (~1-3 MB) */}
+      {effectiveTier === 'low' ? (
+        <>
+          {/* Cheap directional lights to simulate environment reflections on low-tier */}
+          <directionalLight position={[5, 8, 5]} intensity={1.2} color="#ffffff" />
+          <directionalLight position={[-5, 5, -5]} intensity={0.6} color="#8888ff" />
+          <hemisphereLight args={['#ffffff', '#444444', 0.8]} />
+        </>
+      ) : (
+        <Environment preset="city" />
+      )}
 
       {/* Stars — disabled on low, reduced on mid */}
       {effectiveTier !== 'low' && (
@@ -563,7 +576,7 @@ export default function CarShowcase3D({ ctaButtons }: { ctaButtons?: React.React
           gl: { antialias: false, alpha: false, powerPreference: 'low-power' as const, stencil: false, depth: true },
           dpr: [1, 1] as [number, number],
           // On low-end: only re-render when something changes (orbit, color)
-          frameloop: 'always' as const,
+          frameloop: 'demand' as const,
         };
       case 'mid':
         return {
@@ -604,7 +617,7 @@ export default function CarShowcase3D({ ctaButtons }: { ctaButtons?: React.React
             autoRotate
             autoRotateSpeed={tier === 'low' ? 0.4 : 0.8}
           />
-          <Preload all />
+          {/* Removed <Preload all /> — Suspense boundary handles progressive loading */}
         </Suspense>
       </Canvas>
 

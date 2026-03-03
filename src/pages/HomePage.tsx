@@ -15,19 +15,15 @@ import { formatPrice } from '../utils/format';
 // Temporarily disabled due to React Three Fiber version compatibility issue
 // import { CarViewerShowcase } from '../components/3d/CarViewer';
 // import { ARViewerEnhanced } from '../components/3d/ARViewerEnhanced';
-import CarFocusCarousel, { carSlides, CarFocusCarouselHandle } from '../components/CarFocusCarousel';
-import { VehicleSpecCardBack } from '../components/VehicleSpecCardBack';
-import { PerformanceGauge } from '../components/PerformanceGauge';
-import { AudioManager } from '../utils/AudioManager';
-import { ComparisonSidebar } from '../components/ComparisonSidebar';
-import { EnhancedFlipCard } from '../components/EnhancedFlipCard';
-import { VehicleCardWithBadges } from '../components/VehicleCardWithBadges';
-import { ComparisonDisplay } from '../components/ComparisonDisplay';
-import { InteractiveColorCustomizer, type VehicleColor } from '../components/InteractiveColorCustomizer';
-import { ScrollTriggerCounter } from '../components/ScrollTriggerCounter';
+
+// Keep data & type imports synchronous (zero runtime cost)
+import { carSlides } from '../components/CarFocusCarousel';
+import type { CarFocusCarouselHandle } from '../components/CarFocusCarousel';
+import type { VehicleColor } from '../components/InteractiveColorCustomizer';
+
+// Eagerly imported — used for loading states (must render immediately)
 import { EnhancedSkeleton } from '../components/EnhancedSkeleton';
 import { CarouselPlaceholder } from '../components/CarouselPlaceholder';
-import { ImageLoadingProgress } from '../components/ImageLoadingProgress';
 
 // Lazy load heavy below-fold components for better performance
 const ParallaxBackground = lazy(() => import('../components/ParallaxBackground').then(m => ({ default: m.ParallaxBackground })));
@@ -39,6 +35,17 @@ const UnicornBackground = lazy(() => import('../components/UnicornBackground'));
 
 // Lazy load 3D component for better performance
 const CarShowcase3D = lazy(() => import('../components/3d/CarShowcase3D'));
+
+// Lazy load below-fold interactive components (critical perf optimization)
+const CarFocusCarousel = lazy(() => import('../components/CarFocusCarousel'));
+const EnhancedFlipCard = lazy(() => import('../components/EnhancedFlipCard').then(m => ({ default: m.EnhancedFlipCard })));
+const VehicleCardWithBadges = lazy(() => import('../components/VehicleCardWithBadges').then(m => ({ default: m.VehicleCardWithBadges })));
+const ComparisonDisplay = lazy(() => import('../components/ComparisonDisplay').then(m => ({ default: m.ComparisonDisplay })));
+const InteractiveColorCustomizer = lazy(() => import('../components/InteractiveColorCustomizer').then(m => ({ default: m.InteractiveColorCustomizer })));
+const ComparisonSidebar = lazy(() => import('../components/ComparisonSidebar').then(m => ({ default: m.ComparisonSidebar })));
+const VehicleSpecCardBack = lazy(() => import('../components/VehicleSpecCardBack').then(m => ({ default: m.VehicleSpecCardBack })));
+const PerformanceGauge = lazy(() => import('../components/PerformanceGauge').then(m => ({ default: m.PerformanceGauge })));
+const ScrollTriggerCounter = lazy(() => import('../components/ScrollTriggerCounter').then(m => ({ default: m.ScrollTriggerCounter })));
 
 // 3D Showcase loading fallback
 const CarShowcase3DFallback = () => (
@@ -61,20 +68,10 @@ export const HomePage = () => {
   const [showComparison, setShowComparison] = useState(false);
   const [selectedVehicleColor, setSelectedVehicleColor] = useState<VehicleColor | null>(null);
   const [filteredResultCount, setFilteredResultCount] = useState(450);
-  const [isLoadingImages, setIsLoadingImages] = useState(true);
-  const [isLoadingCards, setIsLoadingCards] = useState(true);
+  // Artificial loading delays removed — content renders immediately for faster LCP
+  const isLoadingImages = false;
+  const isLoadingCards = false;
 
-  // Simulate image loading delay
-  useEffect(() => {
-    const timer = setTimeout(() => setIsLoadingImages(false), 2000);
-    return () => clearTimeout(timer);
-  }, []);
-
-  // Simulate card loading delay
-  useEffect(() => {
-    const timer = setTimeout(() => setIsLoadingCards(false), 1500);
-    return () => clearTimeout(timer);
-  }, []);
   const carouselRef = useRef<CarFocusCarouselHandle>(null);
   const carouselSectionRef = useRef<HTMLDivElement>(null);
   const flipTimeoutRef = useRef<NodeJS.Timeout | null>(null);
@@ -124,7 +121,7 @@ export const HomePage = () => {
 
   const handleVehicleSelect = (vehicleId: typeof showcaseVehicle) => {
     setShowcaseVehicle(vehicleId);
-    AudioManager.playVehicleSelect();
+    import('../utils/AudioManager').then(m => m.AudioManager.playVehicleSelect());
   };
 
   // Handler for clicking on a car in the Premium Collection
@@ -147,7 +144,7 @@ export const HomePage = () => {
     if (!comparisonVehicles.find(v => v.id === vehicle.id)) {
       setComparisonVehicles([...comparisonVehicles, vehicle]);
       setShowComparison(true);
-      AudioManager.playClick();
+      import('../utils/AudioManager').then(m => m.AudioManager.playClick());
     }
   };
 
@@ -475,7 +472,7 @@ export const HomePage = () => {
                   autoFlipDelay={3500}
                   onFlipChange={(isFlipped) => {
                     if (isFlipped) {
-                      AudioManager.playVehicleSelect();
+                      import('../utils/AudioManager').then(m => m.AudioManager.playVehicleSelect());
                     }
                   }}
                 />
@@ -1323,7 +1320,7 @@ export const HomePage = () => {
                 language={language}
                 onColorSelect={(color) => {
                   setSelectedVehicleColor(color);
-                  AudioManager.playClick();
+                  import('../utils/AudioManager').then(m => m.AudioManager.playClick());
                 }}
               />
             </motion.div>
@@ -1380,7 +1377,7 @@ export const HomePage = () => {
                 language={language}
                 onColorSelect={(color) => {
                   setSelectedVehicleColor(color);
-                  AudioManager.playClick();
+                  import('../utils/AudioManager').then(m => m.AudioManager.playClick());
                 }}
               />
             </motion.div>
@@ -1437,7 +1434,7 @@ export const HomePage = () => {
                 language={language}
                 onColorSelect={(color) => {
                   setSelectedVehicleColor(color);
-                  AudioManager.playClick();
+                  import('../utils/AudioManager').then(m => m.AudioManager.playClick());
                 }}
               />
             </motion.div>
