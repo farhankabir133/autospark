@@ -8,3 +8,12 @@ createRoot(document.getElementById('root')!).render(
     <App />
   </StrictMode>
 );
+
+// Register Service Worker for asset caching (production only)
+if ('serviceWorker' in navigator && import.meta.env.PROD) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker
+      .register('/autospark/sw.js', { scope: '/autospark/' })
+      .catch(() => {/* SW registration failed — non-critical */});
+  });
+}

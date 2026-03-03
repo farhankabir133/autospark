@@ -10,6 +10,7 @@ import {
   useProgress,
   PerformanceMonitor
 } from '@react-three/drei';
+import { useReducedMotion } from 'framer-motion';
 import * as THREE from 'three';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 import { DRACOLoader } from 'three/examples/jsm/loaders/DRACOLoader.js';
@@ -379,7 +380,7 @@ function ReflectiveFloor() {
 }
 
 // Scene — tier-aware rendering
-function Scene({ selectedColor, tier }: { selectedColor: string; tier: DeviceTier }) {
+function Scene({ selectedColor, tier, reducedMotion = false }: { selectedColor: string; tier: DeviceTier; reducedMotion?: boolean }) {
   const { gl, invalidate } = useThree();
   const [degraded, setDegraded] = useState(false);
 
@@ -442,8 +443,8 @@ function Scene({ selectedColor, tier }: { selectedColor: string; tier: DeviceTie
         <Environment preset="city" />
       )}
 
-      {/* Stars — disabled on low, reduced on mid */}
-      {effectiveTier !== 'low' && (
+      {/* Stars — disabled on low and when prefers-reduced-motion */}
+      {effectiveTier !== 'low' && !reducedMotion && (
         <Stars
           radius={100}
           depth={50}
@@ -455,8 +456,8 @@ function Scene({ selectedColor, tier }: { selectedColor: string; tier: DeviceTie
         />
       )}
 
-      {/* Particles — tier-aware */}
-      <FloatingParticles count={effectiveTier === 'high' ? 100 : 20} tier={effectiveTier} />
+      {/* Particles — tier-aware, disabled for reduced motion */}
+      {!reducedMotion && <FloatingParticles count={effectiveTier === 'high' ? 100 : 20} tier={effectiveTier} />}
 
       {/* The real Ferrari 458 Italia */}
       <FerrariModel color={selectedColor} />
@@ -538,6 +539,7 @@ export default function CarShowcase3D({ ctaButtons }: { ctaButtons?: React.React
   const isMobile = useIsMobile();
   const isTablet = useIsTablet();
   const [tier] = useState<DeviceTier>(() => getDeviceTier());
+  const prefersReducedMotion = useReducedMotion();
   const typewriterText = useTypewriter([
     'Exclusive Cars in Rajshahi',
     "North Bengal's Leading Premium Car Showroom",
@@ -574,29 +576,44 @@ export default function CarShowcase3D({ ctaButtons }: { ctaButtons?: React.React
 
   return (
     <div className="relative w-full h-dvh bg-black overflow-hidden">
-      {/* 3D Canvas — tier-adaptive settings */}
-      <Canvas
-        shadows={canvasProps.shadows}
-        camera={{ position: [4.25, 1.4, -4.5], fov: 40 }}
-        gl={canvasProps.gl}
-        dpr={canvasProps.dpr}
-        frameloop={canvasProps.frameloop}
-      >
-        <Suspense fallback={<LoadingScreen />}>
-          <Scene selectedColor={selectedColor.color} tier={tier} />
-          <OrbitControls
-            enablePan={false}
-            enableZoom={!isMobile && !isTablet}
-            minDistance={3}
-            maxDistance={12}
-            maxPolarAngle={Math.PI / 2}
-            target={[0, 0.5, 0]}
-            autoRotate
-            autoRotateSpeed={tier === 'low' ? 0.4 : 0.8}
+      {/* Low-tier: static hero image instead of full GLTF to avoid ~4-8MB download */}
+      {tier === 'low' ? (
+        <div className="absolute inset-0">
+          <img
+            src="https://images.pexels.com/photos/337909/pexels-photo-337909.jpeg?auto=compress&cs=tinysrgb&w=1200&fm=webp"
+            alt="Ferrari 458 Italia"
+            className="w-full h-full object-cover object-center"
+            loading="eager"
+            fetchPriority="high"
           />
-          {/* Removed <Preload all /> — Suspense boundary handles progressive loading */}
-        </Suspense>
-      </Canvas>
+          {/* Dark overlay for text readability */}
+          <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-black/60" />
+        </div>
+      ) : (
+        /* 3D Canvas — tier-adaptive settings */
+        <Canvas
+          shadows={canvasProps.shadows}
+          camera={{ position: [4.25, 1.4, -4.5], fov: 40 }}
+          gl={canvasProps.gl}
+          dpr={canvasProps.dpr}
+          frameloop={canvasProps.frameloop}
+        >
+          <Suspense fallback={<LoadingScreen />}>
+            <Scene selectedColor={selectedColor.color} tier={tier} reducedMotion={!!prefersReducedMotion} />
+            <OrbitControls
+              enablePan={false}
+              enableZoom={!isMobile && !isTablet}
+              minDistance={3}
+              maxDistance={12}
+              maxPolarAngle={Math.PI / 2}
+              target={[0, 0.5, 0]}
+              autoRotate={!prefersReducedMotion}
+              autoRotateSpeed={tier === 'mid' ? 0.6 : 0.8}
+            />
+            {/* Removed <Preload all /> — Suspense boundary handles progressive loading */}
+          </Suspense>
+        </Canvas>
+      )}
 
       {/* ── Overlay UI ── */}
       <div className="absolute inset-0 pointer-events-none">
@@ -699,7 +716,8 @@ export default function CarShowcase3D({ ctaButtons }: { ctaButtons?: React.React
             </div>
           )}
 
-          {/* Color Selector */}
+          {/* Color Selector — hidden on low-tier (no 3D model to colorize) */}
+          {tier !== 'low' && (
           <div className="pointer-events-auto max-w-[calc(100vw-2rem)]">
             <div
               className="flex items-center gap-2 md:gap-6 bg-black/60 backdrop-blur-xl px-3 py-2 md:px-8 md:py-4 rounded-2xl border border-white/10 shadow-2xl overflow-x-auto scrollbar-hide"
@@ -733,6 +751,7 @@ export default function CarShowcase3D({ ctaButtons }: { ctaButtons?: React.React
               </span>
             </div>
           </div>
+          )}
         </div>
 
         {/* ─── Corner accents ─── */}

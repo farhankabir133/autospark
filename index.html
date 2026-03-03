@@ -27,8 +27,10 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link rel="preconnect" href="https://images.pexels.com" crossorigin />
+    <link rel="preconnect" href="https://threejs.org" crossorigin />
     <link rel="dns-prefetch" href="https://images.pexels.com" />
     <link rel="dns-prefetch" href="https://cdn.jsdelivr.net" />
+    <link rel="dns-prefetch" href="https://www.gstatic.com" />
     
     <!-- Performance: Preload critical fonts with font-display swap -->
     <link rel="preload" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" as="style" onload="this.onload=null;this.rel='stylesheet'" />
@@ -88,9 +90,11 @@
     <div id="root"></div>
     <script type="module" src="/src/main.tsx" fetchpriority="high"></script>
     
-    <!-- Unicorn Studio — loaded after main content (non-blocking) -->
+    <!-- Unicorn Studio — desktop only (≥768px), non-blocking -->
     <script defer>
-      !function(){var u=window.UnicornStudio;if(u&&u.init){u.init()}else{window.UnicornStudio={isInitialized:!1};var i=document.createElement("script");i.src="https://cdn.jsdelivr.net/gh/hiunicornstudio/unicornstudio.js@v2.0.5/dist/unicornStudio.umd.js";i.defer=true;i.onload=function(){UnicornStudio.init()};(document.head||document.body).appendChild(i)}}();
+      if(window.matchMedia('(min-width: 768px)').matches){
+        !function(){var u=window.UnicornStudio;if(u&&u.init){u.init()}else{window.UnicornStudio={isInitialized:!1};var i=document.createElement("script");i.src="https://cdn.jsdelivr.net/gh/hiunicornstudio/unicornstudio.js@v2.0.5/dist/unicornStudio.umd.js";i.defer=true;i.onload=function(){UnicornStudio.init()};(document.head||document.body).appendChild(i)}}();
+      }
     </script>
   </body>
 </html>
