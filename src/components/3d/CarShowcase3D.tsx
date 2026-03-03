@@ -8,7 +8,8 @@ import {
   MeshReflectorMaterial,
   Stars,
   Preload,
-  useProgress
+  useProgress,
+  PerformanceMonitor
 } from '@react-three/drei';
 import * as THREE from 'three';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
@@ -18,7 +19,50 @@ import { DRACOLoader } from 'three/examples/jsm/loaders/DRACOLoader.js';
 const FERRARI_MODEL_URL = 'https://threejs.org/examples/models/gltf/ferrari.glb';
 const DRACO_DECODER_PATH = 'https://www.gstatic.com/draco/versioned/decoders/1.5.7/';
 
-// ── Responsive hook ──
+// ── Device tier detection ──
+type DeviceTier = 'low' | 'mid' | 'high';
+
+function getDeviceTier(): DeviceTier {
+  if (typeof window === 'undefined') return 'mid';
+  const w = window.innerWidth;
+  const isPhone = w < 768;
+  const isTablet = w >= 768 && w < 1024;
+
+  // Check GPU capability via WebGL renderer info
+  try {
+    const canvas = document.createElement('canvas');
+    const gl = canvas.getContext('webgl') || canvas.getContext('experimental-webgl');
+    if (gl && gl instanceof WebGLRenderingContext) {
+      const ext = gl.getExtension('WEBGL_debug_renderer_info');
+      if (ext) {
+        const renderer = gl.getParameter(ext.UNMASKED_RENDERER_WEBGL).toLowerCase();
+        // Low-end mobile GPUs
+        if (renderer.includes('mali-4') || renderer.includes('adreno 3') || renderer.includes('powervr sgx')) {
+          return 'low';
+        }
+      }
+    }
+  } catch { /* ignore */ }
+
+  // Check hardware concurrency (CPU cores)
+  const cores = navigator.hardwareConcurrency || 4;
+  // Check device memory (Chrome only)
+  const memory = (navigator as { deviceMemory?: number }).deviceMemory || 4;
+
+  if (isPhone) {
+    if (cores <= 4 || memory <= 3) return 'low';
+    return 'mid';
+  }
+  if (isTablet) {
+    if (cores <= 4 || memory <= 3) return 'low';
+    return 'mid';
+  }
+  // Desktop
+  if (cores >= 8 && memory >= 8) return 'high';
+  return 'mid';
+}
+
+// ── Responsive hooks ──
 function useIsMobile(breakpoint = 768) {
   const [isMobile, setIsMobile] = useState(() =>
     typeof window !== 'undefined' ? window.innerWidth < breakpoint : false
@@ -29,6 +73,18 @@ function useIsMobile(breakpoint = 768) {
     return () => window.removeEventListener('resize', onResize);
   }, [breakpoint]);
   return isMobile;
+}
+
+function useIsTablet() {
+  const [isTablet, setIsTablet] = useState(() =>
+    typeof window !== 'undefined' ? window.innerWidth >= 768 && window.innerWidth < 1024 : false
+  );
+  useEffect(() => {
+    const onResize = () => setIsTablet(window.innerWidth >= 768 && window.innerWidth < 1024);
+    window.addEventListener('resize', onResize);
+    return () => window.removeEventListener('resize', onResize);
+  }, []);
+  return isTablet;
 }
 
 // Color options
@@ -42,14 +98,19 @@ const CAR_COLORS = [
   { name: 'Royal Purple', color: '#4B0082' },
 ];
 
-// Floating particles
-function FloatingParticles({ count = 80 }: { count?: number }) {
+// Floating particles — completely disabled on low-tier devices
+function FloatingParticles({ count = 80, tier }: { count?: number; tier: DeviceTier }) {
   const mesh = useRef<THREE.Points>(null);
 
+  // On low-tier, render nothing
+  if (tier === 'low') return null;
+
+  const actualCount = tier === 'mid' ? Math.min(count, 20) : count;
+
   const particles = useMemo(() => {
-    const positions = new Float32Array(count * 3);
-    const colors = new Float32Array(count * 3);
-    for (let i = 0; i < count; i++) {
+    const positions = new Float32Array(actualCount * 3);
+    const colors = new Float32Array(actualCount * 3);
+    for (let i = 0; i < actualCount; i++) {
       positions[i * 3] = (Math.random() - 0.5) * 25;
       positions[i * 3 + 1] = Math.random() * 12;
       positions[i * 3 + 2] = (Math.random() - 0.5) * 25;
@@ -59,7 +120,7 @@ function FloatingParticles({ count = 80 }: { count?: number }) {
       colors[i * 3 + 2] = isRed ? 0 : 1;
     }
     return { positions, colors };
-  }, [count]);
+  }, [actualCount]);
 
   useFrame((state) => {
     if (mesh.current) {
@@ -264,12 +325,12 @@ function ResponsiveCamera() {
   return null;
 }
 
-// Animated ground grid
-function AnimatedGrid() {
+// Animated ground grid — static on low-tier
+function AnimatedGrid({ tier }: { tier: DeviceTier }) {
   const gridRef = useRef<THREE.GridHelper>(null);
 
   useFrame((state) => {
-    if (gridRef.current) {
+    if (gridRef.current && tier !== 'low') {
       gridRef.current.position.z = -((-state.clock.elapsedTime) % 1);
     }
   });
@@ -277,7 +338,7 @@ function AnimatedGrid() {
   return (
     <gridHelper
       ref={gridRef}
-      args={[20, 40, 0xffffff, 0xffffff]}
+      args={[20, tier === 'low' ? 20 : 40, 0xffffff, 0xffffff]}
       position={[0, 0.001, 0]}
       material-opacity={0.15}
       material-depthWrite={false}
@@ -286,9 +347,67 @@ function AnimatedGrid() {
   );
 }
 
-// Scene
-function Scene({ selectedColor, isMobile }: { selectedColor: string; isMobile: boolean }) {
+// Simple dark floor for low/mid-tier devices (replaces MeshReflectorMaterial)
+function SimpleFloor() {
+  return (
+    <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0, 0]}>
+      <planeGeometry args={[50, 50]} />
+      <meshStandardMaterial color="#050505" metalness={0.5} roughness={0.8} />
+    </mesh>
+  );
+}
+
+// Reflective floor only for high-tier devices
+function ReflectiveFloor() {
+  return (
+    <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0, 0]}>
+      <planeGeometry args={[50, 50]} />
+      <MeshReflectorMaterial
+        blur={[300, 100]}
+        resolution={1024}
+        mixBlur={1}
+        mixStrength={50}
+        roughness={1}
+        depthScale={1.2}
+        minDepthThreshold={0.4}
+        maxDepthThreshold={1.4}
+        color="#050505"
+        metalness={0.5}
+        mirror={0.5}
+      />
+    </mesh>
+  );
+}
+
+// Mid-tier reflective floor — lighter settings
+function MidReflectiveFloor() {
+  return (
+    <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0, 0]}>
+      <planeGeometry args={[50, 50]} />
+      <MeshReflectorMaterial
+        blur={[100, 50]}
+        resolution={256}
+        mixBlur={1}
+        mixStrength={20}
+        roughness={1}
+        depthScale={1.2}
+        minDepthThreshold={0.4}
+        maxDepthThreshold={1.4}
+        color="#050505"
+        metalness={0.5}
+        mirror={0.2}
+      />
+    </mesh>
+  );
+}
+
+// Scene — tier-aware rendering
+function Scene({ selectedColor, tier }: { selectedColor: string; tier: DeviceTier }) {
   const { gl } = useThree();
+  const [degraded, setDegraded] = useState(false);
+
+  // Dynamically downgrade if FPS drops below threshold
+  const effectiveTier: DeviceTier = degraded ? 'low' : tier;
 
   useEffect(() => {
     gl.toneMapping = THREE.ACESFilmicToneMapping;
@@ -297,70 +416,78 @@ function Scene({ selectedColor, isMobile }: { selectedColor: string; isMobile: b
 
   return (
     <>
+      {/* Runtime performance monitor — degrades quality if FPS drops */}
+      <PerformanceMonitor
+        onDecline={() => setDegraded(true)}
+        flipflops={2}
+        onFallback={() => setDegraded(true)}
+      />
+
       {/* Responsive camera adjustment */}
       <ResponsiveCamera />
 
-      {/* Lighting */}
-      <ambientLight intensity={0.4} />
+      {/* Lighting — simplified on low-tier */}
+      <ambientLight intensity={effectiveTier === 'low' ? 0.6 : 0.4} />
       <spotLight
         position={[10, 15, 10]}
         angle={0.3}
         penumbra={1}
         intensity={2}
-        castShadow
-        shadow-mapSize={isMobile ? [1024, 1024] : [2048, 2048]}
+        castShadow={effectiveTier !== 'low'}
+        shadow-mapSize={effectiveTier === 'high' ? [2048, 2048] : [512, 512]}
       />
-      <spotLight
-        position={[-10, 15, -10]}
-        angle={0.3}
-        penumbra={1}
-        intensity={1.5}
-        color="#ff4444"
-      />
+      {effectiveTier !== 'low' && (
+        <spotLight
+          position={[-10, 15, -10]}
+          angle={0.3}
+          penumbra={1}
+          intensity={1.5}
+          color="#ff4444"
+        />
+      )}
       <pointLight position={[0, 10, 0]} intensity={0.5} />
-      {!isMobile && <pointLight position={[5, 3, 5]} intensity={0.3} color="#ff6600" />}
+      {effectiveTier === 'high' && <pointLight position={[5, 3, 5]} intensity={0.3} color="#ff6600" />}
 
       {/* Environment map for reflections */}
       <Environment preset="city" />
 
-      {/* Stars — fewer on mobile */}
-      <Stars radius={100} depth={50} count={isMobile ? 600 : 2000} factor={4} saturation={0} fade speed={1} />
+      {/* Stars — disabled on low, reduced on mid */}
+      {effectiveTier !== 'low' && (
+        <Stars
+          radius={100}
+          depth={50}
+          count={effectiveTier === 'high' ? 2000 : 400}
+          factor={4}
+          saturation={0}
+          fade
+          speed={1}
+        />
+      )}
 
-      {/* Particles — fewer on mobile */}
-      <FloatingParticles count={isMobile ? 30 : 100} />
+      {/* Particles — tier-aware */}
+      <FloatingParticles count={effectiveTier === 'high' ? 100 : 20} tier={effectiveTier} />
 
       {/* The real Ferrari 458 Italia */}
       <FerrariModel color={selectedColor} />
 
-      {/* Animated grid on floor */}
-      <AnimatedGrid />
+      {/* Animated grid on floor — static on low */}
+      <AnimatedGrid tier={effectiveTier} />
 
-      {/* Reflective floor — lower resolution on mobile */}
-      <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0, 0]}>
-        <planeGeometry args={[50, 50]} />
-        <MeshReflectorMaterial
-          blur={isMobile ? [150, 50] : [300, 100]}
-          resolution={isMobile ? 512 : 1024}
-          mixBlur={1}
-          mixStrength={isMobile ? 30 : 50}
-          roughness={1}
-          depthScale={1.2}
-          minDepthThreshold={0.4}
-          maxDepthThreshold={1.4}
-          color="#050505"
-          metalness={0.5}
-          mirror={isMobile ? 0.3 : 0.5}
+      {/* Floor — tier-based: simple on low, light reflector on mid, full on high */}
+      {effectiveTier === 'low' && <SimpleFloor />}
+      {effectiveTier === 'mid' && <MidReflectiveFloor />}
+      {effectiveTier === 'high' && <ReflectiveFloor />}
+
+      {/* Contact shadow — only on mid and high */}
+      {effectiveTier !== 'low' && (
+        <ContactShadows
+          position={[0, 0.01, 0]}
+          opacity={effectiveTier === 'high' ? 0.8 : 0.5}
+          scale={15}
+          blur={effectiveTier === 'high' ? 2.5 : 1.5}
+          far={10}
         />
-      </mesh>
-
-      {/* Contact shadow */}
-      <ContactShadows
-        position={[0, 0.01, 0]}
-        opacity={0.8}
-        scale={15}
-        blur={2.5}
-        far={10}
-      />
+      )}
     </>
   );
 }
@@ -419,32 +546,63 @@ export default function CarShowcase3D({ ctaButtons }: { ctaButtons?: React.React
   const [selectedColorIndex, setSelectedColorIndex] = useState(0);
   const selectedColor = CAR_COLORS[selectedColorIndex];
   const isMobile = useIsMobile();
+  const isTablet = useIsTablet();
+  const [tier] = useState<DeviceTier>(() => getDeviceTier());
   const typewriterText = useTypewriter([
     'Exclusive Cars in Rajshahi',
     "North Bengal's Leading Premium Car Showroom",
     'Luxury Redefined, Performance Delivered',
   ]);
 
+  // Canvas settings based on device tier
+  const canvasProps = useMemo(() => {
+    switch (tier) {
+      case 'low':
+        return {
+          shadows: false,
+          gl: { antialias: false, alpha: false, powerPreference: 'low-power' as const, stencil: false, depth: true },
+          dpr: [1, 1] as [number, number],
+          // On low-end: only re-render when something changes (orbit, color)
+          frameloop: 'always' as const,
+        };
+      case 'mid':
+        return {
+          shadows: true,
+          gl: { antialias: false, alpha: false, powerPreference: 'default' as const, stencil: false, depth: true },
+          dpr: [1, 1] as [number, number],
+          frameloop: 'always' as const,
+        };
+      default: // high
+        return {
+          shadows: true,
+          gl: { antialias: true, alpha: false, powerPreference: 'high-performance' as const },
+          dpr: [1, 1.5] as [number, number],
+          frameloop: 'always' as const,
+        };
+    }
+  }, [tier]);
+
   return (
     <div className="relative w-full h-dvh bg-black overflow-hidden">
-      {/* 3D Canvas */}
+      {/* 3D Canvas — tier-adaptive settings */}
       <Canvas
-        shadows
+        shadows={canvasProps.shadows}
         camera={{ position: [4.25, 1.4, -4.5], fov: 40 }}
-        gl={{ antialias: !isMobile, alpha: false }}
-        dpr={isMobile ? [1, 1] : [1, 1.5]}
+        gl={canvasProps.gl}
+        dpr={canvasProps.dpr}
+        frameloop={canvasProps.frameloop}
       >
         <Suspense fallback={<LoadingScreen />}>
-          <Scene selectedColor={selectedColor.color} isMobile={isMobile} />
+          <Scene selectedColor={selectedColor.color} tier={tier} />
           <OrbitControls
             enablePan={false}
-            enableZoom={!isMobile}
+            enableZoom={!isMobile && !isTablet}
             minDistance={3}
             maxDistance={12}
             maxPolarAngle={Math.PI / 2}
             target={[0, 0.5, 0]}
             autoRotate
-            autoRotateSpeed={0.8}
+            autoRotateSpeed={tier === 'low' ? 0.4 : 0.8}
           />
           <Preload all />
         </Suspense>
