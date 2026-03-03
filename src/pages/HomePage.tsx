@@ -16,7 +16,6 @@ import { formatPrice } from '../utils/format';
 // import { CarViewerShowcase } from '../components/3d/CarViewer';
 // import { ARViewerEnhanced } from '../components/3d/ARViewerEnhanced';
 import CarFocusCarousel, { carSlides, CarFocusCarouselHandle } from '../components/CarFocusCarousel';
-import { ParallaxBackground } from '../components/ParallaxBackground';
 import { VehicleSpecCardBack } from '../components/VehicleSpecCardBack';
 import { PerformanceGauge } from '../components/PerformanceGauge';
 import { AudioManager } from '../utils/AudioManager';
@@ -25,15 +24,18 @@ import { EnhancedFlipCard } from '../components/EnhancedFlipCard';
 import { VehicleCardWithBadges } from '../components/VehicleCardWithBadges';
 import { ComparisonDisplay } from '../components/ComparisonDisplay';
 import { InteractiveColorCustomizer, type VehicleColor } from '../components/InteractiveColorCustomizer';
-import { MorphingShapeTransition } from '../components/MorphingShapeTransition';
 import { ScrollTriggerCounter } from '../components/ScrollTriggerCounter';
-import { AnimatedComparisonSlider } from '../components/AnimatedComparisonSlider';
-import { FilterAnimations } from '../components/FilterAnimations';
-import { FloatingParticlesBackground } from '../components/FloatingParticlesBackground';
 import { EnhancedSkeleton } from '../components/EnhancedSkeleton';
-import { UnicornBackground } from '../components/UnicornBackground';
 import { CarouselPlaceholder } from '../components/CarouselPlaceholder';
 import { ImageLoadingProgress } from '../components/ImageLoadingProgress';
+
+// Lazy load heavy below-fold components for better performance
+const ParallaxBackground = lazy(() => import('../components/ParallaxBackground').then(m => ({ default: m.ParallaxBackground })));
+const MorphingShapeTransition = lazy(() => import('../components/MorphingShapeTransition').then(m => ({ default: m.MorphingShapeTransition })));
+const AnimatedComparisonSlider = lazy(() => import('../components/AnimatedComparisonSlider').then(m => ({ default: m.AnimatedComparisonSlider })));
+const FilterAnimations = lazy(() => import('../components/FilterAnimations').then(m => ({ default: m.FilterAnimations })));
+const FloatingParticlesBackground = lazy(() => import('../components/FloatingParticlesBackground').then(m => ({ default: m.FloatingParticlesBackground })));
+const UnicornBackground = lazy(() => import('../components/UnicornBackground'));
 
 // Lazy load 3D component for better performance
 const CarShowcase3D = lazy(() => import('../components/3d/CarShowcase3D'));
@@ -307,6 +309,9 @@ export const HomePage = () => {
                     alt={`${car.brand} ${car.model}`}
                     className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
                     loading="lazy"
+                    width={320}
+                    height={160}
+                    decoding="async"
                   />
                   <div className={`absolute inset-0 bg-gradient-to-t ${
                     theme === 'dark' ? 'from-gray-800' : 'from-white'
@@ -410,6 +415,9 @@ export const HomePage = () => {
                         alt={car.model}
                         className="w-full h-48 object-cover rounded-lg mb-4"
                         loading="lazy"
+                        width={400}
+                        height={192}
+                        decoding="async"
                       />
                       <h3 className="text-xl font-bold mb-2 text-white">
                         {car.brand} {car.model}
@@ -1161,6 +1169,9 @@ export const HomePage = () => {
                             alt={vehicle.name}
                             className="w-full h-full object-cover"
                             loading="lazy"
+                            width={96}
+                            height={80}
+                            decoding="async"
                           />
                           {/* Year badge */}
                           <span className="absolute top-1 left-1 px-1.5 py-0.5 text-[9px] font-bold bg-white/90 text-gray-800 rounded">

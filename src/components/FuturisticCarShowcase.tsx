@@ -338,9 +338,11 @@ const FuturisticCarShowcase: React.FC = () => {
         <div className="car-reveal-zone">
           <img
             ref={carImageRef}
-            src="https://images.pexels.com/photos/36318402/pexels-photo-36318402.png?auto=compress&cs=tinysrgb&w=1200"
+            src="https://images.pexels.com/photos/36318402/pexels-photo-36318402.png?auto=compress&cs=tinysrgb&w=1200&fm=webp"
             alt="Futuristic Vehicle"
             className="dimensional-car"
+            loading="lazy"
+            decoding="async"
           />
           
           {/* Scanning light overlay */}

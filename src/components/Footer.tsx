@@ -31,6 +31,8 @@ export const Footer = () => {
                 src={`${import.meta.env.BASE_URL}logo/as.svg`}
                 alt="Auto Spark BD" 
                 className="h-10 w-10 sm:h-12 sm:w-12 drop-shadow-lg"
+                width={48}
+                height={48}
               />
               <span className="text-lg sm:text-xl font-bold text-white">{t('site.title')}</span>
             </div>

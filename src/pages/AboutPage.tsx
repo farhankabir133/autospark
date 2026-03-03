@@ -190,9 +190,13 @@ export const AboutPage = () => {
             <div className="grid md:grid-cols-2 gap-8 items-center">
               <div>
                 <img
-                  src="https://images.pexels.com/photos/3184291/pexels-photo-3184291.jpeg?auto=compress&cs=tinysrgb&w=800"
+                  src="https://images.pexels.com/photos/3184291/pexels-photo-3184291.jpeg?auto=compress&cs=tinysrgb&w=600&fm=webp"
                   alt="Auto Spark BD Showroom"
                   className="rounded-xl shadow-lg w-full h-72 object-cover"
+                  loading="lazy"
+                  width={600}
+                  height={400}
+                  decoding="async"
                 />
               </div>
               <div className={`prose prose-lg ${theme === 'dark' ? 'text-gray-300' : 'text-gray-700'} leading-relaxed space-y-4`}>
@@ -284,9 +288,13 @@ export const AboutPage = () => {
                 <div className="relative">
                   <div className="absolute inset-0 bg-gradient-to-br from-[#C00000] to-[#8B0000] rounded-2xl transform rotate-3"></div>
                   <img
-                    src="https://images.pexels.com/photos/36365285/pexels-photo-36365285.png"
+                    src="https://images.pexels.com/photos/36365285/pexels-photo-36365285.png?auto=compress&cs=tinysrgb&w=400&fm=webp"
                     alt="Founder - Auto Spark BD"
                     className="relative rounded-2xl w-full h-80 object-cover object-top shadow-2xl transform -rotate-0 hover:rotate-0 transition-transform duration-500"
+                    loading="lazy"
+                    width={400}
+                    height={500}
+                    decoding="async"
                   />
                   <div className="absolute -bottom-4 -right-4 bg-[#C00000] text-white px-4 py-2 rounded-lg shadow-lg">
                     <span className="font-bold">{language === 'en' ? 'CEO & Founder' : 'সিইও এবং প্রতিষ্ঠাতা'}</span>
@@ -342,13 +350,13 @@ export const AboutPage = () => {
                 
                 {/* Social Links */}
                 <div className="flex gap-4 pt-4">
-                  <a href="#" className="w-10 h-10 bg-[#C00000]/10 hover:bg-[#C00000] text-[#C00000] hover:text-white rounded-lg flex items-center justify-center transition-colors">
+                  <a href="#" className="w-10 h-10 bg-[#C00000]/10 hover:bg-[#C00000] text-[#C00000] hover:text-white rounded-lg flex items-center justify-center transition-colors" aria-label="Facebook">
                     <Facebook className="w-5 h-5" />
                   </a>
-                  <a href="#" className="w-10 h-10 bg-[#C00000]/10 hover:bg-[#C00000] text-[#C00000] hover:text-white rounded-lg flex items-center justify-center transition-colors">
+                  <a href="#" className="w-10 h-10 bg-[#C00000]/10 hover:bg-[#C00000] text-[#C00000] hover:text-white rounded-lg flex items-center justify-center transition-colors" aria-label="LinkedIn">
                     <Linkedin className="w-5 h-5" />
                   </a>
-                  <a href="mailto:founder@autosparkbd.com" className="w-10 h-10 bg-[#C00000]/10 hover:bg-[#C00000] text-[#C00000] hover:text-white rounded-lg flex items-center justify-center transition-colors">
+                  <a href="mailto:founder@autosparkbd.com" className="w-10 h-10 bg-[#C00000]/10 hover:bg-[#C00000] text-[#C00000] hover:text-white rounded-lg flex items-center justify-center transition-colors" aria-label="Email">
                     <Mail className="w-5 h-5" />
                   </a>
                 </div>
@@ -470,9 +478,13 @@ export const AboutPage = () => {
                   <div className="flex flex-col md:flex-row-reverse md:items-center gap-4">
                     <div className="relative w-36 h-36 sm:w-44 sm:h-44 md:w-52 md:h-52 mx-auto md:mx-0 flex-shrink-0">
                       <img
-                        src="https://images.pexels.com/photos/34067041/pexels-photo-34067041.png"
+                        src="https://images.pexels.com/photos/34067041/pexels-photo-34067041.png?auto=compress&cs=tinysrgb&w=300&fm=webp"
                         alt="Farhan Kabir"
                         className="w-full h-full rounded-full object-cover border-3 border-[#C00000]/30 group-hover:border-[#C00000] transition-colors duration-300"
+                        loading="lazy"
+                        width={208}
+                        height={208}
+                        decoding="async"
                       />
                       <motion.div 
                         className="absolute -top-1 -right-1 bg-[#C00000] text-white p-1.5 rounded-full text-xs shadow-lg"
@@ -496,13 +508,13 @@ export const AboutPage = () => {
                           : 'ডিজিটাল উদ্ভাবন চালনা এবং গ্রাহকদের জন্য নিরবচ্ছিন্ন অভিজ্ঞতা তৈরি করছেন।'}
                       </p>
                       <div className="flex justify-center md:justify-end gap-2 mt-3">
-                        <a href="#" className="w-8 h-8 rounded-full bg-[#C00000]/10 flex items-center justify-center hover:bg-[#C00000] hover:text-white transition-colors">
+                        <a href="#" className="w-8 h-8 rounded-full bg-[#C00000]/10 flex items-center justify-center hover:bg-[#C00000] hover:text-white transition-colors" aria-label="LinkedIn">
                           <Linkedin className="w-4 h-4" />
                         </a>
-                        <a href="#" className="w-8 h-8 rounded-full bg-[#C00000]/10 flex items-center justify-center hover:bg-[#C00000] hover:text-white transition-colors">
+                        <a href="#" className="w-8 h-8 rounded-full bg-[#C00000]/10 flex items-center justify-center hover:bg-[#C00000] hover:text-white transition-colors" aria-label="Facebook">
                           <Facebook className="w-4 h-4" />
                         </a>
-                        <a href="#" className="w-8 h-8 rounded-full bg-[#C00000]/10 flex items-center justify-center hover:bg-[#C00000] hover:text-white transition-colors">
+                        <a href="#" className="w-8 h-8 rounded-full bg-[#C00000]/10 flex items-center justify-center hover:bg-[#C00000] hover:text-white transition-colors" aria-label="Email">
                           <Mail className="w-4 h-4" />
                         </a>
                       </div>
@@ -530,9 +542,13 @@ export const AboutPage = () => {
                   <div className="flex flex-col md:flex-row md:items-center gap-4">
                     <div className="relative w-36 h-36 sm:w-44 sm:h-44 md:w-52 md:h-52 mx-auto md:mx-0 flex-shrink-0">
                       <img
-                        src="https://images.pexels.com/photos/3184611/pexels-photo-3184611.jpeg?auto=compress&cs=tinysrgb&w=400"
+                        src="https://images.pexels.com/photos/3184611/pexels-photo-3184611.jpeg?auto=compress&cs=tinysrgb&w=300&fm=webp"
                         alt="Abu Hasan"
                         className="w-full h-full rounded-full object-cover border-3 border-[#C00000]/30 group-hover:border-[#C00000] transition-colors duration-300"
+                        loading="lazy"
+                        width={208}
+                        height={208}
+                        decoding="async"
                       />
                       <motion.div 
                         className="absolute -top-1 -right-1 bg-[#C00000] text-white p-1.5 rounded-full text-xs shadow-lg"
@@ -556,13 +572,13 @@ export const AboutPage = () => {
                           : 'কৌশলগত দৃষ্টিভঙ্গি এবং গ্রাহক সেবায় উৎকর্ষতার সাথে আমাদের কার্যক্রম পরিচালনা করছেন।'}
                       </p>
                       <div className="flex justify-center md:justify-start gap-2 mt-3">
-                        <a href="#" className="w-8 h-8 rounded-full bg-[#C00000]/10 flex items-center justify-center hover:bg-[#C00000] hover:text-white transition-colors">
+                        <a href="#" className="w-8 h-8 rounded-full bg-[#C00000]/10 flex items-center justify-center hover:bg-[#C00000] hover:text-white transition-colors" aria-label="LinkedIn">
                           <Linkedin className="w-4 h-4" />
                         </a>
-                        <a href="#" className="w-8 h-8 rounded-full bg-[#C00000]/10 flex items-center justify-center hover:bg-[#C00000] hover:text-white transition-colors">
+                        <a href="#" className="w-8 h-8 rounded-full bg-[#C00000]/10 flex items-center justify-center hover:bg-[#C00000] hover:text-white transition-colors" aria-label="Facebook">
                           <Facebook className="w-4 h-4" />
                         </a>
-                        <a href="#" className="w-8 h-8 rounded-full bg-[#C00000]/10 flex items-center justify-center hover:bg-[#C00000] hover:text-white transition-colors">
+                        <a href="#" className="w-8 h-8 rounded-full bg-[#C00000]/10 flex items-center justify-center hover:bg-[#C00000] hover:text-white transition-colors" aria-label="Phone">
                           <Phone className="w-4 h-4" />
                         </a>
                       </div>
@@ -590,9 +606,13 @@ export const AboutPage = () => {
                   <div className="flex flex-col md:flex-row-reverse md:items-center gap-4">
                     <div className="relative w-36 h-36 sm:w-44 sm:h-44 md:w-52 md:h-52 mx-auto md:mx-0 flex-shrink-0">
                       <img
-                        src="https://images.pexels.com/photos/1516680/pexels-photo-1516680.jpeg?auto=compress&cs=tinysrgb&w=400"
+                        src="https://images.pexels.com/photos/1516680/pexels-photo-1516680.jpeg?auto=compress&cs=tinysrgb&w=300&fm=webp"
                         alt="Sohan Ahmed"
                         className="w-full h-full rounded-full object-cover border-3 border-[#C00000]/30 group-hover:border-[#C00000] transition-colors duration-300"
+                        loading="lazy"
+                        width={208}
+                        height={208}
+                        decoding="async"
                       />
                       <motion.div 
                         className="absolute -top-1 -right-1 bg-[#C00000] text-white p-1.5 rounded-full text-xs shadow-lg"
@@ -616,13 +636,13 @@ export const AboutPage = () => {
                           : 'ব্যক্তিগত নির্দেশনার মাধ্যমে গ্রাহকদের তাদের নিখুঁত গাড়ি খুঁজে পেতে সাহায্য করছেন।'}
                       </p>
                       <div className="flex justify-center md:justify-end gap-2 mt-3">
-                        <a href="#" className="w-8 h-8 rounded-full bg-[#C00000]/10 flex items-center justify-center hover:bg-[#C00000] hover:text-white transition-colors">
+                        <a href="#" className="w-8 h-8 rounded-full bg-[#C00000]/10 flex items-center justify-center hover:bg-[#C00000] hover:text-white transition-colors" aria-label="LinkedIn">
                           <Linkedin className="w-4 h-4" />
                         </a>
-                        <a href="#" className="w-8 h-8 rounded-full bg-[#C00000]/10 flex items-center justify-center hover:bg-[#C00000] hover:text-white transition-colors">
+                        <a href="#" className="w-8 h-8 rounded-full bg-[#C00000]/10 flex items-center justify-center hover:bg-[#C00000] hover:text-white transition-colors" aria-label="Facebook">
                           <Facebook className="w-4 h-4" />
                         </a>
-                        <a href="#" className="w-8 h-8 rounded-full bg-[#C00000]/10 flex items-center justify-center hover:bg-[#C00000] hover:text-white transition-colors">
+                        <a href="#" className="w-8 h-8 rounded-full bg-[#C00000]/10 flex items-center justify-center hover:bg-[#C00000] hover:text-white transition-colors" aria-label="Phone">
                           <Phone className="w-4 h-4" />
                         </a>
                       </div>
@@ -650,9 +670,13 @@ export const AboutPage = () => {
                   <div className="flex flex-col md:flex-row md:items-center gap-4">
                     <div className="relative w-36 h-36 sm:w-44 sm:h-44 md:w-52 md:h-52 mx-auto md:mx-0 flex-shrink-0">
                       <img
-                        src="https://images.pexels.com/photos/8961065/pexels-photo-8961065.jpeg?auto=compress&cs=tinysrgb&w=400"
+                        src="https://images.pexels.com/photos/8961065/pexels-photo-8961065.jpeg?auto=compress&cs=tinysrgb&w=300&fm=webp"
                         alt="Amir Rahman"
                         className="w-full h-full rounded-full object-cover border-3 border-[#C00000]/30 group-hover:border-[#C00000] transition-colors duration-300"
+                        loading="lazy"
+                        width={208}
+                        height={208}
+                        decoding="async"
                       />
                       <motion.div 
                         className="absolute -top-1 -right-1 bg-[#C00000] text-white p-1.5 rounded-full text-xs shadow-lg"
@@ -676,13 +700,13 @@ export const AboutPage = () => {
                           : 'প্রতিটি গাড়ি আমাদের কঠোর মান এবং নিরাপত্তা মানদণ্ড পূরণ করছে তা নিশ্চিত করছেন।'}
                       </p>
                       <div className="flex justify-center md:justify-start gap-2 mt-3">
-                        <a href="#" className="w-8 h-8 rounded-full bg-[#C00000]/10 flex items-center justify-center hover:bg-[#C00000] hover:text-white transition-colors">
+                        <a href="#" className="w-8 h-8 rounded-full bg-[#C00000]/10 flex items-center justify-center hover:bg-[#C00000] hover:text-white transition-colors" aria-label="LinkedIn">
                           <Linkedin className="w-4 h-4" />
                         </a>
-                        <a href="#" className="w-8 h-8 rounded-full bg-[#C00000]/10 flex items-center justify-center hover:bg-[#C00000] hover:text-white transition-colors">
+                        <a href="#" className="w-8 h-8 rounded-full bg-[#C00000]/10 flex items-center justify-center hover:bg-[#C00000] hover:text-white transition-colors" aria-label="Facebook">
                           <Facebook className="w-4 h-4" />
                         </a>
-                        <a href="#" className="w-8 h-8 rounded-full bg-[#C00000]/10 flex items-center justify-center hover:bg-[#C00000] hover:text-white transition-colors">
+                        <a href="#" className="w-8 h-8 rounded-full bg-[#C00000]/10 flex items-center justify-center hover:bg-[#C00000] hover:text-white transition-colors" aria-label="Phone">
                           <Phone className="w-4 h-4" />
                         </a>
                       </div>
@@ -732,6 +756,10 @@ export const AboutPage = () => {
                       src={testimonial.image}
                       alt={testimonial.name}
                       className="w-14 h-14 rounded-full object-cover border-2 border-[#C00000]/30"
+                      loading="lazy"
+                      width={56}
+                      height={56}
+                      decoding="async"
                     />
                     <div>
                       <h4 className={`font-bold ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>{testimonial.name}</h4>

@@ -113,18 +113,23 @@ export const VehicleDetailsPage = () => {
                 src={currentImage}
                 alt={`${vehicle.brand_name} ${vehicle.model}`}
                 className="w-full h-96 object-cover"
+                width={600}
+                height={384}
+                decoding="async"
               />
               {images.length > 1 && (
                 <>
                   <button
                     onClick={prevImage}
                     className="absolute left-4 top-1/2 transform -translate-y-1/2 bg-black/50 hover:bg-black/70 text-white p-2 rounded-full transition-colors"
+                    aria-label="Previous image"
                   >
                     <ChevronLeft className="h-6 w-6" />
                   </button>
                   <button
                     onClick={nextImage}
                     className="absolute right-4 top-1/2 transform -translate-y-1/2 bg-black/50 hover:bg-black/70 text-white p-2 rounded-full transition-colors"
+                    aria-label="Next image"
                   >
                     <ChevronRight className="h-6 w-6" />
                   </button>
@@ -146,6 +151,10 @@ export const VehicleDetailsPage = () => {
                       src={img.image_url}
                       alt=""
                       className="w-full h-20 object-cover"
+                      loading="lazy"
+                      width={150}
+                      height={80}
+                      decoding="async"
                     />
                   </button>
                 ))}

@@ -17,6 +17,8 @@ export default defineConfig({
     cssMinify: true,
     // Target modern browsers for smaller bundles
     target: 'es2020',
+    // Enable minification with terser options
+    minify: 'esbuild',
     // Optimize chunk size
     rollupOptions: {
       output: {
@@ -38,6 +40,10 @@ export default defineConfig({
           // Three.js - heavy, separate chunk
           if (id.includes('three') || id.includes('@react-three')) {
             return 'three';
+          }
+          // Model viewer - separate chunk (heavy, rarely used on homepage)
+          if (id.includes('@google/model-viewer') || id.includes('model-viewer')) {
+            return 'model-viewer';
           }
           // UI components
           if (id.includes('lucide-react')) {

@@ -23,19 +23,19 @@
     <meta name="twitter:image" content="https://images.pexels.com/photos/3802510/pexels-photo-3802510.jpeg" />
     <meta name="theme-color" content="#0E0E0E" />
     
-    <!-- Performance: Preconnect to critical third-party origins -->
+    <!-- Performance: Preconnect to critical third-party origins (max 4) -->
     <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link rel="preconnect" href="https://images.pexels.com" crossorigin />
-    <link rel="preconnect" href="https://threejs.org" crossorigin />
-    <link rel="preconnect" href="https://www.gstatic.com" crossorigin />
     <link rel="dns-prefetch" href="https://images.pexels.com" />
-    <link rel="dns-prefetch" href="https://threejs.org" />
-    <link rel="dns-prefetch" href="https://www.gstatic.com" />
+    <link rel="dns-prefetch" href="https://cdn.jsdelivr.net" />
     
     <!-- Performance: Preload critical fonts with font-display swap -->
-    <link rel="preload" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" as="style" onload="this.onload=null;this.rel='stylesheet'" />
-    <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" /></noscript>
+    <link rel="preload" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" as="style" onload="this.onload=null;this.rel='stylesheet'" />
+    <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" /></noscript>
+    
+    <!-- Preload LCP-critical assets -->
+    <link rel="preload" href="/autospark/logo/aslogo.svg" as="image" type="image/svg+xml" />
     
     <!-- Critical CSS for above-the-fold content -->
     <style>
@@ -52,6 +52,8 @@
       /* Skip-to-content link (accessibility) */
       .skip-link{position:absolute;top:-40px;left:0;background:#C00000;color:#fff;padding:8px 16px;z-index:10000;transition:top 0.2s}
       .skip-link:focus{top:0}
+      /* Reduce CLS: reserve space for lazy images */
+      img{content-visibility:auto}
     </style>
 
     <!-- Structured Data (JSON-LD) for SEO -->
@@ -84,7 +86,7 @@
     <!-- Skip to content link for accessibility (keyboard nav) -->
     <a href="#main-content" class="skip-link">Skip to content</a>
     <div id="root"></div>
-    <script type="module" src="/src/main.tsx"></script>
+    <script type="module" src="/src/main.tsx" fetchpriority="high"></script>
     
     <!-- Unicorn Studio — loaded after main content (non-blocking) -->
     <script defer>

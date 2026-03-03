@@ -1756,6 +1756,7 @@ const ProductCard: React.FC<{
             <button
               onClick={() => setQuantity(Math.max(1, quantity - 1))}
               className={`p-2 ${isDark ? 'hover:bg-gray-600' : 'hover:bg-gray-200'}`}
+              aria-label="Decrease quantity"
             >
               <Minus size={14} />
             </button>
@@ -1763,6 +1764,7 @@ const ProductCard: React.FC<{
             <button
               onClick={() => setQuantity(Math.min(product.stock_quantity, quantity + 1))}
               className={`p-2 ${isDark ? 'hover:bg-gray-600' : 'hover:bg-gray-200'}`}
+              aria-label="Increase quantity"
             >
               <Plus size={14} />
             </button>
@@ -1829,6 +1831,7 @@ const QuickViewModal: React.FC<{
               className={`absolute top-4 right-4 z-10 p-2 rounded-full ${
                 isDark ? 'bg-gray-700 hover:bg-gray-600' : 'bg-gray-100 hover:bg-gray-200'
               }`}
+              aria-label="Close quick view"
             >
               <X size={20} className={isDark ? 'text-white' : 'text-gray-900'} />
             </button>
@@ -1841,6 +1844,10 @@ const QuickViewModal: React.FC<{
                     src={product.images?.[0]?.image_url || 'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=600'}
                     alt={product.name_en}
                     className="w-full h-80 object-cover"
+                    loading="lazy"
+                    width={600}
+                    height={320}
+                    decoding="async"
                   />
                   {product.discount && product.discount > 0 && (
                     <div className="absolute top-4 left-4 px-3 py-1 bg-gradient-to-r from-red-500 to-pink-500 text-white font-bold rounded-full">
@@ -1970,6 +1977,7 @@ const QuickViewModal: React.FC<{
                     <button
                       onClick={() => setQuantity(Math.max(1, quantity - 1))}
                       className={`p-3 ${isDark ? 'hover:bg-gray-600' : 'hover:bg-gray-200'}`}
+                      aria-label="Decrease quantity"
                     >
                       <Minus size={18} />
                     </button>
@@ -1979,6 +1987,7 @@ const QuickViewModal: React.FC<{
                     <button
                       onClick={() => setQuantity(Math.min(product.stock_quantity, quantity + 1))}
                       className={`p-3 ${isDark ? 'hover:bg-gray-600' : 'hover:bg-gray-200'}`}
+                      aria-label="Increase quantity"
                     >
                       <Plus size={18} />
                     </button>
@@ -2102,6 +2111,10 @@ const ComparePanel: React.FC<{
                     src={item.product.images?.[0]?.image_url || 'https://via.placeholder.com/50'}
                     alt={item.product.name_en}
                     className="w-12 h-12 rounded-lg object-cover"
+                    loading="lazy"
+                    width={48}
+                    height={48}
+                    decoding="async"
                   />
                   <div className="flex-1">
                     <p className={`text-sm font-medium line-clamp-1 ${isDark ? 'text-white' : 'text-gray-900'}`}>
@@ -2114,6 +2127,7 @@ const ComparePanel: React.FC<{
                   <button
                     onClick={() => onRemove(item.product.id)}
                     className={`p-1 rounded-full ${isDark ? 'hover:bg-gray-600' : 'hover:bg-gray-200'}`}
+                    aria-label={`Remove ${item.product.name_en} from comparison`}
                   >
                     <X size={16} className={isDark ? 'text-gray-400' : 'text-gray-500'} />
                   </button>
@@ -2278,6 +2292,10 @@ const SideCartDrawer: React.FC<{
                         src={item.product.images?.[0]?.image_url || 'https://via.placeholder.com/80'}
                         alt={item.product.name_en}
                         className="w-20 h-20 rounded-lg object-cover"
+                        loading="lazy"
+                        width={80}
+                        height={80}
+                        decoding="async"
                       />
                       <div className="flex-1">
                         <h3 className={`font-medium line-clamp-2 ${isDark ? 'text-white' : 'text-gray-900'}`}>
@@ -2293,6 +2311,7 @@ const SideCartDrawer: React.FC<{
                             <button
                               onClick={() => onUpdateQuantity(item.product.id, item.quantity - 1)}
                               className="p-1.5"
+                              aria-label="Decrease quantity"
                             >
                               <Minus size={14} />
                             </button>
@@ -2300,6 +2319,7 @@ const SideCartDrawer: React.FC<{
                             <button
                               onClick={() => onUpdateQuantity(item.product.id, item.quantity + 1)}
                               className="p-1.5"
+                              aria-label="Increase quantity"
                             >
                               <Plus size={14} />
                             </button>
@@ -2307,6 +2327,7 @@ const SideCartDrawer: React.FC<{
                           <button
                             onClick={() => onRemoveItem(item.product.id)}
                             className={isDark ? 'text-red-400' : 'text-red-500'}
+                            aria-label="Remove item"
                           >
                             <Trash2 size={18} />
                           </button>
@@ -3275,12 +3296,14 @@ export const AccessoriesPage: React.FC = () => {
                     <button
                       onClick={() => setViewMode('grid')}
                       className={`p-2 ${viewMode === 'grid' ? 'bg-purple-600 text-white' : ''}`}
+                      aria-label="Grid view"
                     >
                       <Grid size={18} />
                     </button>
                     <button
                       onClick={() => setViewMode('list')}
                       className={`p-2 ${viewMode === 'list' ? 'bg-purple-600 text-white' : ''}`}
+                      aria-label="List view"
                     >
                       <List size={18} />
                     </button>
@@ -3301,7 +3324,7 @@ export const AccessoriesPage: React.FC = () => {
                       }`}
                     >
                       {filter.label}
-                      <button onClick={filter.onRemove}>
+                      <button onClick={filter.onRemove} aria-label={`Remove ${filter.label} filter`}>
                         <X size={14} />
                       </button>
                     </motion.span>
@@ -3374,6 +3397,10 @@ export const AccessoriesPage: React.FC = () => {
                     src={product.images?.[0]?.image_url || 'https://via.placeholder.com/150'}
                     alt={product.name_en}
                     className="w-full h-32 object-cover rounded-lg mb-3"
+                    loading="lazy"
+                    width={192}
+                    height={128}
+                    decoding="async"
                   />
                   <h3 className={`font-medium text-sm line-clamp-2 ${isDark ? 'text-white' : 'text-gray-900'}`}>
                     {product.name_en}

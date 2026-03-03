@@ -1613,6 +1613,10 @@ const ServicesPage: React.FC = () => {
                     src={tech.image}
                     alt={tech.name}
                     className="w-full h-full object-cover"
+                    loading="lazy"
+                    width={400}
+                    height={256}
+                    decoding="async"
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent" />
                   <div className="absolute bottom-4 left-4 right-4">
@@ -1702,6 +1706,10 @@ const ServicesPage: React.FC = () => {
                     src={review.avatar}
                     alt={review.name}
                     className="w-12 h-12 rounded-full object-cover"
+                    loading="lazy"
+                    width={48}
+                    height={48}
+                    decoding="async"
                   />
                   <div>
                     <div className="flex items-center gap-2">
