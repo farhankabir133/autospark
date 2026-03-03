@@ -378,28 +378,6 @@ function ReflectiveFloor() {
   );
 }
 
-// Mid-tier reflective floor — lighter settings
-function MidReflectiveFloor() {
-  return (
-    <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0, 0]}>
-      <planeGeometry args={[50, 50]} />
-      <MeshReflectorMaterial
-        blur={[100, 50]}
-        resolution={256}
-        mixBlur={1}
-        mixStrength={20}
-        roughness={1}
-        depthScale={1.2}
-        minDepthThreshold={0.4}
-        maxDepthThreshold={1.4}
-        color="#050505"
-        metalness={0.5}
-        mirror={0.2}
-      />
-    </mesh>
-  );
-}
-
 // Scene — tier-aware rendering
 function Scene({ selectedColor, tier }: { selectedColor: string; tier: DeviceTier }) {
   const { gl, invalidate } = useThree();
@@ -487,9 +465,8 @@ function Scene({ selectedColor, tier }: { selectedColor: string; tier: DeviceTie
       <AnimatedGrid tier={effectiveTier} />
 
       {/* Floor — tier-based: simple on low, light reflector on mid, full on high */}
-      {effectiveTier === 'low' && <SimpleFloor />}
-      {effectiveTier === 'mid' && <MidReflectiveFloor />}
-      {effectiveTier === 'high' && <ReflectiveFloor />}
+      {/* Floor — SimpleFloor for low & mid (GPU-friendly), full reflector only for high */}
+      {effectiveTier === 'high' ? <ReflectiveFloor /> : <SimpleFloor />}
 
       {/* Contact shadow — only on mid and high */}
       {effectiveTier !== 'low' && (

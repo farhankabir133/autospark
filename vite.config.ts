@@ -1,9 +1,24 @@
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
+import viteCompression from 'vite-plugin-compression';
 
 // https://vitejs.dev/config/
 export default defineConfig({
-  plugins: [react()],
+  plugins: [
+    react(),
+    // Gzip pre-compression for all assets > 1KB
+    viteCompression({
+      algorithm: 'gzip',
+      threshold: 1024,
+      ext: '.gz',
+    }),
+    // Brotli pre-compression for even better compression ratios
+    viteCompression({
+      algorithm: 'brotliCompress',
+      threshold: 1024,
+      ext: '.br',
+    }),
+  ],
   // GitHub Pages deployment - set base to repo name for production
   // Use '/' for development, '/autospark/' for production
   base: process.env.NODE_ENV === 'production' ? '/autospark/' : '/',
