@@ -1,20 +1,22 @@
 // Service Worker — Cache-first for static assets, network-first for API calls
-const CACHE_NAME = 'autospark-v1';
+const CACHE_NAME = 'autospark-v2';
 
 // Assets to precache on install
 const PRECACHE_URLS = [
   '/autospark/',
   '/autospark/logo/aslogo.svg',
+  '/autospark/models/ferrari.glb',
+  '/autospark/draco/draco_decoder.js',
+  '/autospark/draco/draco_decoder.wasm',
+  '/autospark/draco/draco_wasm_wrapper.js',
 ];
 
 // Cache-first patterns (static assets that rarely change)
 const CACHE_FIRST_PATTERNS = [
-  /\.(?:js|css|woff2?|ttf|eot|svg|png|jpe?g|gif|webp|ico)$/i,
+  /\.(?:js|css|woff2?|ttf|eot|svg|png|jpe?g|gif|webp|ico|glb|wasm)$/i,
   /fonts\.googleapis\.com/,
   /fonts\.gstatic\.com/,
   /images\.pexels\.com/,
-  /threejs\.org\/examples\/models/,
-  /gstatic\.com\/draco/,
 ];
 
 // Network-first patterns (dynamic API data)
