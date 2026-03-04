@@ -23,14 +23,15 @@
     <meta name="twitter:image" content="https://images.pexels.com/photos/3802510/pexels-photo-3802510.jpeg" />
     <meta name="theme-color" content="#0E0E0E" />
     
-    <!-- Performance: Preconnect to critical third-party origins (max 4) -->
+    <!-- Performance: Preconnect to critical third-party origins -->
     <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link rel="preconnect" href="https://images.pexels.com" crossorigin />
-    <link rel="preconnect" href="https://threejs.org" crossorigin />
     <link rel="dns-prefetch" href="https://images.pexels.com" />
     <link rel="dns-prefetch" href="https://cdn.jsdelivr.net" />
-    <link rel="dns-prefetch" href="https://www.gstatic.com" />
+    
+    <!-- Prefetch 3D model for mid/high-tier devices (self-hosted, ~1.6 MB) -->
+    <link rel="prefetch" href="/autospark/models/ferrari.glb" as="fetch" crossorigin />
     
     <!-- Performance: Preload critical fonts with font-display swap -->
     <link rel="preload" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" as="style" onload="this.onload=null;this.rel='stylesheet'" />

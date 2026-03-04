@@ -1,25 +1,17 @@
-import { Suspense, useRef, useState, useMemo, useEffect } from 'react';
-import { Canvas, useFrame, useThree } from '@react-three/fiber';
-import {
-  OrbitControls,
-  Environment,
-  ContactShadows,
-  Html,
-  MeshReflectorMaterial,
-  Stars,
-  useProgress,
-  PerformanceMonitor
-} from '@react-three/drei';
+/**
+ * CarShowcase3D.tsx — THIN WRAPPER
+ * ─────────────────────────────────────────────
+ * Zero Three.js imports. Detects device tier, then:
+ *  • Low-tier  → static image (0 KB Three.js)
+ *  • Mid/High  → lazy(() => import('./CarShowcase3DCanvas'))
+ *
+ * All Three.js code lives in CarShowcase3DCanvas.tsx (~987 KB chunk
+ * only downloaded when actually needed).
+ */
+import { lazy, Suspense, useState, useEffect } from 'react';
 import { useReducedMotion } from 'framer-motion';
-import * as THREE from 'three';
-import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
-import { DRACOLoader } from 'three/examples/jsm/loaders/DRACOLoader.js';
 
-// Ferrari 458 model from Three.js official examples
-const FERRARI_MODEL_URL = 'https://threejs.org/examples/models/gltf/ferrari.glb';
-const DRACO_DECODER_PATH = 'https://www.gstatic.com/draco/versioned/decoders/1.5.7/';
-
-// ── Device tier detection ──
+// ── Device tier detection (no Three.js dependency) ──
 type DeviceTier = 'low' | 'mid' | 'high';
 
 function getDeviceTier(): DeviceTier {
@@ -28,7 +20,6 @@ function getDeviceTier(): DeviceTier {
   const isPhone = w < 768;
   const isTablet = w >= 768 && w < 1024;
 
-  // Check GPU capability via WebGL renderer info
   try {
     const canvas = document.createElement('canvas');
     const gl = canvas.getContext('webgl') || canvas.getContext('experimental-webgl');
@@ -36,7 +27,6 @@ function getDeviceTier(): DeviceTier {
       const ext = gl.getExtension('WEBGL_debug_renderer_info');
       if (ext) {
         const renderer = gl.getParameter(ext.UNMASKED_RENDERER_WEBGL).toLowerCase();
-        // Low-end mobile GPUs
         if (renderer.includes('mali-4') || renderer.includes('adreno 3') || renderer.includes('powervr sgx')) {
           return 'low';
         }
@@ -44,50 +34,19 @@ function getDeviceTier(): DeviceTier {
     }
   } catch { /* ignore */ }
 
-  // Check hardware concurrency (CPU cores)
   const cores = navigator.hardwareConcurrency || 4;
-  // Check device memory (Chrome only)
   const memory = (navigator as { deviceMemory?: number }).deviceMemory || 4;
 
-  if (isPhone) {
-    if (cores <= 4 || memory <= 3) return 'low';
-    return 'mid';
-  }
-  if (isTablet) {
-    if (cores <= 4 || memory <= 3) return 'low';
-    return 'mid';
-  }
-  // Desktop
+  if (isPhone) return cores <= 4 || memory <= 3 ? 'low' : 'mid';
+  if (isTablet) return cores <= 4 || memory <= 3 ? 'low' : 'mid';
   if (cores >= 8 && memory >= 8) return 'high';
   return 'mid';
 }
 
-// ── Responsive hooks ──
-function useIsMobile(breakpoint = 768) {
-  const [isMobile, setIsMobile] = useState(() =>
-    typeof window !== 'undefined' ? window.innerWidth < breakpoint : false
-  );
-  useEffect(() => {
-    const onResize = () => setIsMobile(window.innerWidth < breakpoint);
-    window.addEventListener('resize', onResize);
-    return () => window.removeEventListener('resize', onResize);
-  }, [breakpoint]);
-  return isMobile;
-}
+// ── Lazy Canvas import — only for mid/high tier ──
+const CarShowcase3DCanvas = lazy(() => import('./CarShowcase3DCanvas'));
 
-function useIsTablet() {
-  const [isTablet, setIsTablet] = useState(() =>
-    typeof window !== 'undefined' ? window.innerWidth >= 768 && window.innerWidth < 1024 : false
-  );
-  useEffect(() => {
-    const onResize = () => setIsTablet(window.innerWidth >= 768 && window.innerWidth < 1024);
-    window.addEventListener('resize', onResize);
-    return () => window.removeEventListener('resize', onResize);
-  }, []);
-  return isTablet;
-}
-
-// Color options
+// ── Color options (no Three.js dependency) ──
 const CAR_COLORS = [
   { name: 'Racing Red', color: '#C00000' },
   { name: 'Midnight Black', color: '#111111' },
@@ -98,414 +57,7 @@ const CAR_COLORS = [
   { name: 'Royal Purple', color: '#4B0082' },
 ];
 
-// Floating particles — completely disabled on low-tier devices
-function FloatingParticles({ count = 80, tier }: { count?: number; tier: DeviceTier }) {
-  const mesh = useRef<THREE.Points>(null);
-
-  // On low-tier, render nothing
-  if (tier === 'low') return null;
-
-  const actualCount = tier === 'mid' ? Math.min(count, 20) : count;
-
-  const particles = useMemo(() => {
-    const positions = new Float32Array(actualCount * 3);
-    const colors = new Float32Array(actualCount * 3);
-    for (let i = 0; i < actualCount; i++) {
-      positions[i * 3] = (Math.random() - 0.5) * 25;
-      positions[i * 3 + 1] = Math.random() * 12;
-      positions[i * 3 + 2] = (Math.random() - 0.5) * 25;
-      const isRed = Math.random() > 0.75;
-      colors[i * 3] = isRed ? 0.75 : 1;
-      colors[i * 3 + 1] = isRed ? 0 : 1;
-      colors[i * 3 + 2] = isRed ? 0 : 1;
-    }
-    return { positions, colors };
-  }, [actualCount]);
-
-  useFrame((state) => {
-    if (mesh.current) {
-      mesh.current.rotation.y = state.clock.elapsedTime * 0.015;
-    }
-  });
-
-  return (
-    <points ref={mesh}>
-      <bufferGeometry>
-        <bufferAttribute
-          attach="attributes-position"
-          count={particles.positions.length / 3}
-          array={particles.positions}
-          itemSize={3}
-        />
-        <bufferAttribute
-          attach="attributes-color"
-          count={particles.colors.length / 3}
-          array={particles.colors}
-          itemSize={3}
-        />
-      </bufferGeometry>
-      <pointsMaterial
-        size={0.04}
-        vertexColors
-        transparent
-        opacity={0.5}
-        sizeAttenuation
-      />
-    </points>
-  );
-}
-
-// The actual Ferrari model component
-function FerrariModel({ color }: { color: string }) {
-  const group = useRef<THREE.Group>(null);
-  const [model, setModel] = useState<THREE.Group | null>(null);
-  const wheelsRef = useRef<THREE.Object3D[]>([]);
-
-  // Stable material refs — created once, color updated reactively
-  const bodyMaterialRef = useRef<THREE.MeshPhysicalMaterial>(
-    new THREE.MeshPhysicalMaterial({
-      color: new THREE.Color(color),
-      metalness: 1.0,
-      roughness: 0.5,
-      clearcoat: 1.0,
-      clearcoatRoughness: 0.03,
-      envMapIntensity: 1.2,
-    })
-  );
-
-  const detailsMaterial = useMemo(
-    () =>
-      new THREE.MeshStandardMaterial({
-        color: 0xffffff,
-        metalness: 1.0,
-        roughness: 0.5,
-      }),
-    []
-  );
-
-  const glassMaterial = useMemo(
-    () =>
-      new THREE.MeshPhysicalMaterial({
-        color: 0xffffff,
-        metalness: 0.25,
-        roughness: 0,
-        transmission: 1.0,
-      }),
-    []
-  );
-
-  // Reactively update the body color when user clicks a new color
-  useEffect(() => {
-    const mat = bodyMaterialRef.current;
-    // Animate color transition using Three.js lerp for smooth feel
-    const targetColor = new THREE.Color(color);
-    const startColor = mat.color.clone();
-    let frame: number;
-    let t = 0;
-
-    const animate = () => {
-      t += 0.05; // ~20 frames to complete
-      if (t >= 1) {
-        mat.color.copy(targetColor);
-        mat.needsUpdate = true;
-        return;
-      }
-      mat.color.copy(startColor).lerp(targetColor, t);
-      mat.needsUpdate = true;
-      frame = requestAnimationFrame(animate);
-    };
-
-    frame = requestAnimationFrame(animate);
-    return () => cancelAnimationFrame(frame);
-  }, [color]);
-
-  // Load the Ferrari GLTF model — only once
-  useEffect(() => {
-    const dracoLoader = new DRACOLoader();
-    dracoLoader.setDecoderPath(DRACO_DECODER_PATH);
-
-    const loader = new GLTFLoader();
-    loader.setDRACOLoader(dracoLoader);
-
-    loader.load(
-      FERRARI_MODEL_URL,
-      (gltf) => {
-        const carModel = gltf.scene.children[0] as THREE.Group;
-
-        // Apply materials to named parts
-        const body = carModel.getObjectByName('body');
-        if (body && (body as THREE.Mesh).material) {
-          (body as THREE.Mesh).material = bodyMaterialRef.current;
-        }
-
-        // Rims
-        ['rim_fl', 'rim_fr', 'rim_rr', 'rim_rl'].forEach((name) => {
-          const rim = carModel.getObjectByName(name);
-          if (rim && (rim as THREE.Mesh).material) {
-            (rim as THREE.Mesh).material = detailsMaterial;
-          }
-        });
-
-        // Trim
-        const trim = carModel.getObjectByName('trim');
-        if (trim && (trim as THREE.Mesh).material) {
-          (trim as THREE.Mesh).material = detailsMaterial;
-        }
-
-        // Glass
-        const glass = carModel.getObjectByName('glass');
-        if (glass && (glass as THREE.Mesh).material) {
-          (glass as THREE.Mesh).material = glassMaterial;
-        }
-
-        // Collect wheels for animation
-        const wheelNames = ['wheel_fl', 'wheel_fr', 'wheel_rl', 'wheel_rr'];
-        wheelsRef.current = wheelNames
-          .map((name) => carModel.getObjectByName(name))
-          .filter(Boolean) as THREE.Object3D[];
-
-        // Enable shadows
-        carModel.traverse((child) => {
-          if ((child as THREE.Mesh).isMesh) {
-            child.castShadow = true;
-            child.receiveShadow = true;
-          }
-        });
-
-        setModel(carModel);
-      },
-      undefined,
-      (error) => {
-        console.error('Error loading Ferrari model:', error);
-      }
-    );
-
-    return () => {
-      dracoLoader.dispose();
-    };
-  }, []);
-
-  // Animate wheels
-  useFrame((state) => {
-    const time = -state.clock.elapsedTime;
-    for (const wheel of wheelsRef.current) {
-      wheel.rotation.x = time * Math.PI * 0.5;
-    }
-  });
-
-  if (!model) return null;
-
-  return (
-    <group ref={group} position={[0, -0.01, 0]}>
-      <primitive object={model} />
-    </group>
-  );
-}
-
-// Responsive camera — widens FOV and pulls back on mobile
-// On mobile portrait, position the camera to frame the car in the CENTER of the viewport
-function ResponsiveCamera() {
-  const { camera, size } = useThree();
-  useEffect(() => {
-    const cam = camera as THREE.PerspectiveCamera;
-    const isPortrait = size.height > size.width;
-    if (size.width < 640) {
-      // Phone portrait — pull back more, raise slightly so car sits in middle
-      cam.fov = isPortrait ? 48 : 55;
-      cam.position.set(isPortrait ? 5.5 : 5, isPortrait ? 1.8 : 2, isPortrait ? -6 : -5.5);
-    } else if (size.width < 1024) {
-      cam.fov = 45;
-      cam.position.set(4.5, 1.6, -5);
-    } else {
-      cam.fov = 40;
-      cam.position.set(4.25, 1.4, -4.5);
-    }
-    cam.updateProjectionMatrix();
-  }, [camera, size.width, size.height]);
-  return null;
-}
-
-// Animated ground grid — static on low-tier
-function AnimatedGrid({ tier }: { tier: DeviceTier }) {
-  const gridRef = useRef<THREE.GridHelper>(null);
-
-  useFrame((state) => {
-    if (gridRef.current && tier !== 'low') {
-      gridRef.current.position.z = -((-state.clock.elapsedTime) % 1);
-    }
-  });
-
-  return (
-    <gridHelper
-      ref={gridRef}
-      args={[20, tier === 'low' ? 20 : 40, 0xffffff, 0xffffff]}
-      position={[0, 0.001, 0]}
-      material-opacity={0.15}
-      material-depthWrite={false}
-      material-transparent={true}
-    />
-  );
-}
-
-// Simple dark floor for low/mid-tier devices (replaces MeshReflectorMaterial)
-function SimpleFloor() {
-  return (
-    <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0, 0]}>
-      <planeGeometry args={[50, 50]} />
-      <meshStandardMaterial color="#050505" metalness={0.5} roughness={0.8} />
-    </mesh>
-  );
-}
-
-// Reflective floor only for high-tier devices
-function ReflectiveFloor() {
-  return (
-    <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0, 0]}>
-      <planeGeometry args={[50, 50]} />
-      <MeshReflectorMaterial
-        blur={[300, 100]}
-        resolution={1024}
-        mixBlur={1}
-        mixStrength={50}
-        roughness={1}
-        depthScale={1.2}
-        minDepthThreshold={0.4}
-        maxDepthThreshold={1.4}
-        color="#050505"
-        metalness={0.5}
-        mirror={0.5}
-      />
-    </mesh>
-  );
-}
-
-// Scene — tier-aware rendering
-function Scene({ selectedColor, tier, reducedMotion = false }: { selectedColor: string; tier: DeviceTier; reducedMotion?: boolean }) {
-  const { gl, invalidate } = useThree();
-  const [degraded, setDegraded] = useState(false);
-
-  // Dynamically downgrade if FPS drops below threshold
-  const effectiveTier: DeviceTier = degraded ? 'low' : tier;
-
-  useEffect(() => {
-    gl.toneMapping = THREE.ACESFilmicToneMapping;
-    gl.toneMappingExposure = 0.85;
-  }, [gl]);
-
-  // Invalidate frame when color changes (needed for frameloop: 'demand')
-  useEffect(() => {
-    invalidate();
-  }, [selectedColor, invalidate]);
-
-  return (
-    <>
-      {/* Runtime performance monitor — degrades quality if FPS drops */}
-      <PerformanceMonitor
-        onDecline={() => setDegraded(true)}
-        flipflops={2}
-        onFallback={() => setDegraded(true)}
-      />
-
-      {/* Responsive camera adjustment */}
-      <ResponsiveCamera />
-
-      {/* Lighting — simplified on low-tier */}
-      <ambientLight intensity={effectiveTier === 'low' ? 0.6 : 0.4} />
-      <spotLight
-        position={[10, 15, 10]}
-        angle={0.3}
-        penumbra={1}
-        intensity={2}
-        castShadow={effectiveTier !== 'low'}
-        shadow-mapSize={effectiveTier === 'high' ? [2048, 2048] : [512, 512]}
-      />
-      {effectiveTier !== 'low' && (
-        <spotLight
-          position={[-10, 15, -10]}
-          angle={0.3}
-          penumbra={1}
-          intensity={1.5}
-          color="#ff4444"
-        />
-      )}
-      <pointLight position={[0, 10, 0]} intensity={0.5} />
-      {effectiveTier === 'high' && <pointLight position={[5, 3, 5]} intensity={0.3} color="#ff6600" />}
-
-      {/* Environment map for reflections — skip on low-tier to avoid heavy HDR download (~1-3 MB) */}
-      {effectiveTier === 'low' ? (
-        <>
-          {/* Cheap directional lights to simulate environment reflections on low-tier */}
-          <directionalLight position={[5, 8, 5]} intensity={1.2} color="#ffffff" />
-          <directionalLight position={[-5, 5, -5]} intensity={0.6} color="#8888ff" />
-          <hemisphereLight args={['#ffffff', '#444444', 0.8]} />
-        </>
-      ) : (
-        <Environment preset="city" />
-      )}
-
-      {/* Stars — disabled on low and when prefers-reduced-motion */}
-      {effectiveTier !== 'low' && !reducedMotion && (
-        <Stars
-          radius={100}
-          depth={50}
-          count={effectiveTier === 'high' ? 2000 : 400}
-          factor={4}
-          saturation={0}
-          fade
-          speed={1}
-        />
-      )}
-
-      {/* Particles — tier-aware, disabled for reduced motion */}
-      {!reducedMotion && <FloatingParticles count={effectiveTier === 'high' ? 100 : 20} tier={effectiveTier} />}
-
-      {/* The real Ferrari 458 Italia */}
-      <FerrariModel color={selectedColor} />
-
-      {/* Animated grid on floor — static on low */}
-      <AnimatedGrid tier={effectiveTier} />
-
-      {/* Floor — tier-based: simple on low, light reflector on mid, full on high */}
-      {/* Floor — SimpleFloor for low & mid (GPU-friendly), full reflector only for high */}
-      {effectiveTier === 'high' ? <ReflectiveFloor /> : <SimpleFloor />}
-
-      {/* Contact shadow — only on mid and high */}
-      {effectiveTier !== 'low' && (
-        <ContactShadows
-          position={[0, 0.01, 0]}
-          opacity={effectiveTier === 'high' ? 0.8 : 0.5}
-          scale={15}
-          blur={effectiveTier === 'high' ? 2.5 : 1.5}
-          far={10}
-        />
-      )}
-    </>
-  );
-}
-
-// Loading screen
-function LoadingScreen() {
-  const { progress } = useProgress();
-  return (
-    <Html center>
-      <div className="flex flex-col items-center gap-4">
-        <div className="relative w-20 h-20">
-          <div className="absolute inset-0 border-4 border-red-600/30 rounded-full" />
-          <div
-            className="absolute inset-0 border-4 border-red-600 border-t-transparent rounded-full animate-spin"
-          />
-          <div className="absolute inset-0 flex items-center justify-center">
-            <span className="text-white text-sm font-bold">{Math.round(progress)}%</span>
-          </div>
-        </div>
-        <p className="text-white text-lg font-medium tracking-wider">Loading Ferrari 458...</p>
-        <p className="text-gray-400 text-sm">Preparing your experience</p>
-      </div>
-    </Html>
-  );
-}
-
-// Inline typewriter hook for the showcase
+// ── Typewriter hook (no Three.js dependency) ──
 function useTypewriter(texts: string[], typingSpeed = 60, deletingSpeed = 30, pauseDuration = 3500) {
   const [displayText, setDisplayText] = useState('');
   const [textIndex, setTextIndex] = useState(0);
@@ -532,12 +84,26 @@ function useTypewriter(texts: string[], typingSpeed = 60, deletingSpeed = 30, pa
   return displayText;
 }
 
-// Main export
+// ── Canvas loading fallback (no Three.js dependency) ──
+function CanvasLoadingFallback() {
+  return (
+    <div className="absolute inset-0 flex items-center justify-center bg-black">
+      <div className="flex flex-col items-center gap-4">
+        <div className="relative w-20 h-20">
+          <div className="absolute inset-0 border-4 border-red-600/30 rounded-full" />
+          <div className="absolute inset-0 border-4 border-red-600 border-t-transparent rounded-full animate-spin" />
+        </div>
+        <p className="text-white text-lg font-medium tracking-wider">Loading 3D Experience...</p>
+        <p className="text-gray-400 text-sm">Downloading renderer</p>
+      </div>
+    </div>
+  );
+}
+
+// ── Main export ──
 export default function CarShowcase3D({ ctaButtons }: { ctaButtons?: React.ReactNode }) {
   const [selectedColorIndex, setSelectedColorIndex] = useState(0);
   const selectedColor = CAR_COLORS[selectedColorIndex];
-  const isMobile = useIsMobile();
-  const isTablet = useIsTablet();
   const [tier] = useState<DeviceTier>(() => getDeviceTier());
   const prefersReducedMotion = useReducedMotion();
   const typewriterText = useTypewriter([
@@ -546,37 +112,9 @@ export default function CarShowcase3D({ ctaButtons }: { ctaButtons?: React.React
     'Luxury Redefined, Performance Delivered',
   ]);
 
-  // Canvas settings based on device tier
-  const canvasProps = useMemo(() => {
-    switch (tier) {
-      case 'low':
-        return {
-          shadows: false,
-          gl: { antialias: false, alpha: false, powerPreference: 'low-power' as const, stencil: false, depth: true },
-          dpr: [1, 1] as [number, number],
-          // On low-end: only re-render when something changes (orbit, color)
-          frameloop: 'demand' as const,
-        };
-      case 'mid':
-        return {
-          shadows: true,
-          gl: { antialias: false, alpha: false, powerPreference: 'default' as const, stencil: false, depth: true },
-          dpr: [1, 1] as [number, number],
-          frameloop: 'always' as const,
-        };
-      default: // high
-        return {
-          shadows: true,
-          gl: { antialias: true, alpha: false, powerPreference: 'high-performance' as const },
-          dpr: [1, 1.5] as [number, number],
-          frameloop: 'always' as const,
-        };
-    }
-  }, [tier]);
-
   return (
     <div className="relative w-full h-dvh bg-black overflow-hidden">
-      {/* Low-tier: static hero image instead of full GLTF to avoid ~4-8MB download */}
+      {/* Low-tier: static hero image (0 KB Three.js download) */}
       {tier === 'low' ? (
         <div className="absolute inset-0">
           <img
@@ -586,33 +124,17 @@ export default function CarShowcase3D({ ctaButtons }: { ctaButtons?: React.React
             loading="eager"
             fetchPriority="high"
           />
-          {/* Dark overlay for text readability */}
           <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-black/60" />
         </div>
       ) : (
-        /* 3D Canvas — tier-adaptive settings */
-        <Canvas
-          shadows={canvasProps.shadows}
-          camera={{ position: [4.25, 1.4, -4.5], fov: 40 }}
-          gl={canvasProps.gl}
-          dpr={canvasProps.dpr}
-          frameloop={canvasProps.frameloop}
-        >
-          <Suspense fallback={<LoadingScreen />}>
-            <Scene selectedColor={selectedColor.color} tier={tier} reducedMotion={!!prefersReducedMotion} />
-            <OrbitControls
-              enablePan={false}
-              enableZoom={!isMobile && !isTablet}
-              minDistance={3}
-              maxDistance={12}
-              maxPolarAngle={Math.PI / 2}
-              target={[0, 0.5, 0]}
-              autoRotate={!prefersReducedMotion}
-              autoRotateSpeed={tier === 'mid' ? 0.6 : 0.8}
-            />
-            {/* Removed <Preload all /> — Suspense boundary handles progressive loading */}
-          </Suspense>
-        </Canvas>
+        /* Mid/High: dynamically imported 3D Canvas */
+        <Suspense fallback={<CanvasLoadingFallback />}>
+          <CarShowcase3DCanvas
+            selectedColor={selectedColor.color}
+            tier={tier}
+            reducedMotion={!!prefersReducedMotion}
+          />
+        </Suspense>
       )}
 
       {/* ── Overlay UI ── */}
