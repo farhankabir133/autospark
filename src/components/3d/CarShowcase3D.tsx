@@ -8,7 +8,7 @@
  * All Three.js code lives in CarShowcase3DCanvas.tsx (~987 KB chunk
  * only downloaded when actually needed).
  */
-import { lazy, Suspense, useState, useEffect } from 'react';
+import { lazy, Suspense, useState, useEffect, memo } from 'react';
 import { useReducedMotion } from 'framer-motion';
 
 // ── Device tier detection (no Three.js dependency) ──
@@ -84,6 +84,39 @@ function useTypewriter(texts: string[], typingSpeed = 60, deletingSpeed = 30, pa
   return displayText;
 }
 
+// ── Memoized typewriter text display ──
+// Isolates the ~50 re-renders per sentence so the parent CarShowcase3D
+// (which holds the Canvas/Suspense boundary) doesn't reconcile on every character.
+const TYPEWRITER_TEXTS = [
+  'Exclusive Cars in Rajshahi',
+  "North Bengal's Leading Premium Car Showroom",
+  'Luxury Redefined, Performance Delivered',
+] as const;
+
+const TypewriterMobile = memo(function TypewriterMobile() {
+  const text = useTypewriter([...TYPEWRITER_TEXTS]);
+  return (
+    <div className="flex items-center min-h-[20px] max-w-full">
+      <span className="text-[11px] font-light text-white/80 tracking-wide truncate">
+        {text}
+      </span>
+      <span className="ml-0.5 inline-block w-[2px] h-3.5 bg-red-600 rounded-full animate-pulse flex-shrink-0" />
+    </div>
+  );
+});
+
+const TypewriterDesktop = memo(function TypewriterDesktop() {
+  const text = useTypewriter([...TYPEWRITER_TEXTS]);
+  return (
+    <div className="flex items-center min-h-[32px] mb-4">
+      <span className="text-base lg:text-lg font-light text-white/80 tracking-wide">
+        {text}
+      </span>
+      <span className="ml-0.5 inline-block w-[2px] h-5 bg-red-600 rounded-full animate-pulse" />
+    </div>
+  );
+});
+
 // ── Canvas loading fallback (no Three.js dependency) ──
 function CanvasLoadingFallback() {
   return (
@@ -106,11 +139,6 @@ export default function CarShowcase3D({ ctaButtons }: { ctaButtons?: React.React
   const selectedColor = CAR_COLORS[selectedColorIndex];
   const [tier] = useState<DeviceTier>(() => getDeviceTier());
   const prefersReducedMotion = useReducedMotion();
-  const typewriterText = useTypewriter([
-    'Exclusive Cars in Rajshahi',
-    "North Bengal's Leading Premium Car Showroom",
-    'Luxury Redefined, Performance Delivered',
-  ]);
 
   return (
     <div className="relative w-full h-dvh bg-black overflow-hidden">
@@ -182,12 +210,7 @@ export default function CarShowcase3D({ ctaButtons }: { ctaButtons?: React.React
             </span>
           </h2>
           <div className="w-8 h-[2px] bg-gradient-to-r from-red-600 to-transparent mt-2 mb-1.5" />
-          <div className="flex items-center min-h-[20px] max-w-full">
-            <span className="text-[11px] font-light text-white/80 tracking-wide truncate">
-              {typewriterText}
-            </span>
-            <span className="ml-0.5 inline-block w-[2px] h-3.5 bg-red-600 rounded-full animate-pulse flex-shrink-0" />
-          </div>
+          <TypewriterMobile />
         </div>
 
         {/* ─── DESKTOP ONLY — LEFT SIDE Hero Text (vertically centered) ─── */}
@@ -200,12 +223,7 @@ export default function CarShowcase3D({ ctaButtons }: { ctaButtons?: React.React
             </span>
           </h2>
           <div className="w-12 h-[2px] bg-gradient-to-r from-red-600 to-transparent mb-4" />
-          <div className="flex items-center min-h-[32px] mb-4">
-            <span className="text-base lg:text-lg font-light text-white/80 tracking-wide">
-              {typewriterText}
-            </span>
-            <span className="ml-0.5 inline-block w-[2px] h-5 bg-red-600 rounded-full animate-pulse" />
-          </div>
+          <TypewriterDesktop />
           <p className="text-gray-600 text-xs tracking-wider">
             Drag to rotate &bull; Scroll to zoom
           </p>

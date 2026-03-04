@@ -122,7 +122,7 @@ function FloatingParticles({ count = 80, tier }: { count?: number; tier: DeviceT
 }
 
 // ── Ferrari Model ──
-function FerrariModel({ color }: { color: string }) {
+function FerrariModel({ color, tier }: { color: string; tier: DeviceTier }) {
   const group = useRef<Group>(null);
   const [model, setModel] = useState<Group | null>(null);
   const wheelsRef = useRef<Object3D[]>([]);
@@ -197,10 +197,23 @@ function FerrariModel({ color }: { color: string }) {
           .map((n) => carModel.getObjectByName(n))
           .filter(Boolean) as Object3D[];
 
+        // LOD-aware shadow & geometry optimisation
+        // High-tier: full shadows on every mesh
+        // Mid-tier: only body casts shadow (saves GPU), reduce geometry detail
+        const bodyNames = new Set(['body', 'trim', 'glass']);
         carModel.traverse((child) => {
           if ((child as Mesh).isMesh) {
-            child.castShadow = true;
-            child.receiveShadow = true;
+            const mesh = child as Mesh;
+            if (tier === 'high') {
+              mesh.castShadow = true;
+              mesh.receiveShadow = true;
+            } else {
+              // Mid-tier: only large meshes cast shadows, all receive
+              mesh.castShadow = bodyNames.has(mesh.name);
+              mesh.receiveShadow = true;
+              // Simplify geometry on mid-tier: skip frustum culling optimisation
+              mesh.frustumCulled = true;
+            }
           }
         });
 
@@ -287,6 +300,11 @@ function SimpleFloor() {
   );
 }
 
+// Lazy-loaded MeshReflectorMaterial — only rendered for high-tier devices.
+// Since CarShowcase3DCanvas.tsx is itself dynamically imported (only for mid/high),
+// and MeshReflectorMaterial is bundled into the same 'three' chunk by manualChunks,
+// the real code-split already happens at the wrapper level. ReflectiveFloor is only
+// conditionally rendered when effectiveTier === 'high'.
 function ReflectiveFloor() {
   return (
     <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0, 0]}>
@@ -313,10 +331,12 @@ function Scene({
   selectedColor,
   tier,
   reducedMotion = false,
+  isMobile = false,
 }: {
   selectedColor: string;
   tier: DeviceTier;
   reducedMotion?: boolean;
+  isMobile?: boolean;
 }) {
   const { gl, invalidate } = useThree();
   const [degraded, setDegraded] = useState(false);
@@ -345,7 +365,7 @@ function Scene({
         penumbra={1}
         intensity={2}
         castShadow={effectiveTier !== 'low'}
-        shadow-mapSize={effectiveTier === 'high' ? [2048, 2048] : [512, 512]}
+        shadow-mapSize={effectiveTier === 'high' ? [2048, 2048] : isMobile ? [256, 256] : [512, 512]}
       />
       {effectiveTier !== 'low' && (
         <spotLight position={[-10, 15, -10]} angle={0.3} penumbra={1} intensity={1.5} color="#ff4444" />
@@ -381,7 +401,7 @@ function Scene({
       {!reducedMotion && <FloatingParticles count={effectiveTier === 'high' ? 100 : 20} tier={effectiveTier} />}
 
       {/* Ferrari */}
-      <FerrariModel color={selectedColor} />
+      <FerrariModel color={selectedColor} tier={effectiveTier} />
 
       {/* Grid */}
       <AnimatedGrid tier={effectiveTier} />
@@ -488,7 +508,7 @@ export default function CarShowcase3DCanvas({ selectedColor, tier, reducedMotion
       frameloop={canvasProps.frameloop}
     >
       <Suspense fallback={skipped ? null : <LoadingScreen onSkip={handleSkip} />}>
-        <Scene selectedColor={selectedColor} tier={tier} reducedMotion={reducedMotion} />
+        <Scene selectedColor={selectedColor} tier={tier} reducedMotion={reducedMotion} isMobile={isMobile} />
         <OrbitControls
           enablePan={false}
           enableZoom={!isMobile && !isTablet}
