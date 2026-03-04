@@ -189,7 +189,7 @@ export const HomePage = () => {
     <LazyMotion features={domAnimation}>
     <MotionConfig reducedMotion="user">
     <m.div 
-      className="min-h-screen"
+      className={`min-h-screen ${theme === 'dark' ? 'bg-[#0a0a0a]' : 'bg-gray-50'}`}
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
@@ -256,7 +256,7 @@ export const HomePage = () => {
       </LazySection>
 
       {/* PREMIUM COLLECTION - CLICKABLE CAR GRID */}
-      <section className={`py-8 md:py-12 ${theme === 'dark' ? 'bg-transparent' : 'bg-gray-50'}`}>
+      <section className={`py-8 md:py-12 ${theme === 'dark' ? 'bg-gray-900/80' : 'bg-gray-50'}`}>
         <div className="container mx-auto px-4">
           <m.div 
             className="text-center mb-6"
@@ -376,7 +376,7 @@ export const HomePage = () => {
 
       {/* FEATURED VEHICLES WITH ENHANCED FLIP CARDS */}
       <LazySection minHeight="400px" rootMargin="300px">
-      <section className={`py-8 md:py-12 relative overflow-hidden ${theme === 'dark' ? 'bg-[#0a0a0a]' : 'bg-[#0a0a0a]'}`}>
+      <section className={`py-8 md:py-12 relative overflow-hidden ${theme === 'dark' ? 'bg-[#0a0a0a]' : 'bg-gray-900'}`}>
         {/* Unicorn Studio Animated Background - full section */}
         <div className="absolute inset-0 pointer-events-none">
           <UnicornBackground width="100%" height="100%" />
@@ -494,7 +494,7 @@ export const HomePage = () => {
 
       {/* STATS SECTION WITH ANIMATED COUNTERS */}
       <m.section 
-        className={`py-8 md:py-12 ${theme === 'dark' ? 'bg-black/20' : 'bg-white'}`}
+        className={`py-8 md:py-12 ${theme === 'dark' ? 'bg-gray-900/90' : 'bg-white'}`}
         initial={{ opacity: 0 }}
         whileInView={{ opacity: 1 }}
         transition={{ duration: 0.6 }}
@@ -547,7 +547,7 @@ export const HomePage = () => {
       </m.section>
 
       {/* VEHICLE GALLERY WITH BADGES AND COMPARISON */}
-      <section className={`py-8 md:py-12 ${theme === 'dark' ? 'bg-black/20' : 'bg-white'}`}>
+      <section className={`py-8 md:py-12 ${theme === 'dark' ? 'bg-gray-900/90' : 'bg-white'}`}>
         <div className="container mx-auto px-4">
           <m.div 
             className="text-center mb-8"
@@ -641,7 +641,7 @@ export const HomePage = () => {
       {/* FEATURED VEHICLES WITH CARD LIFT EFFECTS */}
       {featuredVehicles.length > 0 && (
         <m.section 
-          className={`py-8 md:py-12 ${theme === 'dark' ? 'bg-transparent' : 'bg-gray-50'}`}
+          className={`py-8 md:py-12 ${theme === 'dark' ? 'bg-gray-900/80' : 'bg-gray-50'}`}
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
           transition={{ duration: 0.6 }}
@@ -706,7 +706,7 @@ export const HomePage = () => {
       <m.section
         className={`py-6 md:py-10 relative overflow-hidden ${
           theme === 'dark'
-            ? 'bg-gradient-to-br from-gray-900 to-gray-850'
+            ? 'bg-gradient-to-br from-gray-900 to-gray-800'
             : 'bg-gradient-to-br from-white to-gray-50'
         }`}
         initial={{ opacity: 0 }}
@@ -1253,7 +1253,7 @@ export const HomePage = () => {
       <m.section
         className={`py-8 md:py-12 relative overflow-hidden ${
           theme === 'dark'
-            ? 'bg-gradient-to-br from-gray-900 to-gray-850'
+            ? 'bg-gradient-to-br from-gray-900 to-gray-800'
             : 'bg-gradient-to-br from-white to-gray-50'
         }`}
         initial={{ opacity: 0 }}
@@ -1476,7 +1476,7 @@ export const HomePage = () => {
       <m.section
         className={`py-8 md:py-12 relative overflow-hidden ${
           theme === 'dark'
-            ? 'bg-gradient-to-br from-gray-850 to-gray-900'
+            ? 'bg-gradient-to-br from-gray-800 to-gray-900'
             : 'bg-gradient-to-br from-gray-50 to-white'
         }`}
         initial={{ opacity: 0 }}
@@ -1589,7 +1589,7 @@ export const HomePage = () => {
       <m.section
         className={`py-8 md:py-12 relative overflow-hidden ${
           theme === 'dark'
-            ? 'bg-gradient-to-br from-gray-900 to-gray-850'
+            ? 'bg-gradient-to-br from-gray-900 to-gray-800'
             : 'bg-gradient-to-br from-white to-gray-50'
         }`}
         initial={{ opacity: 0 }}
@@ -1669,7 +1669,7 @@ export const HomePage = () => {
       <m.section
         className={`py-8 md:py-12 relative overflow-hidden ${
           theme === 'dark'
-            ? 'bg-gradient-to-br from-gray-850 to-gray-900'
+            ? 'bg-gradient-to-br from-gray-800 to-gray-900'
             : 'bg-gradient-to-br from-gray-50 to-white'
         }`}
         initial={{ opacity: 0 }}
@@ -1960,7 +1960,7 @@ export const HomePage = () => {
 
       {/* WHY CHOOSE US SECTION */}
       <m.section 
-        className={`py-8 md:py-12 ${theme === 'dark' ? 'bg-black/20' : 'bg-white'}`}
+        className={`py-8 md:py-12 ${theme === 'dark' ? 'bg-gray-900/90' : 'bg-white'}`}
         initial={{ opacity: 0 }}
         whileInView={{ opacity: 1 }}
         transition={{ duration: 0.6 }}
@@ -2023,7 +2023,7 @@ export const HomePage = () => {
 
       {testimonials.length > 0 && (
         <m.section 
-          className={`py-8 md:py-12 ${theme === 'dark' ? 'bg-transparent' : 'bg-gray-50'}`}
+          className={`py-8 md:py-12 ${theme === 'dark' ? 'bg-gray-900/80' : 'bg-gray-50'}`}
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
           transition={{ duration: 0.6 }}

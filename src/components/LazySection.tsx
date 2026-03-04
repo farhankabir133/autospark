@@ -52,7 +52,11 @@ export function LazySection({
   }, [rootMargin]);
 
   return (
-    <div ref={ref} className={className} style={isVisible ? undefined : { minHeight }}>
+    <div
+      ref={ref}
+      className={className}
+      style={isVisible ? undefined : { minHeight, background: 'inherit' }}
+    >
       {isVisible ? children : (fallback ?? null)}
     </div>
   );
