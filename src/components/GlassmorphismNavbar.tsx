@@ -117,7 +117,7 @@ export const GlassmorphismNavbar = () => {
     : 'bg-white/80 backdrop-blur-2xl border border-white/40 shadow-2xl shadow-black/10';
 
   return (
-    <LazyMotion features={loadFeatures} strict>
+    <LazyMotion features={loadFeatures}>
     <m.header
       initial="hidden"
       animate="visible"

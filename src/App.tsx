@@ -3,9 +3,7 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { LanguageProvider } from './contexts/LanguageContext';
 import { ThemeProvider } from './contexts/ThemeContext';
 import { Layout } from './components/Layout';
-
-// Lazy-load SplashScreen so it never blocks the critical rendering path
-const SplashScreen = lazy(() => import('./components/SplashScreen').then(m => ({ default: m.SplashScreen })));
+import { SplashScreen } from './components/SplashScreen';
 
 // Lazy load pages for better code splitting and performance
 const HomePage = lazy(() => import('./pages/HomePage').then(m => ({ default: m.HomePage })));
@@ -38,6 +36,14 @@ function App() {
     if (hasVisited) {
       setIsFirstVisit(false);
       setShowSplash(false);
+    } else {
+      // FAIL-SAFE: Force-kill splash after 4s even if SplashScreen chunk fails to load
+      // or onComplete never fires (prevents permanent black screen)
+      const failSafe = setTimeout(() => {
+        setShowSplash(false);
+        sessionStorage.setItem('hasVisitedAutoSpark', 'true');
+      }, 4000);
+      return () => clearTimeout(failSafe);
     }
   }, []);
 
@@ -51,11 +57,9 @@ function App() {
       <LanguageProvider>
         <Router basename={basename}>
           <Layout>
-            {/* Non-blocking splash overlay — app renders underneath for fast LCP */}
+            {/* Splash overlay — shown on first visit, auto-removed after duration */}
             {isFirstVisit && showSplash && (
-              <Suspense fallback={null}>
-                <SplashScreen onComplete={handleSplashComplete} duration={1200} />
-              </Suspense>
+              <SplashScreen onComplete={handleSplashComplete} duration={1200} />
             )}
             <Suspense fallback={<PageLoader />}>
               <Routes>
