@@ -3,7 +3,9 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { LanguageProvider } from './contexts/LanguageContext';
 import { ThemeProvider } from './contexts/ThemeContext';
 import { Layout } from './components/Layout';
-import { SplashScreen } from './components/SplashScreen';
+
+// Lazy-load SplashScreen so it never blocks the critical rendering path
+const SplashScreen = lazy(() => import('./components/SplashScreen').then(m => ({ default: m.SplashScreen })));
 
 // Lazy load pages for better code splitting and performance
 const HomePage = lazy(() => import('./pages/HomePage').then(m => ({ default: m.HomePage })));
@@ -47,13 +49,14 @@ function App() {
   return (
     <ThemeProvider>
       <LanguageProvider>
-        {/* Premium Splash Screen - Only on first visit */}
-        {isFirstVisit && showSplash && (
-          <SplashScreen onComplete={handleSplashComplete} duration={1800} />
-        )}
-        
         <Router basename={basename}>
           <Layout>
+            {/* Non-blocking splash overlay — app renders underneath for fast LCP */}
+            {isFirstVisit && showSplash && (
+              <Suspense fallback={null}>
+                <SplashScreen onComplete={handleSplashComplete} duration={1200} />
+              </Suspense>
+            )}
             <Suspense fallback={<PageLoader />}>
               <Routes>
                 <Route path="/" element={<HomePage />} />

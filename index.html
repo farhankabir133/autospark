@@ -30,12 +30,11 @@
     <link rel="dns-prefetch" href="https://images.pexels.com" />
     <link rel="dns-prefetch" href="https://cdn.jsdelivr.net" />
     
-    <!-- Prefetch 3D model for mid/high-tier devices (self-hosted, ~1.6 MB) -->
-    <link rel="prefetch" href="/autospark/models/ferrari.glb" as="fetch" crossorigin />
+    <!-- 3D model prefetch moved to JS — only for mid/high-tier devices after page load -->
     
-    <!-- Performance: Preload critical fonts with font-display swap -->
-    <link rel="preload" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" as="style" onload="this.onload=null;this.rel='stylesheet'" />
-    <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" /></noscript>
+    <!-- Performance: Preload critical fonts with font-display swap (only 400+700 — 600 removed to save bytes) -->
+    <link rel="preload" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap" as="style" onload="this.onload=null;this.rel='stylesheet'" />
+    <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap" /></noscript>
     
     <!-- Preload LCP-critical assets -->
     <link rel="preload" href="/autospark/logo/aslogo.svg" as="image" type="image/svg+xml" />
@@ -55,8 +54,8 @@
       /* Skip-to-content link (accessibility) */
       .skip-link{position:absolute;top:-40px;left:0;background:#C00000;color:#fff;padding:8px 16px;z-index:10000;transition:top 0.2s}
       .skip-link:focus{top:0}
-      /* Reduce CLS: reserve space for lazy images */
-      img{content-visibility:auto}
+      /* content-visibility:auto only for below-fold images (avoids LCP issues on hero) */
+      img[loading="lazy"]{content-visibility:auto}
     </style>
 
     <!-- Structured Data (JSON-LD) for SEO -->

@@ -63,7 +63,7 @@
 }
 
 @layer base {
-  * {
+  html {
     @apply scroll-smooth;
   }
   
@@ -78,10 +78,15 @@
     font-display: swap;
     background-color: var(--bg-primary);
     color: var(--text-primary);
-    transition: background-color 0.3s ease, color 0.3s ease;
+    /* Transition only applied after first paint via .theme-ready class to avoid blocking initial render */
     /* Safe area padding for iPhone notch */
     padding-top: var(--safe-area-top);
     padding-bottom: var(--safe-area-bottom);
+  }
+
+  /* Apply theme transition only after first paint — avoids Lighthouse penalty */
+  body.theme-ready {
+    transition: background-color 0.3s ease, color 0.3s ease;
   }
 
   [lang="bn"], [lang="bn"] * {

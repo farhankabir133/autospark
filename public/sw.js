@@ -1,14 +1,11 @@
 // Service Worker — Cache-first for static assets, network-first for API calls
-const CACHE_NAME = 'autospark-v2';
+const CACHE_NAME = 'autospark-v3';
 
-// Assets to precache on install
+// Assets to precache on install (only lightweight critical assets)
+// Ferrari GLB + DRACO removed — cached on-demand when 3D scene loads
 const PRECACHE_URLS = [
   '/autospark/',
   '/autospark/logo/aslogo.svg',
-  '/autospark/models/ferrari.glb',
-  '/autospark/draco/draco_decoder.js',
-  '/autospark/draco/draco_decoder.wasm',
-  '/autospark/draco/draco_wasm_wrapper.js',
 ];
 
 // Cache-first patterns (static assets that rarely change)

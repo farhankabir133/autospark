@@ -1,10 +1,16 @@
 import { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { Menu, X, Moon, Sun, Globe, Search } from 'lucide-react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { m, LazyMotion, AnimatePresence } from 'framer-motion';
 import { useLanguage } from '../contexts/LanguageContext';
 import { useTheme } from '../contexts/ThemeContext';
-import { AudioManager } from '../utils/AudioManager';
+
+// Lazy-load framer-motion features (AnimatePresence needs domMax)
+const loadFeatures = () => import('framer-motion').then(mod => mod.domMax);
+
+// Dynamic AudioManager — never imported synchronously in the critical path
+const playClick = () => import('../utils/AudioManager').then(mod => mod.AudioManager.playClick());
+const playButtonClick = () => import('../utils/AudioManager').then(mod => mod.AudioManager.playButtonClick());
 
 export const GlassmorphismNavbar = () => {
   const [isScrolled, setIsScrolled] = useState(false);
@@ -43,23 +49,23 @@ export const GlassmorphismNavbar = () => {
   ];
 
   const toggleLanguage = () => {
-    AudioManager.playClick();
+    playClick();
     setLanguage(language === 'en' ? 'bn' : 'en');
   };
 
   const handleToggleTheme = () => {
-    AudioManager.playClick();
+    playClick();
     toggleTheme();
   };
 
   const handleNavClick = (to: string) => {
-    AudioManager.playButtonClick();
+    playButtonClick();
     setActiveLink(to);
     setIsMobileMenuOpen(false);
   };
 
   const handleMobileMenuToggle = () => {
-    AudioManager.playClick();
+    playClick();
     setIsMobileMenuOpen(!isMobileMenuOpen);
   };
 
@@ -69,7 +75,7 @@ export const GlassmorphismNavbar = () => {
     visible: {
       opacity: 1,
       y: 0,
-      transition: { duration: 0.5, ease: 'easeOut' },
+      transition: { duration: 0.5, ease: 'easeOut' as const },
     },
   };
 
@@ -79,13 +85,13 @@ export const GlassmorphismNavbar = () => {
       opacity: 1,
       y: 0,
       scale: 1,
-      transition: { duration: 0.3, ease: 'easeOut' },
+      transition: { duration: 0.3, ease: 'easeOut' as const },
     },
     exit: {
       opacity: 0,
       y: -10,
       scale: 0.95,
-      transition: { duration: 0.2, ease: 'easeIn' },
+      transition: { duration: 0.2, ease: 'easeIn' as const },
     },
   };
 
@@ -111,7 +117,8 @@ export const GlassmorphismNavbar = () => {
     : 'bg-white/80 backdrop-blur-2xl border border-white/40 shadow-2xl shadow-black/10';
 
   return (
-    <motion.header
+    <LazyMotion features={loadFeatures} strict>
+    <m.header
       initial="hidden"
       animate="visible"
       variants={navbarContainerVariants}
@@ -122,7 +129,7 @@ export const GlassmorphismNavbar = () => {
         <nav aria-label="Main navigation" className="max-w-7xl mx-auto px-3 sm:px-4 lg:px-6 py-3 lg:py-4">
           <div className="flex items-center justify-between">
             {/* Logo Section */}
-            <motion.div
+            <m.div
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
             >
@@ -132,13 +139,13 @@ export const GlassmorphismNavbar = () => {
                 onClick={() => setIsMobileMenuOpen(false)}
               >
                 {/* Animated Logo Container */}
-                <motion.div 
+                <m.div 
                   className="relative"
                   whileHover={{ rotate: [0, -5, 5, 0] }}
                   transition={{ duration: 0.5 }}
                 >
                   {/* Glow effect behind logo */}
-                  <motion.div
+                  <m.div
                     className="absolute inset-0 rounded-full blur-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300"
                     style={{
                       background: 'radial-gradient(circle, rgba(192, 0, 0, 0.7) 0%, rgba(255, 26, 26, 0.3) 50%, transparent 70%)',
@@ -146,7 +153,7 @@ export const GlassmorphismNavbar = () => {
                     }}
                   />
                   {/* Logo Image - Crystal clear zoomed view */}
-                  <motion.img
+                  <m.img
                     src={currentLogo}
                     alt="Auto Spark BD"
                     className="h-12 w-12 sm:h-14 sm:w-14 lg:h-16 lg:w-16 relative z-10 drop-shadow-[0_0_8px_rgba(192,0,0,0.5)]"
@@ -158,7 +165,7 @@ export const GlassmorphismNavbar = () => {
                       delay: 0.2 
                     }}
                   />
-                </motion.div>
+                </m.div>
                 <div>
                   <span className={`text-base sm:text-lg lg:text-xl font-bold tracking-tight transition-colors ${
                     theme === 'dark' ? 'text-white' : 'text-gray-900'
@@ -170,12 +177,12 @@ export const GlassmorphismNavbar = () => {
                   </div>
                 </div>
               </Link>
-            </motion.div>
+            </m.div>
 
             {/* Desktop Navigation */}
             <div className="hidden lg:flex items-center space-x-0.5">
               {navLinks.map((link, index) => (
-                <motion.div
+                <m.div
                   key={link.to}
                   custom={index}
                   variants={navLinkVariants}
@@ -201,7 +208,7 @@ export const GlassmorphismNavbar = () => {
                     
                     {/* Active indicator with glassmorphism */}
                     {activeLink === link.to && (
-                      <motion.div
+                      <m.div
                         layoutId="activeIndicator"
                         className={`absolute inset-0 rounded-lg -z-10 ${
                           theme === 'dark'
@@ -212,17 +219,17 @@ export const GlassmorphismNavbar = () => {
                       />
                     )}
                   </Link>
-                </motion.div>
+                </m.div>
               ))}
             </div>
 
             {/* Right Controls */}
             <div className="flex items-center space-x-1 sm:space-x-2">
               {/* Search Button - Desktop */}
-              <motion.button
+              <m.button
                 whileHover={{ scale: 1.1 }}
                 whileTap={{ scale: 0.95 }}
-                onClick={() => AudioManager.playClick()}
+                onClick={() => playClick()}
                 className={`hidden md:flex p-1.5 rounded-lg transition-all ${
                   theme === 'dark'
                     ? 'hover:bg-gray-700/50 text-gray-400 hover:text-[#FF1A1A]'
@@ -231,10 +238,10 @@ export const GlassmorphismNavbar = () => {
                 aria-label="Search"
               >
                 <Search className="h-4 w-4" />
-              </motion.button>
+              </m.button>
 
               {/* Theme Toggle */}
-              <motion.button
+              <m.button
                 whileHover={{ scale: 1.1, rotate: 20 }}
                 whileTap={{ scale: 0.95 }}
                 onClick={handleToggleTheme}
@@ -250,10 +257,10 @@ export const GlassmorphismNavbar = () => {
                 ) : (
                   <Moon className="h-4 w-4" />
                 )}
-              </motion.button>
+              </m.button>
 
               {/* Language Toggle */}
-              <motion.button
+              <m.button
                 whileHover={{ scale: 1.1 }}
                 whileTap={{ scale: 0.95 }}
                 onClick={toggleLanguage}
@@ -265,13 +272,13 @@ export const GlassmorphismNavbar = () => {
                 aria-label="Toggle language"
               >
                 <Globe className="h-4 w-4" />
-              </motion.button>
+              </m.button>
 
               {/* CTA Button - Desktop */}
-              <motion.button
+              <m.button
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
-                onClick={() => AudioManager.playButtonClick()}
+                onClick={() => playButtonClick()}
                 className={`hidden sm:flex px-3 py-1.5 rounded-lg font-semibold text-xs transition-all ${
                   theme === 'dark'
                     ? 'bg-gradient-to-r from-[#C00000] to-[#FF1A1A] hover:from-[#8B0000] hover:to-[#C00000] text-white shadow-lg shadow-[#C00000]/30'
@@ -279,10 +286,10 @@ export const GlassmorphismNavbar = () => {
                 }`}
               >
                 {t('nav.contact')}
-              </motion.button>
+              </m.button>
 
               {/* Mobile Menu Button */}
-              <motion.button
+              <m.button
                 whileHover={{ scale: 1.1 }}
                 whileTap={{ scale: 0.95 }}
                 onClick={handleMobileMenuToggle}
@@ -295,7 +302,7 @@ export const GlassmorphismNavbar = () => {
               >
                 <AnimatePresence mode="wait">
                   {isMobileMenuOpen ? (
-                    <motion.div
+                    <m.div
                       key="close"
                       initial={{ opacity: 0, rotate: -90 }}
                       animate={{ opacity: 1, rotate: 0 }}
@@ -303,9 +310,9 @@ export const GlassmorphismNavbar = () => {
                       transition={{ duration: 0.2 }}
                     >
                       <X className="h-6 w-6" />
-                    </motion.div>
+                    </m.div>
                   ) : (
-                    <motion.div
+                    <m.div
                       key="open"
                       initial={{ opacity: 0, rotate: 90 }}
                       animate={{ opacity: 1, rotate: 0 }}
@@ -313,17 +320,17 @@ export const GlassmorphismNavbar = () => {
                       transition={{ duration: 0.2 }}
                     >
                       <Menu className="h-6 w-6" />
-                    </motion.div>
+                    </m.div>
                   )}
                 </AnimatePresence>
-              </motion.button>
+              </m.button>
             </div>
           </div>
 
           {/* Mobile Menu */}
           <AnimatePresence>
             {isMobileMenuOpen && (
-              <motion.div
+              <m.div
                 variants={mobileMenuVariants}
                 initial="hidden"
                 animate="visible"
@@ -337,7 +344,7 @@ export const GlassmorphismNavbar = () => {
                 }`}>
                   {/* Mobile Navigation Links */}
                   {navLinks.map((link, index) => (
-                    <motion.div
+                    <m.div
                       key={link.to}
                       initial={{ opacity: 0, x: -20 }}
                       animate={{ opacity: 1, x: 0 }}
@@ -358,16 +365,16 @@ export const GlassmorphismNavbar = () => {
                       >
                         {link.label}
                       </Link>
-                    </motion.div>
+                    </m.div>
                   ))}
 
                   {/* Mobile CTA Button */}
-                  <motion.button
+                  <m.button
                     initial={{ opacity: 0, y: 10 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: navLinks.length * 0.05 }}
                     onClick={() => {
-                      AudioManager.playButtonClick();
+                      playButtonClick();
                       setIsMobileMenuOpen(false);
                     }}
                     className={`w-full px-4 py-3 rounded-lg font-semibold text-sm transition-all mt-4 ${
@@ -377,16 +384,16 @@ export const GlassmorphismNavbar = () => {
                     }`}
                   >
                     {language === 'en' ? 'Book Test Drive' : 'টেস্ট ড্রাইভ বুক করুন'}
-                  </motion.button>
+                  </m.button>
                 </div>
-              </motion.div>
+              </m.div>
             )}
           </AnimatePresence>
         </nav>
       </div>
 
       {/* Bottom gradient accent line */}
-      <motion.div
+      <m.div
         animate={{ opacity: isScrolled ? 0.5 : 0.3 }}
         transition={{ duration: 0.3 }}
         className={`h-px bg-gradient-to-r ${
@@ -395,6 +402,7 @@ export const GlassmorphismNavbar = () => {
             : 'from-transparent via-[#C00000] to-transparent'
         }`}
       />
-    </motion.header>
+    </m.header>
+    </LazyMotion>
   );
 };

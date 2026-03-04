@@ -22,9 +22,6 @@ export default defineConfig({
   // GitHub Pages deployment - set base to repo name for production
   // Use '/' for development, '/autospark/' for production
   base: process.env.NODE_ENV === 'production' ? '/autospark/' : '/',
-  optimizeDeps: {
-    exclude: ['lucide-react'],
-  },
   build: {
     outDir: 'dist',
     sourcemap: false,

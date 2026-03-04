@@ -241,6 +241,7 @@ export const HomePage = () => {
       </section>
 
       {/* PREMIUM CAR FOCUS CAROUSEL */}
+      <LazySection minHeight="500px" rootMargin="300px">
       <div ref={carouselSectionRef}>
         {isLoadingImages ? (
           <CarouselPlaceholder theme={theme} showLoadingText={true} />
@@ -252,6 +253,7 @@ export const HomePage = () => {
           />
         )}
       </div>
+      </LazySection>
 
       {/* PREMIUM COLLECTION - CLICKABLE CAR GRID */}
       <section className={`py-8 md:py-12 ${theme === 'dark' ? 'bg-transparent' : 'bg-gray-50'}`}>
@@ -313,6 +315,7 @@ export const HomePage = () => {
                     width={320}
                     height={160}
                     decoding="async"
+                    fetchPriority="low"
                   />
                   <div className={`absolute inset-0 bg-gradient-to-t ${
                     theme === 'dark' ? 'from-gray-800' : 'from-white'
@@ -420,6 +423,7 @@ export const HomePage = () => {
                         width={400}
                         height={192}
                         decoding="async"
+                        fetchPriority="low"
                       />
                       <h3 className="text-xl font-bold mb-2 text-white">
                         {car.brand} {car.model}
@@ -670,7 +674,7 @@ export const HomePage = () => {
                     <Card className={`overflow-hidden cursor-pointer transition-all ${theme === 'dark' ? 'hover:shadow-lg' : 'hover:shadow-xl'}`}>
                       <div className="relative h-64 overflow-hidden">
                         <m.img
-                          src={vehicle.images?.[0]?.url || 'https://images.pexels.com/photos/3964962/pexels-photo-3964962.jpeg?auto=compress&cs=tinysrgb&w=600&fm=webp'}
+                          src={vehicle.images?.[0]?.url || 'https://images.pexels.com/photos/3964962/pexels-photo-3964962.jpeg?auto=compress&cs=tinysrgb&w=400&fm=webp'}
                           alt={vehicle.title}
                           className="w-full h-full object-contain"
                           whileHover={{ scale: 1.15 }}
@@ -826,28 +830,28 @@ export const HomePage = () => {
                   <ImageCarousel
                     images={
                       showcaseVehicle === 'prado' ? [
-                        { url: 'https://images.pexels.com/photos/36318402/pexels-photo-36318402.png?auto=compress&cs=tinysrgb&w=600&fm=webp', alt: 'Prado Front' },
-                        { url: 'https://images.pexels.com/photos/36318403/pexels-photo-36318403.png?auto=compress&cs=tinysrgb&w=600&fm=webp', alt: 'Prado Side' },
-                        { url: 'https://images.pexels.com/photos/36318404/pexels-photo-36318404.png?auto=compress&cs=tinysrgb&w=600&fm=webp', alt: 'Prado Rear' },
-                        { url: 'https://images.pexels.com/photos/36318405/pexels-photo-36318405.png?auto=compress&cs=tinysrgb&w=600&fm=webp', alt: 'Prado Back' },
+                        { url: 'https://images.pexels.com/photos/36318402/pexels-photo-36318402.png?auto=compress&cs=tinysrgb&w=400&fm=webp', alt: 'Prado Front' },
+                        { url: 'https://images.pexels.com/photos/36318403/pexels-photo-36318403.png?auto=compress&cs=tinysrgb&w=400&fm=webp', alt: 'Prado Side' },
+                        { url: 'https://images.pexels.com/photos/36318404/pexels-photo-36318404.png?auto=compress&cs=tinysrgb&w=400&fm=webp', alt: 'Prado Rear' },
+                        { url: 'https://images.pexels.com/photos/36318405/pexels-photo-36318405.png?auto=compress&cs=tinysrgb&w=400&fm=webp', alt: 'Prado Back' },
                       ] : showcaseVehicle === 'yaris' ? [
-                        { url: 'https://images.pexels.com/photos/36319317/pexels-photo-36319317.png?auto=compress&cs=tinysrgb&w=600&fm=webp', alt: 'Yaris Cross Front' },
-                        { url: 'https://images.pexels.com/photos/36319316/pexels-photo-36319316.png?auto=compress&cs=tinysrgb&w=600&fm=webp', alt: 'Yaris Cross Side' },
-                        { url: 'https://images.pexels.com/photos/36319315/pexels-photo-36319315.png?auto=compress&cs=tinysrgb&w=600&fm=webp', alt: 'Yaris Cross Rear' },
-                        { url: 'https://images.pexels.com/photos/36319314/pexels-photo-36319314.png?auto=compress&cs=tinysrgb&w=600&fm=webp', alt: 'Yaris Cross Back' },
+                        { url: 'https://images.pexels.com/photos/36319317/pexels-photo-36319317.png?auto=compress&cs=tinysrgb&w=400&fm=webp', alt: 'Yaris Cross Front' },
+                        { url: 'https://images.pexels.com/photos/36319316/pexels-photo-36319316.png?auto=compress&cs=tinysrgb&w=400&fm=webp', alt: 'Yaris Cross Side' },
+                        { url: 'https://images.pexels.com/photos/36319315/pexels-photo-36319315.png?auto=compress&cs=tinysrgb&w=400&fm=webp', alt: 'Yaris Cross Rear' },
+                        { url: 'https://images.pexels.com/photos/36319314/pexels-photo-36319314.png?auto=compress&cs=tinysrgb&w=400&fm=webp', alt: 'Yaris Cross Back' },
                       ] : showcaseVehicle === 'chr' ? [
-                        { url: 'https://images.pexels.com/photos/36324034/pexels-photo-36324034.png?auto=compress&cs=tinysrgb&w=600&fm=webp', alt: 'C-HR Front' },
-                        { url: 'https://images.pexels.com/photos/36324033/pexels-photo-36324033.png?auto=compress&cs=tinysrgb&w=600&fm=webp', alt: 'C-HR Side' },
-                        { url: 'https://images.pexels.com/photos/36324031/pexels-photo-36324031.png?auto=compress&cs=tinysrgb&w=600&fm=webp', alt: 'C-HR Rear' },
-                        { url: 'https://images.pexels.com/photos/36324032/pexels-photo-36324032.png?auto=compress&cs=tinysrgb&w=600&fm=webp', alt: 'C-HR Back' },
+                        { url: 'https://images.pexels.com/photos/36324034/pexels-photo-36324034.png?auto=compress&cs=tinysrgb&w=400&fm=webp', alt: 'C-HR Front' },
+                        { url: 'https://images.pexels.com/photos/36324033/pexels-photo-36324033.png?auto=compress&cs=tinysrgb&w=400&fm=webp', alt: 'C-HR Side' },
+                        { url: 'https://images.pexels.com/photos/36324031/pexels-photo-36324031.png?auto=compress&cs=tinysrgb&w=400&fm=webp', alt: 'C-HR Rear' },
+                        { url: 'https://images.pexels.com/photos/36324032/pexels-photo-36324032.png?auto=compress&cs=tinysrgb&w=400&fm=webp', alt: 'C-HR Back' },
                       ] : showcaseVehicle === 'harrier' ? [
-                        { url: 'https://images.pexels.com/photos/35515996/pexels-photo-35515996.png?auto=compress&cs=tinysrgb&w=600&fm=webp', alt: 'Harrier Front' },
+                        { url: 'https://images.pexels.com/photos/35515996/pexels-photo-35515996.png?auto=compress&cs=tinysrgb&w=400&fm=webp', alt: 'Harrier Front' },
                       ] : showcaseVehicle === 'crown' ? [
-                        { url: 'https://images.pexels.com/photos/35509198/pexels-photo-35509198.png?auto=compress&cs=tinysrgb&w=600&fm=webp', alt: 'Crown Front' },
+                        { url: 'https://images.pexels.com/photos/35509198/pexels-photo-35509198.png?auto=compress&cs=tinysrgb&w=400&fm=webp', alt: 'Crown Front' },
                       ] : showcaseVehicle === 'premio' ? [
-                        { url: 'https://images.pexels.com/photos/35516334/pexels-photo-35516334.png?auto=compress&cs=tinysrgb&w=600&fm=webp', alt: 'Premio Front' },
+                        { url: 'https://images.pexels.com/photos/35516334/pexels-photo-35516334.png?auto=compress&cs=tinysrgb&w=400&fm=webp', alt: 'Premio Front' },
                       ] : [
-                        { url: 'https://images.pexels.com/photos/35516440/pexels-photo-35516440.png?auto=compress&cs=tinysrgb&w=600&fm=webp', alt: 'Noah Front' },
+                        { url: 'https://images.pexels.com/photos/35516440/pexels-photo-35516440.png?auto=compress&cs=tinysrgb&w=400&fm=webp', alt: 'Noah Front' },
                       ]
                     }
                     autoPlay={true}
@@ -975,7 +979,7 @@ export const HomePage = () => {
                     name: language === 'en' ? 'Toyota Prado' : 'টয়োটা প্রাডো',
                     subtitle: language === 'en' ? 'Premium 7-Seater SUV' : 'প্রিমিয়াম 7-সিটার এসইউভি',
                     price: '৳ 72,00,000',
-                    image: 'https://images.pexels.com/photos/36318402/pexels-photo-36318402.png?auto=compress&cs=tinysrgb&w=600&fm=webp',
+                    image: 'https://images.pexels.com/photos/36318402/pexels-photo-36318402.png?auto=compress&cs=tinysrgb&w=400&fm=webp',
                     engine: '2.7L V6',
                     fuel: 'Petrol',
                     transmission: 'Automatic',
@@ -996,7 +1000,7 @@ export const HomePage = () => {
                     name: language === 'en' ? 'Toyota Harrier' : 'টয়োটা হ্যারিয়ার',
                     subtitle: language === 'en' ? 'Luxury Premium SUV' : 'বিলাসবহুল প্রিমিয়াম এসইউভি',
                     price: '৳ 75,00,000',
-                    image: 'https://images.pexels.com/photos/35515996/pexels-photo-35515996.png?auto=compress&cs=tinysrgb&w=600&fm=webp',
+                    image: 'https://images.pexels.com/photos/35515996/pexels-photo-35515996.png?auto=compress&cs=tinysrgb&w=400&fm=webp',
                     engine: '2.5L Hybrid',
                     fuel: 'Hybrid',
                     transmission: 'CVT',
@@ -1017,7 +1021,7 @@ export const HomePage = () => {
                     name: language === 'en' ? 'Toyota Crown RS' : 'টয়োটা ক্রাউন আরএস',
                     subtitle: language === 'en' ? 'Executive Premium Sedan' : 'এক্সিকিউটিভ প্রিমিয়াম সেডান',
                     price: '৳ 70,00,000',
-                    image: 'https://images.pexels.com/photos/35509198/pexels-photo-35509198.png?auto=compress&cs=tinysrgb&w=600&fm=webp',
+                    image: 'https://images.pexels.com/photos/35509198/pexels-photo-35509198.png?auto=compress&cs=tinysrgb&w=400&fm=webp',
                     engine: '2.5L Hybrid',
                     fuel: 'Hybrid',
                     transmission: 'Automatic',
@@ -1038,7 +1042,7 @@ export const HomePage = () => {
                     name: language === 'en' ? 'Toyota Yaris Cross' : 'টয়োটা ইয়ারিস ক্রস',
                     subtitle: language === 'en' ? 'Compact Hybrid Crossover' : 'কম্পাক্ট হাইব্রিড ক্রসওভার',
                     price: '৳ 38,00,000',
-                    image: 'https://images.pexels.com/photos/36319317/pexels-photo-36319317.png?auto=compress&cs=tinysrgb&w=600&fm=webp',
+                    image: 'https://images.pexels.com/photos/36319317/pexels-photo-36319317.png?auto=compress&cs=tinysrgb&w=400&fm=webp',
                     engine: '1.5L Hybrid',
                     fuel: 'Hybrid',
                     transmission: 'CVT',
@@ -1059,7 +1063,7 @@ export const HomePage = () => {
                     name: language === 'en' ? 'Toyota C-HR' : 'টয়োটা C-HR',
                     subtitle: language === 'en' ? 'Stylish Compact SUV' : 'স্টাইলিশ কমপ্যাক্ট এসইউভি',
                     price: '৳ 45,00,000',
-                    image: 'https://images.pexels.com/photos/36324034/pexels-photo-36324034.png?auto=compress&cs=tinysrgb&w=600&fm=webp',
+                    image: 'https://images.pexels.com/photos/36324034/pexels-photo-36324034.png?auto=compress&cs=tinysrgb&w=400&fm=webp',
                     engine: '1.8L Hybrid',
                     fuel: 'Hybrid',
                     transmission: 'CVT',
@@ -1080,7 +1084,7 @@ export const HomePage = () => {
                     name: language === 'en' ? 'Toyota Premio' : 'টয়োটা প্রিমিও',
                     subtitle: language === 'en' ? 'Fuel-Efficient Sedan' : 'জ্বালানি-দক্ষ সেডান',
                     price: '৳ 40,00,000',
-                    image: 'https://images.pexels.com/photos/35516334/pexels-photo-35516334.png?auto=compress&cs=tinysrgb&w=600&fm=webp',
+                    image: 'https://images.pexels.com/photos/35516334/pexels-photo-35516334.png?auto=compress&cs=tinysrgb&w=400&fm=webp',
                     engine: '1.5L Hybrid',
                     fuel: 'Hybrid',
                     transmission: 'CVT',
@@ -1101,7 +1105,7 @@ export const HomePage = () => {
                     name: language === 'en' ? 'Toyota Noah' : 'টয়োটা নোয়াহ',
                     subtitle: language === 'en' ? 'Family MPV 8-Seater' : 'পারিবারিক এমপিভি 8-সিটার',
                     price: '৳ 38,00,000',
-                    image: 'https://images.pexels.com/photos/35516440/pexels-photo-35516440.png?auto=compress&cs=tinysrgb&w=600&fm=webp',
+                    image: 'https://images.pexels.com/photos/35516440/pexels-photo-35516440.png?auto=compress&cs=tinysrgb&w=400&fm=webp',
                     engine: '1.8L Hybrid',
                     fuel: 'Hybrid',
                     transmission: 'CVT',
@@ -1285,7 +1289,7 @@ export const HomePage = () => {
               viewport={{ once: true }}
             >
               <InteractiveColorCustomizer
-                vehicleImage="https://images.pexels.com/photos/36318402/pexels-photo-36318402.png?auto=compress&cs=tinysrgb&w=600&fm=webp"
+                vehicleImage="https://images.pexels.com/photos/36318402/pexels-photo-36318402.png?auto=compress&cs=tinysrgb&w=400&fm=webp"
                 vehicleModel="prado"
                 availableColors={[
                   {
@@ -1342,7 +1346,7 @@ export const HomePage = () => {
               viewport={{ once: true }}
             >
               <InteractiveColorCustomizer
-                vehicleImage="https://images.pexels.com/photos/35515996/pexels-photo-35515996.png?auto=compress&cs=tinysrgb&w=600&fm=webp"
+                vehicleImage="https://images.pexels.com/photos/35515996/pexels-photo-35515996.png?auto=compress&cs=tinysrgb&w=400&fm=webp"
                 vehicleModel="harrier"
                 availableColors={[
                   {
@@ -1399,7 +1403,7 @@ export const HomePage = () => {
               viewport={{ once: true }}
             >
               <InteractiveColorCustomizer
-                vehicleImage="https://images.pexels.com/photos/35509198/pexels-photo-35509198.png?auto=compress&cs=tinysrgb&w=600&fm=webp"
+                vehicleImage="https://images.pexels.com/photos/35509198/pexels-photo-35509198.png?auto=compress&cs=tinysrgb&w=400&fm=webp"
                 vehicleModel="crown"
                 availableColors={[
                   {
@@ -1509,19 +1513,19 @@ export const HomePage = () => {
               <MorphingShapeTransition
                 images={[
                   {
-                    src: 'https://images.pexels.com/photos/36318402/pexels-photo-36318402.png?auto=compress&cs=tinysrgb&w=600&fm=webp',
+                    src: 'https://images.pexels.com/photos/36318402/pexels-photo-36318402.png?auto=compress&cs=tinysrgb&w=400&fm=webp',
                     name: language === 'en' ? 'Toyota Prado' : 'টয়োটা প্রাডো',
                   },
                   {
-                    src: 'https://images.pexels.com/photos/35515996/pexels-photo-35515996.png?auto=compress&cs=tinysrgb&w=600&fm=webp',
+                    src: 'https://images.pexels.com/photos/35515996/pexels-photo-35515996.png?auto=compress&cs=tinysrgb&w=400&fm=webp',
                     name: language === 'en' ? 'Toyota Harrier' : 'টয়োটা হ্যারিয়ার',
                   },
                   {
-                    src: 'https://images.pexels.com/photos/35509198/pexels-photo-35509198.png?auto=compress&cs=tinysrgb&w=600&fm=webp',
+                    src: 'https://images.pexels.com/photos/35509198/pexels-photo-35509198.png?auto=compress&cs=tinysrgb&w=400&fm=webp',
                     name: language === 'en' ? 'Toyota Crown' : 'টয়োটা ক্রাউন',
                   },
                   {
-                    src: 'https://images.pexels.com/photos/36319317/pexels-photo-36319317.png?auto=compress&cs=tinysrgb&w=600&fm=webp',
+                    src: 'https://images.pexels.com/photos/36319317/pexels-photo-36319317.png?auto=compress&cs=tinysrgb&w=400&fm=webp',
                     name: language === 'en' ? 'Toyota Yaris' : 'টয়োটা ইয়ারিস',
                   },
                 ]}
@@ -1541,19 +1545,19 @@ export const HomePage = () => {
               <MorphingShapeTransition
                 images={[
                   {
-                    src: 'https://images.pexels.com/photos/35516334/pexels-photo-35516334.png?auto=compress&cs=tinysrgb&w=600&fm=webp',
+                    src: 'https://images.pexels.com/photos/35516334/pexels-photo-35516334.png?auto=compress&cs=tinysrgb&w=400&fm=webp',
                     name: language === 'en' ? 'Toyota Premio' : 'টয়োটা প্রিমিও',
                   },
                   {
-                    src: 'https://images.pexels.com/photos/36324034/pexels-photo-36324034.png?auto=compress&cs=tinysrgb&w=600&fm=webp',
+                    src: 'https://images.pexels.com/photos/36324034/pexels-photo-36324034.png?auto=compress&cs=tinysrgb&w=400&fm=webp',
                     name: language === 'en' ? 'Toyota C-HR' : 'টয়োটা C-HR',
                   },
                   {
-                    src: 'https://images.pexels.com/photos/35516440/pexels-photo-35516440.png?auto=compress&cs=tinysrgb&w=600&fm=webp',
+                    src: 'https://images.pexels.com/photos/35516440/pexels-photo-35516440.png?auto=compress&cs=tinysrgb&w=400&fm=webp',
                     name: language === 'en' ? 'Toyota Noah' : 'টয়োটা নোয়া',
                   },
                   {
-                    src: 'https://images.pexels.com/photos/36318402/pexels-photo-36318402.png?auto=compress&cs=tinysrgb&w=600&fm=webp',
+                    src: 'https://images.pexels.com/photos/36318402/pexels-photo-36318402.png?auto=compress&cs=tinysrgb&w=400&fm=webp',
                     name: language === 'en' ? 'Premium SUV' : 'প্রিমিয়াম এসইউভি',
                   },
                 ]}
@@ -1700,8 +1704,8 @@ export const HomePage = () => {
             viewport={{ once: true }}
           >
             <AnimatedComparisonSlider
-              standardImage="https://images.pexels.com/photos/35515996/pexels-photo-35515996.png?auto=compress&cs=tinysrgb&w=600&fm=webp"
-              premiumImage="https://images.pexels.com/photos/35515996/pexels-photo-35515996.png?auto=compress&cs=tinysrgb&w=600&fm=webp"
+              standardImage="https://images.pexels.com/photos/35515996/pexels-photo-35515996.png?auto=compress&cs=tinysrgb&w=400&fm=webp"
+              premiumImage="https://images.pexels.com/photos/35515996/pexels-photo-35515996.png?auto=compress&cs=tinysrgb&w=400&fm=webp"
               standardModel={language === 'en' ? 'Harrier Standard' : 'হ্যারিয়ার স্ট্যান্ডার্ড'}
               premiumModel={language === 'en' ? 'Harrier Premium' : 'হ্যারিয়ার প্রিমিয়াম'}
               specs={[
@@ -1770,8 +1774,8 @@ export const HomePage = () => {
             viewport={{ once: true }}
           >
             <AnimatedComparisonSlider
-              standardImage="https://images.pexels.com/photos/36318402/pexels-photo-36318402.png?auto=compress&cs=tinysrgb&w=600&fm=webp"
-              premiumImage="https://images.pexels.com/photos/36318402/pexels-photo-36318402.png?auto=compress&cs=tinysrgb&w=600&fm=webp"
+              standardImage="https://images.pexels.com/photos/36318402/pexels-photo-36318402.png?auto=compress&cs=tinysrgb&w=400&fm=webp"
+              premiumImage="https://images.pexels.com/photos/36318402/pexels-photo-36318402.png?auto=compress&cs=tinysrgb&w=400&fm=webp"
               standardModel={language === 'en' ? 'Prado Standard' : 'প্রাডো স্ট্যান্ডার্ড'}
               premiumModel={language === 'en' ? 'Prado Premium' : 'প্রাডো প্রিমিয়াম'}
               specs={[
