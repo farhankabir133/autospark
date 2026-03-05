@@ -188,6 +188,7 @@ export const HomePage = () => {
   return (
     <LazyMotion features={domAnimation}>
     <MotionConfig reducedMotion="user">
+    <Suspense fallback={<div className="min-h-screen bg-[#0a0a0a] flex items-center justify-center"><div className="w-10 h-10 border-2 border-[#C00000] border-t-transparent rounded-full animate-spin" /></div>}>
     <m.div 
       className={`min-h-screen ${theme === 'dark' ? 'bg-[#0a0a0a]' : 'bg-gray-50'}`}
       initial={{ opacity: 0 }}
@@ -2404,6 +2405,7 @@ export const HomePage = () => {
         language={language}
       />
     </m.div>
+    </Suspense>
     </MotionConfig>
     </LazyMotion>
   );

@@ -1,4 +1,4 @@
-import { useRef, useState, useEffect, type ReactNode } from 'react';
+import { useRef, useState, useEffect, Suspense, type ReactNode } from 'react';
 
 interface LazySectionProps {
   children: ReactNode;
@@ -12,10 +12,20 @@ interface LazySectionProps {
   fallback?: ReactNode;
 }
 
+/** Minimal spinner shown while lazy-loaded chunks inside this section are loading */
+const SectionLoader = () => (
+  <div className="w-full flex items-center justify-center py-20" style={{ minHeight: '200px' }}>
+    <div className="w-8 h-8 border-2 border-[#C00000] border-t-transparent rounded-full animate-spin" />
+  </div>
+);
+
 /**
  * LazySection — defers rendering of below-fold sections until they are
  * within `rootMargin` of the viewport. Uses IntersectionObserver for
  * zero-cost idle tracking. Once visible, the section stays mounted.
+ *
+ * Wraps children in a <Suspense> boundary so that any React.lazy()
+ * components inside are correctly caught (prevents React error #300).
  */
 export function LazySection({
   children,
@@ -57,7 +67,13 @@ export function LazySection({
       className={className}
       style={isVisible ? undefined : { minHeight, background: 'inherit' }}
     >
-      {isVisible ? children : (fallback ?? null)}
+      {isVisible ? (
+        <Suspense fallback={fallback ?? <SectionLoader />}>
+          {children}
+        </Suspense>
+      ) : (
+        fallback ?? null
+      )}
     </div>
   );
 }
