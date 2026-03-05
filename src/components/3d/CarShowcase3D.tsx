@@ -17,28 +17,31 @@ type DeviceTier = 'low' | 'mid' | 'high';
 function getDeviceTier(): DeviceTier {
   if (typeof window === 'undefined') return 'mid';
   const w = window.innerWidth;
-  const isPhone = w < 768;
   const isTablet = w >= 768 && w < 1024;
 
+  // Check for truly old/weak GPUs — only these get 'low'
   try {
     const canvas = document.createElement('canvas');
     const gl = canvas.getContext('webgl') || canvas.getContext('experimental-webgl');
-    if (gl && gl instanceof WebGLRenderingContext) {
+    if (!gl) return 'low'; // No WebGL support at all
+    if (gl instanceof WebGLRenderingContext) {
       const ext = gl.getExtension('WEBGL_debug_renderer_info');
       if (ext) {
         const renderer = gl.getParameter(ext.UNMASKED_RENDERER_WEBGL).toLowerCase();
+        // Only truly ancient GPUs get 'low' tier
         if (renderer.includes('mali-4') || renderer.includes('adreno 3') || renderer.includes('powervr sgx')) {
           return 'low';
         }
       }
     }
-  } catch { /* ignore */ }
+  } catch { /* WebGL probe failed — still allow mid tier */ }
 
   const cores = navigator.hardwareConcurrency || 4;
   const memory = (navigator as { deviceMemory?: number }).deviceMemory || 4;
 
-  if (isPhone) return cores <= 4 || memory <= 3 ? 'low' : 'mid';
-  if (isTablet) return cores <= 4 || memory <= 3 ? 'low' : 'mid';
+  // Modern phones & tablets can handle Three.js fine — default to 'mid'
+  // Only desktop with powerful hardware gets 'high'
+  if (isTablet) return 'mid';
   if (cores >= 8 && memory >= 8) return 'high';
   return 'mid';
 }
