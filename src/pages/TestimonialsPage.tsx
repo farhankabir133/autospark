@@ -54,7 +54,7 @@ const MOCK_TESTIMONIALS: CustomerTestimonial[] = [
     vehicle_purchased: 'Toyota Land Cruiser Prado',
     vehicle_model: 'Land Cruiser Prado TX',
     vehicle_year: 2021,
-    vehicle_image: 'https://images.pexels.com/photos/36318402/pexels-photo-36318402.png?auto=compress&cs=tinysrgb&w=400&fm=webp',
+    vehicle_image: 'https://images.pexels.com/photos/36318402/pexels-photo-36318402.png?auto=compress&cs=tinysrgb&w=800&fm=webp',
     is_featured: true,
     is_approved: true,
     created_at: '2025-11-15',
@@ -78,7 +78,7 @@ const MOCK_TESTIMONIALS: CustomerTestimonial[] = [
     vehicle_purchased: 'Toyota Yaris Cross',
     vehicle_model: 'Yaris Cross Hybrid',
     vehicle_year: 2023,
-    vehicle_image: 'https://images.pexels.com/photos/36435468/pexels-photo-36435468.png?auto=compress&cs=tinysrgb&w=400&fm=webp',
+    vehicle_image: 'https://images.pexels.com/photos/36435468/pexels-photo-36435468.png?auto=compress&cs=tinysrgb&w=800&fm=webp',
     is_featured: true,
     is_approved: true,
     created_at: '2025-12-03',
@@ -102,7 +102,7 @@ const MOCK_TESTIMONIALS: CustomerTestimonial[] = [
     vehicle_purchased: 'Toyota Harrier',
     vehicle_model: 'Harrier Z Leather',
     vehicle_year: 2022,
-    vehicle_image: 'https://images.pexels.com/photos/35515996/pexels-photo-35515996.png?auto=compress&cs=tinysrgb&w=400&fm=webp',
+    vehicle_image: 'https://images.pexels.com/photos/35515996/pexels-photo-35515996.png?auto=compress&cs=tinysrgb&w=800&fm=webp',
     is_featured: true,
     is_approved: true,
     created_at: '2025-09-22',
@@ -126,7 +126,7 @@ const MOCK_TESTIMONIALS: CustomerTestimonial[] = [
     vehicle_purchased: 'Toyota Crown',
     vehicle_model: 'Crown RS Advance',
     vehicle_year: 2022,
-    vehicle_image: 'https://images.pexels.com/photos/35509198/pexels-photo-35509198.png?auto=compress&cs=tinysrgb&w=400&fm=webp',
+    vehicle_image: 'https://images.pexels.com/photos/35509198/pexels-photo-35509198.png?auto=compress&cs=tinysrgb&w=800&fm=webp',
     is_featured: false,
     is_approved: true,
     created_at: '2025-08-10',
@@ -150,7 +150,7 @@ const MOCK_TESTIMONIALS: CustomerTestimonial[] = [
     vehicle_purchased: 'Toyota Noah',
     vehicle_model: 'Noah S-Z Hybrid',
     vehicle_year: 2023,
-    vehicle_image: 'https://images.pexels.com/photos/15862688/pexels-photo-15862688.jpeg?auto=compress&cs=tinysrgb&w=400&fm=webp',
+    vehicle_image: 'https://images.pexels.com/photos/15862688/pexels-photo-15862688.jpeg?auto=compress&cs=tinysrgb&w=800&fm=webp',
     is_featured: false,
     is_approved: true,
     created_at: '2025-10-05',
@@ -174,7 +174,7 @@ const MOCK_TESTIMONIALS: CustomerTestimonial[] = [
     vehicle_purchased: 'Toyota Premio',
     vehicle_model: 'Premio F EX Package',
     vehicle_year: 2020,
-    vehicle_image: 'https://images.pexels.com/photos/210019/pexels-photo-210019.jpeg?auto=compress&cs=tinysrgb&w=400&fm=webp',
+    vehicle_image: 'https://images.pexels.com/photos/210019/pexels-photo-210019.jpeg?auto=compress&cs=tinysrgb&w=800&fm=webp',
     is_featured: false,
     is_approved: true,
     created_at: '2025-07-18',
@@ -198,7 +198,7 @@ const MOCK_TESTIMONIALS: CustomerTestimonial[] = [
     vehicle_purchased: 'Toyota C-HR',
     vehicle_model: 'C-HR G-T Hybrid',
     vehicle_year: 2023,
-    vehicle_image: 'https://images.pexels.com/photos/36435469/pexels-photo-36435469.png?auto=compress&cs=tinysrgb&w=400&fm=webp',
+    vehicle_image: 'https://images.pexels.com/photos/36435469/pexels-photo-36435469.png?auto=compress&cs=tinysrgb&w=800&fm=webp',
     is_featured: true,
     is_approved: true,
     created_at: '2026-01-08',
@@ -222,7 +222,7 @@ const MOCK_TESTIMONIALS: CustomerTestimonial[] = [
     vehicle_purchased: 'Toyota Allion',
     vehicle_model: 'Allion A20',
     vehicle_year: 2019,
-    vehicle_image: 'https://images.pexels.com/photos/170811/pexels-photo-170811.jpeg?auto=compress&cs=tinysrgb&w=400&fm=webp',
+    vehicle_image: 'https://images.pexels.com/photos/170811/pexels-photo-170811.jpeg?auto=compress&cs=tinysrgb&w=800&fm=webp',
     is_featured: false,
     is_approved: true,
     created_at: '2025-06-20',
@@ -246,7 +246,7 @@ const MOCK_TESTIMONIALS: CustomerTestimonial[] = [
     vehicle_purchased: 'Toyota Axio',
     vehicle_model: 'Axio X Grade',
     vehicle_year: 2018,
-    vehicle_image: 'https://images.pexels.com/photos/116675/pexels-photo-116675.jpeg?auto=compress&cs=tinysrgb&w=400&fm=webp',
+    vehicle_image: 'https://images.pexels.com/photos/116675/pexels-photo-116675.jpeg?auto=compress&cs=tinysrgb&w=800&fm=webp',
     is_featured: false,
     is_approved: true,
     created_at: '2025-05-12',
@@ -270,7 +270,7 @@ const MOCK_TESTIMONIALS: CustomerTestimonial[] = [
     vehicle_purchased: 'Toyota Harrier',
     vehicle_model: 'Harrier Premium',
     vehicle_year: 2023,
-    vehicle_image: 'https://images.pexels.com/photos/36435471/pexels-photo-36435471.png?auto=compress&cs=tinysrgb&w=400&fm=webp',
+    vehicle_image: 'https://images.pexels.com/photos/36435471/pexels-photo-36435471.png?auto=compress&cs=tinysrgb&w=800&fm=webp',
     is_featured: true,
     is_approved: true,
     created_at: '2026-02-14',
@@ -294,7 +294,7 @@ const MOCK_TESTIMONIALS: CustomerTestimonial[] = [
     vehicle_purchased: 'Toyota Land Cruiser Prado',
     vehicle_model: 'Prado TZ-G',
     vehicle_year: 2022,
-    vehicle_image: 'https://images.pexels.com/photos/36435470/pexels-photo-36435470.png?auto=compress&cs=tinysrgb&w=400&fm=webp',
+    vehicle_image: 'https://images.pexels.com/photos/36435470/pexels-photo-36435470.png?auto=compress&cs=tinysrgb&w=800&fm=webp',
     is_featured: false,
     is_approved: true,
     created_at: '2026-01-20',
@@ -318,7 +318,7 @@ const MOCK_TESTIMONIALS: CustomerTestimonial[] = [
     vehicle_purchased: 'Toyota C-HR',
     vehicle_model: 'C-HR S Hybrid',
     vehicle_year: 2022,
-    vehicle_image: 'https://images.pexels.com/photos/36435472/pexels-photo-36435472.png?auto=compress&cs=tinysrgb&w=400&fm=webp',
+    vehicle_image: 'https://images.pexels.com/photos/36435472/pexels-photo-36435472.png?auto=compress&cs=tinysrgb&w=800&fm=webp',
     is_featured: false,
     is_approved: true,
     created_at: '2025-11-30',
@@ -481,18 +481,18 @@ const FeaturedTestimonialCard = ({
       </span>
     </div>
 
-    <div className="grid md:grid-cols-2 gap-0">
-      {/* Vehicle Image Side */}
+    <div className="flex flex-col">
+      {/* Vehicle Image — full width, natural height */}
       {t.vehicle_image && (
-        <div className="relative h-48 md:h-full min-h-[200px]">
+        <div className="relative w-full">
           <img
             src={t.vehicle_image}
             alt={t.vehicle_purchased || 'Vehicle'}
-            className="w-full h-full object-cover"
+            className="w-full h-auto object-contain"
             loading="lazy"
             decoding="async"
           />
-          <div className={`absolute inset-0 ${theme === 'dark' ? 'bg-gradient-to-t md:bg-gradient-to-r from-gray-900/80 to-transparent' : 'bg-gradient-to-t md:bg-gradient-to-r from-white/80 to-transparent'}`} />
+          <div className={`absolute inset-0 ${theme === 'dark' ? 'bg-gradient-to-t from-gray-900/70 via-transparent to-transparent' : 'bg-gradient-to-t from-white/70 via-transparent to-transparent'}`} />
           {t.vehicle_purchased && (
             <div className="absolute bottom-4 left-4">
               <div className="flex items-center gap-2">
@@ -577,11 +577,11 @@ const TestimonialCard = ({
     >
       {/* Vehicle Image Header */}
       {t.vehicle_image && (
-        <div className="relative h-40 overflow-hidden">
+        <div className="relative w-full overflow-hidden">
           <img
             src={t.vehicle_image}
             alt={t.vehicle_purchased || 'Vehicle'}
-            className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+            className="w-full h-auto object-contain transition-transform duration-500 group-hover:scale-105"
             loading="lazy"
             decoding="async"
           />
@@ -1129,14 +1129,14 @@ export const TestimonialsPage = () => {
               whileInView={{ opacity: 1, scale: 1 }}
               transition={{ duration: 0.5, delay: i * 0.1 }}
               viewport={{ once: true, margin: '-30px' }}
-              className={`group relative aspect-[4/3] rounded-2xl overflow-hidden border ${
+              className={`group relative rounded-2xl overflow-hidden border ${
                 theme === 'dark' ? 'border-gray-700/50' : 'border-gray-200'
               }`}
             >
               <img
                 src={`${src}?auto=compress&cs=tinysrgb&w=600&fm=webp`}
                 alt={language === 'en' ? `Happy customer ${i + 1}` : `সুখী গ্রাহক ${i + 1}`}
-                className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+                className="w-full h-auto object-contain transition-transform duration-500 group-hover:scale-105"
                 loading="lazy"
                 decoding="async"
               />
