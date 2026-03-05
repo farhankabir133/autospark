@@ -1090,6 +1090,70 @@ export const TestimonialsPage = () => {
       </section>
 
       {/* ══════════════════════════════════════════
+          CUSTOMER GALLERY
+          ══════════════════════════════════════════ */}
+      <section className="container mx-auto px-4 py-12 md:py-16">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
+          viewport={{ once: true }}
+          className="text-center mb-8"
+        >
+          <h2 className={`text-xl md:text-2xl font-bold mb-3 ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
+            {language === 'en' ? 'Our Happy Customers' : 'আমাদের সুখী গ্রাহকরা'}
+          </h2>
+          <p className={`text-sm md:text-base max-w-2xl mx-auto ${theme === 'dark' ? 'text-gray-400' : 'text-gray-600'}`}>
+            {language === 'en'
+              ? 'Real moments captured with customers who drove home their dream cars from Auto Spark BD.'
+              : 'অটো স্পার্ক বিডি থেকে স্বপ্নের গাড়ি নিয়ে বাড়ি ফেরা গ্রাহকদের বাস্তব মুহূর্ত।'}
+          </p>
+        </motion.div>
+
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3 md:gap-4">
+          {[
+            'https://images.pexels.com/photos/36435423/pexels-photo-36435423.png',
+            'https://images.pexels.com/photos/36435424/pexels-photo-36435424.png',
+            'https://images.pexels.com/photos/36435425/pexels-photo-36435425.png',
+            'https://images.pexels.com/photos/36435427/pexels-photo-36435427.png',
+            'https://images.pexels.com/photos/36435428/pexels-photo-36435428.png',
+          ].map((src, i) => (
+            <motion.div
+              key={src}
+              initial={{ opacity: 0, scale: 0.9 }}
+              whileInView={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.5, delay: i * 0.1 }}
+              viewport={{ once: true, margin: '-30px' }}
+              className={`group relative aspect-[4/3] rounded-2xl overflow-hidden border ${
+                theme === 'dark' ? 'border-gray-700/50' : 'border-gray-200'
+              }`}
+            >
+              <img
+                src={`${src}?auto=compress&cs=tinysrgb&w=600&fm=webp`}
+                alt={language === 'en' ? `Happy customer ${i + 1}` : `সুখী গ্রাহক ${i + 1}`}
+                className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+                loading="lazy"
+                decoding="async"
+              />
+              {/* Hover overlay */}
+              <div className={`absolute inset-0 transition-opacity duration-300 opacity-0 group-hover:opacity-100 ${
+                theme === 'dark'
+                  ? 'bg-gradient-to-t from-black/60 via-transparent to-transparent'
+                  : 'bg-gradient-to-t from-black/40 via-transparent to-transparent'
+              }`}>
+                <div className="absolute bottom-3 left-3 right-3">
+                  <span className="inline-flex items-center gap-1.5 text-white text-xs font-medium">
+                    <Heart size={12} className="text-red-400 fill-red-400" />
+                    {language === 'en' ? 'Verified Customer' : 'যাচাইকৃত গ্রাহক'}
+                  </span>
+                </div>
+              </div>
+            </motion.div>
+          ))}
+        </div>
+      </section>
+
+      {/* ══════════════════════════════════════════
           CTA — Share Your Story
           ══════════════════════════════════════════ */}
       <section className={`py-12 md:py-16 ${
