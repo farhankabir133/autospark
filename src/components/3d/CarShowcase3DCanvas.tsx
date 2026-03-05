@@ -130,7 +130,8 @@ function FerrariModel({ color, tier }: { color: string; tier: DeviceTier }) {
   const [model, setModel] = useState<Group | null>(null);
   const wheelsRef = useRef<Object3D[]>([]);
 
-  // Stable material — created once, color animated inside useFrame
+  // Stable material — created once with the INITIAL color, then kept in sync.
+  // useRef initializer only runs on first render, so we also sync it below.
   const bodyMaterialRef = useRef<MeshPhysicalMaterial>(
     new MeshPhysicalMaterial({
       color: new Color(color),
@@ -152,16 +153,36 @@ function FerrariModel({ color, tier }: { color: string; tier: DeviceTier }) {
     [],
   );
 
-  // ── Color lerp INSIDE useFrame (no standalone rAF) ──
+  // ── Color management ──
+  // We track whether the user has actively changed color (via the picker).
+  // On first load / mount we snap instantly. On subsequent user changes we lerp.
   const targetColorRef = useRef(new Color(color));
+  const isFirstColorRef = useRef(true);
+
   useEffect(() => {
-    targetColorRef.current.set(color);
+    const newTarget = new Color(color);
+    targetColorRef.current.copy(newTarget);
+
+    if (isFirstColorRef.current) {
+      // SNAP: apply immediately — no visible transition on first load
+      bodyMaterialRef.current.color.copy(newTarget);
+      bodyMaterialRef.current.needsUpdate = true;
+      isFirstColorRef.current = false;
+    }
   }, [color]);
 
   useFrame(() => {
     const mat = bodyMaterialRef.current;
     if (!mat.color.equals(targetColorRef.current)) {
-      mat.color.lerp(targetColorRef.current, 0.08);
+      // Faster lerp (0.15) so color changes feel snappy, not sluggish
+      mat.color.lerp(targetColorRef.current, 0.15);
+      // Snap when close enough to avoid lingering color drift
+      const dr = mat.color.r - targetColorRef.current.r;
+      const dg = mat.color.g - targetColorRef.current.g;
+      const db = mat.color.b - targetColorRef.current.b;
+      if (dr * dr + dg * dg + db * db < 0.0001) {
+        mat.color.copy(targetColorRef.current);
+      }
       mat.needsUpdate = true;
     }
   });
@@ -183,7 +204,13 @@ function FerrariModel({ color, tier }: { color: string; tier: DeviceTier }) {
         const carModel = gltf.scene.children[0] as Group;
 
         const body = carModel.getObjectByName('body');
-        if (body && (body as Mesh).material) (body as Mesh).material = bodyMaterialRef.current;
+        if (body && (body as Mesh).material) {
+          // Sync material color to current target before assigning to mesh
+          // This prevents the "flash of wrong color" on model load
+          bodyMaterialRef.current.color.copy(targetColorRef.current);
+          bodyMaterialRef.current.needsUpdate = true;
+          (body as Mesh).material = bodyMaterialRef.current;
+        }
 
         ['rim_fl', 'rim_fr', 'rim_rr', 'rim_rl'].forEach((name) => {
           const rim = carModel.getObjectByName(name);
@@ -343,7 +370,11 @@ function Scene({
 }) {
   const { gl, invalidate } = useThree();
   const [degraded, setDegraded] = useState(false);
-  const effectiveTier: DeviceTier = degraded ? 'low' : tier;
+  // When PerformanceMonitor triggers, degrade high→mid (not to 'low').
+  // 'low' tier has completely different lighting which causes a visible
+  // color shift on the car body. We never drop below 'mid' inside the
+  // Canvas — the 'low' path is only for the static image fallback.
+  const effectiveTier: DeviceTier = degraded && tier === 'high' ? 'mid' : tier;
 
   useEffect(() => {
     (gl as WebGLRenderer).toneMapping = ACESFilmicToneMapping;
