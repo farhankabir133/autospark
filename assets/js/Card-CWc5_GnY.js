@@ -1,1 +1,0 @@
-import{j as e}from"./react-vendor-CNRN5RT9.js";import{a as t}from"./index-D76lHpqY.js";const i=({children:r,className:o="",hover:a=!1})=>{const{theme:s}=t();return e.jsx("div",{className:`${s==="dark"?"bg-gray-800 border border-gray-700":"bg-white"} rounded-lg shadow-md ${a?"hover:shadow-xl transition-shadow duration-300":""} ${o}`,children:r})};export{i as C};
