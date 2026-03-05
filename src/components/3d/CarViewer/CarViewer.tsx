@@ -22,7 +22,6 @@ import React, { Suspense, useState, useEffect, useCallback, useMemo, useRef } fr
 import { Canvas, useFrame } from '@react-three/fiber';
 import { 
   OrbitControls, 
-  Environment, 
   ContactShadows,
   Center,
   useProgress,
@@ -377,12 +376,10 @@ const CanvasLoader: React.FC = () => {
  */
 interface SceneLightingProps {
   mode: 'day' | 'night' | 'studio';
-  environmentPreset?: string;
 }
 
 const SceneLighting: React.FC<SceneLightingProps> = ({ 
   mode, 
-  environmentPreset = 'city' 
 }) => {
   const preset = LIGHTING_PRESETS[mode];
   
@@ -416,11 +413,9 @@ const SceneLighting: React.FC<SceneLightingProps> = ({
         color={preset.directionalColor}
       />
       
-      {/* Environment map for reflections */}
-      <Environment 
-        preset={environmentPreset as any}
-        background={false}
-      />
+      {/* Environment lighting — inline (no external HDR fetch) */}
+      <directionalLight position={[0, 10, -8]} intensity={0.5} color="#ffd4a6" />
+      <hemisphereLight args={['#ffffff', '#444444', 1.0]} />
     </>
   );
 };
@@ -486,7 +481,6 @@ export const CarViewer: React.FC<CarViewerProps> = ({
   onColorChange,
   onModelLoad,
   onModelError,
-  environmentPreset = 'city',
 }) => {
   // Get vehicle data
   const vehicleData = useMemo(() => getVehicleById(vehicleId), [vehicleId]);
@@ -625,7 +619,6 @@ export const CarViewer: React.FC<CarViewerProps> = ({
             {/* Lighting */}
             <SceneLighting 
               mode={lightingMode} 
-              environmentPreset={environmentPreset}
             />
 
             {/* Car Model */}

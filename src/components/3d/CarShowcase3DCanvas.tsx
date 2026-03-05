@@ -18,7 +18,6 @@ import { Suspense, useRef, useState, useMemo, useEffect, useCallback } from 'rea
 import { Canvas, useFrame, useThree } from '@react-three/fiber';
 import {
   OrbitControls,
-  Environment,
   ContactShadows,
   Html,
   MeshReflectorMaterial,
@@ -377,15 +376,12 @@ function Scene({
       <pointLight position={[0, 10, 0]} intensity={0.5} />
       {effectiveTier === 'high' && <pointLight position={[5, 3, 5]} intensity={0.3} color="#ff6600" />}
 
-      {/* Environment */}
-      {effectiveTier === 'low' ? (
-        <>
-          <directionalLight position={[5, 8, 5]} intensity={1.2} color="#ffffff" />
-          <directionalLight position={[-5, 5, -5]} intensity={0.6} color="#8888ff" />
-          <hemisphereLight args={['#ffffff', '#444444', 0.8]} />
-        </>
-      ) : (
-        <Environment preset="city" />
+      {/* Environment — inline lighting (no external HDR fetch) */}
+      <directionalLight position={[5, 8, 5]} intensity={effectiveTier === 'high' ? 1.4 : 1.2} color="#ffffff" />
+      <directionalLight position={[-5, 5, -5]} intensity={0.6} color="#8888ff" />
+      <hemisphereLight args={['#ffffff', '#444444', effectiveTier === 'low' ? 0.8 : 1.0]} />
+      {effectiveTier !== 'low' && (
+        <directionalLight position={[0, 10, -8]} intensity={0.5} color="#ffd4a6" />
       )}
 
       {/* Stars */}
