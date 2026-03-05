@@ -16,6 +16,7 @@ const AboutPage = lazy(() => import('./pages/AboutPage').then(m => ({ default: m
 const SellCarPage = lazy(() => import('./pages/SellCarPage').then(m => ({ default: m.SellCarPage })));
 const ContactPage = lazy(() => import('./pages/ContactPage').then(m => ({ default: m.ContactPage })));
 const VehicleExperiencePage = lazy(() => import('./pages/VehicleExperiencePage').then(m => ({ default: m.VehicleExperiencePage })));
+const TestimonialsPage = lazy(() => import('./pages/TestimonialsPage').then(m => ({ default: m.TestimonialsPage })));
 
 // Minimal loading fallback to prevent CLS
 const PageLoader = () => (
@@ -72,6 +73,7 @@ function App() {
                 <Route path="/services" element={<ServicesPage />} />
                 <Route path="/accessories" element={<AccessoriesPage />} />
                 <Route path="/about" element={<AboutPage />} />
+                <Route path="/testimonials" element={<TestimonialsPage />} />
                 <Route path="/sell" element={<SellCarPage />} />
                 <Route path="/contact" element={<ContactPage />} />
               </Routes>

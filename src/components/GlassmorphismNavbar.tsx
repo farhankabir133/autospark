@@ -42,6 +42,7 @@ export const GlassmorphismNavbar = () => {
     { to: '/services', label: t('nav.services') },
     { to: '/accessories', label: t('nav.accessories') },
     { to: '/about', label: t('nav.about') },
+    { to: '/testimonials', label: t('nav.testimonials') },
     { to: '/contact', label: t('nav.contact') },
   ];
 
