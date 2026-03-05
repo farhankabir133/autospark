@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { LanguageProvider } from './contexts/LanguageContext';
 import { ThemeProvider } from './contexts/ThemeContext';
 import { Layout } from './components/Layout';
+import ErrorBoundary from './components/ErrorBoundary';
 import { SplashScreen } from './components/SplashScreen';
 
 // Lazy load pages for better code splitting and performance
@@ -55,6 +56,7 @@ function App() {
   return (
     <ThemeProvider>
       <LanguageProvider>
+        <ErrorBoundary>
         <Router basename={basename}>
           <Layout>
             {/* Splash overlay — shown on first visit, auto-removed after duration */}
@@ -76,6 +78,7 @@ function App() {
             </Suspense>
           </Layout>
         </Router>
+        </ErrorBoundary>
       </LanguageProvider>
     </ThemeProvider>
   );

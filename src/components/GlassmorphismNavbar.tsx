@@ -1,12 +1,9 @@
 import { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { Menu, X, Moon, Sun, Globe, Search } from 'lucide-react';
-import { m, LazyMotion, AnimatePresence } from 'framer-motion';
+import { m, LazyMotion, domMax, AnimatePresence } from 'framer-motion';
 import { useLanguage } from '../contexts/LanguageContext';
 import { useTheme } from '../contexts/ThemeContext';
-
-// Lazy-load framer-motion features (AnimatePresence needs domMax)
-const loadFeatures = () => import('framer-motion').then(mod => mod.domMax);
 
 // Dynamic AudioManager — never imported synchronously in the critical path
 const playClick = () => import('../utils/AudioManager').then(mod => mod.AudioManager.playClick());
@@ -117,7 +114,7 @@ export const GlassmorphismNavbar = () => {
     : 'bg-white/80 backdrop-blur-2xl border border-white/40 shadow-2xl shadow-black/10';
 
   return (
-    <LazyMotion features={loadFeatures}>
+    <LazyMotion features={domMax}>
     <m.header
       initial="hidden"
       animate="visible"

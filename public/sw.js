@@ -83,19 +83,22 @@ self.addEventListener('fetch', (event) => {
     return;
   }
 
-  // Stale-while-revalidate for navigation / HTML requests
+  // Network-first for navigation / HTML requests — ensures users receive latest SPA shell
   if (event.request.mode === 'navigate') {
     event.respondWith(
-      caches.match(event.request).then((cached) => {
-        const fetchPromise = fetch(event.request).then((response) => {
-          if (response.ok) {
+      fetch(event.request)
+        .then((response) => {
+          // Cache the successful HTML response for offline fallback
+          if (response && response.ok) {
             const clone = response.clone();
             caches.open(CACHE_NAME).then((cache) => cache.put(event.request, clone));
           }
           return response;
-        });
-        return cached || fetchPromise;
-      })
+        })
+        .catch(() => {
+          // If network fails, fall back to cache (site shell)
+          return caches.match('/autospark/') || caches.match(event.request) || caches.match('/');
+        })
     );
     return;
   }

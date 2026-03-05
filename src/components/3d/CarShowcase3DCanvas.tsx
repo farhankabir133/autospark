@@ -73,13 +73,14 @@ function useIsTablet() {
 }
 
 // ── Floating particles ──
+// All hooks MUST run before any conditional return to satisfy React's
+// rules of hooks (hook count must be identical on every render).
 function FloatingParticles({ count = 80, tier }: { count?: number; tier: DeviceTier }) {
   const mesh = useRef<Points>(null);
-
-  if (tier === 'low') return null;
-  const actualCount = tier === 'mid' ? Math.min(count, 20) : count;
+  const actualCount = tier === 'low' ? 0 : tier === 'mid' ? Math.min(count, 20) : count;
 
   const particles = useMemo(() => {
+    if (actualCount === 0) return { positions: new Float32Array(0), colors: new Float32Array(0) };
     const positions = new Float32Array(actualCount * 3);
     const colors = new Float32Array(actualCount * 3);
     for (let i = 0; i < actualCount; i++) {
@@ -95,10 +96,13 @@ function FloatingParticles({ count = 80, tier }: { count?: number; tier: DeviceT
   }, [actualCount]);
 
   useFrame((state) => {
-    if (mesh.current) {
+    if (mesh.current && tier !== 'low') {
       mesh.current.rotation.y = state.clock.elapsedTime * 0.015;
     }
   });
+
+  // Early return AFTER all hooks have been called
+  if (tier === 'low') return null;
 
   return (
     <points ref={mesh}>

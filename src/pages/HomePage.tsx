@@ -1,6 +1,6 @@
 import { useEffect, useState, useRef, lazy, Suspense } from 'react';
 import { Link } from 'react-router-dom';
-import { m, LazyMotion, domAnimation, MotionConfig } from 'framer-motion';
+import { motion, MotionConfig } from 'framer-motion';
 import { ArrowRight, Car, Wrench, Shield, Users, Award, ChevronDown, Zap, Fuel } from 'lucide-react';
 import { useLanguage } from '../contexts/LanguageContext';
 import { useTheme } from '../contexts/ThemeContext';
@@ -11,41 +11,35 @@ import { Card } from '../components/ui/Card';
 import { ImageCarousel } from '../components/ImageCarousel';
 import type { Vehicle, Testimonial } from '../types';
 import { formatPrice } from '../utils/format';
-// Temporarily disabled due to React Three Fiber version compatibility issue
-// import { CarViewerShowcase } from '../components/3d/CarViewer';
-// import { ARViewerEnhanced } from '../components/3d/ARViewerEnhanced';
 
-// Keep data & type imports synchronous (zero runtime cost)
-import { carSlides } from '../components/CarFocusCarousel';
+// ─── Direct imports ────────────────────────────────────────────────
+// These components are small (<400 LOC each, ~3.2k total) and all share
+// the same framer-motion dependency already in this chunk. Lazy-loading
+// them provided zero bundle benefit but introduced fragile Suspense
+// boundary requirements that caused React error #300 on scroll.
+import CarFocusCarousel, { carSlides } from '../components/CarFocusCarousel';
 import type { CarFocusCarouselHandle } from '../components/CarFocusCarousel';
 import type { VehicleColor } from '../components/InteractiveColorCustomizer';
-
-// Eagerly imported — used for loading states (must render immediately)
+import { ParallaxBackground } from '../components/ParallaxBackground';
+import { MorphingShapeTransition } from '../components/MorphingShapeTransition';
+import { AnimatedComparisonSlider } from '../components/AnimatedComparisonSlider';
+import { FilterAnimations } from '../components/FilterAnimations';
+import { FloatingParticlesBackground } from '../components/FloatingParticlesBackground';
+import { UnicornBackground } from '../components/UnicornBackground';
+import { EnhancedFlipCard } from '../components/EnhancedFlipCard';
+import { VehicleCardWithBadges } from '../components/VehicleCardWithBadges';
+import { ComparisonDisplay } from '../components/ComparisonDisplay';
+import { InteractiveColorCustomizer } from '../components/InteractiveColorCustomizer';
+import { ComparisonSidebar } from '../components/ComparisonSidebar';
+import { VehicleSpecCardBack } from '../components/VehicleSpecCardBack';
+import { PerformanceGauge } from '../components/PerformanceGauge';
+import { ScrollTriggerCounter } from '../components/ScrollTriggerCounter';
 import { EnhancedSkeleton } from '../components/EnhancedSkeleton';
 import { CarouselPlaceholder } from '../components/CarouselPlaceholder';
 import { LazySection } from '../components/LazySection';
 
-// Lazy load heavy below-fold components for better performance
-const ParallaxBackground = lazy(() => import('../components/ParallaxBackground').then(mod => ({ default: mod.ParallaxBackground })));
-const MorphingShapeTransition = lazy(() => import('../components/MorphingShapeTransition').then(mod => ({ default: mod.MorphingShapeTransition })));
-const AnimatedComparisonSlider = lazy(() => import('../components/AnimatedComparisonSlider').then(mod => ({ default: mod.AnimatedComparisonSlider })));
-const FilterAnimations = lazy(() => import('../components/FilterAnimations').then(mod => ({ default: mod.FilterAnimations })));
-const FloatingParticlesBackground = lazy(() => import('../components/FloatingParticlesBackground').then(mod => ({ default: mod.FloatingParticlesBackground })));
-const UnicornBackground = lazy(() => import('../components/UnicornBackground'));
-
-// Lazy load 3D component for better performance
+// ─── Only CarShowcase3D stays lazy (pulls in three.js ≈ 1 MB) ─────
 const CarShowcase3D = lazy(() => import('../components/3d/CarShowcase3D'));
-
-// Lazy load below-fold interactive components (critical perf optimization)
-const CarFocusCarousel = lazy(() => import('../components/CarFocusCarousel'));
-const EnhancedFlipCard = lazy(() => import('../components/EnhancedFlipCard').then(mod => ({ default: mod.EnhancedFlipCard })));
-const VehicleCardWithBadges = lazy(() => import('../components/VehicleCardWithBadges').then(mod => ({ default: mod.VehicleCardWithBadges })));
-const ComparisonDisplay = lazy(() => import('../components/ComparisonDisplay').then(mod => ({ default: mod.ComparisonDisplay })));
-const InteractiveColorCustomizer = lazy(() => import('../components/InteractiveColorCustomizer').then(mod => ({ default: mod.InteractiveColorCustomizer })));
-const ComparisonSidebar = lazy(() => import('../components/ComparisonSidebar').then(mod => ({ default: mod.ComparisonSidebar })));
-const VehicleSpecCardBack = lazy(() => import('../components/VehicleSpecCardBack').then(mod => ({ default: mod.VehicleSpecCardBack })));
-const PerformanceGauge = lazy(() => import('../components/PerformanceGauge').then(mod => ({ default: mod.PerformanceGauge })));
-const ScrollTriggerCounter = lazy(() => import('../components/ScrollTriggerCounter').then(mod => ({ default: mod.ScrollTriggerCounter })));
 
 // 3D Showcase loading fallback
 const CarShowcase3DFallback = () => (
@@ -56,6 +50,148 @@ const CarShowcase3DFallback = () => (
     </div>
   </div>
 );
+
+// Extracted stat card — hooks MUST be at the top level of a component,
+// never inside .map() or any loop/condition.
+interface StatCardProps {
+  value: number;
+  label: string;
+  icon: React.ElementType;
+  index: number;
+  theme: string;
+}
+const StatCard = ({ value, label, icon: Icon, index, theme }: StatCardProps) => {
+  const { ref, isInView } = useAnimationOnScroll(0.1);
+  const count = useCounter({ end: value, duration: 2000, shouldStart: isInView });
+
+  return (
+    <motion.div
+      ref={ref}
+      initial={{ opacity: 0, y: 20 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.6, delay: index * 0.1 }}
+      viewport={{ once: true }}
+      className={`text-center p-6 rounded-xl ${theme === 'dark' ? 'bg-gray-700' : 'bg-gray-50'}`}
+      whileHover={{ y: -5, boxShadow: '0 10px 30px rgba(0,0,0,0.1)' }}
+    >
+      <Icon className={`h-12 w-12 mx-auto mb-4 ${theme === 'dark' ? 'text-blue-400' : 'text-blue-600'}`} />
+      <div className={`text-2xl sm:text-3xl md:text-4xl font-bold mb-2 ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
+        {count}{value >= 100 ? '+' : ''}
+      </div>
+      <div className={theme === 'dark' ? 'text-gray-300' : 'text-gray-600'}>{label}</div>
+    </motion.div>
+  );
+};
+
+// Extracted vehicle flip card — hooks MUST be at the top level of a component,
+// never inside .map() or any loop/condition.
+interface ShowcaseVehicle {
+  id: string;
+  name: string;
+  subtitle: string;
+  price: string;
+  image: string;
+  engine: string;
+  fuel: string;
+  transmission: string;
+  year: number;
+  gradient: string;
+  lightGradient: string;
+  safetyRating: number;
+  warrantyYears: number;
+  mileage: string;
+  emissions: string;
+  horsepower: number;
+  torque: string;
+  efficiency: number;
+  features: string[];
+}
+interface VehicleFlipCardProps {
+  vehicle: ShowcaseVehicle;
+  index: number;
+  theme: string;
+  language: string;
+  isSelected: boolean;
+  onSelect: () => void;
+  flipTimeoutRef: React.MutableRefObject<NodeJS.Timeout | null>;
+}
+const VehicleFlipCard = ({ vehicle, index, theme, language, isSelected, onSelect, flipTimeoutRef }: VehicleFlipCardProps) => {
+  const [isFlipped, setIsFlipped] = useState(false);
+
+  return (
+    <motion.div
+      key={vehicle.id}
+      className={`relative h-32 cursor-pointer group ${
+        isSelected ? 'ring-2 ring-offset-2 ring-blue-500' : ''
+      }`}
+      style={{ perspective: '1000px' }}
+      initial={{ opacity: 0, x: 30 }}
+      whileInView={{ opacity: 1, x: 0 }}
+      transition={{ duration: 0.4, delay: index * 0.1 }}
+      viewport={{ once: true }}
+      onClick={onSelect}
+    >
+      {/* Card Container - handles the flip with enhanced interaction */}
+      <motion.div
+        className="relative w-full h-full"
+        style={{ transformStyle: 'preserve-3d' }}
+        animate={isFlipped ? { rotateY: 180 } : { rotateY: 0 }}
+        transition={{ duration: 0.6, ease: 'easeInOut' }}
+        onHoverStart={() => {
+          setIsFlipped(true);
+          if (flipTimeoutRef.current) clearTimeout(flipTimeoutRef.current);
+          flipTimeoutRef.current = setTimeout(() => setIsFlipped(false), 3000);
+        }}
+        onHoverEnd={() => {
+          if (flipTimeoutRef.current) clearTimeout(flipTimeoutRef.current);
+          flipTimeoutRef.current = setTimeout(() => setIsFlipped(false), 500);
+        }}
+      >
+        {/* FRONT FACE */}
+        <div
+          className={`absolute inset-0 rounded-xl p-4 flex items-center gap-4 bg-gradient-to-br ${
+            theme === 'dark' ? vehicle.gradient : vehicle.lightGradient
+          } shadow-lg`}
+          style={{ backfaceVisibility: 'hidden' }}
+        >
+          <div className="relative w-24 h-20 rounded-lg overflow-hidden flex-shrink-0 bg-black/20">
+            <img
+              src={vehicle.image}
+              alt={vehicle.name}
+              className="w-full h-full object-cover"
+              loading="lazy"
+              width={96}
+              height={80}
+              decoding="async"
+            />
+            <span className="absolute top-1 left-1 px-1.5 py-0.5 text-[9px] font-bold bg-white/90 text-gray-800 rounded">
+              {vehicle.year}
+            </span>
+            {vehicle.fuel === 'Hybrid' && (
+              <span className="absolute bottom-1 right-1 px-1.5 py-0.5 text-[8px] font-bold bg-green-500 text-white rounded">
+                HYBRID
+              </span>
+            )}
+          </div>
+          <div className="flex-1 min-w-0">
+            <h3 className="text-white font-bold text-base truncate">{vehicle.name}</h3>
+            <p className="text-white/80 text-xs mt-0.5 truncate">{vehicle.subtitle}</p>
+            <p className="text-white font-bold text-sm mt-2">{vehicle.price}</p>
+          </div>
+          {isSelected && (
+            <div className="absolute top-2 right-2 w-3 h-3 bg-white rounded-full animate-pulse" />
+          )}
+          <div className="absolute bottom-2 right-2 text-white/60 text-[10px] opacity-0 group-hover:opacity-100 transition-opacity">
+            {language === 'en' ? 'Hover to see specs →' : 'স্পেক দেখতে হোভার করুন →'}
+          </div>
+        </div>
+
+        {/* BACK FACE - Enhanced Vehicle Specs */}
+        <VehicleSpecCardBack vehicle={vehicle} theme={theme} />
+      </motion.div>
+    </motion.div>
+  );
+};
 
 export const HomePage = () => {
   const { t, language } = useLanguage();
@@ -186,10 +322,8 @@ export const HomePage = () => {
   };
 
   return (
-    <LazyMotion features={domAnimation}>
     <MotionConfig reducedMotion="user">
-    <Suspense fallback={<div className="min-h-screen bg-[#0a0a0a] flex items-center justify-center"><div className="w-10 h-10 border-2 border-[#C00000] border-t-transparent rounded-full animate-spin" /></div>}>
-    <m.div 
+    <motion.div 
       className={`min-h-screen ${theme === 'dark' ? 'bg-[#0a0a0a]' : 'bg-gray-50'}`}
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
@@ -202,7 +336,7 @@ export const HomePage = () => {
         <Suspense fallback={<CarShowcase3DFallback />}>
           <CarShowcase3D
             ctaButtons={
-              <m.div 
+              <motion.div 
                 className="flex flex-row gap-2 sm:gap-3 justify-center"
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -224,13 +358,13 @@ export const HomePage = () => {
                     {t('hero.sell')}
                   </Button>
                 </Link>
-              </m.div>
+              </motion.div>
             }
           />
         </Suspense>
 
         {/* Scroll hint — desktop only */}
-        <m.button
+        <motion.button
           onClick={scrollToContent}
           aria-label="Scroll to content"
           className="absolute bottom-2 left-1/2 transform -translate-x-1/2 text-white/40 z-10 hidden md:block"
@@ -238,7 +372,7 @@ export const HomePage = () => {
           transition={{ duration: 2, repeat: Infinity }}
         >
           <ChevronDown className="h-6 w-6" />
-        </m.button>
+        </motion.button>
       </section>
 
       {/* PREMIUM CAR FOCUS CAROUSEL */}
@@ -259,7 +393,7 @@ export const HomePage = () => {
       {/* PREMIUM COLLECTION - CLICKABLE CAR GRID */}
       <section className={`py-8 md:py-12 ${theme === 'dark' ? 'bg-gray-900/80' : 'bg-gray-50'}`}>
         <div className="container mx-auto px-4">
-          <m.div 
+          <motion.div 
             className="text-center mb-6"
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -277,12 +411,12 @@ export const HomePage = () => {
                 ? 'Click on any vehicle to view it in the showcase carousel above' 
                 : 'উপরের শোকেস ক্যারোসেলে দেখতে যেকোনো গাড়িতে ক্লিক করুন'}
             </p>
-          </m.div>
+          </motion.div>
 
           {/* Car Cards Grid */}
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 md:gap-6">
             {carSlides.map((car, index) => (
-              <m.div
+              <motion.div
                 key={car.id}
                 initial={{ opacity: 0, y: 30 }}
                 whileInView={{ opacity: 1, y: 0 }}
@@ -369,7 +503,7 @@ export const HomePage = () => {
                     {language === 'en' ? 'View in Carousel' : 'ক্যারোসেলে দেখুন'}
                   </span>
                 </div>
-              </m.div>
+              </motion.div>
             ))}
           </div>
         </div>
@@ -384,7 +518,7 @@ export const HomePage = () => {
         </div>
         
         <div className="container mx-auto px-4 relative z-10">
-          <m.div 
+          <motion.div 
             className="text-center mb-6"
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -402,7 +536,7 @@ export const HomePage = () => {
                 ? 'Experience our premium collection with interactive 3D flip cards. Click to flip and explore detailed specifications.'
                 : 'ইন্টারঅ্যাক্টিভ 3D ফ্লিপ কার্ড দিয়ে আমাদের প্রিমিয়াম সংগ্রহ অনুভব করুন৷ বিস্তারিত স্পেসিফিকেশন অন্বেষণ করতে ক্লিক করুন।'}
             </p>
-          </m.div>
+          </motion.div>
 
           {/* Featured vehicles grid */}
           {isLoadingCards ? (
@@ -468,14 +602,14 @@ export const HomePage = () => {
                           <span className="font-semibold text-green-400">{car.price}</span>
                         </div>
                       </div>
-                      <m.button
+                      <motion.button
                         className="w-full mt-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg font-semibold transition-colors"
                         whileHover={{ scale: 1.05 }}
                         whileTap={{ scale: 0.95 }}
                         onClick={() => handleAddToComparison(car as any)}
                       >
                         {language === 'en' ? 'Add to Comparison' : 'তুলনায় যুক্ত করুন'}
-                      </m.button>
+                      </motion.button>
                     </div>
                   }
                   theme={theme}
@@ -494,7 +628,7 @@ export const HomePage = () => {
       </LazySection>
 
       {/* STATS SECTION WITH ANIMATED COUNTERS */}
-      <m.section 
+      <motion.section 
         className={`py-8 md:py-12 ${theme === 'dark' ? 'bg-gray-900/90' : 'bg-white'}`}
         initial={{ opacity: 0 }}
         whileInView={{ opacity: 1 }}
@@ -502,7 +636,7 @@ export const HomePage = () => {
         viewport={{ once: true }}
       >
         <div className="container mx-auto px-4">
-          <m.div 
+          <motion.div 
             className="text-center mb-8"
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -512,7 +646,7 @@ export const HomePage = () => {
             <h2 className={`text-2xl sm:text-3xl md:text-4xl font-bold mb-4 ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
               {language === 'en' ? 'By The Numbers' : 'সংখ্যায়'}
             </h2>
-          </m.div>
+          </motion.div>
 
           <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
             {[
@@ -520,37 +654,24 @@ export const HomePage = () => {
               { value: 500, label: language === 'en' ? 'Happy Customers' : 'সন্তুষ্ট গ্রাহক', icon: Users },
               { value: 10, label: language === 'en' ? 'Years Experience' : 'বছরের অভিজ্ঞতা', icon: Award },
               { value: 98, label: language === 'en' ? 'Satisfaction %' : 'সন্তুষ্টি %', icon: Shield },
-            ].map((stat, index) => {
-              const { ref, isInView } = useAnimationOnScroll(0.1);
-              const count = useCounter({ end: stat.value, duration: 2000, shouldStart: isInView });
-
-              return (
-                <m.div
-                  key={index}
-                  ref={ref}
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.6, delay: index * 0.1 }}
-                  viewport={{ once: true }}
-                  className={`text-center p-6 rounded-xl ${theme === 'dark' ? 'bg-gray-700' : 'bg-gray-50'}`}
-                  whileHover={{ y: -5, boxShadow: '0 10px 30px rgba(0,0,0,0.1)' }}
-                >
-                  <stat.icon className={`h-12 w-12 mx-auto mb-4 ${theme === 'dark' ? 'text-blue-400' : 'text-blue-600'}`} />
-                  <div className={`text-2xl sm:text-3xl md:text-4xl font-bold mb-2 ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
-                    {count}{stat.value >= 100 ? '+' : ''}
-                  </div>
-                  <div className={theme === 'dark' ? 'text-gray-300' : 'text-gray-600'}>{stat.label}</div>
-                </m.div>
-              );
-            })}
+            ].map((stat, index) => (
+              <StatCard
+                key={index}
+                value={stat.value}
+                label={stat.label}
+                icon={stat.icon}
+                index={index}
+                theme={theme}
+              />
+            ))}
           </div>
         </div>
-      </m.section>
+      </motion.section>
 
       {/* VEHICLE GALLERY WITH BADGES AND COMPARISON */}
       <section className={`py-8 md:py-12 ${theme === 'dark' ? 'bg-gray-900/90' : 'bg-white'}`}>
         <div className="container mx-auto px-4">
-          <m.div 
+          <motion.div 
             className="text-center mb-8"
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -568,7 +689,7 @@ export const HomePage = () => {
                 ? 'Browse our premium collection with interactive badges. Add vehicles to compare side-by-side.' 
                 : 'ইন্টারঅ্যাক্টিভ ব্যাজ সহ আমাদের প্রিমিয়াম সংগ্রহ ব্রাউজ করুন। পাশাপাশি তুলনা করতে গাড়ি যুক্ত করুন।'}
             </p>
-          </m.div>
+          </motion.div>
 
           {/* Vehicle Cards Grid */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
@@ -611,7 +732,7 @@ export const HomePage = () => {
 
           {/* Comparison Display */}
           {comparisonVehicles.length > 0 && (
-            <m.div
+            <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5 }}
@@ -619,11 +740,11 @@ export const HomePage = () => {
               <ComparisonDisplay
                 vehicles={comparisonVehicles.map(v => ({
                   id: v.id,
-                  name: v.model || v.title,
-                  price: v.price,
+                  name: v.model,
+                  price: formatPrice(v.price),
                   specs: {
-                    engine: { label: 'Engine', value: '2.4L Petrol', highlight: false },
-                    transmission: { label: 'Transmission', value: 'Automatic', highlight: false },
+                    engine: { label: 'Engine', value: v.engine_capacity || '2.4L Petrol', highlight: false },
+                    transmission: { label: 'Transmission', value: v.transmission || 'Automatic', highlight: false },
                     mileage: { label: 'Mileage', value: '14 km/l', highlight: true },
                     seating: { label: 'Seating', value: '5 Person', highlight: false },
                     power: { label: 'Power', value: '175 HP', highlight: false },
@@ -634,14 +755,14 @@ export const HomePage = () => {
                 onRemove={handleRemoveFromComparison}
                 onExport={handleExportComparison}
               />
-            </m.div>
+            </motion.div>
           )}
         </div>
       </section>
 
       {/* FEATURED VEHICLES WITH CARD LIFT EFFECTS */}
       {featuredVehicles.length > 0 && (
-        <m.section 
+        <motion.section 
           className={`py-8 md:py-12 ${theme === 'dark' ? 'bg-gray-900/80' : 'bg-gray-50'}`}
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
@@ -649,7 +770,7 @@ export const HomePage = () => {
           viewport={{ once: true }}
         >
           <div className="container mx-auto px-4">
-            <m.div 
+            <motion.div 
               className="text-center mb-8"
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
@@ -659,11 +780,11 @@ export const HomePage = () => {
               <h2 className={`text-2xl sm:text-3xl md:text-4xl font-bold mb-4 ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
                 {language === 'en' ? 'Featured Vehicles' : 'বৈশিষ্ট্যযুক্ত গাড়ি'}
               </h2>
-            </m.div>
+            </motion.div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
               {featuredVehicles.map((vehicle, index) => (
-                <m.div
+                <motion.div
                   key={vehicle.id}
                   initial={{ opacity: 0, y: 20 }}
                   whileInView={{ opacity: 1, y: 0 }}
@@ -671,12 +792,12 @@ export const HomePage = () => {
                   viewport={{ once: true }}
                   whileHover={{ y: -10 }}
                 >
-                  <Link to={`/vehicles/${vehicle.id}`}>
+                  <Link to={`/vehicle/${vehicle.id}`}>
                     <Card className={`overflow-hidden cursor-pointer transition-all ${theme === 'dark' ? 'hover:shadow-lg' : 'hover:shadow-xl'}`}>
                       <div className="relative h-64 overflow-hidden">
-                        <m.img
-                          src={vehicle.images?.[0]?.url || 'https://images.pexels.com/photos/3964962/pexels-photo-3964962.jpeg?auto=compress&cs=tinysrgb&w=400&fm=webp'}
-                          alt={vehicle.title}
+                        <motion.img
+                          src={vehicle.images?.[0]?.image_url || 'https://images.pexels.com/photos/3964962/pexels-photo-3964962.jpeg?auto=compress&cs=tinysrgb&w=400&fm=webp'}
+                          alt={vehicle.model}
                           className="w-full h-full object-contain"
                           whileHover={{ scale: 1.15 }}
                           transition={{ duration: 0.3 }}
@@ -684,27 +805,27 @@ export const HomePage = () => {
                       </div>
                       <div className="p-6">
                         <h3 className={`text-xl font-bold mb-2 ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
-                          {language === 'en' ? vehicle.title : vehicle.title_bn || vehicle.title}
+                          {language === 'en' ? (vehicle.description_en || vehicle.model) : (vehicle.description_bn || vehicle.model)}
                         </h3>
                         <div className={`flex items-center justify-between mb-4 ${theme === 'dark' ? 'text-gray-300' : 'text-gray-600'}`}>
                           <span>{vehicle.year}</span>
                           <span>{formatPrice(vehicle.price)}</span>
                         </div>
                         <p className={`text-sm ${theme === 'dark' ? 'text-gray-400' : 'text-gray-500'}`}>
-                          {language === 'en' ? vehicle.description : vehicle.description_bn || vehicle.description}
+                          {language === 'en' ? (vehicle.description_en || '') : (vehicle.description_bn || vehicle.description_en || '')}
                         </p>
                       </div>
                     </Card>
                   </Link>
-                </m.div>
+                </motion.div>
               ))}
             </div>
           </div>
-        </m.section>
+        </motion.section>
       )}
 
       {/* FEATURE 13: FILTER/SORT ANIMATIONS */}
-      <m.section
+      <motion.section
         className={`py-6 md:py-10 relative overflow-hidden ${
           theme === 'dark'
             ? 'bg-gradient-to-br from-gray-900 to-gray-800'
@@ -716,7 +837,7 @@ export const HomePage = () => {
         viewport={{ once: true }}
       >
         <div className="container mx-auto px-4">
-          <m.div
+          <motion.div
             className="text-center mb-6"
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -731,7 +852,7 @@ export const HomePage = () => {
                 ? 'Use filters to narrow down your choices'
                 : 'আপনার পছন্দ সীমিত করতে ফিল্টার ব্যবহার করুন'}
             </p>
-          </m.div>
+          </motion.div>
 
           <FilterAnimations
             filters={[
@@ -773,11 +894,11 @@ export const HomePage = () => {
             language={language}
           />
         </div>
-      </m.section>
+      </motion.section>
 
       {/* CAROUSEL SHOWCASE WITH FLIP ANIMATIONS & PARALLAX */}
       <LazySection minHeight="600px" rootMargin="200px">
-      <m.section 
+      <motion.section 
         className={`py-8 md:py-12 relative overflow-hidden ${theme === 'dark' ? 'bg-gradient-to-br from-gray-900 to-gray-800' : 'bg-gradient-to-br from-blue-50 to-indigo-50'}`}
         initial={{ opacity: 0 }}
         whileInView={{ opacity: 1 }}
@@ -795,7 +916,7 @@ export const HomePage = () => {
         <ParallaxBackground theme={theme} />
         
         <div className="container mx-auto px-4 relative z-10">
-          <m.div 
+          <motion.div 
             className="text-center mb-8"
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -810,12 +931,12 @@ export const HomePage = () => {
                 ? 'Stunning 360° views of each vehicle with interactive carousel' 
                 : 'প্রতিটি গাড়ির অসাধারণ 360° ভিউ ইন্টারেক্টিভ ক্যারোসেলের সাথে'}
             </p>
-          </m.div>
+          </motion.div>
 
           {/* Main Carousel with Flip Cards */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
             {/* Left side - Large carousel with curved styling */}
-            <m.div
+            <motion.div
               initial={{ opacity: 0, x: -50 }}
               whileInView={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.6 }}
@@ -865,7 +986,7 @@ export const HomePage = () => {
 
                 {/* Vehicle selector buttons - Scrollable for mobile */}
                 <div className="flex gap-2 mt-6 justify-center flex-wrap">
-                  <m.button
+                  <motion.button
                     onClick={() => handleVehicleSelect('prado')}
                     className={`px-4 py-2 rounded-full font-semibold transition-all text-sm ${
                       showcaseVehicle === 'prado'
@@ -876,8 +997,8 @@ export const HomePage = () => {
                     whileTap={{ scale: 0.95 }}
                   >
                     Prado
-                  </m.button>
-                  <m.button
+                  </motion.button>
+                  <motion.button
                     onClick={() => handleVehicleSelect('harrier')}
                     className={`px-4 py-2 rounded-full font-semibold transition-all text-sm ${
                       showcaseVehicle === 'harrier'
@@ -888,8 +1009,8 @@ export const HomePage = () => {
                     whileTap={{ scale: 0.95 }}
                   >
                     Harrier
-                  </m.button>
-                  <m.button
+                  </motion.button>
+                  <motion.button
                     onClick={() => handleVehicleSelect('crown')}
                     className={`px-4 py-2 rounded-full font-semibold transition-all text-sm ${
                       showcaseVehicle === 'crown'
@@ -900,8 +1021,8 @@ export const HomePage = () => {
                     whileTap={{ scale: 0.95 }}
                   >
                     Crown
-                  </m.button>
-                  <m.button
+                  </motion.button>
+                  <motion.button
                     onClick={() => handleVehicleSelect('yaris')}
                     className={`px-4 py-2 rounded-full font-semibold transition-all text-sm ${
                       showcaseVehicle === 'yaris'
@@ -912,8 +1033,8 @@ export const HomePage = () => {
                     whileTap={{ scale: 0.95 }}
                   >
                     Yaris
-                  </m.button>
-                  <m.button
+                  </motion.button>
+                  <motion.button
                     onClick={() => handleVehicleSelect('chr')}
                     className={`px-4 py-2 rounded-full font-semibold transition-all text-sm ${
                       showcaseVehicle === 'chr'
@@ -924,8 +1045,8 @@ export const HomePage = () => {
                     whileTap={{ scale: 0.95 }}
                   >
                     C-HR
-                  </m.button>
-                  <m.button
+                  </motion.button>
+                  <motion.button
                     onClick={() => handleVehicleSelect('premio')}
                     className={`px-4 py-2 rounded-full font-semibold transition-all text-sm ${
                       showcaseVehicle === 'premio'
@@ -936,8 +1057,8 @@ export const HomePage = () => {
                     whileTap={{ scale: 0.95 }}
                   >
                     Premio
-                  </m.button>
-                  <m.button
+                  </motion.button>
+                  <motion.button
                     onClick={() => handleVehicleSelect('noah')}
                     className={`px-4 py-2 rounded-full font-semibold transition-all text-sm ${
                       showcaseVehicle === 'noah'
@@ -948,25 +1069,25 @@ export const HomePage = () => {
                     whileTap={{ scale: 0.95 }}
                   >
                     Noah
-                  </m.button>
+                  </motion.button>
                 </div>
 
                 {/* Decorative elements */}
-                <m.div
+                <motion.div
                   className={`absolute -bottom-6 -left-6 w-24 h-24 rounded-full ${theme === 'dark' ? 'bg-blue-500/20' : 'bg-blue-300/30'}`}
                   animate={{ y: [0, 20, 0], x: [0, -10, 0] }}
                   transition={{ duration: 4, repeat: Infinity }}
                 />
-                <m.div
+                <motion.div
                   className={`absolute -top-6 -right-6 w-32 h-32 rounded-full ${theme === 'dark' ? 'bg-purple-500/20' : 'bg-purple-300/30'}`}
                   animate={{ y: [0, -20, 0], x: [0, 10, 0] }}
                   transition={{ duration: 5, repeat: Infinity }}
                 />
               </div>
-            </m.div>
+            </motion.div>
 
             {/* Right side - Flip card gallery - SYNCED with carousel */}
-            <m.div
+            <motion.div
               initial={{ opacity: 0, x: 50 }}
               whileInView={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.6, delay: 0.2 }}
@@ -1122,111 +1243,24 @@ export const HomePage = () => {
                     efficiency: 18.2,
                     features: ['8-Seater', 'Family-Friendly', 'Spacious Interior', 'Sliding Doors'],
                   },
-                ].map((vehicle, index) => {
-                  const [isFlipped, setIsFlipped] = useState(false);
-
-                  return (
-                  <m.div
+                ].map((vehicle, index) => (
+                  <VehicleFlipCard
                     key={vehicle.id}
-                    className={`relative h-32 cursor-pointer group ${
-                      showcaseVehicle === vehicle.id ? 'ring-2 ring-offset-2 ring-blue-500' : ''
-                    }`}
-                    style={{ perspective: '1000px' }}
-                    initial={{ opacity: 0, x: 30 }}
-                    whileInView={{ opacity: 1, x: 0 }}
-                    transition={{ duration: 0.4, delay: index * 0.1 }}
-                    viewport={{ once: true }}
-                    onClick={() => handleVehicleSelect(vehicle.id as typeof showcaseVehicle)}
-                  >
-                    {/* Card Container - handles the flip with enhanced interaction */}
-                    <m.div
-                      className="relative w-full h-full"
-                      style={{ transformStyle: 'preserve-3d' }}
-                      animate={isFlipped ? { rotateY: 180 } : { rotateY: 0 }}
-                      transition={{ duration: 0.6, ease: 'easeInOut' }}
-                      onHoverStart={() => {
-                        setIsFlipped(true);
-                        // Auto flip back after 3 seconds
-                        if (flipTimeoutRef.current) {
-                          clearTimeout(flipTimeoutRef.current);
-                        }
-                        flipTimeoutRef.current = setTimeout(() => {
-                          setIsFlipped(false);
-                        }, 3000);
-                      }}
-                      onHoverEnd={() => {
-                        // Auto flip back when leaving
-                        if (flipTimeoutRef.current) {
-                          clearTimeout(flipTimeoutRef.current);
-                        }
-                        flipTimeoutRef.current = setTimeout(() => {
-                          setIsFlipped(false);
-                        }, 500);
-                      }}
-                    >
-                      {/* FRONT FACE */}
-                      <div 
-                        className={`absolute inset-0 rounded-xl p-4 flex items-center gap-4 bg-gradient-to-br ${
-                          theme === 'dark' ? vehicle.gradient : vehicle.lightGradient
-                        } shadow-lg`}
-                        style={{ backfaceVisibility: 'hidden' }}
-                      >
-                        {/* Vehicle Thumbnail */}
-                        <div className="relative w-24 h-20 rounded-lg overflow-hidden flex-shrink-0 bg-black/20">
-                          <img 
-                            src={vehicle.image} 
-                            alt={vehicle.name}
-                            className="w-full h-full object-cover"
-                            loading="lazy"
-                            width={96}
-                            height={80}
-                            decoding="async"
-                          />
-                          {/* Year badge */}
-                          <span className="absolute top-1 left-1 px-1.5 py-0.5 text-[9px] font-bold bg-white/90 text-gray-800 rounded">
-                            {vehicle.year}
-                          </span>
-                          {/* Hybrid badge */}
-                          {vehicle.fuel === 'Hybrid' && (
-                            <span className="absolute bottom-1 right-1 px-1.5 py-0.5 text-[8px] font-bold bg-green-500 text-white rounded">
-                              HYBRID
-                            </span>
-                          )}
-                        </div>
-                        
-                        {/* Vehicle Info */}
-                        <div className="flex-1 min-w-0">
-                          <h3 className="text-white font-bold text-base truncate">{vehicle.name}</h3>
-                          <p className="text-white/80 text-xs mt-0.5 truncate">{vehicle.subtitle}</p>
-                          <p className="text-white font-bold text-sm mt-2">{vehicle.price}</p>
-                        </div>
-
-                        {/* Selected indicator */}
-                        {showcaseVehicle === vehicle.id && (
-                          <div className="absolute top-2 right-2 w-3 h-3 bg-white rounded-full animate-pulse" />
-                        )}
-
-                        {/* Hover hint */}
-                        <div className="absolute bottom-2 right-2 text-white/60 text-[10px] opacity-0 group-hover:opacity-100 transition-opacity">
-                          {language === 'en' ? 'Hover to see specs →' : 'স্পেক দেখতে হোভার করুন →'}
-                        </div>
-                      </div>
-
-                      {/* BACK FACE - Enhanced Vehicle Specs */}
-                      <VehicleSpecCardBack 
-                        vehicle={vehicle}
-                        theme={theme}
-                      />
-                    </m.div>
-                  </m.div>
-                  );
-                })}
+                    vehicle={vehicle}
+                    index={index}
+                    theme={theme}
+                    language={language}
+                    isSelected={showcaseVehicle === vehicle.id}
+                    onSelect={() => handleVehicleSelect(vehicle.id as typeof showcaseVehicle)}
+                    flipTimeoutRef={flipTimeoutRef}
+                  />
+                ))}
               </div>
-            </m.div>
+            </motion.div>
           </div>
 
           {/* Call-to-action */}
-          <m.div
+          <motion.div
             className="text-center mt-12"
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -1234,7 +1268,7 @@ export const HomePage = () => {
             viewport={{ once: true }}
           >
             <Link to="/inventory">
-              <m.div
+              <motion.div
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
               >
@@ -1242,16 +1276,16 @@ export const HomePage = () => {
                   {language === 'en' ? 'View All Vehicles' : 'সমস্ত গাড়ি দেখুন'}
                   <ArrowRight className="ml-2 h-5 w-5" />
                 </Button>
-              </m.div>
+              </motion.div>
             </Link>
-          </m.div>
+          </motion.div>
         </div>
-      </m.section>
+      </motion.section>
       </LazySection>
 
       {/* FEATURE 7: INTERACTIVE COLOR CUSTOMIZER */}
       <LazySection minHeight="400px" rootMargin="200px">
-      <m.section
+      <motion.section
         className={`py-8 md:py-12 relative overflow-hidden ${
           theme === 'dark'
             ? 'bg-gradient-to-br from-gray-900 to-gray-800'
@@ -1263,7 +1297,7 @@ export const HomePage = () => {
         viewport={{ once: true }}
       >
         <div className="container mx-auto px-4">
-          <m.div
+          <motion.div
             className="text-center mb-8"
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -1278,12 +1312,12 @@ export const HomePage = () => {
                 ? 'Choose from premium color options and watch your car transform in real-time'
                 : 'প্রিমিয়াম রঙ বিকল্প থেকে বেছে নিন এবং আপনার গাড়ি রিয়েল-টাইমে রূপান্তরিত দেখুন'}
             </p>
-          </m.div>
+          </motion.div>
 
           {/* Color Customizer Grid */}
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
             {/* Prado Color Customizer */}
-            <m.div
+            <motion.div
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.1 }}
@@ -1337,10 +1371,10 @@ export const HomePage = () => {
                   import('../utils/AudioManager').then(m => m.AudioManager.playClick());
                 }}
               />
-            </m.div>
+            </motion.div>
 
             {/* Harrier Color Customizer */}
-            <m.div
+            <motion.div
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.2 }}
@@ -1394,10 +1428,10 @@ export const HomePage = () => {
                   import('../utils/AudioManager').then(m => m.AudioManager.playClick());
                 }}
               />
-            </m.div>
+            </motion.div>
 
             {/* Crown Color Customizer */}
-            <m.div
+            <motion.div
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.3 }}
@@ -1451,12 +1485,12 @@ export const HomePage = () => {
                   import('../utils/AudioManager').then(m => m.AudioManager.playClick());
                 }}
               />
-            </m.div>
+            </motion.div>
           </div>
 
           {/* Color Selection Info */}
           {selectedVehicleColor && (
-            <m.div
+            <motion.div
               className={`mt-12 p-6 rounded-xl ${theme === 'dark' ? 'bg-gray-800' : 'bg-blue-50'} border ${theme === 'dark' ? 'border-gray-700' : 'border-blue-200'}`}
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
@@ -1466,15 +1500,15 @@ export const HomePage = () => {
                   ? `You've selected ${selectedVehicleColor.name}. This color preference has been saved to your vehicle customization profile.`
                   : `আপনি ${selectedVehicleColor.name} নির্বাচন করেছেন। এই রঙের পছন্দ আপনার গাড়ি কাস্টমাইজেশন প্রোফাইলে সংরক্ষিত হয়েছে।`}
               </p>
-            </m.div>
+            </motion.div>
           )}
         </div>
-      </m.section>
+      </motion.section>
       </LazySection>
 
       {/* FEATURE 8: MORPHING SHAPE TRANSITIONS */}
       <LazySection minHeight="400px" rootMargin="200px">
-      <m.section
+      <motion.section
         className={`py-8 md:py-12 relative overflow-hidden ${
           theme === 'dark'
             ? 'bg-gradient-to-br from-gray-800 to-gray-900'
@@ -1486,7 +1520,7 @@ export const HomePage = () => {
         viewport={{ once: true }}
       >
         <div className="container mx-auto px-4">
-          <m.div
+          <motion.div
             className="text-center mb-8"
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -1501,11 +1535,11 @@ export const HomePage = () => {
                 ? 'Experience stunning clip-path and SVG morphing transitions between vehicles'
                 : 'গাড়ির মধ্যে অসাধারণ ক্লিপ-পাথ এবং SVG আকৃতি রূপান্তর অনুভব করুন'}
             </p>
-          </m.div>
+          </motion.div>
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
             {/* Blob Morphing */}
-            <m.div
+            <motion.div
               initial={{ opacity: 0, x: -20 }}
               whileInView={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.6, delay: 0.1 }}
@@ -1534,10 +1568,10 @@ export const HomePage = () => {
                 theme={theme}
                 language={language}
               />
-            </m.div>
+            </motion.div>
 
             {/* Diamond Morphing */}
-            <m.div
+            <motion.div
               initial={{ opacity: 0, x: 20 }}
               whileInView={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.6, delay: 0.2 }}
@@ -1566,11 +1600,11 @@ export const HomePage = () => {
                 theme={theme}
                 language={language}
               />
-            </m.div>
+            </motion.div>
           </div>
 
           {/* Morphing Info Box */}
-          <m.div
+          <motion.div
             className={`mt-12 p-6 rounded-xl ${theme === 'dark' ? 'bg-gray-800/50' : 'bg-blue-50/50'} border ${theme === 'dark' ? 'border-gray-700' : 'border-blue-200'}`}
             initial={{ opacity: 0, y: 10 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -1582,12 +1616,12 @@ export const HomePage = () => {
                 ? '💡 Tip: Click on the vehicle names or use the navigation arrows to experience smooth morphing transitions with animated SVG overlays and clip-path effects.'
                 : '💡 টিপ: গাড়ির নাম ক্লিক করুন বা নেভিগেশন তীর ব্যবহার করুন মসৃণ আকৃতি রূপান্তর অনুভব করতে।'}
             </p>
-          </m.div>
+          </motion.div>
         </div>
-      </m.section>
+      </motion.section>
 
       {/* FEATURE 9: SCROLL-TRIGGERED NUMBER COUNTERS */}
-      <m.section
+      <motion.section
         className={`py-8 md:py-12 relative overflow-hidden ${
           theme === 'dark'
             ? 'bg-gradient-to-br from-gray-900 to-gray-800'
@@ -1599,7 +1633,7 @@ export const HomePage = () => {
         viewport={{ once: true }}
       >
         <div className="container mx-auto px-4">
-          <m.div
+          <motion.div
             className="text-center mb-8"
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -1614,7 +1648,7 @@ export const HomePage = () => {
                 ? 'Scroll down to see our impact and achievements'
                 : 'আমাদের প্রভাব এবং কৃতিত্ব দেখতে নিচে স্ক্রল করুন'}
             </p>
-          </m.div>
+          </motion.div>
 
           {/* Counters Grid */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
@@ -1650,7 +1684,7 @@ export const HomePage = () => {
           </div>
 
           {/* Info Box */}
-          <m.div
+          <motion.div
             className={`mt-12 p-6 rounded-xl ${theme === 'dark' ? 'bg-gray-800/50' : 'bg-blue-50/50'} border ${theme === 'dark' ? 'border-gray-700' : 'border-blue-200'}`}
             initial={{ opacity: 0, y: 10 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -1662,12 +1696,12 @@ export const HomePage = () => {
                 ? '✨ Our counters use scroll-triggered animations with smooth odometer-style effects to celebrate your trust in us.'
                 : '✨ আমাদের কাউন্টাররা আপনার আস্থার প্রতি স্ক্রল-ট্রিগার করা মসৃণ অ্যানিমেশন ব্যবহার করে।'}
             </p>
-          </m.div>
+          </motion.div>
         </div>
-      </m.section>
+      </motion.section>
 
       {/* FEATURE 10: ANIMATED COMPARISON SLIDER (BEFORE/AFTER) */}
-      <m.section
+      <motion.section
         className={`py-8 md:py-12 relative overflow-hidden ${
           theme === 'dark'
             ? 'bg-gradient-to-br from-gray-800 to-gray-900'
@@ -1679,7 +1713,7 @@ export const HomePage = () => {
         viewport={{ once: true }}
       >
         <div className="container mx-auto px-4">
-          <m.div
+          <motion.div
             className="text-center mb-8"
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -1694,10 +1728,10 @@ export const HomePage = () => {
                 ? 'Discover what makes our premium models special - drag the slider to compare'
                 : 'আমাদের প্রিমিয়াম মডেলগুলিকে বিশেষ করে তোলে তা আবিষ্কার করুন'}
             </p>
-          </m.div>
+          </motion.div>
 
           {/* Harrier Standard vs Premium Comparison */}
-          <m.div
+          <motion.div
             className="mb-8"
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -1765,10 +1799,10 @@ export const HomePage = () => {
               theme={theme}
               language={language}
             />
-          </m.div>
+          </motion.div>
 
           {/* Prado Standard vs Premium Comparison */}
-          <m.div
+          <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.2 }}
@@ -1833,12 +1867,12 @@ export const HomePage = () => {
               theme={theme}
               language={language}
             />
-          </m.div>
+          </motion.div>
         </div>
-      </m.section>
+      </motion.section>
 
       {/* PERFORMANCE METRICS SECTION */}
-      <m.section
+      <motion.section
         className={`py-8 md:py-12 relative overflow-hidden ${
           theme === 'dark'
             ? 'bg-gradient-to-br from-gray-800 via-gray-900 to-black'
@@ -1850,7 +1884,7 @@ export const HomePage = () => {
         viewport={{ once: true }}
       >
         <div className="container mx-auto px-4">
-          <m.div
+          <motion.div
             className="text-center mb-8"
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -1865,7 +1899,7 @@ export const HomePage = () => {
                 ? 'Key metrics for the ' + (showcaseVehicle.charAt(0).toUpperCase() + showcaseVehicle.slice(1))
                 : 'এর জন্য মূল মেট্রিক্স'}
             </p>
-          </m.div>
+          </motion.div>
 
           <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
             {/* Horsepower */}
@@ -1939,7 +1973,7 @@ export const HomePage = () => {
                 color: 'text-purple-500',
               },
             ].map((metric, index) => (
-              <m.div
+              <motion.div
                 key={index}
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
@@ -1953,14 +1987,14 @@ export const HomePage = () => {
                   color={metric.color}
                   unit={index === 1 ? 'km/l' : index === 2 ? '/5' : ''}
                 />
-              </m.div>
+              </motion.div>
             ))}
           </div>
         </div>
-      </m.section>
+      </motion.section>
 
       {/* WHY CHOOSE US SECTION */}
-      <m.section 
+      <motion.section 
         className={`py-8 md:py-12 ${theme === 'dark' ? 'bg-gray-900/90' : 'bg-white'}`}
         initial={{ opacity: 0 }}
         whileInView={{ opacity: 1 }}
@@ -1968,7 +2002,7 @@ export const HomePage = () => {
         viewport={{ once: true }}
       >
         <div className="container mx-auto px-4">
-          <m.div 
+          <motion.div 
             className="text-center mb-8"
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -1978,7 +2012,7 @@ export const HomePage = () => {
             <h2 className={`text-2xl sm:text-3xl md:text-4xl font-bold mb-4 ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
               {language === 'en' ? 'Why Choose Auto Spark BD?' : 'কেন অটো স্পার্ক বিডি বেছে নেবেন?'}
             </h2>
-          </m.div>
+          </motion.div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {[
@@ -1998,7 +2032,7 @@ export const HomePage = () => {
                 description: language === 'en' ? 'State-of-the-art service center with experienced technicians' : 'অভিজ্ঞ প্রযুক্তিবিদদের সাথে অত্যাধুনিক সার্ভিস সেন্টার',
               },
             ].map((feature, index) => (
-              <m.div
+              <motion.div
                 key={index}
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
@@ -2007,23 +2041,23 @@ export const HomePage = () => {
                 whileHover={{ y: -10 }}
               >
                 <Card className={`p-8 text-center ${theme === 'dark' ? 'hover:shadow-lg' : 'hover:shadow-xl'}`}>
-                  <m.div
+                  <motion.div
                     whileHover={{ scale: 1.1, rotate: 5 }}
                     transition={{ type: 'spring', stiffness: 300, damping: 20 }}
                   >
                     <feature.icon className={`h-16 w-16 mx-auto mb-4 ${theme === 'dark' ? 'text-blue-400' : 'text-blue-600'}`} />
-                  </m.div>
+                  </motion.div>
                   <h3 className={`text-xl font-bold mb-3 ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>{feature.title}</h3>
                   <p className={`leading-relaxed ${theme === 'dark' ? 'text-gray-300' : 'text-gray-600'}`}>{feature.description}</p>
                 </Card>
-              </m.div>
+              </motion.div>
             ))}
           </div>
         </div>
-      </m.section>
+      </motion.section>
 
       {testimonials.length > 0 && (
-        <m.section 
+        <motion.section 
           className={`py-8 md:py-12 ${theme === 'dark' ? 'bg-gray-900/80' : 'bg-gray-50'}`}
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
@@ -2031,7 +2065,7 @@ export const HomePage = () => {
           viewport={{ once: true }}
         >
           <div className="container mx-auto px-4">
-            <m.div 
+            <motion.div 
               className="text-center mb-6"
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
@@ -2041,11 +2075,11 @@ export const HomePage = () => {
               <h2 className={`text-2xl sm:text-3xl md:text-4xl font-bold mb-4 ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
                 {language === 'en' ? 'What Our Customers Say' : 'আমাদের গ্রাহকরা কি বলেন'}
               </h2>
-            </m.div>
+            </motion.div>
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
               {testimonials.map((testimonial: any, index: number) => (
-                <m.div
+                <motion.div
                   key={testimonial.id}
                   initial={{ opacity: 0, y: 20 }}
                   whileInView={{ opacity: 1, y: 0 }}
@@ -2056,11 +2090,11 @@ export const HomePage = () => {
                   <Card className="p-6">
                     <div className="flex items-center mb-4">
                       {[...Array(testimonial.rating)].map((_, i) => (
-                        <m.div key={i} initial={{ opacity: 0, scale: 0 }} animate={{ opacity: 1, scale: 1 }} transition={{ delay: 0.1 * i }}>
+                        <motion.div key={i} initial={{ opacity: 0, scale: 0 }} animate={{ opacity: 1, scale: 1 }} transition={{ delay: 0.1 * i }}>
                           <svg className="h-5 w-5 text-yellow-400 fill-current" viewBox="0 0 20 20">
                             <path d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z" />
                           </svg>
-                        </m.div>
+                        </motion.div>
                       ))}
                     </div>
                     <p className={`mb-4 leading-relaxed ${theme === 'dark' ? 'text-gray-300' : 'text-gray-700'}`}>
@@ -2080,18 +2114,18 @@ export const HomePage = () => {
                       </div>
                     </div>
                   </Card>
-                </m.div>
+                </motion.div>
               ))}
             </div>
           </div>
-        </m.section>
+        </motion.section>
       )}
 
       {/* 3D & Interactive Elements Section */}
       <section className={`py-8 md:py-12 bg-gradient-to-b ${theme === 'dark' ? 'from-gray-800 to-gray-900' : 'from-white to-gray-50'}`}>
         <div className="container mx-auto px-4">
           {/* Section Header */}
-          <m.div 
+          <motion.div 
             className="text-center mb-8"
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -2106,11 +2140,11 @@ export const HomePage = () => {
                 ? 'Explore our vehicles with cutting-edge 3D visualization and interactive tools' 
                 : 'অত্যাধুনিক 3D ভিজুয়ালাইজেশন এবং ইন্টারেক্টিভ সরঞ্জামগুলির সাথে আমাদের গাড়িগুলি অন্বেষণ করুন'}
             </p>
-          </m.div>
+          </motion.div>
 
           {/* 1. 360° Vehicle Viewer - Temporarily disabled due to R3F compatibility issue */}
           {/* 
-          <m.div 
+          <motion.div 
             className="mb-8"
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -2128,12 +2162,12 @@ export const HomePage = () => {
               </p>
             </div>
             <CarViewerShowcase theme={theme} language={language} />
-          </m.div>
+          </motion.div>
           */}
 
           {/* 2. Augmented Reality Viewer - Temporarily disabled */}
           {/*
-          <m.div 
+          <motion.div 
             className="mb-8"
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -2151,11 +2185,11 @@ export const HomePage = () => {
               </p>
             </div>
             <ARViewerEnhanced />
-          </m.div>
+          </motion.div>
           */}
 
           {/* CTA for Interactive Experience */}
-          <m.div 
+          <motion.div 
             className="bg-gradient-to-r from-blue-600 to-blue-800 rounded-2xl p-8 text-center text-white"
             initial={{ opacity: 0, scale: 0.9 }}
             whileInView={{ opacity: 1, scale: 1 }}
@@ -2171,7 +2205,7 @@ export const HomePage = () => {
                 ? 'Use these interactive tools to find your perfect vehicle'
                 : 'আপনার নিখুঁত গাড়ি খুঁজে পেতে এই ইন্টারেক্টিভ সরঞ্জামগুলি ব্যবহার করুন'}
             </p>
-            <m.div
+            <motion.div
               whileHover={{ y: -5 }}
               whileTap={{ scale: 0.95 }}
             >
@@ -2181,13 +2215,13 @@ export const HomePage = () => {
                   <ArrowRight className="ml-2 h-5 w-5" />
                 </Button>
               </Link>
-            </m.div>
-          </m.div>
+            </motion.div>
+          </motion.div>
         </div>
       </section>
 
       {/* GOOGLE MAPS LOCATION SECTION - Interactive with Animations */}
-      <m.section
+      <motion.section
         className="py-8 md:py-12 bg-gradient-to-b from-gray-50 to-white dark:from-gray-900 dark:to-gray-800"
         initial={{ opacity: 0 }}
         whileInView={{ opacity: 1 }}
@@ -2196,7 +2230,7 @@ export const HomePage = () => {
       >
         <div className="container mx-auto px-4">
           {/* Section Header */}
-          <m.div
+          <motion.div
             className="text-center mb-8"
             initial={{ opacity: 0, y: -20 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -2211,11 +2245,11 @@ export const HomePage = () => {
                 ? 'Located in the heart of Rajshahi. Experience our vehicles in person and take a test drive today.'
                 : 'রাজশাহীর কেন্দ্রে অবস্থিত। আমাদের গাড়িগুলি সরাসরি অনুভব করুন এবং আজই টেস্ট ড্রাইভ নিন।'}
             </p>
-          </m.div>
+          </motion.div>
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-8">
             {/* Location Info Cards */}
-            <m.div
+            <motion.div
               className="flex flex-col gap-6"
               initial={{ opacity: 0, x: -50 }}
               whileInView={{ opacity: 1, x: 0 }}
@@ -2223,7 +2257,7 @@ export const HomePage = () => {
               viewport={{ once: true }}
             >
               {/* Address Card */}
-              <m.div
+              <motion.div
                 className="bg-white dark:bg-gray-800 rounded-2xl p-8 shadow-lg border border-gray-200 dark:border-gray-700 hover:shadow-2xl transition-all"
                 whileHover={{ y: -10 }}
               >
@@ -2241,10 +2275,10 @@ export const HomePage = () => {
                     <p className="text-gray-600 dark:text-gray-300">Bangladesh</p>
                   </div>
                 </div>
-              </m.div>
+              </motion.div>
 
               {/* Hours Card */}
-              <m.div
+              <motion.div
                 className="bg-white dark:bg-gray-800 rounded-2xl p-8 shadow-lg border border-gray-200 dark:border-gray-700 hover:shadow-2xl transition-all"
                 whileHover={{ y: -10 }}
                 transition={{ delay: 0.1 }}
@@ -2266,10 +2300,10 @@ export const HomePage = () => {
                     </div>
                   </div>
                 </div>
-              </m.div>
+              </motion.div>
 
               {/* Contact Card */}
-              <m.div
+              <motion.div
                 className="bg-white dark:bg-gray-800 rounded-2xl p-8 shadow-lg border border-gray-200 dark:border-gray-700 hover:shadow-2xl transition-all"
                 whileHover={{ y: -10 }}
                 transition={{ delay: 0.2 }}
@@ -2288,10 +2322,10 @@ export const HomePage = () => {
                     <p className="text-gray-600 dark:text-gray-300">✉️ info@autospark.com</p>
                   </div>
                 </div>
-              </m.div>
+              </motion.div>
 
               {/* CTA Button */}
-              <m.div
+              <motion.div
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
               >
@@ -2303,11 +2337,11 @@ export const HomePage = () => {
                 >
                   {language === 'en' ? '📍 Get Directions on Google Maps' : '📍 গুগল ম্যাপে দিকনির্দেশনা পান'}
                 </a>
-              </m.div>
-            </m.div>
+              </motion.div>
+            </motion.div>
 
             {/* Google Maps Embed - Right Side */}
-            <m.div
+            <motion.div
               className="relative rounded-2xl overflow-hidden shadow-2xl h-full min-h-[500px]"
               initial={{ opacity: 0, scale: 0.95 }}
               whileInView={{ opacity: 1, scale: 1 }}
@@ -2318,7 +2352,7 @@ export const HomePage = () => {
               }}
             >
               {/* Animated Border */}
-              <m.div
+              <motion.div
                 className="absolute -inset-0.5 rounded-2xl opacity-30 pointer-events-none"
                 style={{
                   backgroundImage: 'linear-gradient(45deg, #3B82F6, #6366F1, #3B82F6)',
@@ -2341,14 +2375,14 @@ export const HomePage = () => {
                 loading="lazy"
                 referrerPolicy="no-referrer-when-downgrade"
               />
-            </m.div>
+            </motion.div>
           </div>
         </div>
-      </m.section>
+      </motion.section>
       </LazySection>
 
       {/* CTA SECTION */}
-      <m.section 
+      <motion.section 
         className={`py-8 md:py-12 bg-gradient-to-r from-blue-600 to-blue-800`}
         initial={{ opacity: 0 }}
         whileInView={{ opacity: 1 }}
@@ -2356,7 +2390,7 @@ export const HomePage = () => {
         viewport={{ once: true }}
       >
         <div className="container mx-auto px-4 text-center">
-          <m.div
+          <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
@@ -2369,7 +2403,7 @@ export const HomePage = () => {
               {language === 'en' ? 'Browse our extensive inventory or visit our showroom in Rajshahi' : 'আমাদের বিস্তৃত ইনভেন্টরি ব্রাউজ করুন বা রাজশাহীতে আমাদের শোরুম পরিদর্শন করুন'}
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <m.div
+              <motion.div
                 whileHover={{ y: -5 }}
                 whileTap={{ scale: 0.95 }}
               >
@@ -2378,8 +2412,8 @@ export const HomePage = () => {
                     {language === 'en' ? 'Browse Inventory' : 'ইনভেন্টরি ব্রাউজ করুন'}
                   </Button>
                 </Link>
-              </m.div>
-              <m.div
+              </motion.div>
+              <motion.div
                 whileHover={{ y: -5 }}
                 whileTap={{ scale: 0.95 }}
               >
@@ -2388,15 +2422,22 @@ export const HomePage = () => {
                     {language === 'en' ? 'Contact Us' : 'যোগাযোগ করুন'}
                   </Button>
                 </Link>
-              </m.div>
+              </motion.div>
             </div>
-          </m.div>
+          </motion.div>
         </div>
-      </m.section>
+      </motion.section>
 
       {/* Comparison Sidebar */}
       <ComparisonSidebar
-        vehicles={comparisonVehicles}
+        vehicles={comparisonVehicles.map(v => ({
+          id: v.id,
+          name: v.model,
+          price: formatPrice(v.price),
+          engine: v.engine_capacity || 'N/A',
+          fuel: v.fuel_type || 'Petrol',
+          transmission: v.transmission || 'Automatic',
+        }))}
         isOpen={showComparison}
         onToggle={() => setShowComparison(!showComparison)}
         onRemove={handleRemoveFromComparison}
@@ -2404,9 +2445,7 @@ export const HomePage = () => {
         theme={theme}
         language={language}
       />
-    </m.div>
-    </Suspense>
+    </motion.div>
     </MotionConfig>
-    </LazyMotion>
   );
 };
