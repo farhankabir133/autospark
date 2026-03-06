@@ -1,0 +1,55 @@
+/* Container Queries for extraordinary modular responsiveness */
+.car-card-container {
+  container-type: inline-size;
+  container-name: car-card;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.car-card {
+  width: 100%;
+  aspect-ratio: 16/9;
+  background: var(--card-bg);
+  border-radius: 1rem;
+  box-shadow: 0 4px 24px rgba(0,0,0,0.12);
+  transition: box-shadow 0.2s, transform 0.2s;
+  font-size: clamp(1rem, 2vw, 1.5rem);
+  padding: 1rem;
+  container-type: inline-size;
+}
+
+@container car-card (min-width: 400px) {
+  .car-card {
+    font-size: clamp(1.2rem, 3vw, 2rem);
+    padding: 1.5rem;
+  }
+}
+
+@container car-card (min-width: 600px) {
+  .car-card {
+    font-size: clamp(1.5rem, 4vw, 2.5rem);
+    padding: 2rem;
+  }
+}
+
+/* Touch targets & micro-interactions */
+.button, .nav-link, .view-details {
+  min-width: 48px;
+  min-height: 48px;
+  border-radius: 0.5rem;
+  transition: box-shadow 0.2s, transform 0.1s;
+}
+.button:active, .nav-link:active, .view-details:active {
+  transform: scale(0.97);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.18);
+}
+
+/* Dark mode & high contrast */
+@media (prefers-color-scheme: dark) {
+  .car-card {
+    background: #181818;
+    color: #fff;
+    box-shadow: 0 4px 24px rgba(0,0,0,0.32);
+  }
+}

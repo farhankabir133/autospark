@@ -1,4 +1,79 @@
-import { Award, Shield, Users, TrendingUp, Target, Eye, Star, Car, CheckCircle, Quote, Phone, Mail, Linkedin, Facebook } from 'lucide-react';
+          {/* Animated SVG Logo/Spark */}
+          <motion.div
+            className="absolute left-1/2 top-10 -translate-x-1/2 z-20"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 1, delay: 0.2 }}
+          >
+            <svg width="80" height="80" viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <motion.path
+                d="M10 40 Q40 10 70 40 Q40 70 10 40 Z"
+                stroke="#FF1A1A"
+                strokeWidth="4"
+                fill="none"
+                initial={{ pathLength: 0 }}
+                animate={{ pathLength: 1 }}
+                transition={{ duration: 2 }}
+              />
+              <motion.circle
+                cx="40" cy="40" r="8"
+                stroke="#C00000"
+                strokeWidth="3"
+                fill="#FF1A1A"
+                initial={{ scale: 0 }}
+                animate={{ scale: 1 }}
+                transition={{ duration: 1, delay: 1.5 }}
+              />
+            </svg>
+          </motion.div>
+
+          {/* Dynamic Particle System */}
+          <motion.div
+            className="absolute inset-0 z-10 pointer-events-none"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 0.7 }}
+            transition={{ duration: 1, delay: 0.5 }}
+          >
+            {[...Array(18)].map((_, i) => (
+              <motion.div
+                key={i}
+                className="absolute rounded-full bg-white/20"
+                style={{
+                  left: `${Math.random() * 90 + 5}%`,
+                  top: `${Math.random() * 80 + 10}%`,
+                  width: `${Math.random() * 8 + 4}px`,
+                  height: `${Math.random() * 8 + 4}px`,
+                  filter: 'blur(2px)',
+                }}
+                animate={{ y: [0, Math.random() * 30 - 15, 0], opacity: [0.7, 1, 0.7] }}
+                transition={{ duration: 6 + Math.random() * 2, repeat: Infinity, delay: i * 0.2 }}
+              />
+            ))}
+          </motion.div>
+
+          {/* Interactive Timeline */}
+          <div className="absolute bottom-6 left-1/2 -translate-x-1/2 z-30 w-full max-w-xl">
+            <motion.div
+              className="flex justify-center gap-6 bg-black/30 rounded-xl py-3 px-6 shadow-lg backdrop-blur-md"
+              initial={{ opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 1, delay: 1 }}
+            >
+              {['2014','2016','2018','2020','2023','2026'].map((year, idx) => (
+                <motion.button
+                  key={year}
+                  className="text-white font-bold text-lg px-3 py-1 rounded-full bg-gradient-to-r from-[#C00000] to-[#FF1A1A] focus:outline-none focus:ring-2 focus:ring-[#FF1A1A] transition-all hover:scale-110"
+                  whileHover={{ scale: 1.12 }}
+                  whileTap={{ scale: 0.95 }}
+                  aria-label={`Milestone ${year}`}
+                  tabIndex={0}
+                >
+                  {year}
+                </motion.button>
+              ))}
+            </motion.div>
+          </div>
+import { Award, Shield, Users, TrendingUp, Target, Eye, Star, Car, CheckCircle, Quote, Phone, Mail, Linkedin, Facebook, Instagram, MapPin } from 'lucide-react';
 import { useLanguage } from '../contexts/LanguageContext';
 import { useTheme } from '../contexts/ThemeContext';
 import { Card } from '../components/ui/Card';
@@ -6,6 +81,31 @@ import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 
 export const AboutPage = () => {
+  // Showroom and Service Center Details
+  const showroom = {
+    address: 'Station Road, Near Shuvo Petroleum, Sheroil, Ghoramara, Boalia Rajshahi, Rajshahi, Bangladesh, 6207',
+    city: 'Rajshahi, Rajshahi Division, Bangladesh',
+    website: 'autosparkbd.com',
+    youtube: 'https://www.youtube.com/@autosparkbd1131',
+    tiktok: 'https://www.tiktok.com/@auto_spark0',
+    phone: '+880 1760-401605',
+    email: 'autosparkbd@gmail.com',
+    name: 'AutoSpark',
+  logo: '/logo/logoAS3.svg',
+    awards: ['Award', 'Verified', 'Security', 'Certificate'],
+  };
+  const serviceCenter = {
+    address: 'Meherchandi, West Side of School Mor, Rajshahi, Rajshahi, Bangladesh, 6202',
+    city: 'Rajshahi, Rajshahi Division, Bangladesh',
+    website: 'autosparkbd.com',
+    youtube: 'https://www.youtube.com/@autosparkbd1131',
+    tiktok: 'http://www.tiktok.com/@easycareeasylife',
+    phone: '+880 1321-233670',
+    email: 'autosparkbd@gmail.com',
+    name: 'Auto Spark Service Center',
+  logo: '/logo/logoassc.svg',
+    awards: ['Award', 'Verified', 'Security', 'Certificate'],
+  };
   const { language } = useLanguage();
   const { theme } = useTheme();
 
@@ -118,29 +218,173 @@ export const AboutPage = () => {
   };
 
   return (
-    <div className={`min-h-screen ${theme === 'dark' ? 'bg-transparent' : 'bg-gray-50'} pt-20`}>
-      {/* Hero Section */}
-      <div className="relative h-[500px] bg-gradient-to-r from-[#0D0D0D] to-[#1a1a1a]">
-        <div className="absolute inset-0 bg-[url('https://images.pexels.com/photos/1409999/pexels-photo-1409999.jpeg?auto=compress&cs=tinysrgb&w=1920')] bg-cover bg-center opacity-20"></div>
-        <div className="absolute inset-0 bg-gradient-to-t from-[#0D0D0D] via-transparent to-transparent"></div>
-        <div className="relative container mx-auto px-4 h-full flex items-center">
+    <div>
+      <section className="container mx-auto px-4 py-8">
+        <h2 className="text-2xl font-bold mb-8 text-center">Showroom & Service Center Details</h2>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+          {/* Showroom Card */}
+          <Card className="p-6 flex flex-col items-center text-center shadow-lg bg-white dark:bg-gray-900">
+            <img src={showroom.logo} alt="Showroom Logo" className="h-16 w-16 mb-4" />
+            <h3 className="text-xl font-bold text-[#C00000] mb-2">{showroom.name}</h3>
+            <div className="text-sm text-gray-700 dark:text-gray-300 mb-2">{showroom.address}</div>
+            <div className="text-xs text-gray-500 mb-2">{showroom.city}</div>
+            <div className="flex flex-wrap gap-2 justify-center mb-2">
+              <a href={`tel:${showroom.phone}`} className="text-xs underline text-blue-600">{showroom.phone}</a>
+              <a href={`mailto:${showroom.email}`} className="text-xs underline text-blue-600">{showroom.email}</a>
+              <a href={`https://${showroom.website}`} className="text-xs underline text-blue-600">{showroom.website}</a>
+            </div>
+            <div className="flex gap-4 mb-2">
+              <a href="https://www.facebook.com/autosparkbd" target="_blank" rel="noopener noreferrer" className="hover:text-[#FF1A1A]">
+                <Facebook className="w-6 h-6" />
+              </a>
+              <a href="https://www.instagram.com/autosparkbd" target="_blank" rel="noopener noreferrer" className="hover:text-[#FF1A1A]">
+                <Instagram className="w-6 h-6" />
+              </a>
+              <a href="https://www.youtube.com/@autosparkbd1131" target="_blank" rel="noopener noreferrer" className="hover:text-[#FF1A1A]">
+                <Mail className="w-6 h-6" />
+              </a>
+              <a href="https://www.tiktok.com/@auto_spark0" target="_blank" rel="noopener noreferrer" className="hover:text-[#FF1A1A]">
+                <MapPin className="w-6 h-6" />
+              </a>
+            </div>
+            <div className="flex gap-2 mt-2">
+              <span className="inline-flex items-center px-2 py-1 bg-yellow-100 text-yellow-800 rounded text-xs font-semibold border border-yellow-300">🏆 Award</span>
+              <span className="inline-flex items-center px-2 py-1 bg-blue-100 text-blue-800 rounded text-xs font-semibold border border-blue-300">✔️ Verified</span>
+              <span className="inline-flex items-center px-2 py-1 bg-green-100 text-green-800 rounded text-xs font-semibold border border-green-300">🛡️ Security</span>
+              <span className="inline-flex items-center px-2 py-1 bg-purple-100 text-purple-800 rounded text-xs font-semibold border border-purple-300">📄 Certificate</span>
+            </div>
+          </Card>
+          {/* Service Center Card */}
+          <Card className="p-6 flex flex-col items-center text-center shadow-lg bg-white dark:bg-gray-900">
+            <img src={serviceCenter.logo} alt="Service Center Logo" className="h-16 w-16 mb-4" />
+            <h3 className="text-xl font-bold text-[#C00000] mb-2">{serviceCenter.name}</h3>
+            <div className="text-sm text-gray-700 dark:text-gray-300 mb-2">{serviceCenter.address}</div>
+            <div className="text-xs text-gray-500 mb-2">{serviceCenter.city}</div>
+            <div className="flex gap-4 mb-2">
+              <a href="https://www.facebook.com/autosparkbd" target="_blank" rel="noopener noreferrer" className="hover:text-[#FF1A1A]">
+                <Facebook className="w-6 h-6" />
+              </a>
+              <a href="https://www.instagram.com/autosparkbd" target="_blank" rel="noopener noreferrer" className="hover:text-[#FF1A1A]">
+                <Instagram className="w-6 h-6" />
+              </a>
+              <a href="https://www.youtube.com/@autosparkbd1131" target="_blank" rel="noopener noreferrer" className="hover:text-[#FF1A1A]">
+                <Mail className="w-6 h-6" />
+              </a>
+              <a href="http://www.tiktok.com/@easycareeasylife" target="_blank" rel="noopener noreferrer" className="hover:text-[#FF1A1A]">
+                <MapPin className="w-6 h-6" />
+              </a>
+            </div>
+            <div className="flex gap-2 mt-2">
+              <span className="inline-flex items-center px-2 py-1 bg-yellow-100 text-yellow-800 rounded text-xs font-semibold border border-yellow-300">🏆 Award</span>
+              <span className="inline-flex items-center px-2 py-1 bg-blue-100 text-blue-800 rounded text-xs font-semibold border border-blue-300">✔️ Verified</span>
+              <span className="inline-flex items-center px-2 py-1 bg-green-100 text-green-800 rounded text-xs font-semibold border border-green-300">🛡️ Security</span>
+              <span className="inline-flex items-center px-2 py-1 bg-purple-100 text-purple-800 rounded text-xs font-semibold border border-purple-300">📄 Certificate</span>
+            </div>
+          </Card>
+        </div>
+      </section>
+      {/* ...existing code... */}
+      <div className={`min-h-screen ${theme === 'dark' ? 'bg-transparent' : 'bg-gray-50'} pt-20`}>
+        {/* Hero Section */}
+        <div className="relative h-[500px] overflow-hidden">
+          {/* Parallax Animated Gradient Background */}
           <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8 }}
-            className="max-w-3xl"
-          >
-            <span className="inline-block px-4 py-2 bg-[#C00000]/20 text-[#FF1A1A] rounded-full text-sm font-medium mb-4 border border-[#C00000]/30">
+            className="absolute inset-0 z-0 bg-gradient-to-br from-[#C00000]/30 via-[#181818]/60 to-[#FF1A1A]/20 animate-gradientMove"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 1 }}
+            style={{ backgroundSize: '200% 200%', backgroundPosition: '0% 50%' }}
+            aria-hidden="true"
+          />
+          {/* Floating Interactive Icons with Tooltips */}
+          <div className="absolute inset-0 z-0 pointer-events-none">
+            <motion.button
+              className="absolute left-10 top-16 focus:outline-none"
+              animate={{ y: [0, -20, 0], scale: [1, 1.1, 1] }}
+              transition={{ duration: 6, repeat: Infinity }}
+              aria-label="Premium Cars"
+              tabIndex={0}
+            >
+              <Car className="w-10 h-10 text-blue-400 drop-shadow-lg" />
+              <span className="sr-only">Premium Cars</span>
+              <span className="absolute left-12 top-0 bg-blue-900 text-white text-xs rounded px-2 py-1 shadow-lg opacity-0 group-focus:opacity-100 group-hover:opacity-100 transition-opacity">Premium Cars</span>
+            </motion.button>
+            <motion.button
+              className="absolute right-16 top-24 focus:outline-none"
+              animate={{ y: [0, 15, 0], scale: [1, 1.08, 1] }}
+              transition={{ duration: 5, repeat: Infinity }}
+              aria-label="Trusted Dealer"
+              tabIndex={0}
+            >
+              <Award className="w-10 h-10 text-yellow-400 drop-shadow-lg" />
+              <span className="sr-only">Trusted Dealer</span>
+              <span className="absolute right-12 top-0 bg-yellow-700 text-white text-xs rounded px-2 py-1 shadow-lg opacity-0 group-focus:opacity-100 group-hover:opacity-100 transition-opacity">Trusted Dealer</span>
+            </motion.button>
+            <motion.button
+              className="absolute left-24 bottom-20 focus:outline-none"
+              animate={{ y: [0, -10, 0], scale: [1, 1.05, 1] }}
+              transition={{ duration: 7, repeat: Infinity }}
+              aria-label="Security & Assurance"
+              tabIndex={0}
+            >
+              <Shield className="w-10 h-10 text-green-400 drop-shadow-lg" />
+              <span className="sr-only">Security & Assurance</span>
+              <span className="absolute left-12 bottom-0 bg-green-700 text-white text-xs rounded px-2 py-1 shadow-lg opacity-0 group-focus:opacity-100 group-hover:opacity-100 transition-opacity">Security & Assurance</span>
+            </motion.button>
+            <motion.button
+              className="absolute right-24 bottom-16 focus:outline-none"
+              animate={{ y: [0, 12, 0], scale: [1, 1.12, 1] }}
+              transition={{ duration: 6, repeat: Infinity }}
+              aria-label="Excellence"
+              tabIndex={0}
+            >
+              <Star className="w-10 h-10 text-pink-400 drop-shadow-lg" />
+              <span className="sr-only">Excellence</span>
+              <span className="absolute right-12 bottom-0 bg-pink-700 text-white text-xs rounded px-2 py-1 shadow-lg opacity-0 group-focus:opacity-100 group-hover:opacity-100 transition-opacity">Excellence</span>
+            </motion.button>
+          </div>
+          <div className="relative container mx-auto px-4 h-full flex items-center z-10">
+            <motion.div
+              initial={{ opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8 }}
+              className="max-w-3xl"
+            >
+              {/* Animated Underline for Headline */}
+              <motion.div
+                className="w-32 h-1 bg-gradient-to-r from-[#C00000] via-[#FF1A1A] to-[#C00000] rounded-full mb-4"
+                initial={{ scaleX: 0 }}
+                animate={{ scaleX: 1 }}
+                transition={{ duration: 1, delay: 0.5 }}
+                style={{ transformOrigin: 'left' }}
+                aria-hidden="true"
+              />
+            <motion.span
+              initial={{ opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.7, delay: 0.2 }}
+              className="inline-block px-4 py-2 bg-[#C00000]/20 text-[#FF1A1A] rounded-full text-sm font-medium mb-4 border border-[#C00000]/30"
+            >
               {language === 'en' ? 'Established 2014' : 'প্রতিষ্ঠিত ২০১৪'}
-            </span>
-            <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-4 sm:mb-6">
+            </motion.span>
+            <motion.h1
+              initial={{ opacity: 0, y: 40 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8, delay: 0.4 }}
+              className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-4 sm:mb-6"
+            >
               {language === 'en' ? 'About Auto Spark BD' : 'অটো স্পার্ক বিডি সম্পর্কে'}
-            </h1>
-            <p className="text-base sm:text-lg md:text-xl text-gray-300 max-w-2xl leading-relaxed">
+            </motion.h1>
+            <motion.p
+              initial={{ opacity: 0, y: 50 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.9, delay: 0.6 }}
+              className="text-base sm:text-lg md:text-xl text-gray-300 max-w-2xl leading-relaxed"
+            >
               {language === 'en'
                 ? "North Bengal's premier destination for luxury and premium automobiles. Where passion meets excellence."
                 : 'উত্তরবঙ্গের বিলাসবহুল এবং প্রিমিয়াম গাড়ির প্রধান গন্তব্য। যেখানে আবেগ উৎকর্ষতার সাথে মিলিত হয়।'}
-            </p>
+            </motion.p>
           </motion.div>
         </div>
       </div>
@@ -819,5 +1063,7 @@ export const AboutPage = () => {
         </motion.div>
       </div>
     </div>
+    {/* Close main parent div */}
+  </div>
   );
 };

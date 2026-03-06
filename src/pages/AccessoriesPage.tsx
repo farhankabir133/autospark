@@ -75,6 +75,206 @@ interface CompareItem {
 // Demo Products (fallback if Supabase is empty)
 const demoProducts: AccessoryProduct[] = [
   {
+    id: '6',
+    name_en: 'Air Filter 37021',
+    name_bn: '',
+    description_en: '',
+    description_bn: '',
+    category: 'Air Filter',
+    price: 0,
+    stock_quantity: 66,
+    sku: 'PR102785',
+    is_available: true,
+    images: [],
+    brand: '',
+    rating: 0,
+    reviews: 0,
+    discount: 0,
+    compatibility: [],
+    isNew: false,
+    isBestseller: false
+  },
+  {
+    id: '7',
+    name_en: 'AC Filter 37021',
+    name_bn: '',
+    description_en: '',
+    description_bn: '',
+    category: 'AC Filter',
+    price: 0,
+    stock_quantity: 55,
+    sku: 'PR134729',
+    is_available: true,
+    images: [],
+    brand: '',
+    rating: 0,
+    reviews: 0,
+    discount: 0,
+    compatibility: [],
+    isNew: false,
+    isBestseller: false
+  },
+  {
+    id: '8',
+    name_en: 'WD40',
+    name_bn: '',
+    description_en: '',
+    description_bn: '',
+    category: '',
+    price: 0,
+    stock_quantity: 41,
+    sku: 'PR729840',
+    is_available: true,
+    images: [],
+    brand: '',
+    rating: 0,
+    reviews: 0,
+    discount: 0,
+    compatibility: [],
+    isNew: false,
+    isBestseller: false
+  },
+  {
+    id: '9',
+    name_en: 'Towel',
+    name_bn: '',
+    description_en: '',
+    description_bn: '',
+    category: 'Accessories',
+    price: 0,
+    stock_quantity: 34,
+    sku: '8088000090933',
+    is_available: true,
+    images: [],
+    brand: '',
+    rating: 0,
+    reviews: 0,
+    discount: 0,
+    compatibility: [],
+    isNew: false,
+    isBestseller: false
+  },
+  {
+    id: '10',
+    name_en: 'AC Filter 30040',
+    name_bn: '',
+    description_en: '',
+    description_bn: '',
+    category: 'AC Filter',
+    price: 0,
+    stock_quantity: 29,
+    sku: 'PR864502',
+    is_available: true,
+    images: [],
+    brand: '',
+    rating: 0,
+    reviews: 0,
+    discount: 0,
+    compatibility: [],
+    isNew: false,
+    isBestseller: false
+  },
+  {
+    id: '11',
+    name_en: 'Toyota Mobil Filter/Oil Filter',
+    name_bn: '',
+    description_en: '',
+    description_bn: '',
+    category: 'Filter',
+    price: 0,
+    stock_quantity: 28,
+    sku: '8088000090667',
+    is_available: true,
+    images: [],
+    brand: '',
+    rating: 0,
+    reviews: 0,
+    discount: 0,
+    compatibility: [],
+    isNew: false,
+    isBestseller: false
+  },
+  {
+    id: '12',
+    name_en: 'Mud-Gud',
+    name_bn: '',
+    description_en: '',
+    description_bn: '',
+    category: '',
+    price: 0,
+    stock_quantity: 25,
+    sku: 'PR634297',
+    is_available: true,
+    images: [],
+    brand: '',
+    rating: 0,
+    reviews: 0,
+    discount: 0,
+    compatibility: [],
+    isNew: false,
+    isBestseller: false
+  },
+  {
+    id: '13',
+    name_en: 'Air Filter 21050',
+    name_bn: '',
+    description_en: '',
+    description_bn: '',
+    category: 'Air Filter',
+    price: 0,
+    stock_quantity: 23,
+    sku: 'PR061432',
+    is_available: true,
+    images: [],
+    brand: '',
+    rating: 0,
+    reviews: 0,
+    discount: 0,
+    compatibility: [],
+    isNew: false,
+    isBestseller: false
+  },
+  {
+    id: '14',
+    name_en: 'AC/Cabin Filter-40',
+    name_bn: '',
+    description_en: '',
+    description_bn: '',
+    category: 'Filter',
+    price: 0,
+    stock_quantity: 22,
+    sku: '8088000090681',
+    is_available: true,
+    images: [],
+    brand: '',
+    rating: 0,
+    reviews: 0,
+    discount: 0,
+    compatibility: [],
+    isNew: false,
+    isBestseller: false
+  },
+  {
+    id: '15',
+    name_en: 'Mobil Filter 40060',
+    name_bn: '',
+    description_en: '',
+    description_bn: '',
+    category: 'Mobil Filter',
+    price: 0,
+    stock_quantity: 22,
+    sku: 'PR720468',
+    is_available: true,
+    images: [],
+    brand: '',
+    rating: 0,
+    reviews: 0,
+    discount: 0,
+    compatibility: [],
+    isNew: false,
+    isBestseller: false
+  },
+  {
     id: '1',
     name_en: 'Premium Leather Seat Covers',
     name_bn: 'প্রিমিয়াম লেদার সিট কভার',
@@ -2421,14 +2621,22 @@ export const AccessoriesPage: React.FC = () => {
       result = result.filter(p => p.category === selectedCategory);
     }
 
-    // Search filter
+    // Search filter with relevance ranking
     if (searchTerm) {
       const term = searchTerm.toLowerCase();
-      result = result.filter(p =>
-        p.name_en.toLowerCase().includes(term) ||
-        (p.name_bn && p.name_bn.toLowerCase().includes(term)) ||
-        (p.description_en && p.description_en.toLowerCase().includes(term))
-      );
+      // Assign relevance score
+      result = result
+        .map(p => {
+          let score = 0;
+          if (p.name_en && p.name_en.toLowerCase().includes(term)) score += 3;
+          if (p.name_bn && p.name_bn.toLowerCase().includes(term)) score += 2;
+          if (p.description_en && p.description_en.toLowerCase().includes(term)) score += 1;
+          return { ...p, _relevanceScore: score };
+        })
+        .filter(p => p._relevanceScore > 0)
+        .sort((a, b) => b._relevanceScore - a._relevanceScore);
+      // Remove _relevanceScore before returning
+      result = result.map(({ _relevanceScore, ...rest }) => rest);
     }
 
     // Brand filter

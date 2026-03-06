@@ -1,6 +1,9 @@
 import { motion } from 'framer-motion';
 import { Star, TrendingUp, Zap, AlertTriangle, Heart } from 'lucide-react';
 import { useState } from 'react';
+import styles from './ResponsiveContainer.module.css';
+import { ResponsiveCarImage } from './ResponsiveCarImage';
+import { FluidHeader } from './FluidHeader';
 
 export type BadgeType = 'best-value' | 'popular' | 'new-arrival' | 'limited-stock' | 'featured' | 'none';
 
@@ -81,122 +84,119 @@ export const VehicleCardWithBadges = ({
     : 'border-gray-200';
 
   return (
-    <motion.div
-      className={`${bgColor} rounded-2xl overflow-hidden border ${borderColor} shadow-lg hover:shadow-2xl transition-all duration-300 group`}
-      whileHover={{ y: -8, scale: 1.02 }}
-      transition={{ type: 'spring', stiffness: 300, damping: 30 }}
-    >
-      {/* Image Container */}
-      <div className="relative h-56 overflow-hidden bg-gradient-to-br from-gray-200 to-gray-300 dark:from-gray-700 dark:to-gray-800">
-        <motion.img
-          src={image}
-          alt={`${brand} ${model}`}
-          className="w-full h-full object-cover"
-          animate={{ scale: 1 }}
-          whileHover={{ scale: 1.1 }}
-          transition={{ duration: 0.4 }}
-        />
-
-        {/* Badge */}
-        {badgeData && badge !== 'none' && (
-          <motion.div
-            className={`absolute top-4 right-4 px-3 py-1.5 rounded-full text-white text-xs font-bold flex items-center gap-1 ${badgeData.bg} shadow-lg`}
-            animate={badgeData.animation}
-            transition={{
-              duration: badge === 'popular' ? 20 : badge === 'limited-stock' ? 1.5 : 2,
-              repeat: Infinity,
-              ease: 'easeInOut',
+    <div className={styles['car-card-container']}>
+      <motion.div
+        className={`${styles['car-card']} ${bgColor} overflow-hidden border ${borderColor} shadow-lg hover:shadow-2xl transition-all duration-300 group`}
+        whileHover={{ y: -8, scale: 1.02 }}
+        transition={{ type: 'spring', stiffness: 300, damping: 30 }}
+      >
+        {/* Responsive Image Container */}
+        <div className="relative h-56 overflow-hidden bg-gradient-to-br from-gray-200 to-gray-300 dark:from-gray-700 dark:to-gray-800">
+          <ResponsiveCarImage
+            alt={`${brand} ${model}`}
+            images={{
+              webp: image.replace(/\.(jpg|jpeg|png)$/i, '.webp'),
+              fallback: image,
+              width: 320,
+              height: 180,
             }}
-          >
-            {badgeData.icon}
-            <span>{badgeData.label}</span>
-          </motion.div>
-        )}
-
-        {/* Wishlist Button */}
-        <motion.button
-          onClick={() => setIsWishlisted(!isWishlisted)}
-          className="absolute top-4 left-4 bg-white/90 hover:bg-white rounded-full p-2 transition-colors"
-          whileHover={{ scale: 1.1 }}
-          whileTap={{ scale: 0.95 }}
-        >
-          <Heart
-            className={`w-5 h-5 ${isWishlisted ? 'fill-red-500 text-red-500' : 'text-gray-600'}`}
+            className="w-full h-full object-cover"
           />
-        </motion.button>
 
-        {/* Overlay */}
-        <motion.div
-          className={`absolute inset-0 ${
-            theme === 'dark' ? 'bg-black/40' : 'bg-black/20'
-          } opacity-0 group-hover:opacity-100 transition-opacity duration-300`}
-        />
-      </div>
+          {/* Badge */}
+          {badgeData && badge !== 'none' && (
+            <motion.div
+              className={`absolute top-4 right-4 px-3 py-1.5 rounded-full text-white text-xs font-bold flex items-center gap-1 ${badgeData.bg} shadow-lg ${styles['button']}`}
+              animate={badgeData.animation}
+              transition={{
+                duration: badge === 'popular' ? 20 : badge === 'limited-stock' ? 1.5 : 2,
+                repeat: Infinity,
+                ease: 'easeInOut',
+              }}
+            >
+              {badgeData.icon}
+              <span>{badgeData.label}</span>
+            </motion.div>
+          )}
 
-      {/* Content */}
-      <div className="p-5">
-        <motion.p
-          className={`text-xs font-semibold uppercase tracking-wider mb-1 ${
-            theme === 'dark' ? 'text-blue-400' : 'text-blue-600'
-          }`}
-          initial={{ opacity: 0 }}
-          whileInView={{ opacity: 1 }}
-          transition={{ delay: 0.1 }}
-        >
-          {brand}
-        </motion.p>
+          {/* Wishlist Button */}
+          <motion.button
+            onClick={() => setIsWishlisted(!isWishlisted)}
+            className={`absolute top-4 left-4 bg-white/90 hover:bg-white rounded-full p-2 transition-colors ${styles['button']}`}
+            whileHover={{ scale: 1.1 }}
+            whileTap={{ scale: 0.95 }}
+            style={{ minWidth: 48, minHeight: 48 }}
+          >
+            <Heart
+              className={`w-5 h-5 ${isWishlisted ? 'fill-red-500 text-red-500' : 'text-gray-600'}`}
+            />
+          </motion.button>
 
-        <motion.h3
-          className={`text-lg font-bold mb-1 line-clamp-2 ${
-            theme === 'dark' ? 'text-white' : 'text-gray-900'
-          }`}
-          initial={{ opacity: 0 }}
-          whileInView={{ opacity: 1 }}
-          transition={{ delay: 0.15 }}
-        >
-          {model}
-        </motion.h3>
+          {/* Overlay */}
+          <motion.div
+            className={`absolute inset-0 ${
+              theme === 'dark' ? 'bg-black/40' : 'bg-black/20'
+            } opacity-0 group-hover:opacity-100 transition-opacity duration-300`}
+          />
+        </div>
 
-        <motion.p
-          className={`text-sm mb-3 ${
-            theme === 'dark' ? 'text-gray-400' : 'text-gray-600'
-          }`}
-          initial={{ opacity: 0 }}
-          whileInView={{ opacity: 1 }}
-          transition={{ delay: 0.2 }}
-        >
-          {bodyType}
-        </motion.p>
-
-        {/* Price and Button */}
-        <div className="flex items-center justify-between">
+        {/* Content */}
+        <div className="p-5">
           <motion.p
-            className={`text-lg font-bold ${
-              theme === 'dark' ? 'text-green-400' : 'text-green-600'
+            className={`text-xs font-semibold uppercase tracking-wider mb-1 ${
+              theme === 'dark' ? 'text-blue-400' : 'text-blue-600'
             }`}
             initial={{ opacity: 0 }}
             whileInView={{ opacity: 1 }}
-            transition={{ delay: 0.25 }}
+            transition={{ delay: 0.1 }}
           >
-            {price}
+            {brand}
           </motion.p>
 
-          {onCompare && (
-            <motion.button
-              onClick={() => onCompare(id)}
-              className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-colors ${
-                theme === 'dark'
-                  ? 'bg-blue-600 hover:bg-blue-700 text-white'
-                  : 'bg-blue-500 hover:bg-blue-600 text-white'
+          <FluidHeader className={`mb-1 line-clamp-2 ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>{model}</FluidHeader>
+
+          <motion.p
+            className={`text-sm mb-3 ${
+              theme === 'dark' ? 'text-gray-400' : 'text-gray-600'
+            }`}
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
+            transition={{ delay: 0.2 }}
+          >
+            {bodyType}
+          </motion.p>
+
+          {/* Price and Button */}
+          <div className="flex items-center justify-between">
+            <motion.p
+              className={`text-lg font-bold ${
+                theme === 'dark' ? 'text-green-400' : 'text-green-600'
               }`}
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
+              initial={{ opacity: 0 }}
+              whileInView={{ opacity: 1 }}
+              transition={{ delay: 0.25 }}
             >
-              {language === 'en' ? 'Compare' : 'তুলনা'}
-            </motion.button>
-          )}
+              {price}
+            </motion.p>
+
+            {onCompare && (
+              <motion.button
+                onClick={() => onCompare(id)}
+                className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-colors ${styles['button']} ${
+                  theme === 'dark'
+                    ? 'bg-blue-600 hover:bg-blue-700 text-white'
+                    : 'bg-blue-500 hover:bg-blue-600 text-white'
+                }`}
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                style={{ minWidth: 48, minHeight: 48 }}
+              >
+                {language === 'en' ? 'Compare' : 'তুলনা'}
+              </motion.button>
+            )}
+          </div>
         </div>
-      </div>
-    </motion.div>
+      </motion.div>
+    </div>
   );
 };

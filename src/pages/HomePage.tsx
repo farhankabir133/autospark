@@ -1,3 +1,38 @@
+      {/* Showroom & Service Center Maps Side by Side */}
+      <section className="py-8 md:py-12">
+        <div className="container mx-auto px-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+            {/* Showroom Map */}
+            <div className="rounded-lg overflow-hidden shadow-lg h-96">
+              <iframe
+                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3634.3846758707845!2d88.60447931496736!3d24.374532984292816!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x39fbefa96a38d031%3A0x10f93a950ed6b5f9!2sStation%20Road%2C%20Rajshahi!5e0!3m2!1sen!2sbd!4v1234567890"
+                width="100%"
+                height="100%"
+                style={{ border: 0 }}
+                allowFullScreen
+                loading="lazy"
+                referrerPolicy="no-referrer-when-downgrade"
+              ></iframe>
+              <div className="mt-2 text-center text-sm font-semibold">Showroom: Station Road, Rajshahi</div>
+            </div>
+            {/* Service Center Map */}
+            <div className="rounded-lg overflow-hidden shadow-lg h-96">
+              <iframe
+                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3634.3846758707845!2d88.6346711!3d24.3817492!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x39fbf17f21c0ee57:0x373f79532c58e48a!2sAuto+Spark+Service+Center!5e0!3m2!1sen!2sbd!4v1709999999999"
+                width="100%"
+                height="100%"
+                style={{ border: 0 }}
+                allowFullScreen
+                loading="lazy"
+                referrerPolicy="no-referrer-when-downgrade"
+              ></iframe>
+              <div className="mt-2 text-center text-sm font-semibold">Service Center: West Side of School Mor, Rajshahi</div>
+            </div>
+          </div>
+        </div>
+      </section>
+import { FluidHeader } from '../components/FluidHeader';
+import { ResponsiveCarImage } from '../components/ResponsiveCarImage';
 import { useEffect, useState, useRef, lazy, Suspense } from 'react';
 import { Link } from 'react-router-dom';
 import { motion, MotionConfig } from 'framer-motion';
@@ -75,10 +110,8 @@ const StatCard = ({ value, label, icon: Icon, index, theme }: StatCardProps) => 
       whileHover={{ y: -5, boxShadow: '0 10px 30px rgba(0,0,0,0.1)' }}
     >
       <Icon className={`h-12 w-12 mx-auto mb-4 ${theme === 'dark' ? 'text-blue-400' : 'text-blue-600'}`} />
-      <div className={`text-2xl sm:text-3xl md:text-4xl font-bold mb-2 ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
-        {count}{value >= 100 ? '+' : ''}
-      </div>
-      <div className={theme === 'dark' ? 'text-gray-300' : 'text-gray-600'}>{label}</div>
+      <FluidHeader className={`mb-2 ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>{count}{value >= 100 ? '+' : ''}</FluidHeader>
+      <div className={theme === 'dark' ? 'text-gray-300' : 'text-gray-600'} style={{ fontSize: 'clamp(1rem, 2vw, 1.5rem)' }}>{label}</div>
     </motion.div>
   );
 };
@@ -155,14 +188,15 @@ const VehicleFlipCard = ({ vehicle, index, theme, language, isSelected, onSelect
           style={{ backfaceVisibility: 'hidden' }}
         >
           <div className="relative w-24 h-20 rounded-lg overflow-hidden flex-shrink-0 bg-black/20">
-            <img
-              src={vehicle.image}
+            <ResponsiveCarImage
               alt={vehicle.name}
+              images={{
+                webp: vehicle.image.replace(/\.(jpg|jpeg|png)$/i, '.webp'),
+                fallback: vehicle.image,
+                width: 96,
+                height: 80,
+              }}
               className="w-full h-full object-cover"
-              loading="lazy"
-              width={96}
-              height={80}
-              decoding="async"
             />
             <span className="absolute top-1 left-1 px-1.5 py-0.5 text-[9px] font-bold bg-white/90 text-gray-800 rounded">
               {vehicle.year}
@@ -188,7 +222,8 @@ const VehicleFlipCard = ({ vehicle, index, theme, language, isSelected, onSelect
 
         {/* BACK FACE - Enhanced Vehicle Specs */}
         <VehicleSpecCardBack vehicle={vehicle} theme={theme} />
-      </motion.div>
+    </motion.div>
+  );
     </motion.div>
   );
 };
@@ -323,7 +358,7 @@ export const HomePage = () => {
 
   return (
     <MotionConfig reducedMotion="user">
-    <motion.div 
+      <motion.div
       className={`min-h-screen ${theme === 'dark' ? 'bg-[#0a0a0a]' : 'bg-gray-50'}`}
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
@@ -442,50 +477,16 @@ export const HomePage = () => {
 
                 {/* Car Image */}
                 <div className="relative h-32 md:h-40 overflow-hidden">
-                  <img
-                    src={car.image}
+                  <ResponsiveCarImage
                     alt={`${car.brand} ${car.model}`}
-                    className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
-                    loading="lazy"
-                    width={320}
-                    height={160}
-                    decoding="async"
-                    fetchPriority="low"
+                    images={{
+                      webp: car.image.replace(/\.(jpg|jpeg|png)$/i, '.webp'),
+                      fallback: car.image,
+                      width: 320,
+                      height: 160,
+                    }}
+                    className="w-full h-full object-cover"
                   />
-                  <div className={`absolute inset-0 bg-gradient-to-t ${
-                    theme === 'dark' ? 'from-gray-800' : 'from-white'
-                  } via-transparent to-transparent opacity-60`} />
-                  
-                  {/* Year badge */}
-                  <span className="absolute top-2 left-2 px-2 py-0.5 text-[10px] font-semibold text-white bg-black/50 backdrop-blur-sm rounded-full">
-                    {car.year}
-                  </span>
-                </div>
-
-                {/* Car Info */}
-                <div className="p-3 md:p-4">
-                  {/* Brand */}
-                  <p className={`text-[10px] md:text-xs font-semibold uppercase tracking-wider mb-1 ${
-                    theme === 'dark' ? 'text-blue-400' : 'text-blue-600'
-                  }`}>
-                    {car.brand}
-                  </p>
-                  
-                  {/* Model */}
-                  <h3 className={`text-sm md:text-base font-bold mb-1 line-clamp-1 ${
-                    theme === 'dark' ? 'text-white' : 'text-gray-900'
-                  }`}>
-                    {car.model}
-                  </h3>
-                  
-                  {/* Body Type */}
-                  <p className={`text-[10px] md:text-xs mb-2 ${
-                    theme === 'dark' ? 'text-gray-400' : 'text-gray-500'
-                  }`}>
-                    {car.bodyType}
-                  </p>
-                  
-                  {/* Price */}
                   <p className={`text-xs md:text-sm font-bold ${
                     theme === 'dark' ? 'text-green-400' : 'text-green-600'
                   }`}>
@@ -539,26 +540,21 @@ export const HomePage = () => {
           </motion.div>
 
           {/* Featured vehicles grid */}
-          {isLoadingCards ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 justify-items-center">
-              <EnhancedSkeleton variant="flip-card" count={3} theme={theme} />
-            </div>
-          ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 justify-items-center">
-              {carSlides.slice(0, 3).map((car) => (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 justify-items-center">
+            {carSlides.slice(0, 3).map((car) => (
+              <div key={car.id} className="w-full flex justify-center">
                 <EnhancedFlipCard
-                  key={car.id}
                   frontContent={
                     <div className="flex flex-col h-full">
-                      <img
-                        src={car.image}
+                      <ResponsiveCarImage
                         alt={car.model}
-                        className="w-full h-48 object-cover rounded-lg mb-4"
-                        loading="lazy"
-                        width={400}
-                        height={192}
-                        decoding="async"
-                        fetchPriority="low"
+                        images={{
+                          webp: car.image.replace(/\.(jpg|jpeg|png)$/i, '.webp'),
+                          fallback: car.image,
+                          width: 320,
+                          height: 160,
+                        }}
+                        className="w-full h-full object-cover rounded-xl"
                       />
                       <h3 className="text-xl font-bold mb-2 text-white">
                         {car.brand} {car.model}
@@ -603,7 +599,7 @@ export const HomePage = () => {
                         </div>
                       </div>
                       <motion.button
-                        className="w-full mt-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg font-semibold transition-colors"
+                        className="w-full mt-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg font-semibold transition-colors touch-target"
                         whileHover={{ scale: 1.05 }}
                         whileTap={{ scale: 0.95 }}
                         onClick={() => handleAddToComparison(car as any)}
@@ -620,209 +616,75 @@ export const HomePage = () => {
                     }
                   }}
                 />
-              ))}
-            </div>
-          )}
-        </div>
-      </section>
-      </LazySection>
-
-      {/* STATS SECTION WITH ANIMATED COUNTERS */}
-      <motion.section 
-        className={`py-8 md:py-12 ${theme === 'dark' ? 'bg-gray-900/90' : 'bg-white'}`}
-        initial={{ opacity: 0 }}
-        whileInView={{ opacity: 1 }}
-        transition={{ duration: 0.6 }}
-        viewport={{ once: true }}
-      >
-        <div className="container mx-auto px-4">
-          <motion.div 
-            className="text-center mb-8"
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-            viewport={{ once: true }}
-          >
-            <h2 className={`text-2xl sm:text-3xl md:text-4xl font-bold mb-4 ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
-              {language === 'en' ? 'By The Numbers' : 'সংখ্যায়'}
-            </h2>
-          </motion.div>
-
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
-            {[
-              { value: 150, label: language === 'en' ? 'Vehicles' : 'গাড়ি', icon: Car },
-              { value: 500, label: language === 'en' ? 'Happy Customers' : 'সন্তুষ্ট গ্রাহক', icon: Users },
-              { value: 10, label: language === 'en' ? 'Years Experience' : 'বছরের অভিজ্ঞতা', icon: Award },
-              { value: 98, label: language === 'en' ? 'Satisfaction %' : 'সন্তুষ্টি %', icon: Shield },
-            ].map((stat, index) => (
-              <StatCard
-                key={index}
-                value={stat.value}
-                label={stat.label}
-                icon={stat.icon}
-                index={index}
-                theme={theme}
-              />
+              </div>
             ))}
           </div>
         </div>
-      </motion.section>
-
-      {/* VEHICLE GALLERY WITH BADGES AND COMPARISON */}
-      <section className={`py-8 md:py-12 ${theme === 'dark' ? 'bg-gray-900/90' : 'bg-white'}`}>
-        <div className="container mx-auto px-4">
-          <motion.div 
-            className="text-center mb-8"
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-            viewport={{ once: true }}
-          >
-            <span className={`text-sm font-semibold uppercase tracking-wider ${theme === 'dark' ? 'text-blue-400' : 'text-blue-600'}`}>
-              {language === 'en' ? 'Find Your Perfect Match' : 'আপনার নিখুঁত ম্যাচ খুঁজুন'}
-            </span>
-            <h2 className={`text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold mt-2 mb-4 ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
-              {language === 'en' ? 'Available Models' : 'উপলব্ধ মডেল'}
-            </h2>
-            <p className={`text-lg max-w-2xl mx-auto ${theme === 'dark' ? 'text-gray-400' : 'text-gray-600'}`}>
-              {language === 'en' 
-                ? 'Browse our premium collection with interactive badges. Add vehicles to compare side-by-side.' 
-                : 'ইন্টারঅ্যাক্টিভ ব্যাজ সহ আমাদের প্রিমিয়াম সংগ্রহ ব্রাউজ করুন। পাশাপাশি তুলনা করতে গাড়ি যুক্ত করুন।'}
-            </p>
-          </motion.div>
-
-          {/* Vehicle Cards Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
-            {carSlides.slice(0, 6).map((car, index) => {
-              // Assign badges to vehicles
-              let badge: 'best-value' | 'popular' | 'new-arrival' | 'limited-stock' | 'featured' | 'none' = 'none';
-              if (index === 0) badge = 'best-value';
-              else if (index === 1) badge = 'popular';
-              else if (index === 2) badge = 'new-arrival';
-              else if (index === 3) badge = 'limited-stock';
-              else if (index === 4) badge = 'featured';
-
-              return (
-                <VehicleCardWithBadges
-                  key={car.id}
-                  id={car.id}
-                  brand={car.brand}
-                  model={car.model}
-                  image={car.image}
-                  price={car.price}
-                  bodyType={car.bodyType}
-                  badge={badge}
-                  theme={theme}
-                  language={language}
-                  onCompare={(vehicleId) => {
-                    const selectedVehicle = carSlides.find(c => c.id === vehicleId);
-                    if (selectedVehicle) {
-                      handleAddToComparison({
-                        id: vehicleId,
-                        title: selectedVehicle.model,
-                        model: selectedVehicle.model,
-                        price: selectedVehicle.price,
-                      } as any);
-                    }
-                  }}
-                />
-              );
-            })}
-          </div>
-
-          {/* Comparison Display */}
-          {comparisonVehicles.length > 0 && (
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5 }}
-            >
-              <ComparisonDisplay
-                vehicles={comparisonVehicles.map(v => ({
-                  id: v.id,
-                  name: v.model,
-                  price: formatPrice(v.price),
-                  specs: {
-                    engine: { label: 'Engine', value: v.engine_capacity || '2.4L Petrol', highlight: false },
-                    transmission: { label: 'Transmission', value: v.transmission || 'Automatic', highlight: false },
-                    mileage: { label: 'Mileage', value: '14 km/l', highlight: true },
-                    seating: { label: 'Seating', value: '5 Person', highlight: false },
-                    power: { label: 'Power', value: '175 HP', highlight: false },
-                  },
-                }))}
-                theme={theme}
-                language={language}
-                onRemove={handleRemoveFromComparison}
-                onExport={handleExportComparison}
-              />
-            </motion.div>
-          )}
-        </div>
       </section>
+    </LazySection>
 
-      {/* FEATURED VEHICLES WITH CARD LIFT EFFECTS */}
-      {featuredVehicles.length > 0 && (
-        <motion.section 
-          className={`py-8 md:py-12 ${theme === 'dark' ? 'bg-gray-900/80' : 'bg-gray-50'}`}
-          initial={{ opacity: 0 }}
-          whileInView={{ opacity: 1 }}
-          transition={{ duration: 0.6 }}
-          viewport={{ once: true }}
-        >
-          <div className="container mx-auto px-4">
-            <motion.div 
-              className="text-center mb-8"
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
+          {/* Featured Vehicles Section */}
+          {featuredVehicles.length > 0 && (
+            <motion.section 
+              className={`py-8 md:py-12 ${theme === 'dark' ? 'bg-gray-900/80' : 'bg-gray-50'}`}
+              initial={{ opacity: 0 }}
+              whileInView={{ opacity: 1 }}
               transition={{ duration: 0.6 }}
               viewport={{ once: true }}
             >
-              <h2 className={`text-2xl sm:text-3xl md:text-4xl font-bold mb-4 ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
-                {language === 'en' ? 'Featured Vehicles' : 'বৈশিষ্ট্যযুক্ত গাড়ি'}
-              </h2>
-            </motion.div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-              {featuredVehicles.map((vehicle, index) => (
-                <motion.div
-                  key={vehicle.id}
+              <div className="container mx-auto px-4">
+                <motion.div 
+                  className="text-center mb-8"
                   initial={{ opacity: 0, y: 20 }}
                   whileInView={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.6, delay: index * 0.1 }}
+                  transition={{ duration: 0.6 }}
                   viewport={{ once: true }}
-                  whileHover={{ y: -10 }}
                 >
-                  <Link to={`/vehicle/${vehicle.id}`}>
-                    <Card className={`overflow-hidden cursor-pointer transition-all ${theme === 'dark' ? 'hover:shadow-lg' : 'hover:shadow-xl'}`}>
-                      <div className="relative h-64 overflow-hidden">
-                        <motion.img
-                          src={vehicle.images?.[0]?.image_url || 'https://images.pexels.com/photos/3964962/pexels-photo-3964962.jpeg?auto=compress&cs=tinysrgb&w=400&fm=webp'}
-                          alt={vehicle.model}
-                          className="w-full h-full object-contain"
-                          whileHover={{ scale: 1.15 }}
-                          transition={{ duration: 0.3 }}
-                        />
-                      </div>
-                      <div className="p-6">
-                        <h3 className={`text-xl font-bold mb-2 ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
-                          {language === 'en' ? (vehicle.description_en || vehicle.model) : (vehicle.description_bn || vehicle.model)}
-                        </h3>
-                        <div className={`flex items-center justify-between mb-4 ${theme === 'dark' ? 'text-gray-300' : 'text-gray-600'}`}>
-                          <span>{vehicle.year}</span>
-                          <span>{formatPrice(vehicle.price)}</span>
-                        </div>
-                        <p className={`text-sm ${theme === 'dark' ? 'text-gray-400' : 'text-gray-500'}`}>
-                          {language === 'en' ? (vehicle.description_en || '') : (vehicle.description_bn || vehicle.description_en || '')}
-                        </p>
-                      </div>
-                    </Card>
-                  </Link>
+                  <h2 className={`text-2xl sm:text-3xl md:text-4xl font-bold mb-4 ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}> 
+                    {language === 'en' ? 'Featured Vehicles' : 'বৈশিষ্ট্যযুক্ত গাড়ি'}
+                  </h2>
                 </motion.div>
-              ))}
-            </div>
-          </div>
-        </motion.section>
-      )}
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                  {featuredVehicles.map((vehicle, index) => (
+                    <motion.div
+                      key={vehicle.id}
+                      initial={{ opacity: 0, y: 20 }}
+                      whileInView={{ opacity: 1, y: 0 }}
+                      transition={{ duration: 0.6, delay: index * 0.1 }}
+                      viewport={{ once: true }}
+                      whileHover={{ y: -10 }}
+                    >
+                      <Link to={`/vehicle/${vehicle.id}`}>
+                        <Card className={`overflow-hidden cursor-pointer transition-all ${theme === 'dark' ? 'hover:shadow-lg' : 'hover:shadow-xl'}`}>
+                          <div className="relative h-64 overflow-hidden">
+                            <motion.img
+                              src={vehicle.images?.[0]?.image_url || 'https://images.pexels.com/photos/3964962/pexels-photo-3964962.jpeg?auto=compress&cs=tinysrgb&w=400&fm=webp'}
+                              alt={vehicle.model}
+                              className="w-full h-full object-contain"
+                              whileHover={{ scale: 1.15 }}
+                              transition={{ duration: 0.3 }}
+                            />
+                          </div>
+                          <div className="p-6">
+                            <h3 className={`text-xl font-bold mb-2 ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}> 
+                              {language === 'en' ? (vehicle.description_en || vehicle.model) : (vehicle.description_bn || vehicle.model)}
+                            </h3>
+                            <div className={`flex items-center justify-between mb-4 ${theme === 'dark' ? 'text-gray-300' : 'text-gray-600'}`}> 
+                              <span>{vehicle.year}</span>
+                              <span>{formatPrice(vehicle.price)}</span>
+                            </div>
+                            <p className={`text-sm ${theme === 'dark' ? 'text-gray-400' : 'text-gray-500'}`}> 
+                              {language === 'en' ? (vehicle.description_en || '') : (vehicle.description_bn || vehicle.description_en || '')}
+                            </p>
+                          </div>
+                        </Card>
+                      </Link>
+                    </motion.div>
+                  ))}
+                </div>
+              </div>
+            </motion.section>
+          )}
 
       {/* FEATURE 13: FILTER/SORT ANIMATIONS */}
       <motion.section
@@ -2271,8 +2133,9 @@ export const HomePage = () => {
                     <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-2">
                       {language === 'en' ? 'Address' : 'ঠিকানা'}
                     </h3>
-                    <p className="text-gray-600 dark:text-gray-300">Auto Spark, Rajshahi</p>
-                    <p className="text-gray-600 dark:text-gray-300">Bangladesh</p>
+                    <p className="text-gray-600 dark:text-gray-300">AutoSpark</p>
+                    <p className="text-gray-600 dark:text-gray-300">Station Road, Near Shuvo Petroleum, Sheroil, Ghoramara, Boalia Rajshahi, Rajshahi, Bangladesh, 6207</p>
+                    <p className="text-gray-600 dark:text-gray-300">Rajshahi, Rajshahi Division, Bangladesh</p>
                   </div>
                 </div>
               </motion.div>
@@ -2445,7 +2308,7 @@ export const HomePage = () => {
         theme={theme}
         language={language}
       />
-    </motion.div>
+      </motion.div>
     </MotionConfig>
   );
 };
