@@ -91,7 +91,7 @@ export const AboutPage = () => {
     phone: '+880 1760-401605',
     email: 'autosparkbd@gmail.com',
     name: 'AutoSpark',
-  logo: '/logo/logoAS3.svg',
+  logo: '/autospark/logo/logoAS3.svg',
     awards: ['Award', 'Verified', 'Security', 'Certificate'],
   };
   const serviceCenter = {
@@ -103,7 +103,7 @@ export const AboutPage = () => {
     phone: '+880 1321-233670',
     email: 'autosparkbd@gmail.com',
     name: 'Auto Spark Service Center',
-  logo: '/logo/logoassc.svg',
+  logo: '/autospark/logo/logoassc.svg',
     awards: ['Award', 'Verified', 'Security', 'Certificate'],
   };
   const { language } = useLanguage();
@@ -432,18 +432,33 @@ export const AboutPage = () => {
           </div>
           <Card className={`p-8 md:p-12 ${theme === 'dark' ? 'bg-gray-900/50 border-gray-800' : 'bg-white'}`}>
             <div className="grid md:grid-cols-2 gap-8 items-center">
-              <div>
-                <img
-                  src="https://images.pexels.com/photos/3184291/pexels-photo-3184291.jpeg?auto=compress&cs=tinysrgb&w=600&fm=webp"
-                  alt="Auto Spark BD Showroom"
+              <div className="flex flex-col gap-6">
+                <motion.img
+                  src="https://images.pexels.com/photos/36496123/pexels-photo-36496123.png"
+                  alt="Auto Spark BD Showroom 1"
                   className="rounded-xl shadow-lg w-full h-72 object-cover"
                   loading="lazy"
                   width={600}
                   height={400}
                   decoding="async"
+                  initial={{ opacity: 0, y: 40 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.8, delay: 0.3 }}
+                />
+                <motion.img
+                  src="https://images.pexels.com/photos/36496048/pexels-photo-36496048.png"
+                  alt="Auto Spark BD Showroom 2"
+                  className="rounded-xl shadow-lg w-full h-72 object-cover"
+                  loading="lazy"
+                  width={600}
+                  height={400}
+                  decoding="async"
+                  initial={{ opacity: 0, y: 40 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.8, delay: 0.7 }}
                 />
               </div>
-              <div className={`prose prose-lg ${theme === 'dark' ? 'text-gray-300' : 'text-gray-700'} leading-relaxed space-y-4`}>
+              <div className={`prose prose-lg ${theme === 'dark' ? 'text-gray-300' : 'text-gray-700'} leading-relaxed space-y-4 w-full md:w-full`}>
                 <p>
                   {language === 'en'
                     ? 'Auto Spark BD was founded in 2014 with a singular vision: to bring world-class automotive excellence to Rajshahi and the greater North Bengal region. What began as a modest showroom driven by passion has evolved into the region\'s most trusted name in premium automobiles.'

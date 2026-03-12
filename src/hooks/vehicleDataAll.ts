@@ -404,7 +404,7 @@ export const ALL_VEHICLES: Vehicle[] = [
     created_at: new Date().toISOString(),
     updated_at: new Date().toISOString(),
     images: [
-      { id: '20-1', vehicle_id: '20', image_url: 'https://images.unsplash.com/photo-1503376780353-7e6692767b70?w=600&h=400&fit=crop', display_order: 1, is_primary: true, created_at: new Date().toISOString() }
+  { id: '20-1', vehicle_id: '20', image_url: 'https://res.cloudinary.com/dnogrvbsf/image/upload/v1717432322/autospark/nissan-xtrail-2023-silver.jpg', display_order: 1, is_primary: true, created_at: new Date().toISOString() }
     ]
   },
 
@@ -463,7 +463,7 @@ export const ALL_VEHICLES: Vehicle[] = [
     created_at: new Date().toISOString(),
     updated_at: new Date().toISOString(),
     images: [
-      { id: '2-1', vehicle_id: '2', image_url: 'https://images.pexels.com/photos/17653852/pexels-photo-17653852.jpeg?auto=compress&cs=tinysrgb&w=800', display_order: 1, is_primary: true, created_at: new Date().toISOString() }
+  { id: '2-1', vehicle_id: '2', image_url: 'https://res.cloudinary.com/dnogrvbsf/image/upload/v1717432322/autospark/honda-civic-2023-blue.jpg', display_order: 1, is_primary: true, created_at: new Date().toISOString() }
     ]
   },
   {
@@ -517,7 +517,7 @@ export const ALL_VEHICLES: Vehicle[] = [
     created_at: new Date().toISOString(),
     updated_at: new Date().toISOString(),
     images: [
-      { id: '4-1', vehicle_id: '4', image_url: 'https://images.pexels.com/photos/13885915/pexels-photo-13885915.jpeg?auto=compress&cs=tinysrgb&w=800', display_order: 1, is_primary: true, created_at: new Date().toISOString() }
+  { id: '4-1', vehicle_id: '4', image_url: 'https://res.cloudinary.com/dnogrvbsf/image/upload/v1717432322/autospark/honda-crv-2023-black.jpg', display_order: 1, is_primary: true, created_at: new Date().toISOString() }
     ]
   },
   {

@@ -19,9 +19,8 @@ export default defineConfig({
       ext: '.br',
     }),
   ],
-  // GitHub Pages deployment - set base to repo name for production
-  // Use '/' for development, '/autospark/' for production
-  base: process.env.NODE_ENV === 'production' ? '/autospark/' : '/',
+  // Custom domain deployment - always use root
+  base: '/',
   build: {
     outDir: 'dist',
     sourcemap: false,

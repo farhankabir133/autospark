@@ -107,12 +107,12 @@ export const GlassmorphismNavbar = () => {
   };
 
   const glassBackground = theme === 'dark'
-    ? 'bg-gray-900/40 backdrop-blur-xl border border-gray-700/30'
-    : 'bg-white/40 backdrop-blur-xl border border-white/30';
+  ? 'bg-gray-900/40 backdrop-blur-xl border-b border-gray-700/30'
+  : 'bg-white/40 backdrop-blur-xl border-b border-gray-200/30';
 
   const glassBackgroundScrolled = theme === 'dark'
-    ? 'bg-gray-900/80 backdrop-blur-2xl border border-gray-700/40 shadow-2xl shadow-black/20'
-    : 'bg-white/80 backdrop-blur-2xl border border-white/40 shadow-2xl shadow-black/10';
+  ? 'bg-gray-900/80 backdrop-blur-2xl border-b border-gray-700/40 shadow-2xl shadow-black/20'
+  : 'bg-white/80 backdrop-blur-2xl border-b border-gray-200/40 shadow-2xl shadow-black/10';
 
   return (
     <LazyMotion features={domMax}>
@@ -154,7 +154,7 @@ export const GlassmorphismNavbar = () => {
                   <m.img
                     src={currentLogo}
                     alt="Auto Spark BD"
-                    className="h-12 w-12 sm:h-14 sm:w-14 lg:h-16 lg:w-16 relative z-10 drop-shadow-[0_0_8px_rgba(192,0,0,0.5)]"
+                    className="h-16 w-16 sm:h-14 sm:w-14 lg:h-16 lg:w-16 relative z-10 drop-shadow-[0_0_8px_rgba(192,0,0,0.5)]"
                     initial={{ opacity: 0, scale: 0.5, rotate: -180 }}
                     animate={{ opacity: 1, scale: 1, rotate: 0 }}
                     transition={{ 
@@ -189,35 +189,35 @@ export const GlassmorphismNavbar = () => {
                   whileHover="hover"
                   className="relative"
                 >
-                  <Link
-                    to={link.to}
-                    onClick={() => handleNavClick(link.to)}
-                    className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-all duration-300 relative ${
-                      activeLink === link.to
-                        ? theme === 'dark'
-                          ? 'text-[#FF1A1A]'
-                          : 'text-[#C00000]'
-                        : theme === 'dark'
-                        ? 'text-gray-300 hover:text-white'
-                        : 'text-gray-700 hover:text-gray-900'
-                    }`}
-                  >
-                    {link.label}
-                    
-                    {/* Active indicator with glassmorphism */}
-                    {activeLink === link.to && (
-                      <m.div
-                        layoutId="activeIndicator"
-                        className={`absolute inset-0 rounded-lg -z-10 ${
-                          theme === 'dark'
-                            ? 'bg-[#C00000]/20 backdrop-blur-md border border-[#C00000]/30'
-                            : 'bg-[#C00000]/10 backdrop-blur-md border border-[#C00000]/30'
-                        }`}
-                        transition={{ duration: 0.3 }}
-                      />
-                    )}
-                  </Link>
-                </m.div>
+                    <Link
+                      to={link.to}
+                      onClick={() => handleNavClick(link.to)}
+                      className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-all duration-300 relative outline-none focus:ring-2 focus:ring-blue-500 ${
+                        activeLink === link.to
+                          ? theme === 'dark'
+                            ? 'text-[#FF1A1A]'
+                            : 'text-[#C00000]'
+                          : theme === 'dark'
+                          ? 'text-gray-300 hover:text-white'
+                          : 'text-gray-700 hover:text-gray-900'
+                      }`}
+                      aria-current={activeLink === link.to ? 'page' : undefined}
+                    >
+                      {link.label}
+                      {/* Active indicator with glassmorphism */}
+                      {activeLink === link.to && (
+                        <m.div
+                          layoutId="activeIndicator"
+                          className={`absolute inset-0 rounded-lg -z-10 ${
+                            theme === 'dark'
+                              ? 'bg-[#C00000]/20 backdrop-blur-md border border-[#C00000]/30'
+                              : 'bg-[#C00000]/10 backdrop-blur-md border border-[#C00000]/30'
+                          }`}
+                          transition={{ duration: 0.3 }}
+                        />
+                      )}
+                    </Link>
+                  </m.div>
               ))}
             </div>
 
@@ -351,7 +351,7 @@ export const GlassmorphismNavbar = () => {
                       <Link
                         to={link.to}
                         onClick={() => handleNavClick(link.to)}
-                        className={`block px-4 py-3 rounded-lg transition-all ${
+                        className={`block px-4 py-4 rounded-lg transition-all outline-none focus:ring-2 focus:ring-blue-500 ${
                           activeLink === link.to
                             ? theme === 'dark'
                               ? 'bg-[#C00000]/30 border border-[#C00000]/50 text-[#FF1A1A]'
@@ -360,6 +360,7 @@ export const GlassmorphismNavbar = () => {
                             ? 'text-gray-300 hover:bg-gray-700/30 hover:text-white'
                             : 'text-gray-700 hover:bg-gray-100/30 hover:text-gray-900'
                         }`}
+                        aria-current={activeLink === link.to ? 'page' : undefined}
                       >
                         {link.label}
                       </Link>
