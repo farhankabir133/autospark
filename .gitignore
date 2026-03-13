@@ -1,6 +1,3 @@
-<<<<<<< HEAD
-node_modules
-=======
 logs
 *.log
 npm-debug.log*
@@ -24,4 +21,3 @@ dist-ssr
 *.sln
 *.sw?
 .env
->>>>>>> final-vertex
