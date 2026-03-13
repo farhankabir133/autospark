@@ -24,8 +24,8 @@ export const GlassmorphismNavbar = () => {
   // Determine which logo to show based on current page
   const isServicesOrAccessories = location.pathname === '/services' || location.pathname === '/accessories';
   const currentLogo = isServicesOrAccessories 
-    ? `${import.meta.env.BASE_URL}logo/logoassc.svg`
-    : `${import.meta.env.BASE_URL}logo/logoAS3.svg`;
+  ? `/logo/logoassc.svg`
+  : `/logo/logoAS3.svg`;
 
   useEffect(() => {
     const handleScroll = () => {

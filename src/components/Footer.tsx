@@ -59,7 +59,7 @@ export const Footer = () => {
           {/* Brand & Info */}
           <div className="flex flex-col gap-4 md:col-span-1">
             <div className="flex items-center gap-3 mb-2">
-              <img src="/autospark/logo/logoAS3.svg" alt="Auto Spark BD" className="h-20 w-20 drop-shadow-lg" width={80} height={80} />
+              <img src="/logo/logoAS3.svg" alt="Auto Spark BD" className="h-20 w-20 drop-shadow-lg" width={80} height={80} />
               <span className="text-xl font-bold text-white tracking-tight">{t('site.title')}</span>
             </div>
             <p className="text-sm text-gray-400 mb-2">{t('footer.description')}</p>

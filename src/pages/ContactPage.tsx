@@ -15,7 +15,7 @@ export const ContactPage = () => {
     phone: '+880 1760-401605',
     email: 'autosparkbd@gmail.com',
     name: 'AutoSpark',
-  logo: '/autospark/logo/logoAS3.svg',
+  logo: '/logo/logoAS3.svg',
     awards: ['Award', 'Verified', 'Security', 'Certificate'],
   };
   const serviceCenter = {
@@ -27,7 +27,7 @@ export const ContactPage = () => {
     phone: '+880 1321-233670',
     email: 'autosparkbd@gmail.com',
     name: 'Auto Spark Service Center',
-  logo: '/autospark/logo/logoassc.svg',
+  logo: '/logo/logoassc.svg',
     awards: ['Award', 'Verified', 'Security', 'Certificate'],
   };
   const { t, language } = useLanguage();
