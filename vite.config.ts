@@ -19,8 +19,8 @@ export default defineConfig({
       ext: '.br',
     }),
   ],
-  // GitHub Pages deployment - use repo subdirectory
-  base: '/autospark/',
+  // Custom domain deployment - use root
+  base: '/',
   build: {
     outDir: 'dist',
     sourcemap: false,
