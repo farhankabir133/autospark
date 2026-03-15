@@ -15,10 +15,10 @@ export const Layout = ({ children }: LayoutProps) => {
 
   return (
     <div className={`min-h-screen flex flex-col transition-colors duration-300 ${
-      theme === 'dark' ? 'bg-gray-900 text-white' : 'bg-white text-gray-900'
+      theme === 'dark' ? 'bg-[#0a0a0a] text-white' : 'bg-gray-50 text-gray-900'
     }`}>
       <Header />
-      <main className="flex-grow">{children}</main>
+      <main id="main-content" className="flex-grow relative z-10">{children}</main>
       <Footer />
 
       <a

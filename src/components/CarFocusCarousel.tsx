@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback, forwardRef, useImperativeHandle } from 'react';
+import { useState, useEffect, useCallback, useRef, forwardRef, useImperativeHandle } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ChevronLeft, ChevronRight, Sparkles } from 'lucide-react';
 import { Link } from 'react-router-dom';
@@ -29,7 +29,7 @@ export const carSlides = [
     subtitle: '2024 Hybrid Edition',
     tagline: 'Modern Compact Crossover with Smart Features',
     year: 2024,
-    image: 'https://images.pexels.com/photos/35509100/pexels-photo-35509100.png?auto=compress&cs=tinysrgb&w=800',
+    image: 'https://images.pexels.com/photos/36581771/pexels-photo-36581771.png',
     price: '৳ 45,50,000',
     color: 'Steel Blue',
     features: ['1.8L Hybrid', 'Toyota Safety Sense', 'Wireless Charging'],
@@ -194,7 +194,7 @@ export const carSlides = [
     subtitle: 'Sporty Sedan',
     tagline: 'Sporty Sedan with Modern Technology',
     year: 2023,
-    image: 'https://images.pexels.com/photos/3769173/pexels-photo-3769173.jpeg?auto=compress&cs=tinysrgb&w=800',
+    image: 'https://images.pexels.com/photos/36581984/pexels-photo-36581984.png',
     price: '৳ 32,00,000',
     color: 'Blue',
     features: ['1.8L VTEC', 'Honda Sensing', 'Apple CarPlay'],
@@ -209,7 +209,7 @@ export const carSlides = [
     subtitle: 'Turbo Family SUV',
     tagline: 'Reliable Family SUV with Spacious Interior',
     year: 2023,
-    image: 'https://images.pexels.com/photos/3807518/pexels-photo-3807518.jpeg?auto=compress&cs=tinysrgb&w=800',
+    image: 'https://images.pexels.com/photos/36580896/pexels-photo-36580896.png',
     price: '৳ 42,00,000',
     color: 'Black',
     features: ['1.5L Turbo', 'AWD Available', 'Honda Sensing'],
@@ -319,6 +319,45 @@ const CarFocusCarousel = forwardRef<CarFocusCarouselHandle, CarFocusCarouselProp
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [handlePrev, handleNext]);
 
+  // Touch / swipe support — improved sensitivity and visual feedback
+  const touchStartX = useRef<number | null>(null);
+  const touchStartY = useRef<number | null>(null);
+  const isSwiping = useRef(false);
+
+  const onTouchStart = useCallback((e: React.TouchEvent) => {
+    touchStartX.current = e.touches[0].clientX;
+    touchStartY.current = e.touches[0].clientY;
+    isSwiping.current = false;
+  }, []);
+
+  const onTouchMove = useCallback((e: React.TouchEvent) => {
+    if (touchStartX.current === null || touchStartY.current === null) return;
+    const dx = Math.abs(e.touches[0].clientX - touchStartX.current);
+    const dy = Math.abs(e.touches[0].clientY - touchStartY.current);
+    // If horizontal movement dominates, prevent vertical scroll
+    if (dx > 10 && dx > dy * 1.2) {
+      isSwiping.current = true;
+      e.preventDefault();
+    }
+  }, []);
+
+  const onTouchEnd = useCallback(
+    (e: React.TouchEvent) => {
+      if (touchStartX.current === null || touchStartY.current === null) return;
+      const dx = e.changedTouches[0].clientX - touchStartX.current;
+      const dy = e.changedTouches[0].clientY - touchStartY.current;
+      // Lower threshold (30px) for better mobile responsiveness
+      if (Math.abs(dx) > 30 && Math.abs(dx) > Math.abs(dy) * 1.2) {
+        if (dx < 0) handleNext();
+        else handlePrev();
+      }
+      touchStartX.current = null;
+      touchStartY.current = null;
+      isSwiping.current = false;
+    },
+    [handleNext, handlePrev]
+  );
+
   // Get visible cars with positions - Show more cars for wider spread (14 total cars)
   const getVisibleCars = () => {
     const visible = [];
@@ -377,7 +416,7 @@ const CarFocusCarousel = forwardRef<CarFocusCarouselHandle, CarFocusCarouselProp
   const visibleCars = getVisibleCars();
 
   return (
-    <section className="relative w-full overflow-hidden py-20 lg:py-32">
+    <section className="relative w-full overflow-hidden py-10 md:py-20 lg:py-32">
       {/* Background with enhanced gradient */}
       <div className="absolute inset-0 bg-gradient-to-b from-gray-950 via-gray-900/95 to-black" />
       
@@ -474,7 +513,7 @@ const CarFocusCarousel = forwardRef<CarFocusCarouselHandle, CarFocusCarouselProp
           </span>
         </motion.div>
         
-        <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-4">
+        <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-bold text-white mb-4">
           <span className="bg-gradient-to-r from-white via-blue-100 to-white bg-clip-text text-transparent">
             Featured Vehicles
           </span>
@@ -487,11 +526,14 @@ const CarFocusCarousel = forwardRef<CarFocusCarouselHandle, CarFocusCarouselProp
 
       {/* 3D Carousel Container - WIDER */}
       <div 
-        className="relative h-[500px] md:h-[600px] lg:h-[700px] mx-auto max-w-[1600px]"
+        className="relative h-[500px] md:h-[600px] lg:h-[700px] mx-auto max-w-[1600px] touch-pan-y"
         style={{ 
           perspective: '1600px',
           perspectiveOrigin: '50% 35%',
         }}
+        onTouchStart={onTouchStart}
+        onTouchMove={onTouchMove}
+        onTouchEnd={onTouchEnd}
       >
         {/* Cars Container */}
         <div className="absolute inset-0 flex items-center justify-center">
@@ -556,7 +598,7 @@ const CarFocusCarousel = forwardRef<CarFocusCarouselHandle, CarFocusCarouselProp
                 >
                   {/* Car Card - WIDER */}
                   <div 
-                    className={`relative w-[340px] md:w-[420px] lg:w-[480px] rounded-3xl overflow-hidden transition-all duration-500 ${
+                    className={`relative w-[280px] sm:w-[340px] md:w-[420px] lg:w-[480px] rounded-3xl overflow-hidden transition-all duration-500 ${
                       isActive 
                         ? 'bg-gradient-to-b from-gray-800/95 to-gray-900/98 shadow-2xl shadow-blue-500/30 border border-white/20' 
                         : 'bg-gray-800/40 border border-white/5 backdrop-blur-sm'
@@ -615,6 +657,7 @@ const CarFocusCarousel = forwardRef<CarFocusCarouselHandle, CarFocusCarouselProp
                         src={car.image}
                         alt={`${car.brand} ${car.model}`}
                         className="w-full h-full object-cover"
+                        loading="lazy"
                         initial={{ scale: 1.4, x: direction > 0 ? 30 : -30 }}
                         animate={{ 
                           scale: isActive ? 1 : 1.2, 
@@ -786,6 +829,7 @@ const CarFocusCarousel = forwardRef<CarFocusCarouselHandle, CarFocusCarouselProp
         <div className="absolute inset-x-0 top-1/2 -translate-y-1/2 flex items-center justify-between px-4 md:px-12 lg:px-20 z-20 pointer-events-none">
           <motion.button
             onClick={handlePrev}
+            aria-label="Previous car"
             className="pointer-events-auto relative p-4 md:p-5 rounded-full bg-white/5 backdrop-blur-xl border border-white/10 text-white hover:bg-white/15 hover:border-white/30 transition-all duration-300 group overflow-hidden"
             whileHover={{ scale: 1.15, x: -8 }}
             whileTap={{ scale: 0.9 }}
@@ -806,6 +850,7 @@ const CarFocusCarousel = forwardRef<CarFocusCarouselHandle, CarFocusCarouselProp
 
           <motion.button
             onClick={handleNext}
+            aria-label="Next car"
             className="pointer-events-auto relative p-4 md:p-5 rounded-full bg-white/5 backdrop-blur-xl border border-white/10 text-white hover:bg-white/15 hover:border-white/30 transition-all duration-300 group overflow-hidden"
             whileHover={{ scale: 1.15, x: 8 }}
             whileTap={{ scale: 0.9 }}

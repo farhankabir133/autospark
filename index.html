@@ -2,44 +2,95 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/autospark/vite.svg" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!-- Favicon - using aslogo.svg for browser tab/URL bar icon -->
+  <link rel="icon" type="image/svg+xml" href="logo/aslogo.svg" />
+  <link rel="apple-touch-icon" href="logo/aslogo.svg" />
+  <link rel="shortcut icon" href="logo/aslogo.svg" type="image/svg+xml" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, maximum-scale=5" />
     <title>Auto Spark BD - Exclusive Cars in Rajshahi | Premium Car Dealership</title>
     <meta name="description" content="North Bengal's leading premium car showroom in Rajshahi. Browse exclusive luxury vehicles, expert service center, and genuine accessories. Your trusted car dealer since 2014." />
     <meta name="keywords" content="exclusive cars Rajshahi, car showroom Rajshahi, premium car dealer North Bengal, auto service center Rajshahi, luxury vehicles Bangladesh" />
+    <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://autosparkbd.com" />
     <meta property="og:title" content="Auto Spark BD - Exclusive Cars in Rajshahi" />
     <meta property="og:description" content="North Bengal's leading premium car showroom. Exclusive luxury vehicles and expert service." />
-    <meta property="og:image" content="https://images.pexels.com/photos/3802510/pexels-photo-3802510.jpeg" />
+  <meta property="og:image" content="https://autosparkbd.com/logo/aslogo.svg" />
     <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://autosparkbd.com" />
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content="Auto Spark BD - Exclusive Cars in Rajshahi" />
     <meta name="twitter:description" content="North Bengal's leading premium car showroom" />
-    <meta name="twitter:image" content="https://images.pexels.com/photos/3802510/pexels-photo-3802510.jpeg" />
+  <meta name="twitter:image" content="https://autosparkbd.com/logo/aslogo.svg" />
     <meta name="theme-color" content="#0E0E0E" />
-    <!-- GitHub Pages SPA Redirect Handler -->
-    <script type="text/javascript">
-      // Handle SPA routing for GitHub Pages
-      (function() {
-        var redirect = sessionStorage.redirect;
-        delete sessionStorage.redirect;
-        if (redirect && redirect !== location.href) {
-          history.replaceState(null, null, redirect);
-        }
-      })();
-      
-      // Parse the redirect from 404.html
-      (function() {
-        var query = window.location.search;
-        if (query && query.startsWith('?/')) {
-          var path = query.slice(2).split('&')[0];
-          var newUrl = window.location.origin + '/autospark/' + path + window.location.hash;
-          window.history.replaceState(null, null, newUrl);
-        }
-      })();
+    
+    <!-- Performance: Preconnect to critical third-party origins -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="preconnect" href="https://images.pexels.com" crossorigin />
+    <link rel="dns-prefetch" href="https://images.pexels.com" />
+    <link rel="dns-prefetch" href="https://cdn.jsdelivr.net" />
+    
+    <!-- 3D model prefetch moved to JS — only for mid/high-tier devices after page load -->
+    
+    <!-- Performance: Preload critical fonts with font-display swap (only 400+700 — 600 removed to save bytes) -->
+    <link rel="preload" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap" as="style" onload="this.onload=null;this.rel='stylesheet'" />
+    <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap" /></noscript>
+    
+    <!-- Preload LCP-critical assets -->
+  <link rel="preload" href="logo/aslogo.svg" as="image" type="image/svg+xml" />
+    
+    <!-- Critical CSS for above-the-fold content -->
+    <style>
+      /* Critical CSS - prevents layout shift */
+      *,*::before,*::after{box-sizing:border-box}
+      html{line-height:1.5;-webkit-text-size-adjust:100%;font-family:Inter,system-ui,-apple-system,sans-serif}
+      body{margin:0;background:#0f0f0f;color:#fff}
+      #root{min-height:100vh}
+      /* Hero section placeholder to prevent CLS */
+      .hero-placeholder{position:relative;width:100%;height:100vh;background:#0a0a0a;display:flex;align-items:center;justify-content:center}
+      /* Skeleton loading animation */
+      @keyframes shimmer{0%{background-position:-200% 0}100%{background-position:200% 0}}
+      .skeleton{background:linear-gradient(90deg,#1a1a1a 25%,#2a2a2a 50%,#1a1a1a 75%);background-size:200% 100%;animation:shimmer 1.5s infinite}
+      /* Skip-to-content link (accessibility) */
+      .skip-link{position:absolute;top:-40px;left:0;background:#C00000;color:#fff;padding:8px 16px;z-index:10000;transition:top 0.2s}
+      .skip-link:focus{top:0}
+      /* content-visibility:auto only for below-fold images (avoids LCP issues on hero) */
+      img[loading="lazy"]{content-visibility:auto}
+    </style>
+
+    <!-- Structured Data (JSON-LD) for SEO -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "AutoDealer",
+      "name": "Auto Spark BD",
+      "description": "North Bengal's leading premium car showroom in Rajshahi",
+      "url": "https://autosparkbd.com",
+      "image": "https://autosparkbd.com/logo/aslogo.svg",
+      "address": {
+        "@type": "PostalAddress",
+        "addressLocality": "Rajshahi",
+        "addressCountry": "BD"
+      },
+      "telephone": "+8801700000000",
+      "openingHours": "Sa-Th 09:00-18:00",
+      "priceRange": "৳৳৳"
+    }
     </script>
+
+    <!-- Custom domain: Removed GitHub Pages SPA redirect logic -->
   </head>
   <body>
+    <!-- Skip to content link for accessibility (keyboard nav) -->
+    <a href="#main-content" class="skip-link">Skip to content</a>
     <div id="root"></div>
-    <script type="module" src="/src/main.tsx"></script>
+    <script type="module" src="/src/main.tsx" fetchpriority="high"></script>
+    
+    <!-- Unicorn Studio — desktop only (≥768px), non-blocking -->
+    <script defer>
+      if(window.matchMedia('(min-width: 768px)').matches){
+        !function(){var u=window.UnicornStudio;if(u&&u.init){u.init()}else{window.UnicornStudio={isInitialized:!1};var i=document.createElement("script");i.src="https://cdn.jsdelivr.net/gh/hiunicornstudio/unicornstudio.js@v2.0.5/dist/unicornStudio.umd.js";i.defer=true;i.onload=function(){UnicornStudio.init()};(document.head||document.body).appendChild(i)}}();
+      }
+    </script>
   </body>
 </html>

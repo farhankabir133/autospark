@@ -1,4 +1,4 @@
-import { useRef, useState, useCallback, useEffect } from 'react';
+import { useRef, useState, useCallback, useEffect, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
   ChevronDown, 
@@ -16,8 +16,12 @@ import {
   X,
   Info,
   ChevronLeft,
-  ChevronRight
+  ChevronRight,
+  Sparkles
 } from 'lucide-react';
+import { EnhancedHotspotPanel, EnhancedHotspot } from './EnhancedHotspotPanel';
+import { VehicleColorCustomizer } from './VehicleColorCustomizer';
+import { getVehicleCategory, getVehicleTheme, getViewerGradient, getAccentColor } from '../../utils/vehicleTheming';
 
 // ============================================
 // VEHICLE DATA - All 14 vehicles with multiple angles
@@ -56,12 +60,12 @@ const vehicleData = [
     price: '৳ 45,50,000',
     type: 'Compact Crossover',
     exteriorImages: [
-      'https://images.pexels.com/photos/35509100/pexels-photo-35509100.png?auto=compress&cs=tinysrgb&w=1200',
+      'https://images.pexels.com/photos/36344639/pexels-photo-36344639.png',
     ],
     interiorImage: 'https://images.pexels.com/photos/1104768/pexels-photo-1104768.jpeg?auto=compress&cs=tinysrgb&w=1200',
     colors: [
-      { name: 'Steel Blue', hex: '#4682B4', image: 'https://images.pexels.com/photos/35509100/pexels-photo-35509100.png?auto=compress&cs=tinysrgb&w=1200' },
-      { name: 'White Pearl', hex: '#F8F8FF', image: 'https://images.pexels.com/photos/35509100/pexels-photo-35509100.png?auto=compress&cs=tinysrgb&w=1200' },
+      { name: 'Steel Blue', hex: '#4682B4', image: 'https://images.pexels.com/photos/36344639/pexels-photo-36344639.png' },
+      { name: 'White Pearl', hex: '#F8F8FF', image: 'https://images.pexels.com/photos/36344639/pexels-photo-36344639.png' },
     ],
     hotspots: [
       { id: 1, x: 20, y: 40, label: 'Bi-Beam LED', description: 'Bi-Beam LED headlights with DRL' },
@@ -78,12 +82,12 @@ const vehicleData = [
     price: '৳ 70,00,000',
     type: 'Premium Sedan',
     exteriorImages: [
-      'https://images.pexels.com/photos/35509198/pexels-photo-35509198.png?auto=compress&cs=tinysrgb&w=1200',
+      'https://images.pexels.com/photos/36344647/pexels-photo-36344647.png',
     ],
     interiorImage: 'https://images.pexels.com/photos/1104768/pexels-photo-1104768.jpeg?auto=compress&cs=tinysrgb&w=1200',
     colors: [
-      { name: 'Black Metallic', hex: '#1a1a1a', image: 'https://images.pexels.com/photos/35509198/pexels-photo-35509198.png?auto=compress&cs=tinysrgb&w=1200' },
-      { name: 'Silver', hex: '#C0C0C0', image: 'https://images.pexels.com/photos/35509198/pexels-photo-35509198.png?auto=compress&cs=tinysrgb&w=1200' },
+      { name: 'Black Metallic', hex: '#1a1a1a', image: 'https://images.pexels.com/photos/36344647/pexels-photo-36344647.png' },
+      { name: 'Silver', hex: '#C0C0C0', image: 'https://images.pexels.com/photos/36344647/pexels-photo-36344647.png' },
     ],
     hotspots: [
       { id: 1, x: 18, y: 42, label: 'Matrix LED', description: 'Adaptive Matrix LED headlights' },
@@ -100,12 +104,12 @@ const vehicleData = [
     price: '৳ 85,00,000',
     type: 'Premium SUV',
     exteriorImages: [
-      'https://images.pexels.com/photos/35516384/pexels-photo-35516384.png?auto=compress&cs=tinysrgb&w=1200',
+      'https://images.pexels.com/photos/36344640/pexels-photo-36344640.png',
     ],
     interiorImage: 'https://images.pexels.com/photos/1104768/pexels-photo-1104768.jpeg?auto=compress&cs=tinysrgb&w=1200',
     colors: [
-      { name: 'Black Pearl', hex: '#0a0a0a', image: 'https://images.pexels.com/photos/35516384/pexels-photo-35516384.png?auto=compress&cs=tinysrgb&w=1200' },
-      { name: 'White', hex: '#FFFFFF', image: 'https://images.pexels.com/photos/35516384/pexels-photo-35516384.png?auto=compress&cs=tinysrgb&w=1200' },
+      { name: 'Black Pearl', hex: '#0a0a0a', image: 'https://images.pexels.com/photos/36344640/pexels-photo-36344640.png' },
+      { name: 'White', hex: '#FFFFFF', image: 'https://images.pexels.com/photos/36344640/pexels-photo-36344640.png' },
     ],
     hotspots: [
       { id: 1, x: 15, y: 40, label: 'LED Headlamps', description: 'Quad-LED projector headlamps' },
@@ -285,12 +289,12 @@ const vehicleData = [
     price: '৳ 32,00,000',
     type: 'Sedan',
     exteriorImages: [
-      'https://images.pexels.com/photos/3769173/pexels-photo-3769173.jpeg?auto=compress&cs=tinysrgb&w=1200',
+      'https://images.pexels.com/photos/17653852/pexels-photo-17653852.jpeg?auto=compress&cs=tinysrgb&w=1200',
     ],
     interiorImage: 'https://images.pexels.com/photos/1104768/pexels-photo-1104768.jpeg?auto=compress&cs=tinysrgb&w=1200',
     colors: [
-      { name: 'Blue', hex: '#4169E1', image: 'https://images.pexels.com/photos/3769173/pexels-photo-3769173.jpeg?auto=compress&cs=tinysrgb&w=1200' },
-      { name: 'Red', hex: '#DC143C', image: 'https://images.pexels.com/photos/3769173/pexels-photo-3769173.jpeg?auto=compress&cs=tinysrgb&w=1200' },
+      { name: 'Blue', hex: '#4169E1', image: 'https://images.pexels.com/photos/17653852/pexels-photo-17653852.jpeg?auto=compress&cs=tinysrgb&w=1200' },
+      { name: 'Red', hex: '#DC143C', image: 'https://images.pexels.com/photos/17653852/pexels-photo-17653852.jpeg?auto=compress&cs=tinysrgb&w=1200' },
     ],
     hotspots: [
       { id: 1, x: 18, y: 40, label: 'LED Headlights', description: 'Jewel-eye LED headlights' },
@@ -307,12 +311,12 @@ const vehicleData = [
     price: '৳ 42,00,000',
     type: 'Compact SUV',
     exteriorImages: [
-      'https://images.pexels.com/photos/3807518/pexels-photo-3807518.jpeg?auto=compress&cs=tinysrgb&w=1200',
+      'https://images.pexels.com/photos/13885915/pexels-photo-13885915.jpeg?auto=compress&cs=tinysrgb&w=1200',
     ],
     interiorImage: 'https://images.pexels.com/photos/1104768/pexels-photo-1104768.jpeg?auto=compress&cs=tinysrgb&w=1200',
     colors: [
-      { name: 'Black', hex: '#1a1a1a', image: 'https://images.pexels.com/photos/3807518/pexels-photo-3807518.jpeg?auto=compress&cs=tinysrgb&w=1200' },
-      { name: 'White', hex: '#FFFFFF', image: 'https://images.pexels.com/photos/3807518/pexels-photo-3807518.jpeg?auto=compress&cs=tinysrgb&w=1200' },
+      { name: 'Black', hex: '#1a1a1a', image: 'https://images.pexels.com/photos/13885915/pexels-photo-13885915.jpeg?auto=compress&cs=tinysrgb&w=1200' },
+      { name: 'White', hex: '#FFFFFF', image: 'https://images.pexels.com/photos/13885915/pexels-photo-13885915.jpeg?auto=compress&cs=tinysrgb&w=1200' },
     ],
     hotspots: [
       { id: 1, x: 18, y: 42, label: 'LED Headlights', description: 'Auto-dimming LED headlights' },
@@ -348,6 +352,8 @@ export const VehicleViewer360Enhanced: React.FC<VehicleViewer360Props> = ({
   const [showHotspots, setShowHotspots] = useState(true);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [compareDropdownOpen, setCompareDropdownOpen] = useState(false);
+  const [showColorCustomizer, setShowColorCustomizer] = useState(false);
+  const [selectedHotspotPanel, setSelectedHotspotPanel] = useState<EnhancedHotspot | null>(null);
   
   const containerRef = useRef<HTMLDivElement>(null);
   const isDragging = useRef(false);
@@ -357,6 +363,28 @@ export const VehicleViewer360Enhanced: React.FC<VehicleViewer360Props> = ({
   // Get selected vehicle
   const selectedVehicle = vehicleData.find(v => v.id === selectedVehicleId) || vehicleData[0];
   const compareVehicle = compareVehicleId ? vehicleData.find(v => v.id === compareVehicleId) : null;
+
+  // Compute vehicle category and theme
+  const vehicleCategory = useMemo(() => {
+    return getVehicleCategory(
+      selectedVehicle.name,
+      parseInt(selectedVehicle.price.replace(/[^\d]/g, '')),
+      selectedVehicle.type
+    );
+  }, [selectedVehicle]);
+
+  const isDarkMode = false; // or get from ThemeContext if available
+  const theme = useMemo(() => {
+    return getVehicleTheme(vehicleCategory, isDarkMode);
+  }, [vehicleCategory, isDarkMode]);
+
+  const accentColor = useMemo(() => {
+    return getAccentColor(vehicleCategory, isDarkMode);
+  }, [vehicleCategory, isDarkMode]);
+
+  const viewerGradient = useMemo(() => {
+    return getViewerGradient(vehicleCategory, isDarkMode);
+  }, [vehicleCategory, isDarkMode]);
 
   // Current image based on view mode and color
   const getCurrentImage = (vehicle: typeof selectedVehicle) => {
@@ -465,7 +493,7 @@ export const VehicleViewer360Enhanced: React.FC<VehicleViewer360Props> = ({
 
   // Render single viewer
   const renderViewer = (vehicle: typeof selectedVehicle, isCompare = false) => (
-    <div className={`relative ${isCompare ? 'w-1/2' : 'w-full'} h-full`}>
+    <div className={`relative ${isCompare ? 'w-1/2' : 'w-full'} h-full flex flex-col`}>
       {/* Loading skeleton */}
       <AnimatePresence>
         {isLoading && (
@@ -484,9 +512,9 @@ export const VehicleViewer360Enhanced: React.FC<VehicleViewer360Props> = ({
 
       {/* Main image with rotation */}
       <motion.div
-        className="w-full h-full flex items-center justify-center overflow-hidden cursor-grab active:cursor-grabbing"
+        className="w-full h-full flex items-center justify-center overflow-visible cursor-grab active:cursor-grabbing"
         style={{ 
-          perspective: '1000px',
+          perspective: '1200px',
         }}
         onMouseDown={handleMouseDown}
         onMouseMove={handleMouseMove}
@@ -500,11 +528,10 @@ export const VehicleViewer360Enhanced: React.FC<VehicleViewer360Props> = ({
         <motion.img
           src={getCurrentImage(vehicle)}
           alt={vehicle.name}
-          className="max-w-full max-h-full object-contain select-none"
+          className="w-auto h-auto max-w-[95%] max-h-[95%] object-contain select-none drop-shadow-lg"
           style={{
             transform: `rotateY(${rotation}deg) scale(${zoom})`,
             transformStyle: 'preserve-3d',
-            filter: viewMode === 'interior' ? 'none' : `hue-rotate(${rotation * 0.1}deg)`,
           }}
           draggable={false}
         />
@@ -530,7 +557,21 @@ export const VehicleViewer360Enhanced: React.FC<VehicleViewer360Props> = ({
                 } shadow-lg border-2 border-blue-400`}
                 whileHover={{ scale: 1.2 }}
                 whileTap={{ scale: 0.9 }}
-                onClick={() => setActiveHotspot(activeHotspot === hotspot.id ? null : hotspot.id)}
+                onClick={() => {
+                  setSelectedHotspotPanel({
+                    id: hotspot.id,
+                    x: hotspot.x,
+                    y: hotspot.y,
+                    label: hotspot.label,
+                    description: hotspot.description,
+                    videoUrl: undefined,
+                    specs: hotspot.specs || {
+                      'Material': 'Premium aluminum alloy',
+                      'Weight': 'Reduced vs standard',
+                      'Durability': 'Weather resistant',
+                    },
+                  });
+                }}
               >
                 <Info className="w-4 h-4" />
               </motion.button>
@@ -559,6 +600,17 @@ export const VehicleViewer360Enhanced: React.FC<VehicleViewer360Props> = ({
         </div>
       )}
 
+      {/* Enhanced Hotspot Panel */}
+      <AnimatePresence>
+        {selectedHotspotPanel && (
+          <EnhancedHotspotPanel
+            hotspot={selectedHotspotPanel}
+            onClose={() => setSelectedHotspotPanel(null)}
+            isDarkTheme={false}
+          />
+        )}
+      </AnimatePresence>
+
       {/* Vehicle info overlay (compare mode) */}
       {isCompare && (
         <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 to-transparent p-4 text-white">
@@ -579,8 +631,13 @@ export const VehicleViewer360Enhanced: React.FC<VehicleViewer360Props> = ({
         isFullscreen ? 'fixed inset-0 z-50 rounded-none' : ''
       }`}
     >
-      {/* Header */}
-      <div className="bg-gradient-to-r from-blue-600 via-blue-700 to-indigo-800 p-4 md:p-6">
+      {/* Header - Dynamic Theme */}
+      <div 
+        className="p-4 md:p-6 text-white"
+        style={{
+          background: `linear-gradient(135deg, ${accentColor}dd 0%, ${accentColor}99 50%, ${accentColor}66 100%)`
+        }}
+      >
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
           {/* Vehicle Selector */}
           <div className="flex items-center gap-4">
@@ -688,7 +745,23 @@ export const VehicleViewer360Enhanced: React.FC<VehicleViewer360Props> = ({
           </div>
 
           {/* Color Switcher */}
-          {viewMode === 'exterior' && selectedVehicle.colors.length > 1 && (
+          {/* Color Customizer Button */}
+          {viewMode === 'exterior' && (
+            <button
+              onClick={() => setShowColorCustomizer(!showColorCustomizer)}
+              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-medium transition-all ${
+                showColorCustomizer
+                  ? 'bg-gradient-to-r from-blue-600 to-purple-600 text-white'
+                  : 'bg-gray-200 dark:bg-gray-700 text-gray-600 dark:text-gray-300 hover:bg-gray-300'
+              }`}
+              title="Open Color Customizer"
+            >
+              <Palette className="w-4 h-4" />
+              Customize
+            </button>
+          )}
+
+          {viewMode === 'exterior' && selectedVehicle.colors.length > 1 && !showColorCustomizer && (
             <div className="flex items-center gap-2 px-3 py-1.5 bg-gray-200 dark:bg-gray-700 rounded-lg">
               <Palette className="w-4 h-4 text-gray-600 dark:text-gray-300" />
               <div className="flex gap-1.5">
@@ -864,78 +937,139 @@ export const VehicleViewer360Enhanced: React.FC<VehicleViewer360Props> = ({
         )}
       </AnimatePresence>
 
-      {/* Main Viewer Area */}
+      {/* Main Viewer Area - Dynamic Theme Background */}
       <div 
-        className={`relative bg-gradient-to-br from-gray-100 via-gray-50 to-gray-100 dark:from-gray-800 dark:via-gray-850 dark:to-gray-900 ${
-          isFullscreen ? 'h-[calc(100vh-200px)]' : 'h-[400px] md:h-[500px]'
+        className={`relative flex-1 overflow-visible ${
+          isFullscreen ? 'h-[calc(100vh-200px)]' : 'h-[400px] md:h-[500px] lg:h-[600px]'
         }`}
+        style={{
+          background: viewerGradient
+        }}
       >
-        <div className="absolute inset-0 flex">
-          {/* Main viewer */}
-          {renderViewer(selectedVehicle)}
-
-          {/* Compare viewer */}
-          {isCompareMode && compareVehicle && (
-            <>
-              <div className="w-px bg-gray-300 dark:bg-gray-600" />
-              {renderViewer(compareVehicle, true)}
-            </>
-          )}
-        </div>
-
-        {/* Rotation indicator */}
-        <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex items-center gap-2 bg-white/90 dark:bg-gray-800/90 px-4 py-2 rounded-full shadow-lg">
-          <ChevronLeft className="w-4 h-4 text-gray-500" />
-          <span className="text-sm text-gray-700 dark:text-gray-300 font-medium">
-            {Math.round(rotation % 360)}°
-          </span>
-          <ChevronRight className="w-4 h-4 text-gray-500" />
-        </div>
-
-        {/* Keyboard hints */}
-        <div className="absolute bottom-4 right-4 hidden md:flex gap-2">
-          <span className="px-2 py-1 bg-white/80 dark:bg-gray-800/80 text-xs text-gray-600 dark:text-gray-400 rounded">
-            ← → Rotate
-          </span>
-          <span className="px-2 py-1 bg-white/80 dark:bg-gray-800/80 text-xs text-gray-600 dark:text-gray-400 rounded">
-            +/- Zoom
-          </span>
-          <span className="px-2 py-1 bg-white/80 dark:bg-gray-800/80 text-xs text-gray-600 dark:text-gray-400 rounded">
-            Space Auto
-          </span>
-        </div>
-      </div>
-
-      {/* Footer with specs */}
-      <div className="bg-gray-50 dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700 p-4">
-        <div className="flex flex-wrap items-center justify-between gap-4">
-          <div className="flex flex-wrap gap-4">
-            <div>
-              <p className="text-xs text-gray-500 dark:text-gray-400">Price</p>
-              <p className="font-bold text-gray-900 dark:text-white">{selectedVehicle.price}</p>
+        {showColorCustomizer && (
+          <motion.div
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="absolute inset-0 bg-white/95 z-40 overflow-y-auto rounded-lg"
+          >
+            <button
+              onClick={() => setShowColorCustomizer(false)}
+              className="absolute top-4 right-4 p-2 bg-gray-200 hover:bg-gray-300 rounded-lg z-50"
+            >
+              <X className="w-5 h-5" />
+            </button>
+            <div className="p-6">
+              <VehicleColorCustomizer
+                vehicleImage={getCurrentImage(selectedVehicle)}
+                isDarkTheme={false}
+              />
             </div>
-            <div>
-              <p className="text-xs text-gray-500 dark:text-gray-400">Type</p>
-              <p className="font-medium text-gray-700 dark:text-gray-300">{selectedVehicle.type}</p>
+          </motion.div>
+        )}
+
+        {!showColorCustomizer && (
+          <div className="absolute inset-0 flex flex-col overflow-visible">
+            <div className="flex-1 flex overflow-visible">
+              {/* Main viewer */}
+              {renderViewer(selectedVehicle)}
+
+              {/* Compare viewer */}
+              {isCompareMode && compareVehicle && (
+                <>
+                  <div className="w-px bg-gray-300 dark:bg-gray-600" />
+                  {renderViewer(compareVehicle, true)}
+                </>
+              )}
             </div>
-            <div>
-              <p className="text-xs text-gray-500 dark:text-gray-400">Engine</p>
-              <p className="font-medium text-gray-700 dark:text-gray-300">{selectedVehicle.specs.engine}</p>
+
+            {/* Rotation indicator - Theme-aware */}
+            <div 
+              className="absolute bottom-4 left-1/2 -translate-x-1/2 flex items-center gap-2 px-4 py-2 rounded-full shadow-xl border backdrop-blur-sm"
+              style={{
+                backgroundColor: theme.cardBgLight,
+                borderColor: theme.borderColor,
+                boxShadow: `0 8px 24px ${theme.shadowColor}`
+              }}
+            >
+              <ChevronLeft className="w-4 h-4" style={{ color: accentColor }} />
+              <span className="text-sm font-semibold" style={{ color: accentColor }}>
+                {Math.round(rotation % 360)}°
+              </span>
+              <ChevronRight className="w-4 h-4" style={{ color: accentColor }} />
             </div>
-            <div>
-              <p className="text-xs text-gray-500 dark:text-gray-400">Power</p>
-              <p className="font-medium text-gray-700 dark:text-gray-300">{selectedVehicle.specs.hp}</p>
-            </div>
-            <div>
-              <p className="text-xs text-gray-500 dark:text-gray-400">Transmission</p>
-              <p className="font-medium text-gray-700 dark:text-gray-300">{selectedVehicle.specs.transmission}</p>
+
+            {/* Keyboard hints - Theme-aware */}
+            <div className="absolute bottom-4 right-4 hidden md:flex gap-2">
+              {['← → Rotate', '+/- Zoom', 'Space Auto'].map((hint, idx) => (
+                <span 
+                  key={idx}
+                  className="px-3 py-1.5 text-xs font-medium rounded-lg backdrop-blur-sm border"
+                  style={{
+                    backgroundColor: theme.cardBgLight,
+                    borderColor: theme.borderColor,
+                    color: accentColor
+                  }}
+                >
+                  {hint}
+                </span>
+              ))}
             </div>
           </div>
+        )}
+      </div>
+
+      {/* Footer with specs - Enhanced card patterns */}
+      <div 
+        className="border-t p-4 md:p-6"
+        style={{
+          backgroundColor: theme.cardBgLight,
+          borderColor: theme.borderColor
+        }}
+      >
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
+          {/* Spec cards grid */}
+          <div className="grid grid-cols-2 md:grid-cols-5 gap-3 flex-1">
+            {[
+              { label: 'Price', value: selectedVehicle.price, icon: '💰' },
+              { label: 'Type', value: selectedVehicle.type, icon: '🚗' },
+              { label: 'Engine', value: selectedVehicle.specs.engine, icon: '⚙️' },
+              { label: 'Power', value: selectedVehicle.specs.hp, icon: '⚡' },
+              { label: 'Transmission', value: selectedVehicle.specs.transmission, icon: '🔧' }
+            ].map((spec, idx) => (
+              <motion.div
+                key={idx}
+                whileHover={{ scale: 1.02, y: -2 }}
+                className="p-3 rounded-xl border backdrop-blur-sm transition-all"
+                style={{
+                  backgroundColor: isDarkMode ? 'rgba(255,255,255,0.05)' : 'rgba(255,255,255,0.6)',
+                  borderColor: theme.borderColor,
+                  boxShadow: `0 4px 12px ${theme.shadowColor}`
+                }}
+              >
+                <p className="text-lg mb-1">{spec.icon}</p>
+                <p className="text-xs font-medium" style={{ color: theme.accentColor }}>
+                  {spec.label}
+                </p>
+                <p className="font-bold text-xs mt-1 line-clamp-2" style={{ color: accentColor }}>
+                  {spec.value}
+                </p>
+              </motion.div>
+            ))}
+          </div>
+
+          {/* Action button */}
           <motion.button
-            whileHover={{ scale: 1.02 }}
-            whileTap={{ scale: 0.98 }}
-            className="px-6 py-2.5 bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-semibold rounded-xl shadow-lg hover:shadow-xl transition-all"
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            className="px-6 py-3 rounded-xl font-semibold shadow-lg border transition-all flex items-center gap-2 whitespace-nowrap"
+            style={{
+              backgroundColor: accentColor,
+              color: isDarkMode ? '#000' : '#fff',
+              borderColor: accentColor,
+              boxShadow: `0 8px 20px ${accentColor}40`
+            }}
           >
+            <Sparkles className="w-4 h-4" />
             View Full Details
           </motion.button>
         </div>

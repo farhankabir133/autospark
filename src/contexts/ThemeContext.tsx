@@ -27,11 +27,8 @@ export const ThemeProvider = ({ children }: ThemeProviderProps) => {
     if (stored === 'dark' || stored === 'light') {
       return stored;
     }
-    // Check system preference
-    if (typeof window !== 'undefined' && window.matchMedia) {
-      return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
-    }
-    return 'light';
+    // Default to dark mode for all first-time visitors
+    return 'dark';
   });
 
   useEffect(() => {

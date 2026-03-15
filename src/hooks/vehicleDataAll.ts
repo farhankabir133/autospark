@@ -56,7 +56,7 @@ export const ALL_VEHICLES: Vehicle[] = [
     created_at: new Date().toISOString(),
     updated_at: new Date().toISOString(),
     images: [
-      { id: '8-1', vehicle_id: '8', image_url: 'https://images.pexels.com/photos/35509100/pexels-photo-35509100.png?auto=compress&cs=tinysrgb&w=600', display_order: 1, is_primary: true, created_at: new Date().toISOString() }
+  { id: '8-1', vehicle_id: '8', image_url: 'https://images.pexels.com/photos/36581771/pexels-photo-36581771.png', display_order: 1, is_primary: true, created_at: new Date().toISOString() }
     ]
   },
 
@@ -404,7 +404,7 @@ export const ALL_VEHICLES: Vehicle[] = [
     created_at: new Date().toISOString(),
     updated_at: new Date().toISOString(),
     images: [
-      { id: '20-1', vehicle_id: '20', image_url: 'https://images.unsplash.com/photo-1503376780353-7e6692767b70?w=600&h=400&fit=crop', display_order: 1, is_primary: true, created_at: new Date().toISOString() }
+  { id: '20-1', vehicle_id: '20', image_url: 'https://images.pexels.com/photos/36581986/pexels-photo-36581986.png', display_order: 1, is_primary: true, created_at: new Date().toISOString() }
     ]
   },
 
@@ -463,7 +463,7 @@ export const ALL_VEHICLES: Vehicle[] = [
     created_at: new Date().toISOString(),
     updated_at: new Date().toISOString(),
     images: [
-      { id: '2-1', vehicle_id: '2', image_url: 'https://images.pexels.com/photos/3769173/pexels-photo-3769173.jpeg?auto=compress&cs=tinysrgb&w=800', display_order: 1, is_primary: true, created_at: new Date().toISOString() }
+  { id: '2-1', vehicle_id: '2', image_url: 'https://images.pexels.com/photos/36581984/pexels-photo-36581984.png', display_order: 1, is_primary: true, created_at: new Date().toISOString() }
     ]
   },
   {
@@ -490,7 +490,7 @@ export const ALL_VEHICLES: Vehicle[] = [
     created_at: new Date().toISOString(),
     updated_at: new Date().toISOString(),
     images: [
-      { id: '3-1', vehicle_id: '3', image_url: 'https://images.pexels.com/photos/3839293/pexels-photo-3839293.jpeg?auto=compress&cs=tinysrgb&w=800', display_order: 1, is_primary: true, created_at: new Date().toISOString() }
+  { id: '3-1', vehicle_id: '3', image_url: 'https://images.pexels.com/photos/36580897/pexels-photo-36580897.png', display_order: 1, is_primary: true, created_at: new Date().toISOString() }
     ]
   },
   {
@@ -517,7 +517,7 @@ export const ALL_VEHICLES: Vehicle[] = [
     created_at: new Date().toISOString(),
     updated_at: new Date().toISOString(),
     images: [
-      { id: '4-1', vehicle_id: '4', image_url: 'https://images.pexels.com/photos/3807518/pexels-photo-3807518.jpeg?auto=compress&cs=tinysrgb&w=800', display_order: 1, is_primary: true, created_at: new Date().toISOString() }
+  { id: '4-1', vehicle_id: '4', image_url: 'https://images.pexels.com/photos/36580896/pexels-photo-36580896.png', display_order: 1, is_primary: true, created_at: new Date().toISOString() }
     ]
   },
   {
