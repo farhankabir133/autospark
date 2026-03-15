@@ -5,16 +5,15 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Auto Spark BD - Redirecting...</title>
   <script>
-    // SPA redirect for GitHub Pages with infinite loop protection
+    // SPA redirect for GitHub Pages with infinite loop protection (custom domain)
     (function() {
-      var repo = '/autospark';
       var location = window.location;
-      var path = location.pathname.split('/').slice(2).join('/');
+      var path = location.pathname;
       var search = location.search;
       var hash = location.hash;
-      // Prevent infinite loop: only redirect if not already at /?/ or /index.html
-      if (!location.pathname.includes('/?/') && !location.pathname.endsWith('/index.html')) {
-        var redirectUrl = location.protocol + '//' + location.host + repo + '/?/' + path;
+      // Only redirect if not already at /?/ or /index.html
+      if (!path.startsWith('/?/') && !path.endsWith('/index.html')) {
+        var redirectUrl = location.protocol + '//' + location.host + '/?/' + path.replace(/^\//, '');
         if (search) redirectUrl += '&' + search.slice(1);
         if (hash) redirectUrl += hash;
         location.replace(redirectUrl);
