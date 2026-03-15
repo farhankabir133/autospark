@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Auto Spark BD - Redirecting...</title>
+  <script>
+    // SPA redirect for GitHub Pages with infinite loop protection
+    (function() {
+      var repo = '/autospark';
+      var location = window.location;
+      var path = location.pathname.split('/').slice(2).join('/');
+      var search = location.search;
+      var hash = location.hash;
+      // Prevent infinite loop: only redirect if not already at /?/ or /index.html
+      if (!location.pathname.includes('/?/') && !location.pathname.endsWith('/index.html')) {
+        var redirectUrl = location.protocol + '//' + location.host + repo + '/?/' + path;
+        if (search) redirectUrl += '&' + search.slice(1);
+        if (hash) redirectUrl += hash;
+        location.replace(redirectUrl);
+      }
+    })();
+  </script>
+</head>
+<body>
+  <div style="display: flex; justify-content: center; align-items: center; height: 100vh; font-family: system-ui, -apple-system, sans-serif;">
+    <div style="text-align: center;">
+      <h1 style="color: #3b82f6;">Auto Spark BD</h1>
+      <p>Redirecting...</p>
+    </div>
+  </div>
+</body>
+</html>
