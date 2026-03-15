@@ -4,8 +4,8 @@ const CACHE_NAME = 'autospark-v3';
 // Assets to precache on install (only lightweight critical assets)
 // Ferrari GLB + DRACO removed — cached on-demand when 3D scene loads
 const PRECACHE_URLS = [
-  '/',
-  '/logo/aslogo.svg',
+  '/autospark/',
+  '/autospark/logo/aslogo.svg',
 ];
 
 // Cache-first patterns (static assets that rarely change)
@@ -97,7 +97,7 @@ self.addEventListener('fetch', (event) => {
         })
         .catch(() => {
           // If network fails, fall back to cache (site shell)
-          return caches.match('/') || caches.match(event.request) || caches.match('/');
+          return caches.match('/autospark/') || caches.match(event.request) || caches.match('/');
         })
     );
     return;
