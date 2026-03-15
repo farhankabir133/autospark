@@ -102,7 +102,12 @@
 
         // Navigate after fade out
         setTimeout(() => {
-          window.location.href = href;
+          // For SPA, let React Router handle navigation. Optionally, use history.pushState if needed.
+          if (window.ReactRouterNavigate) {
+            window.ReactRouterNavigate(href);
+          } else {
+            window.location.hash = href;
+          }
         }, 300);
       }
     });

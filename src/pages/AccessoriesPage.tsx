@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useMemo, useCallback } from 'react';
+import { Helmet } from 'react-helmet-async';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useTheme } from '../contexts/ThemeContext';
 import { useLanguage } from '../contexts/LanguageContext';
@@ -1826,7 +1827,7 @@ const CountdownTimer: React.FC<{ endDate: Date; isDark: boolean }> = ({ endDate,
         {value.toString().padStart(2, '0')}
       </span>
       <span className={`text-xs ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>{label}</span>
-    </div>
+  </div>
   );
 
   return (
@@ -2269,19 +2270,19 @@ const QuickViewModal: React.FC<{
                 {/* Stock Status */}
                 <div className="flex items-center gap-2">
                   {product.stock_quantity > 0 ? (
-                    <>
+                    <span className="flex items-center gap-2">
                       <Check className="text-green-500" size={18} />
                       <span className={`text-sm ${isDark ? 'text-green-400' : 'text-green-600'}`}>
                         In Stock ({product.stock_quantity} available)
                       </span>
-                    </>
+                    </span>
                   ) : (
-                    <>
+                    <span className="flex items-center gap-2">
                       <X className="text-red-500" size={18} />
                       <span className={`text-sm ${isDark ? 'text-red-400' : 'text-red-600'}`}>
                         Out of Stock
                       </span>
-                    </>
+                    </span>
                   )}
                 </div>
 
@@ -2652,7 +2653,6 @@ const SideCartDrawer: React.FC<{
                   const finalPrice = item.product.discount
                     ? calculateDiscount(item.product.price, item.product.discount)
                     : item.product.price;
-                  
                   return (
                     <motion.div
                       key={item.product.id}
@@ -2795,19 +2795,20 @@ export const AccessoriesPage: React.FC = () => {
     // Search filter with relevance ranking
     if (searchTerm) {
       const term = searchTerm.toLowerCase();
-      // Assign relevance score
-      result = result
+      // Assign relevance score (use intersection type for local _relevanceScore)
+      type ScoredProduct = AccessoryProduct & { _relevanceScore: number };
+      let scored: ScoredProduct[] = result
         .map(p => {
           let score = 0;
           if (p.name_en && p.name_en.toLowerCase().includes(term)) score += 3;
           if (p.name_bn && p.name_bn.toLowerCase().includes(term)) score += 2;
           if (p.description_en && p.description_en.toLowerCase().includes(term)) score += 1;
           return { ...p, _relevanceScore: score };
-        })
-        .filter(p => p._relevanceScore > 0)
+        });
+      scored = scored.filter(p => p._relevanceScore > 0)
         .sort((a, b) => b._relevanceScore - a._relevanceScore);
       // Remove _relevanceScore before returning
-      result = result.map(({ _relevanceScore, ...rest }) => rest);
+      result = scored.map(({ _relevanceScore, ...rest }) => rest as AccessoryProduct);
     }
 
     // Brand filter
@@ -2991,7 +2992,18 @@ export const AccessoriesPage: React.FC = () => {
   ], []);
 
   return (
-    <div className={`min-h-screen pt-16 sm:pt-20 ${isDark ? 'bg-transparent' : 'bg-gray-50'}`}>
+  <div>
+      <Helmet>
+        <title>Car Accessories | Auto Spark BD</title>
+        <meta name="description" content="Shop premium car accessories at Auto Spark BD. Find genuine parts, upgrades, and exclusive deals for your vehicle in Rajshahi and Bangladesh." />
+        <link rel="canonical" href="https://autosparkbd.com/accessories" />
+        <meta property="og:title" content="Car Accessories | Auto Spark BD" />
+        <meta property="og:description" content="Shop premium car accessories at Auto Spark BD. Find genuine parts, upgrades, and exclusive deals for your vehicle in Rajshahi and Bangladesh." />
+        <meta property="og:image" content="https://autosparkbd.com/logo/aslogo.svg" />
+        <meta property="og:type" content="website" />
+        <meta property="og:url" content="https://autosparkbd.com/accessories" />
+      </Helmet>
+      <div className={`min-h-screen pt-16 sm:pt-20 ${isDark ? 'bg-transparent' : 'bg-gray-50'}`}>
       {/* Ultra Premium Hero Section */}
       <section className={`relative min-h-[50vh] sm:min-h-[60vh] lg:min-h-[70vh] flex items-center justify-center overflow-hidden ${
         isDark 
@@ -3835,6 +3847,7 @@ export const AccessoriesPage: React.FC = () => {
 
       {/* Bottom Padding for Cart Bar */}
       {cart.length > 0 && <div className="h-24" />}
+  </div>
     </div>
   );
 };

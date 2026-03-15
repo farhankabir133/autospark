@@ -25,8 +25,8 @@ const PageLoader = () => (
   </div>
 );
 
-// GitHub Pages basename - use '/autospark' in production, '/' in development
-const basename = import.meta.env.BASE_URL;
+// Use root for custom domain deployment
+const basename = '/';
 
 function App() {
   const [showSplash, setShowSplash] = useState(true);

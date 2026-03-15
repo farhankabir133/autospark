@@ -23,16 +23,9 @@ export class ErrorBoundary extends React.Component<React.PropsWithChildren<{}>, 
   }
 
   handleReload = () => {
-    // Try a hard reload which bypasses service worker cache
-    if ('serviceWorker' in navigator) {
-      // Ask service worker to update, then reload
-      navigator.serviceWorker.getRegistrations().then((regs) => {
-        regs.forEach((reg) => reg.update());
-        window.location.reload();
-      }).catch(() => window.location.reload());
-    } else {
-      window.location.reload();
-    }
+    // For SPA, just reset error state. Optionally, show a message or navigate home.
+    this.setState({ hasError: false, error: null });
+    // Optionally, navigate to home: window.location.hash = '/';
   };
 
   render() {
