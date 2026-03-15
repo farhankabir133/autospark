@@ -8,23 +8,30 @@
     // Single Page App redirect for GitHub Pages
     // This script takes the current URL and converts the path to a query string
     // so that the main index.html can handle client-side routing
-      (function() {
-        var location = window.location;
-        var path = location.pathname;
-        var hash = location.hash;
-        // If already on the SPA fallback (/?/...), do NOT redirect again
-        if (path.startsWith('/?/')) {
-          // Already in fallback format, do nothing
-          return;
-        }
-        // Otherwise, redirect to root with path as SPA fallback
-        var cleanPath = path.startsWith('/') ? path.slice(1) : path;
-        var redirectUrl = location.protocol + '//' + location.host + '/?/' + cleanPath;
-        if (hash) {
-          redirectUrl += hash;
-        }
-        location.replace(redirectUrl);
-      })();
+    (function() {
+      var pathSegmentsToKeep = 1; // Keep '/autospark' as the base
+      var location = window.location;
+      var repo = '/autospark';
+      
+      // Get the path after the repo name
+      var path = location.pathname.split('/').slice(pathSegmentsToKeep + 1).join('/');
+      var search = location.search;
+      var hash = location.hash;
+      
+      // Build the redirect URL
+      var redirectUrl = location.protocol + '//' + location.host + repo + '/?/' + path;
+      
+      if (search) {
+        redirectUrl += '&' + search.slice(1);
+      }
+      
+      if (hash) {
+        redirectUrl += hash;
+      }
+      
+      // Redirect to the main page with the path as a query parameter
+      location.replace(redirectUrl);
+    })();
   </script>
 </head>
 <body>
