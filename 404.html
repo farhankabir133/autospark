@@ -5,24 +5,31 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Auto Spark BD - Redirecting...</title>
   <script>
-    // Robust SPA redirect for GitHub Pages (custom domain, infinite loop safe)
+    // Single Page App redirect for GitHub Pages
+    // This script takes the current URL and converts the path to a query string
+    // so that the main index.html can handle client-side routing
     (function() {
+      var pathSegmentsToKeep = 1; // Keep '/autospark' as the base
       var location = window.location;
-      var path = location.pathname;
+      var repo = '/autospark';
+      
+      // Get the path after the repo name
+      var path = location.pathname.split('/').slice(pathSegmentsToKeep + 1).join('/');
       var search = location.search;
       var hash = location.hash;
-
-      // If path already contains /?/ (anywhere), do not redirect
-      if (path.indexOf('/?/') !== -1 || path.endsWith('/index.html')) return;
-
-      // Remove leading slash for clean join
-      var cleanPath = path.replace(/^\//, '');
-
-      // Build redirect URL
-      var redirectUrl = location.protocol + '//' + location.host + '/?/' + cleanPath;
-      if (search) redirectUrl += '&' + search.slice(1);
-      if (hash) redirectUrl += hash;
-
+      
+      // Build the redirect URL
+      var redirectUrl = location.protocol + '//' + location.host + repo + '/?/' + path;
+      
+      if (search) {
+        redirectUrl += '&' + search.slice(1);
+      }
+      
+      if (hash) {
+        redirectUrl += hash;
+      }
+      
+      // Redirect to the main page with the path as a query parameter
       location.replace(redirectUrl);
     })();
   </script>
