@@ -56,7 +56,7 @@ export const ALL_VEHICLES: Vehicle[] = [
     created_at: new Date().toISOString(),
     updated_at: new Date().toISOString(),
     images: [
-      { id: '8-1', vehicle_id: '8', image_url: 'https://images.pexels.com/photos/35509100/pexels-photo-35509100.png?auto=compress&cs=tinysrgb&w=600', display_order: 1, is_primary: true, created_at: new Date().toISOString() }
+      { id: '8-1', vehicle_id: '8', image_url: 'https://res.cloudinary.com/dnogrvbsf/image/upload/v1717432322/autospark/toyota-corolla-cross-2024-blue.jpg', display_order: 1, is_primary: true, created_at: new Date().toISOString() }
     ]
   },
 
@@ -490,7 +490,7 @@ export const ALL_VEHICLES: Vehicle[] = [
     created_at: new Date().toISOString(),
     updated_at: new Date().toISOString(),
     images: [
-      { id: '3-1', vehicle_id: '3', image_url: 'https://images.pexels.com/photos/3839293/pexels-photo-3839293.jpeg?auto=compress&cs=tinysrgb&w=800', display_order: 1, is_primary: true, created_at: new Date().toISOString() }
+  { id: '3-1', vehicle_id: '3', image_url: 'https://res.cloudinary.com/dnogrvbsf/image/upload/v1717432322/autospark/toyota-corolla-cross-2023-silver.jpg', display_order: 1, is_primary: true, created_at: new Date().toISOString() }
     ]
   },
   {
@@ -517,7 +517,8 @@ export const ALL_VEHICLES: Vehicle[] = [
     created_at: new Date().toISOString(),
     updated_at: new Date().toISOString(),
     images: [
-  { id: '4-1', vehicle_id: '4', image_url: 'https://res.cloudinary.com/dnogrvbsf/image/upload/v1717432322/autospark/honda-crv-2023-black.jpg', display_order: 1, is_primary: true, created_at: new Date().toISOString() }
+  { id: '4-1', vehicle_id: '4', image_url: 'https://res.cloudinary.com/dnogrvbsf/image/upload/v1717432322/autospark/honda-crv-2023-black.jpg', display_order: 1, is_primary: true, created_at: new Date().toISOString() },
+  { id: '4-2', vehicle_id: '4', image_url: 'https://res.cloudinary.com/dnogrvbsf/image/upload/v1717432322/autospark/honda-crv-2023-white.jpg', display_order: 2, is_primary: false, created_at: new Date().toISOString() }
     ]
   },
   {
