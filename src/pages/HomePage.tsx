@@ -32,7 +32,6 @@
         </div>
       </section>
 import { FluidHeader } from '../components/FluidHeader';
-import { Helmet } from 'react-helmet-async';
 import { ResponsiveCarImage } from '../components/ResponsiveCarImage';
 import { useEffect, useState, useRef, lazy, Suspense } from 'react';
 import { Link } from 'react-router-dom';
@@ -358,31 +357,46 @@ export const HomePage = () => {
   };
 
   return (
-    <>
-      <Helmet>
-        <title>Auto Spark BD - Exclusive Cars in Rajshahi | Premium Car Dealership</title>
-        <meta name="description" content="North Bengal's leading premium car showroom in Rajshahi. Browse exclusive luxury vehicles, expert service center, and genuine accessories. Your trusted car dealer since 2014." />
-        <link rel="canonical" href="https://autosparkbd.com/" />
-        <meta property="og:title" content="Auto Spark BD - Exclusive Cars in Rajshahi" />
-        <meta property="og:description" content="North Bengal's leading premium car showroom. Exclusive luxury vehicles and expert service." />
-        <meta property="og:image" content="https://autosparkbd.com/logo/aslogo.svg" />
-        <meta property="og:type" content="website" />
-        <meta property="og:url" content="https://autosparkbd.com/" />
-      </Helmet>
-      <MotionConfig reducedMotion="user">
-        <motion.div
-          className={`min-h-screen ${theme === 'dark' ? 'bg-[#0a0a0a]' : 'bg-gray-50'}`}
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-          transition={{ duration: 0.5 }}
-        >
-          {/* ...existing JSX content for the page... */}
-          {/* HERO SECTION WITH 3D CAR SHOWCASE, all sections, etc. */}
-          {/* The rest of the HomePage JSX remains unchanged and is inside this fragment */}
-        </motion.div>
-      </MotionConfig>
-    </>
+    <MotionConfig reducedMotion="user">
+      <motion.div
+      className={`min-h-screen ${theme === 'dark' ? 'bg-[#0a0a0a]' : 'bg-gray-50'}`}
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      transition={{ duration: 0.5 }}
+    >
+      {/* HERO SECTION WITH 3D CAR SHOWCASE */}
+      <section className="relative h-dvh overflow-hidden">
+        {/* 3D Car Showcase - Interactive Experience */}
+        <Suspense fallback={<CarShowcase3DFallback />}>
+          <CarShowcase3D
+            ctaButtons={
+              <motion.div 
+                className="flex flex-row gap-2 sm:gap-3 justify-center"
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.8, delay: 1 }}
+              >
+                <Link to="/inventory">
+                  <Button size="sm" className="text-xs sm:text-sm md:text-base md:px-6 md:py-3">
+                    {t('hero.browse')}
+                    <ArrowRight className="ml-1.5 h-3.5 w-3.5 md:h-5 md:w-5" />
+                  </Button>
+                </Link>
+                <Link to="/services">
+                  <Button size="sm" variant="outline" className="text-xs sm:text-sm md:text-base md:px-6 md:py-3 bg-white/10 backdrop-blur-sm border-white text-white hover:bg-white">
+                    {t('hero.book_service')}
+                  </Button>
+                </Link>
+                <Link to="/sell">
+                  <Button size="sm" variant="secondary" className="text-xs sm:text-sm md:text-base md:px-6 md:py-3">
+                    {t('hero.sell')}
+                  </Button>
+                </Link>
+              </motion.div>
+            }
+          />
+        </Suspense>
 
         {/* Scroll hint — desktop only */}
         <motion.button

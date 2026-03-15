@@ -3,9 +3,9 @@
   <head>
     <meta charset="UTF-8" />
     <!-- Favicon - using aslogo.svg for browser tab/URL bar icon -->
-  <link rel="icon" type="image/svg+xml" href="logo/aslogo.svg" />
-  <link rel="apple-touch-icon" href="logo/aslogo.svg" />
-  <link rel="shortcut icon" href="logo/aslogo.svg" type="image/svg+xml" />
+  <link rel="icon" type="image/svg+xml" href="./logo/aslogo.svg" />
+  <link rel="apple-touch-icon" href="./logo/aslogo.svg" />
+  <link rel="shortcut icon" href="./logo/aslogo.svg" type="image/svg+xml" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, maximum-scale=5" />
     <title>Auto Spark BD - Exclusive Cars in Rajshahi | Premium Car Dealership</title>
     <meta name="description" content="North Bengal's leading premium car showroom in Rajshahi. Browse exclusive luxury vehicles, expert service center, and genuine accessories. Your trusted car dealer since 2014." />
@@ -37,7 +37,7 @@
     <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap" /></noscript>
     
     <!-- Preload LCP-critical assets -->
-  <link rel="preload" href="logo/aslogo.svg" as="image" type="image/svg+xml" />
+  <link rel="preload" href="./logo/aslogo.svg" as="image" type="image/svg+xml" />
     
     <!-- Critical CSS for above-the-fold content -->
     <style>
@@ -84,7 +84,7 @@
     <!-- Skip to content link for accessibility (keyboard nav) -->
     <a href="#main-content" class="skip-link">Skip to content</a>
     <div id="root"></div>
-  <!-- Vite injects the correct script automatically during build -->
+    <script type="module" src="/src/main.tsx" fetchpriority="high"></script>
     
     <!-- Unicorn Studio — desktop only (≥768px), non-blocking -->
     <script defer>

@@ -20,7 +20,7 @@ requestAnimationFrame(() => {
 if ('serviceWorker' in navigator && import.meta.env.PROD) {
   window.addEventListener('load', () => {
     navigator.serviceWorker
-      .register('./sw.js?v=1.0', { scope: './' })
+  .register('/sw.js', { scope: '/' })
       .catch(() => {/* SW registration failed — non-critical */});
   });
 }

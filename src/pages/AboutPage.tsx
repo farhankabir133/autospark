@@ -79,7 +79,6 @@ import { useTheme } from '../contexts/ThemeContext';
 import { Card } from '../components/ui/Card';
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
-import { Helmet } from 'react-helmet-async';
 
 export const AboutPage = () => {
   // Showroom and Service Center Details
@@ -219,97 +218,86 @@ export const AboutPage = () => {
   };
 
   return (
-    <>
-      <Helmet>
-        <title>About Auto Spark BD | Our Story & Values</title>
-        <meta name="description" content="Learn about Auto Spark BD, Rajshahi's leading premium car dealership. Discover our story, values, and commitment to excellence in Bangladesh's automotive market." />
-        <link rel="canonical" href="https://autosparkbd.com/about" />
-        <meta property="og:title" content="About Auto Spark BD | Our Story & Values" />
-        <meta property="og:description" content="Learn about Auto Spark BD, Rajshahi's leading premium car dealership. Discover our story, values, and commitment to excellence in Bangladesh's automotive market." />
-        <meta property="og:image" content="https://autosparkbd.com/logo/aslogo.svg" />
-        <meta property="og:type" content="website" />
-        <meta property="og:url" content="https://autosparkbd.com/about" />
-      </Helmet>
-      <div>
-        <section className="container mx-auto px-4 py-8">
-          <h2 className="text-2xl font-bold mb-8 text-center">Showroom & Service Center Details</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            {/* Showroom Card */}
-            <Card className="p-6 flex flex-col items-center text-center shadow-lg bg-white dark:bg-gray-900">
-              <img src={showroom.logo} alt="Showroom Logo" className="h-16 w-16 mb-4" />
-              <h3 className="text-xl font-bold text-[#C00000] mb-2">{showroom.name}</h3>
-              <div className="text-sm text-gray-700 dark:text-gray-300 mb-2">{showroom.address}</div>
-              <div className="text-xs text-gray-500 mb-2">{showroom.city}</div>
-              <div className="flex flex-wrap gap-2 justify-center mb-2">
-                <a href={`tel:${showroom.phone}`} className="text-xs underline text-blue-600">{showroom.phone}</a>
-                <a href={`mailto:${showroom.email}`} className="text-xs underline text-blue-600">{showroom.email}</a>
-                <a href={`https://${showroom.website}`} className="text-xs underline text-blue-600">{showroom.website}</a>
-              </div>
-              <div className="flex gap-4 mb-2">
-                <a href="https://www.facebook.com/autosparkbd" target="_blank" rel="noopener noreferrer" className="hover:text-[#FF1A1A]">
-                  <Facebook className="w-6 h-6" />
-                </a>
-                <a href="https://www.instagram.com/autosparkbd" target="_blank" rel="noopener noreferrer" className="hover:text-[#FF1A1A]">
-                  <Instagram className="w-6 h-6" />
-                </a>
-                <a href="https://www.youtube.com/@autosparkbd1131" target="_blank" rel="noopener noreferrer" className="hover:text-[#FF1A1A]">
-                  <Mail className="w-6 h-6" />
-                </a>
-                <a href="https://www.tiktok.com/@auto_spark0" target="_blank" rel="noopener noreferrer" className="hover:text-[#FF1A1A]">
-                  <MapPin className="w-6 h-6" />
-                </a>
-              </div>
-              <div className="flex gap-2 mt-2">
-                <span className="inline-flex items-center px-2 py-1 bg-yellow-100 text-yellow-800 rounded text-xs font-semibold border border-yellow-300">🏆 Award</span>
-                <span className="inline-flex items-center px-2 py-1 bg-blue-100 text-blue-800 rounded text-xs font-semibold border border-blue-300">✔️ Verified</span>
-                <span className="inline-flex items-center px-2 py-1 bg-green-100 text-green-800 rounded text-xs font-semibold border border-green-300">🛡️ Security</span>
-                <span className="inline-flex items-center px-2 py-1 bg-purple-100 text-purple-800 rounded text-xs font-semibold border border-purple-300">📄 Certificate</span>
-              </div>
-            </Card>
-            {/* Service Center Card */}
-            <Card className="p-6 flex flex-col items-center text-center shadow-lg bg-white dark:bg-gray-900">
-              <img src={serviceCenter.logo} alt="Service Center Logo" className="h-16 w-16 mb-4" />
-              <h3 className="text-xl font-bold text-[#C00000] mb-2">{serviceCenter.name}</h3>
-              <div className="text-sm text-gray-700 dark:text-gray-300 mb-2">{serviceCenter.address}</div>
-              <div className="text-xs text-gray-500 mb-2">{serviceCenter.city}</div>
-              <div className="flex gap-4 mb-2">
-                <a href="https://www.facebook.com/autosparkbd" target="_blank" rel="noopener noreferrer" className="hover:text-[#FF1A1A]">
-                  <Facebook className="w-6 h-6" />
-                </a>
-                <a href="https://www.instagram.com/autosparkbd" target="_blank" rel="noopener noreferrer" className="hover:text-[#FF1A1A]">
-                  <Instagram className="w-6 h-6" />
-                </a>
-                <a href="https://www.youtube.com/@autosparkbd1131" target="_blank" rel="noopener noreferrer" className="hover:text-[#FF1A1A]">
-                  <Mail className="w-6 h-6" />
-                </a>
-                <a href="http://www.tiktok.com/@easycareeasylife" target="_blank" rel="noopener noreferrer" className="hover:text-[#FF1A1A]">
-                  <MapPin className="w-6 h-6" />
-                </a>
-              </div>
-              <div className="flex gap-2 mt-2">
-                <span className="inline-flex items-center px-2 py-1 bg-yellow-100 text-yellow-800 rounded text-xs font-semibold border border-yellow-300">🏆 Award</span>
-                <span className="inline-flex items-center px-2 py-1 bg-blue-100 text-blue-800 rounded text-xs font-semibold border border-blue-300">✔️ Verified</span>
-                <span className="inline-flex items-center px-2 py-1 bg-green-100 text-green-800 rounded text-xs font-semibold border border-green-300">🛡️ Security</span>
-                <span className="inline-flex items-center px-2 py-1 bg-purple-100 text-purple-800 rounded text-xs font-semibold border border-purple-300">📄 Certificate</span>
-              </div>
-            </Card>
-          </div>
-        </section>
-        {/* ...existing code... */}
-        <div className={`min-h-screen ${theme === 'dark' ? 'bg-transparent' : 'bg-gray-50'} pt-20`}>
-          {/* Hero Section */}
-          <div className="relative h-[500px] overflow-hidden">
-            {/* Parallax Animated Gradient Background */}
-            <motion.div
-              className="absolute inset-0 z-0 bg-gradient-to-br from-[#C00000]/30 via-[#181818]/60 to-[#FF1A1A]/20 animate-gradientMove"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ duration: 1 }}
-              style={{ backgroundSize: '200% 200%', backgroundPosition: '0% 50%' }}
-              aria-hidden="true"
-            />
-            {/* Floating Interactive Icons with Tooltips */}
-            <div className="absolute inset-0 z-0 pointer-events-none">
+    <div>
+      <section className="container mx-auto px-4 py-8">
+        <h2 className="text-2xl font-bold mb-8 text-center">Showroom & Service Center Details</h2>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+          {/* Showroom Card */}
+          <Card className="p-6 flex flex-col items-center text-center shadow-lg bg-white dark:bg-gray-900">
+            <img src={showroom.logo} alt="Showroom Logo" className="h-16 w-16 mb-4" />
+            <h3 className="text-xl font-bold text-[#C00000] mb-2">{showroom.name}</h3>
+            <div className="text-sm text-gray-700 dark:text-gray-300 mb-2">{showroom.address}</div>
+            <div className="text-xs text-gray-500 mb-2">{showroom.city}</div>
+            <div className="flex flex-wrap gap-2 justify-center mb-2">
+              <a href={`tel:${showroom.phone}`} className="text-xs underline text-blue-600">{showroom.phone}</a>
+              <a href={`mailto:${showroom.email}`} className="text-xs underline text-blue-600">{showroom.email}</a>
+              <a href={`https://${showroom.website}`} className="text-xs underline text-blue-600">{showroom.website}</a>
+            </div>
+            <div className="flex gap-4 mb-2">
+              <a href="https://www.facebook.com/autosparkbd" target="_blank" rel="noopener noreferrer" className="hover:text-[#FF1A1A]">
+                <Facebook className="w-6 h-6" />
+              </a>
+              <a href="https://www.instagram.com/autosparkbd" target="_blank" rel="noopener noreferrer" className="hover:text-[#FF1A1A]">
+                <Instagram className="w-6 h-6" />
+              </a>
+              <a href="https://www.youtube.com/@autosparkbd1131" target="_blank" rel="noopener noreferrer" className="hover:text-[#FF1A1A]">
+                <Mail className="w-6 h-6" />
+              </a>
+              <a href="https://www.tiktok.com/@auto_spark0" target="_blank" rel="noopener noreferrer" className="hover:text-[#FF1A1A]">
+                <MapPin className="w-6 h-6" />
+              </a>
+            </div>
+            <div className="flex gap-2 mt-2">
+              <span className="inline-flex items-center px-2 py-1 bg-yellow-100 text-yellow-800 rounded text-xs font-semibold border border-yellow-300">🏆 Award</span>
+              <span className="inline-flex items-center px-2 py-1 bg-blue-100 text-blue-800 rounded text-xs font-semibold border border-blue-300">✔️ Verified</span>
+              <span className="inline-flex items-center px-2 py-1 bg-green-100 text-green-800 rounded text-xs font-semibold border border-green-300">🛡️ Security</span>
+              <span className="inline-flex items-center px-2 py-1 bg-purple-100 text-purple-800 rounded text-xs font-semibold border border-purple-300">📄 Certificate</span>
+            </div>
+          </Card>
+          {/* Service Center Card */}
+          <Card className="p-6 flex flex-col items-center text-center shadow-lg bg-white dark:bg-gray-900">
+            <img src={serviceCenter.logo} alt="Service Center Logo" className="h-16 w-16 mb-4" />
+            <h3 className="text-xl font-bold text-[#C00000] mb-2">{serviceCenter.name}</h3>
+            <div className="text-sm text-gray-700 dark:text-gray-300 mb-2">{serviceCenter.address}</div>
+            <div className="text-xs text-gray-500 mb-2">{serviceCenter.city}</div>
+            <div className="flex gap-4 mb-2">
+              <a href="https://www.facebook.com/autosparkbd" target="_blank" rel="noopener noreferrer" className="hover:text-[#FF1A1A]">
+                <Facebook className="w-6 h-6" />
+              </a>
+              <a href="https://www.instagram.com/autosparkbd" target="_blank" rel="noopener noreferrer" className="hover:text-[#FF1A1A]">
+                <Instagram className="w-6 h-6" />
+              </a>
+              <a href="https://www.youtube.com/@autosparkbd1131" target="_blank" rel="noopener noreferrer" className="hover:text-[#FF1A1A]">
+                <Mail className="w-6 h-6" />
+              </a>
+              <a href="http://www.tiktok.com/@easycareeasylife" target="_blank" rel="noopener noreferrer" className="hover:text-[#FF1A1A]">
+                <MapPin className="w-6 h-6" />
+              </a>
+            </div>
+            <div className="flex gap-2 mt-2">
+              <span className="inline-flex items-center px-2 py-1 bg-yellow-100 text-yellow-800 rounded text-xs font-semibold border border-yellow-300">🏆 Award</span>
+              <span className="inline-flex items-center px-2 py-1 bg-blue-100 text-blue-800 rounded text-xs font-semibold border border-blue-300">✔️ Verified</span>
+              <span className="inline-flex items-center px-2 py-1 bg-green-100 text-green-800 rounded text-xs font-semibold border border-green-300">🛡️ Security</span>
+              <span className="inline-flex items-center px-2 py-1 bg-purple-100 text-purple-800 rounded text-xs font-semibold border border-purple-300">📄 Certificate</span>
+            </div>
+          </Card>
+        </div>
+      </section>
+      {/* ...existing code... */}
+      <div className={`min-h-screen ${theme === 'dark' ? 'bg-transparent' : 'bg-gray-50'} pt-20`}>
+        {/* Hero Section */}
+        <div className="relative h-[500px] overflow-hidden">
+          {/* Parallax Animated Gradient Background */}
+          <motion.div
+            className="absolute inset-0 z-0 bg-gradient-to-br from-[#C00000]/30 via-[#181818]/60 to-[#FF1A1A]/20 animate-gradientMove"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 1 }}
+            style={{ backgroundSize: '200% 200%', backgroundPosition: '0% 50%' }}
+            aria-hidden="true"
+          />
+          {/* Floating Interactive Icons with Tooltips */}
+          <div className="absolute inset-0 z-0 pointer-events-none">
             <motion.button
               className="absolute left-10 top-16 focus:outline-none"
               animate={{ y: [0, -20, 0], scale: [1, 1.1, 1] }}
@@ -1092,6 +1080,5 @@ export const AboutPage = () => {
     </div>
     {/* Close main parent div */}
   </div>
-      </>
   );
 };

@@ -102,12 +102,7 @@
 
         // Navigate after fade out
         setTimeout(() => {
-          // For SPA, let React Router handle navigation. Optionally, use history.pushState if needed.
-          if (window.ReactRouterNavigate) {
-            window.ReactRouterNavigate(href);
-          } else {
-            window.location.hash = href;
-          }
+          // window.location.href = href; // Disabled to prevent unwanted redirects
         }, 300);
       }
     });
@@ -122,11 +117,11 @@
    */
   function initNavigationLinks() {
     const links = document.querySelectorAll('.nav-link');
-    const currentPath = window.location.pathname;
+  const currentPath = location.pathname;
 
     links.forEach(link => {
       const href = link.getAttribute('href');
-      if (href === currentPath || href === window.location.pathname + '/') {
+  if (href === currentPath || href === currentPath + '/') {
         link.classList.add('active');
       } else {
         link.classList.remove('active');
@@ -329,9 +324,11 @@
    * Log performance metrics
    */
   function logPerformanceMetrics() {
-    if (window.location.hostname !== 'localhost' && !window.location.hostname.includes('127.0.0.1')) {
-      return; // Only log on localhost
-    }
+
+  // Only log on localhost
+  if (window.location.hostname !== 'localhost' && !window.location.hostname.includes('127.0.0.1')) {
+    return;
+  }
 
     if (window.performance && window.performance.timing) {
       window.addEventListener('load', () => {
