@@ -15,7 +15,10 @@ interface ResponsiveCarImageProps {
 export const ResponsiveCarImage: React.FC<ResponsiveCarImageProps> = ({ alt, images, className }) => (
   <picture>
     {images.avif && <source srcSet={images.avif} type="image/avif" />}
-    <source srcSet={images.webp} type="image/webp" />
+    {/* Only add .webp source if the fallback is not a .png (since .webp may not exist for provided PNGs) */}
+    {!images.fallback.endsWith('.png') && (
+      <source srcSet={images.webp} type="image/webp" />
+    )}
     <img
       src={images.fallback}
       alt={alt}

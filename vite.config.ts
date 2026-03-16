@@ -19,8 +19,8 @@ export default defineConfig({
       ext: '.br',
     }),
   ],
-  // Custom domain deployment - use root
-  base: '/',
+  // Custom domain deployment - use relative base for GitHub Pages root
+  base: './',
   build: {
     outDir: 'dist',
     sourcemap: false,
