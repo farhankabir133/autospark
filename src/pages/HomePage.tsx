@@ -62,14 +62,15 @@ import { FilterAnimations } from '../components/FilterAnimations';
 import { FloatingParticlesBackground } from '../components/FloatingParticlesBackground';
 import { UnicornBackground } from '../components/UnicornBackground';
 import { EnhancedFlipCard } from '../components/EnhancedFlipCard';
-import { VehicleCardWithBadges } from '../components/VehicleCardWithBadges';
+// import { VehicleCardWithBadges } from '../components/VehicleCardWithBadges';
 import { ComparisonDisplay } from '../components/ComparisonDisplay';
+import FeaturedVehicles from '../components/home/FeaturedVehicles';
 import { InteractiveColorCustomizer } from '../components/InteractiveColorCustomizer';
 import { ComparisonSidebar } from '../components/ComparisonSidebar';
 import { VehicleSpecCardBack } from '../components/VehicleSpecCardBack';
 import { PerformanceGauge } from '../components/PerformanceGauge';
 import { ScrollTriggerCounter } from '../components/ScrollTriggerCounter';
-import { EnhancedSkeleton } from '../components/EnhancedSkeleton';
+// import { EnhancedSkeleton } from '../components/EnhancedSkeleton';
 import { CarouselPlaceholder } from '../components/CarouselPlaceholder';
 import { LazySection } from '../components/LazySection';
 
@@ -241,7 +242,7 @@ export const HomePage = () => {
   const [filteredResultCount, setFilteredResultCount] = useState(450);
   // Artificial loading delays removed — content renders immediately for faster LCP
   const isLoadingImages = false;
-  const isLoadingCards = false;
+  // const isLoadingCards = false;
 
   const carouselRef = useRef<CarFocusCarouselHandle>(null);
   const carouselSectionRef = useRef<HTMLDivElement>(null);
@@ -625,65 +626,7 @@ export const HomePage = () => {
 
           {/* Featured Vehicles Section */}
           {featuredVehicles.length > 0 && (
-            <motion.section 
-              className={`py-8 md:py-12 ${theme === 'dark' ? 'bg-gray-900/80' : 'bg-gray-50'}`}
-              initial={{ opacity: 0 }}
-              whileInView={{ opacity: 1 }}
-              transition={{ duration: 0.6 }}
-              viewport={{ once: true }}
-            >
-              <div className="container mx-auto px-4">
-                <motion.div 
-                  className="text-center mb-8"
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.6 }}
-                  viewport={{ once: true }}
-                >
-                  <h2 className={`text-2xl sm:text-3xl md:text-4xl font-bold mb-4 ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}> 
-                    {language === 'en' ? 'Featured Vehicles' : 'বৈশিষ্ট্যযুক্ত গাড়ি'}
-                  </h2>
-                </motion.div>
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                  {featuredVehicles.map((vehicle, index) => (
-                    <motion.div
-                      key={vehicle.id}
-                      initial={{ opacity: 0, y: 20 }}
-                      whileInView={{ opacity: 1, y: 0 }}
-                      transition={{ duration: 0.6, delay: index * 0.1 }}
-                      viewport={{ once: true }}
-                      whileHover={{ y: -10 }}
-                    >
-                      <Link to={`/vehicle/${vehicle.id}`}>
-                        <Card className={`overflow-hidden cursor-pointer transition-all ${theme === 'dark' ? 'hover:shadow-lg' : 'hover:shadow-xl'}`}>
-                          <div className="relative h-64 overflow-hidden">
-                            <motion.img
-                              src={vehicle.images?.[0]?.image_url || 'https://images.pexels.com/photos/3964962/pexels-photo-3964962.jpeg?auto=compress&cs=tinysrgb&w=400&fm=webp'}
-                              alt={vehicle.model}
-                              className="w-full h-full object-contain"
-                              whileHover={{ scale: 1.15 }}
-                              transition={{ duration: 0.3 }}
-                            />
-                          </div>
-                          <div className="p-6">
-                            <h3 className={`text-xl font-bold mb-2 ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}> 
-                              {language === 'en' ? (vehicle.description_en || vehicle.model) : (vehicle.description_bn || vehicle.model)}
-                            </h3>
-                            <div className={`flex items-center justify-between mb-4 ${theme === 'dark' ? 'text-gray-300' : 'text-gray-600'}`}> 
-                              <span>{vehicle.year}</span>
-                              <span>{formatPrice(vehicle.price)}</span>
-                            </div>
-                            <p className={`text-sm ${theme === 'dark' ? 'text-gray-400' : 'text-gray-500'}`}> 
-                              {language === 'en' ? (vehicle.description_en || '') : (vehicle.description_bn || vehicle.description_en || '')}
-                            </p>
-                          </div>
-                        </Card>
-                      </Link>
-                    </motion.div>
-                  ))}
-                </div>
-              </div>
-            </motion.section>
+            <FeaturedVehicles vehicles={featuredVehicles} theme={theme} />
           )}
 
       {/* FEATURE 13: FILTER/SORT ANIMATIONS */}

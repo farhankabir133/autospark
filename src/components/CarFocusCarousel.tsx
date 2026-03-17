@@ -15,10 +15,10 @@ export const carSlides = [
     tagline: 'Luxury Premium SUV with Advanced Hybrid Technology',
     year: 2024,
     image: 'https://images.pexels.com/photos/35515996/pexels-photo-35515996.png?auto=compress&cs=tinysrgb&w=800',
-    price: '৳ 75,00,000',
-    color: 'Pearl White',
-    features: ['2.5L Hybrid', 'Panoramic Roof', 'JBL Premium Audio'],
-    bodyType: 'Premium SUV',
+    price: '৳ 45,50,000',
+    color: 'Steel Blue',
+    features: ['1.8L Hybrid', 'Toyota Safety Sense', 'Wireless Charging'],
+    bodyType: 'Compact Crossover',
   },
   // TOYOTA - Corolla Cross Z
   {
@@ -147,10 +147,8 @@ export const carSlides = [
     model: 'Prius S',
     title: 'Toyota Prius',
     subtitle: 'S Hybrid Edition',
-    tagline: 'Iconic Hybrid with Exceptional Fuel Efficiency',
     year: 2023,
     image: 'https://images.pexels.com/photos/35516335/pexels-photo-35516335.png?auto=compress&cs=tinysrgb&w=800',
-    price: '৳ 28,50,000',
     color: 'Pearl White',
     features: ['1.5L Hybrid', 'EV Mode', 'Eco Display'],
     bodyType: 'Sedan',
@@ -162,10 +160,8 @@ export const carSlides = [
     model: 'Insight',
     title: 'Honda Insight',
     subtitle: 'Intelligent Hybrid Sedan',
-    tagline: 'Intelligent Engine Technology for the Future',
     year: 2023,
     image: 'https://images.pexels.com/photos/35515950/pexels-photo-35515950.png?auto=compress&cs=tinysrgb&w=800',
-    price: '৳ 42,00,000',
     color: 'Crystal Gray',
     features: ['1.5L Hybrid', 'Honda Sensing', 'Sport Mode'],
     bodyType: 'Sedan',
@@ -177,10 +173,8 @@ export const carSlides = [
     model: 'ES Hybrid',
     title: 'Lexus ES',
     subtitle: 'Luxury Hybrid Sedan',
-    tagline: 'Premium Luxury with Hybrid Excellence',
     year: 2023,
     image: 'https://images.pexels.com/photos/35516542/pexels-photo-35516542.png?auto=compress&cs=tinysrgb&w=800',
-    price: '৳ 28,00,000',
     color: 'Pearl White',
     features: ['2.0L Hybrid', 'Lexus Safety System+', 'Luxury Interior'],
     bodyType: 'Luxury Sedan',
@@ -192,10 +186,8 @@ export const carSlides = [
     model: 'Civic',
     title: 'Honda Civic',
     subtitle: 'Sporty Sedan',
-    tagline: 'Sporty Sedan with Modern Technology',
     year: 2023,
     image: 'https://images.pexels.com/photos/36590735/pexels-photo-36590735.png',
-    price: '৳ 32,00,000',
     color: 'Blue',
     features: ['1.8L VTEC', 'Honda Sensing', 'Apple CarPlay'],
     bodyType: 'Sedan',
@@ -207,10 +199,8 @@ export const carSlides = [
     model: 'CR-V',
     title: 'Honda CR-V',
     subtitle: 'Turbo Family SUV',
-    tagline: 'Reliable Family SUV with Spacious Interior',
     year: 2023,
     image: 'https://images.pexels.com/photos/36580896/pexels-photo-36580896.png',
-    price: '৳ 42,00,000',
     color: 'Black',
     features: ['1.5L Turbo', 'AWD Available', 'Honda Sensing'],
     bodyType: 'Compact SUV',
@@ -252,7 +242,6 @@ const CarFocusCarousel = forwardRef<CarFocusCarouselHandle, CarFocusCarouselProp
       if (index >= 0) {
         setDirection(index > activeIndex ? 1 : -1);
         setActiveIndex(index);
-        setIsAutoPlaying(false);
       }
     },
     goToIndex: (index: number) => {
@@ -518,13 +507,6 @@ const CarFocusCarousel = forwardRef<CarFocusCarouselHandle, CarFocusCarouselProp
             Featured Vehicles
           </span>
         </h2>
-        
-        <p className="text-lg md:text-xl text-gray-400 max-w-2xl mx-auto">
-          Experience luxury, performance, and innovation in our curated selection
-        </p>
-      </motion.div>
-
-      {/* 3D Carousel Container - WIDER */}
       <div 
         className="relative h-[500px] md:h-[600px] lg:h-[700px] mx-auto max-w-[1600px] touch-pan-y"
         style={{ 
@@ -604,47 +586,43 @@ const CarFocusCarousel = forwardRef<CarFocusCarouselHandle, CarFocusCarouselProp
                         : 'bg-gray-800/40 border border-white/5 backdrop-blur-sm'
                     }`}
                   >
-                    {/* Glowing border effect for active card - ENHANCED */}
+                    {/* Animated conic background for active card */}
                     {isActive && (
-                      <div className="absolute inset-0 rounded-3xl overflow-hidden">
-                        {/* Rotating gradient border */}
-                        <motion.div
-                          className="absolute -inset-[2px] opacity-60"
-                          style={{
-                            background: 'conic-gradient(from 0deg, transparent 0%, rgba(59,130,246,0.5) 10%, transparent 20%, rgba(139,92,246,0.5) 30%, transparent 40%, rgba(59,130,246,0.5) 50%, transparent 60%, rgba(236,72,153,0.5) 70%, transparent 80%, rgba(59,130,246,0.5) 90%, transparent 100%)',
-                            borderRadius: '1.5rem',
-                          }}
-                          animate={{
-                            rotate: [0, 360],
-                          }}
-                          transition={{
-                            duration: 8,
-                            repeat: Infinity,
-                            ease: 'linear',
-                          }}
-                        />
-                        {/* Inner mask */}
-                        <div className="absolute inset-[2px] bg-gradient-to-b from-gray-800 to-gray-900 rounded-3xl" />
-                        
-                        {/* Sweeping light effect */}
-                        <motion.div
-                          className="absolute inset-0"
-                          style={{
-                            background: 'linear-gradient(105deg, transparent 20%, rgba(255,255,255,0.15) 45%, rgba(255,255,255,0.25) 50%, rgba(255,255,255,0.15) 55%, transparent 80%)',
-                            backgroundSize: '300% 300%',
-                          }}
-                          animate={{
-                            backgroundPosition: ['-100% 0%', '200% 0%'],
-                          }}
-                          transition={{
-                            duration: 3,
-                            repeat: Infinity,
-                            repeatDelay: 2,
-                            ease: 'easeInOut',
-                          }}
-                        />
-                      </div>
+                      <motion.div
+                        className="absolute inset-0 z-0"
+                        style={{
+                          background: 'conic-gradient(from 0deg, transparent 0%, rgba(59,130,246,0.5) 10%, transparent 20%, rgba(139,92,246,0.5) 30%, transparent 40%, rgba(59,130,246,0.5) 50%, transparent 60%, rgba(236,72,153,0.5) 70%, transparent 80%, rgba(59,130,246,0.5) 90%, transparent 100%)',
+                          borderRadius: '1.5rem',
+                        }}
+                        animate={{
+                          rotate: [0, 360],
+                        }}
+                        transition={{
+                          duration: 8,
+                          repeat: Infinity,
+                          ease: 'linear',
+                        }}
+                      />
                     )}
+                  {/* Inner mask */}
+                  <div className="absolute inset-[2px] bg-gradient-to-b from-gray-800 to-gray-900 rounded-3xl" />
+                  {/* Sweeping light effect */}
+                  <motion.div
+                    className="absolute inset-0"
+                    style={{
+                      background: 'linear-gradient(105deg, transparent 20%, rgba(255,255,255,0.15) 45%, rgba(255,255,255,0.25) 50%, rgba(255,255,255,0.15) 55%, transparent 80%)',
+                      backgroundSize: '300% 300%',
+                    }}
+                    animate={{
+                      backgroundPosition: ['-100% 0%', '200% 0%'],
+                    }}
+                    transition={{
+                      duration: 3,
+                      repeat: Infinity,
+                      repeatDelay: 2,
+                      ease: 'easeInOut',
+                    }}
+                  />
 
                     {/* Car Image Container - TALLER */}
                     <div className="relative h-[200px] md:h-[250px] lg:h-[280px] overflow-hidden">
@@ -661,21 +639,8 @@ const CarFocusCarousel = forwardRef<CarFocusCarouselHandle, CarFocusCarouselProp
                         initial={{ scale: 1.4, x: direction > 0 ? 30 : -30 }}
                         animate={{ 
                           scale: isActive ? 1 : 1.2, 
-                          x: 0,
-                          filter: isActive ? 'brightness(1.05) saturate(1.1)' : 'brightness(0.85) saturate(0.9)'
                         }}
-                        transition={{ duration: 0.8, ease: 'easeOut' }}
                       />
-                      
-                      {/* Animated gradient overlay on hover */}
-                      {isActive && (
-                        <motion.div
-                          className="absolute inset-0 z-10 opacity-0 hover:opacity-100 transition-opacity duration-500"
-                          style={{
-                            background: 'linear-gradient(135deg, transparent 30%, rgba(59,130,246,0.1) 50%, transparent 70%)',
-                          }}
-                        />
-                      )}
 
                       {/* Featured badge */}
                       {isActive && (
@@ -1033,7 +998,8 @@ const CarFocusCarousel = forwardRef<CarFocusCarouselHandle, CarFocusCarouselProp
           }}
         />
       </div>
-    </section>
+    </motion.div>
+  </section>
   );
 });
 

@@ -9,7 +9,7 @@ export const ALL_VEHICLES: Vehicle[] = [
     brand_name: 'Toyota',
     model: 'Harrier Advance Premium',
     year: 2024,
-    price: 7500000,
+    price: 6900000, // Pre-Order Price
     mileage: 0,
     fuel_type: 'Hybrid',
     transmission: 'Automatic',
@@ -38,7 +38,7 @@ export const ALL_VEHICLES: Vehicle[] = [
     brand_name: 'Toyota',
     model: 'Corolla Cross Z',
     year: 2024,
-    price: 4550000,
+    price: 4350000, // Pre-Order Price
     mileage: 0,
     fuel_type: 'Hybrid',
     transmission: 'CVT',
@@ -56,7 +56,35 @@ export const ALL_VEHICLES: Vehicle[] = [
     created_at: new Date().toISOString(),
     updated_at: new Date().toISOString(),
     images: [
-  { id: '8-1', vehicle_id: '8', image_url: 'https://images.pexels.com/photos/36581771/pexels-photo-36581771.png', display_order: 1, is_primary: true, created_at: new Date().toISOString() }
+      { id: '8-1', vehicle_id: '8', image_url: 'https://images.pexels.com/photos/36581771/pexels-photo-36581771.png', display_order: 1, is_primary: true, created_at: new Date().toISOString() }
+    ]
+  },
+  // TOYOTA - Corolla Cross (Inventory Stock #: CCROSS-001)
+  {
+    id: 'inv-ccross-001',
+    stock_number: 'CCROSS-001',
+    brand_name: 'Toyota',
+    model: 'Corolla Cross',
+    year: 2023,
+    price: 4350000, // Pre-Order Price
+    mileage: 3000,
+    fuel_type: 'Hybrid',
+    transmission: 'CVT',
+    engine_capacity: '1.8L Hybrid',
+    color_exterior: 'Steel Blue',
+    color_interior: 'Gray Fabric',
+    body_type: 'Compact Crossover',
+    condition: 'New',
+    description_en: 'Inventory unit. Modern compact crossover with advanced hybrid engine and smart features',
+    description_bn: 'ইনভেন্টরি ইউনিট। অত্যাধুনিক হাইব্রিড ইঞ্জিন এবং স্মার্ট বৈশিষ্ট্য সহ আধুনিক কমপ্যাক্ট ক্রসওভার',
+    is_available: true,
+    is_featured: false,
+    video_url: '',
+    view_count: 0,
+    created_at: new Date().toISOString(),
+    updated_at: new Date().toISOString(),
+    images: [
+      { id: 'inv-ccross-001-1', vehicle_id: 'inv-ccross-001', image_url: 'https://images.pexels.com/photos/36581771/pexels-photo-36581771.png', display_order: 1, is_primary: true, created_at: new Date().toISOString() }
     ]
   },
 
@@ -67,7 +95,7 @@ export const ALL_VEHICLES: Vehicle[] = [
     brand_name: 'Toyota',
     model: 'Crown RS',
     year: 2024,
-    price: 7000000,
+    price: 7300000, // Pre-Order Price
     mileage: 0,
     fuel_type: 'Hybrid',
     transmission: 'Automatic',
@@ -96,7 +124,7 @@ export const ALL_VEHICLES: Vehicle[] = [
     brand_name: 'Toyota',
     model: 'Premio F-EX',
     year: 2023,
-    price: 4000000,
+    price: 4350000, // Pre-Order Price
     mileage: 2000,
     fuel_type: 'Hybrid',
     transmission: 'CVT',
@@ -125,7 +153,7 @@ export const ALL_VEHICLES: Vehicle[] = [
     brand_name: 'Toyota',
     model: 'Noah Si WxB',
     year: 2023,
-    price: 3800000,
+    price: 3050000, // Pre-Order Price
     mileage: 3000,
     fuel_type: 'Hybrid',
     transmission: 'CVT',
@@ -154,7 +182,7 @@ export const ALL_VEHICLES: Vehicle[] = [
     brand_name: 'Toyota',
     model: 'C-HR G-LED',
     year: 2023,
-    price: 3550000,
+    price: 3050000, // Pre-Order Price
     mileage: 1000,
     fuel_type: 'Hybrid',
     transmission: 'CVT',
@@ -183,7 +211,7 @@ export const ALL_VEHICLES: Vehicle[] = [
     brand_name: 'Toyota',
     model: 'Yaris Cross Z',
     year: 2023,
-    price: 3550000,
+    price: 3050000, // Pre-Order Price
     mileage: 2500,
     fuel_type: 'Hybrid',
     transmission: 'CVT',
@@ -212,7 +240,7 @@ export const ALL_VEHICLES: Vehicle[] = [
     brand_name: 'Toyota',
     model: 'Axio WxB',
     year: 2023,
-    price: 3000000,
+    price: 2250000, // Pre-Order Price
     mileage: 1500,
     fuel_type: 'Hybrid',
     transmission: 'CVT',
@@ -241,7 +269,7 @@ export const ALL_VEHICLES: Vehicle[] = [
     brand_name: 'Toyota',
     model: 'Prius S',
     year: 2023,
-    price: 2850000,
+    price: 2950000, // Pre-Order Price
     mileage: 2000,
     fuel_type: 'Hybrid',
     transmission: 'CVT',
@@ -270,7 +298,7 @@ export const ALL_VEHICLES: Vehicle[] = [
     brand_name: 'Toyota',
     model: 'Prado',
     year: 2024,
-    price: 8500000,
+    price: 13800000, // Pre-Order Price
     mileage: 0,
     fuel_type: 'Petrol',
     transmission: 'Automatic',
@@ -299,7 +327,7 @@ export const ALL_VEHICLES: Vehicle[] = [
     brand_name: 'Honda',
     model: 'Insight',
     year: 2023,
-    price: 4200000,
+    price: 3450000, // Pre-Order Price
     mileage: 1000,
     fuel_type: 'Hybrid',
     transmission: 'CVT',
@@ -328,7 +356,7 @@ export const ALL_VEHICLES: Vehicle[] = [
     brand_name: 'Toyota',
     model: 'Lexus',
     year: 2023,
-    price: 2800000,
+    price: 4350000, // Pre-Order Price
     mileage: 3000,
     fuel_type: 'Hybrid',
     transmission: 'Automatic',
@@ -386,7 +414,7 @@ export const ALL_VEHICLES: Vehicle[] = [
     brand_name: 'Nissan',
     model: 'X-Trail',
     year: 2023,
-    price: 3200000,
+    price: 3550000,
     mileage: 1500,
     fuel_type: 'Petrol',
     transmission: 'Automatic',
@@ -472,7 +500,7 @@ export const ALL_VEHICLES: Vehicle[] = [
     brand_name: 'Toyota',
     model: 'Corolla Cross',
     year: 2023,
-    price: 2800000,
+    price: 4350000, // Pre-Order Price
     mileage: 3000,
     fuel_type: 'Hybrid',
     transmission: 'CVT',
@@ -526,7 +554,7 @@ export const ALL_VEHICLES: Vehicle[] = [
     brand_name: 'Toyota',
     model: 'Yaris Cross',
     year: 2023,
-    price: 3800000,
+    price: 3150000, // Pre-Order Price
     mileage: 4500,
     fuel_type: 'Hybrid',
     transmission: 'CVT',
@@ -556,7 +584,7 @@ export const ALL_VEHICLES: Vehicle[] = [
     brand_name: 'Toyota',
     model: 'C-HR',
     year: 2023,
-    price: 4500000,
+    price: 3050000, // Pre-Order Price
     mileage: 6000,
     fuel_type: 'Hybrid',
     transmission: 'CVT',
