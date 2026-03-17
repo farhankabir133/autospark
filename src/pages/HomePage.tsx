@@ -346,25 +346,48 @@ export const HomePage = () => {
   };
 
   const fetchFeaturedVehicles = async () => {
-    const { supabase } = await import('../lib/supabase');
-    const { data } = await supabase
-      .from('vehicles')
-      .select('*, images:vehicle_images(*)')
-      .eq('is_featured', true)
-      .eq('is_available', true)
-      .limit(6);
-    if (data) setFeaturedVehicles(data);
+    try {
+      const { supabase } = await import('../lib/supabase');
+      const { data, error } = await supabase
+        .from('vehicles')
+        .select('*, images:vehicle_images(*)')
+        .eq('is_featured', true)
+        .eq('is_available', true)
+        .limit(6);
+      if (error) {
+        console.warn('fetchFeaturedVehicles supabase error:', error);
+        setFeaturedVehicles([]);
+        return;
+      }
+      if (data) setFeaturedVehicles(data);
+    } catch (err) {
+      // Network or import errors — fail gracefully
+      // eslint-disable-next-line no-console
+      console.warn('fetchFeaturedVehicles failed:', err);
+      setFeaturedVehicles([]);
+    }
   };
 
   const fetchTestimonials = async () => {
-    const { supabase } = await import('../lib/supabase');
-    const { data } = await supabase
-      .from('testimonials')
-      .select('*')
-      .eq('is_approved', true)
-      .eq('is_featured', true)
-      .limit(3);
-    if (data) setTestimonials(data);
+    try {
+      const { supabase } = await import('../lib/supabase');
+      const { data, error } = await supabase
+        .from('testimonials')
+        .select('*')
+        .eq('is_approved', true)
+        .eq('is_featured', true)
+        .limit(3);
+      if (error) {
+        console.warn('fetchTestimonials supabase error:', error);
+        setTestimonials([]);
+        return;
+      }
+      if (data) setTestimonials(data);
+    } catch (err) {
+      // eslint-disable-next-line no-console
+      console.warn('fetchTestimonials failed:', err);
+      setTestimonials([]);
+    }
   };
 
   const handleVehicleSelect = (vehicleId: typeof showcaseVehicle) => {
