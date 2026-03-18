@@ -348,7 +348,7 @@ export const VehicleViewer360Enhanced: React.FC<VehicleViewer360Props> = ({
   const [rotation, setRotation] = useState(0);
   const [zoom, setZoom] = useState(1);
   const [isLoading, setIsLoading] = useState(true);
-  const [activeHotspot, setActiveHotspot] = useState<number | null>(null);
+  const [activeHotspot, _setActiveHotspot] = useState<number | null>(null);
   const [showHotspots, setShowHotspots] = useState(true);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [compareDropdownOpen, setCompareDropdownOpen] = useState(false);
@@ -565,7 +565,7 @@ export const VehicleViewer360Enhanced: React.FC<VehicleViewer360Props> = ({
                     label: hotspot.label,
                     description: hotspot.description,
                     videoUrl: undefined,
-                    specs: hotspot.specs || {
+                    specs: (hotspot as any).specs || {
                       'Material': 'Premium aluminum alloy',
                       'Weight': 'Reduced vs standard',
                       'Durability': 'Weather resistant',

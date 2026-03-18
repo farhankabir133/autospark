@@ -2807,7 +2807,10 @@ export const AccessoriesPage: React.FC = () => {
         .filter(p => p._relevanceScore > 0)
         .sort((a, b) => b._relevanceScore - a._relevanceScore);
       // Remove _relevanceScore before returning
-      result = result.map(({ _relevanceScore, ...rest }) => rest);
+      result = (result as any).map((p: any) => {
+        const { _relevanceScore, ...rest } = p as any;
+        return rest;
+      });
     }
 
     // Brand filter

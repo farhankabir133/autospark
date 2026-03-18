@@ -25,6 +25,25 @@ if ('serviceWorker' in navigator && import.meta.env.PROD) {
   });
 }
 
+// In development, unregister any previously-registered service workers to avoid cached
+// bundles interfering with hot reload / testing. This is intentionally dev-only and
+// won't run in production.
+if ('serviceWorker' in navigator && !import.meta.env.PROD) {
+  window.addEventListener('load', () => {
+    try {
+      navigator.serviceWorker.getRegistrations()
+        .then((registrations) => {
+          registrations.forEach((reg) => {
+            try { reg.unregister(); } catch (e) { /* ignore */ }
+          });
+        })
+        .catch(() => {/* ignore */});
+    } catch (err) {
+      // Ignore — best effort only
+    }
+  });
+}
+
 // Prefetch 3D model only for mid/high-tier devices (not mobile low-tier)
 // Deferred to 'load' event so it never competes with critical resources
 window.addEventListener('load', () => {

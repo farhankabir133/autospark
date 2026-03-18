@@ -6,17 +6,17 @@ import { InteractiveVehicleComparison } from '../components/3d/InteractiveVehicl
 import { VirtualShowroomTour } from '../components/3d/VirtualShowroomTour';
 
 export const VehicleExperiencePage = () => {
-  const { t, language } = useLanguage();
+  const { language } = useLanguage();
   const { theme } = useTheme();
 
   // Map ALL_VEHICLES to InteractiveVehicleComparison format
-  let comparisonVehicles = ALL_VEHICLES.map(v => ({
+  const comparisonVehicles = ALL_VEHICLES.map(v => ({
     id: v.id,
     name: v.model === 'Corolla Cross Z' ? 'Corolla Cross' : v.model,
     brand: v.brand_name,
     image:
       v.images && v.images.length > 0
-        ? v.images[0].image_url
+        ? encodeURI(v.images[0].image_url)
         : (v.model === 'Corolla Cross' && v.price === 2800000)
           ? 'https://images.pexels.com/photos/3839293/pexels-photo-3839293.jpeg?auto=compress&cs=tinysrgb&w=800&h=600&dpr=1'
           : v.model === 'Corolla Cross' || v.model === 'Corolla Cross Z'
@@ -48,7 +48,7 @@ export const VehicleExperiencePage = () => {
         brand: corollaCrossZ.brand_name,
         image:
           corollaCrossZ.images && corollaCrossZ.images.length > 0
-            ? corollaCrossZ.images[0].image_url
+            ? encodeURI(corollaCrossZ.images[0].image_url)
             : 'https://images.pexels.com/photos/35509100/pexels-photo-35509100.png?auto=compress&cs=tinysrgb&w=600',
         price: corollaCrossZ.price,
         specs: {

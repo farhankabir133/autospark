@@ -1,6 +1,12 @@
 export const formatPrice = (price: number, language: 'en' | 'bn' = 'en'): string => {
+  // Always present prices using the BDT symbol (৳).
+  // When language is 'bn' convert digits to Bengali numerals; otherwise use grouping for en.
   const formatted = price.toLocaleString('en-BD');
-  return language === 'bn' ? `৳${formatted}` : `BDT ${formatted}`;
+  if (language === 'bn') {
+    const bengaliDigits = ['০', '১', '২', '৩', '৪', '৫', '৬', '৭', '৮', '৯'];
+    return `৳${formatted.replace(/\d/g, (d) => bengaliDigits[Number(d)])}`;
+  }
+  return `৳${formatted}`;
 };
 
 export const formatNumber = (num: number, language: 'en' | 'bn' = 'en'): string => {

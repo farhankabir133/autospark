@@ -27,7 +27,12 @@ export const ALL_VEHICLES: Vehicle[] = [
     created_at: new Date().toISOString(),
     updated_at: new Date().toISOString(),
     images: [
-      { id: '7-1', vehicle_id: '7', image_url: 'https://images.pexels.com/photos/35515996/pexels-photo-35515996.png?auto=compress&cs=tinysrgb&w=600', display_order: 1, is_primary: true, created_at: new Date().toISOString() }
+      { id: '7-1', vehicle_id: '7', image_url: '/cars/Toyota Harrier/222.webp', display_order: 1, is_primary: true, created_at: new Date().toISOString() },
+      { id: '7-2', vehicle_id: '7', image_url: '/cars/Toyota Harrier/223.webp', display_order: 2, is_primary: false, created_at: new Date().toISOString() },
+      { id: '7-3', vehicle_id: '7', image_url: '/cars/Toyota Harrier/224.webp', display_order: 3, is_primary: false, created_at: new Date().toISOString() },
+      { id: '7-4', vehicle_id: '7', image_url: '/cars/Toyota Harrier/225.webp', display_order: 4, is_primary: false, created_at: new Date().toISOString() },
+      { id: '7-5', vehicle_id: '7', image_url: '/cars/Toyota Harrier/226.webp', display_order: 5, is_primary: false, created_at: new Date().toISOString() },
+      { id: '7-6', vehicle_id: '7', image_url: '/cars/Toyota Harrier/227.webp', display_order: 6, is_primary: false, created_at: new Date().toISOString() }
     ]
   },
 
@@ -56,7 +61,12 @@ export const ALL_VEHICLES: Vehicle[] = [
     created_at: new Date().toISOString(),
     updated_at: new Date().toISOString(),
     images: [
-      { id: '8-1', vehicle_id: '8', image_url: 'https://images.pexels.com/photos/36581771/pexels-photo-36581771.png', display_order: 1, is_primary: true, created_at: new Date().toISOString() }
+      { id: '8-1', vehicle_id: '8', image_url: '/cars/Toyota Corolla Cross/152.webp', display_order: 1, is_primary: true, created_at: new Date().toISOString() },
+      { id: '8-2', vehicle_id: '8', image_url: '/cars/Toyota Corolla Cross/153.webp', display_order: 2, is_primary: false, created_at: new Date().toISOString() },
+      { id: '8-3', vehicle_id: '8', image_url: '/cars/Toyota Corolla Cross/154.webp', display_order: 3, is_primary: false, created_at: new Date().toISOString() },
+      { id: '8-4', vehicle_id: '8', image_url: '/cars/Toyota Corolla Cross/155.webp', display_order: 4, is_primary: false, created_at: new Date().toISOString() },
+      { id: '8-5', vehicle_id: '8', image_url: '/cars/Toyota Corolla Cross/156.webp', display_order: 5, is_primary: false, created_at: new Date().toISOString() },
+      { id: '8-6', vehicle_id: '8', image_url: '/cars/Toyota Corolla Cross/157.webp', display_order: 6, is_primary: false, created_at: new Date().toISOString() }
     ]
   },
   // TOYOTA - Corolla Cross (Inventory Stock #: CCROSS-001)
@@ -113,7 +123,12 @@ export const ALL_VEHICLES: Vehicle[] = [
     created_at: new Date().toISOString(),
     updated_at: new Date().toISOString(),
     images: [
-      { id: '9-1', vehicle_id: '9', image_url: 'https://images.pexels.com/photos/35509198/pexels-photo-35509198.png?auto=compress&cs=tinysrgb&w=600', display_order: 1, is_primary: true, created_at: new Date().toISOString() }
+      { id: '9-1', vehicle_id: '9', image_url: '/cars/Toyota Crown/68.webp', display_order: 1, is_primary: true, created_at: new Date().toISOString() },
+      { id: '9-2', vehicle_id: '9', image_url: '/cars/Toyota Crown/69.webp', display_order: 2, is_primary: false, created_at: new Date().toISOString() },
+      { id: '9-3', vehicle_id: '9', image_url: '/cars/Toyota Crown/70.webp', display_order: 3, is_primary: false, created_at: new Date().toISOString() },
+      { id: '9-4', vehicle_id: '9', image_url: '/cars/Toyota Crown/71.webp', display_order: 4, is_primary: false, created_at: new Date().toISOString() },
+      { id: '9-5', vehicle_id: '9', image_url: '/cars/Toyota Crown/72.webp', display_order: 5, is_primary: false, created_at: new Date().toISOString() },
+      { id: '9-6', vehicle_id: '9', image_url: '/cars/Toyota Crown/73.webp', display_order: 6, is_primary: false, created_at: new Date().toISOString() }
     ]
   },
 
@@ -258,7 +273,12 @@ export const ALL_VEHICLES: Vehicle[] = [
     created_at: new Date().toISOString(),
     updated_at: new Date().toISOString(),
     images: [
-      { id: '14-1', vehicle_id: '14', image_url: 'https://images.pexels.com/photos/35515952/pexels-photo-35515952.png?auto=compress&cs=tinysrgb&w=600', display_order: 1, is_primary: true, created_at: new Date().toISOString() }
+      { id: '14-1', vehicle_id: '14', image_url: '/cars/Toyota Axio/46.webp', display_order: 1, is_primary: true, created_at: new Date().toISOString() },
+      { id: '14-2', vehicle_id: '14', image_url: '/cars/Toyota Axio/47.webp', display_order: 2, is_primary: false, created_at: new Date().toISOString() },
+      { id: '14-3', vehicle_id: '14', image_url: '/cars/Toyota Axio/48.webp', display_order: 3, is_primary: false, created_at: new Date().toISOString() },
+      { id: '14-4', vehicle_id: '14', image_url: '/cars/Toyota Axio/49.webp', display_order: 4, is_primary: false, created_at: new Date().toISOString() },
+      { id: '14-5', vehicle_id: '14', image_url: '/cars/Toyota Axio/50.webp', display_order: 5, is_primary: false, created_at: new Date().toISOString() },
+      { id: '14-6', vehicle_id: '14', image_url: '/cars/Toyota Axio/51.webp', display_order: 6, is_primary: false, created_at: new Date().toISOString() }
     ]
   },
 
@@ -287,7 +307,12 @@ export const ALL_VEHICLES: Vehicle[] = [
     created_at: new Date().toISOString(),
     updated_at: new Date().toISOString(),
     images: [
-      { id: '15-1', vehicle_id: '15', image_url: 'https://images.pexels.com/photos/35516335/pexels-photo-35516335.png?auto=compress&cs=tinysrgb&w=600', display_order: 1, is_primary: true, created_at: new Date().toISOString() }
+      { id: '15-1', vehicle_id: '15', image_url: '/cars/Toyota Prius/141.webp', display_order: 1, is_primary: true, created_at: new Date().toISOString() },
+      { id: '15-2', vehicle_id: '15', image_url: '/cars/Toyota Prius/142.webp', display_order: 2, is_primary: false, created_at: new Date().toISOString() },
+      { id: '15-3', vehicle_id: '15', image_url: '/cars/Toyota Prius/143.webp', display_order: 3, is_primary: false, created_at: new Date().toISOString() },
+      { id: '15-4', vehicle_id: '15', image_url: '/cars/Toyota Prius/144.webp', display_order: 4, is_primary: false, created_at: new Date().toISOString() },
+      { id: '15-5', vehicle_id: '15', image_url: '/cars/Toyota Prius/145.webp', display_order: 5, is_primary: false, created_at: new Date().toISOString() },
+      { id: '15-6', vehicle_id: '15', image_url: '/cars/Toyota Prius/146.webp', display_order: 6, is_primary: false, created_at: new Date().toISOString() }
     ]
   },
 
@@ -378,34 +403,6 @@ export const ALL_VEHICLES: Vehicle[] = [
     ]
   },
 
-  // HYUNDAI - Sonata
-  {
-    id: '19',
-    stock_number: 'SONATA-001',
-    brand_name: 'Hyundai',
-    model: 'Sonata',
-    year: 2023,
-    price: 3500000,
-    mileage: 2000,
-    fuel_type: 'Petrol',
-    transmission: 'Automatic',
-    engine_capacity: '2.0L Turbo',
-    color_exterior: 'Black Pearl',
-    color_interior: 'Black Leather',
-    body_type: 'Sedan',
-    condition: 'New',
-    description_en: 'Sophisticated Hyundai sedan with modern design and features',
-    description_bn: 'আধুনিক ডিজাইন এবং বৈশিষ্ট্য সহ পরিশীলিত হুন্দাই সেডান',
-    is_available: true,
-    is_featured: false,
-    video_url: '',
-    view_count: 0,
-    created_at: new Date().toISOString(),
-    updated_at: new Date().toISOString(),
-    images: [
-      { id: '19-1', vehicle_id: '19', image_url: 'https://images.unsplash.com/photo-1549317661-bd32c8ce0db2?w=600&h=400&fit=crop', display_order: 1, is_primary: true, created_at: new Date().toISOString() }
-    ]
-  },
 
   // NISSAN - X-Trail
   {
@@ -443,7 +440,7 @@ export const ALL_VEHICLES: Vehicle[] = [
     brand_name: 'Toyota',
     model: 'Prado',
     year: 2023,
-    price: 7200000,
+    price: 13800000,
     mileage: 15000,
     fuel_type: 'Petrol',
     transmission: 'Automatic',
@@ -491,7 +488,12 @@ export const ALL_VEHICLES: Vehicle[] = [
     created_at: new Date().toISOString(),
     updated_at: new Date().toISOString(),
     images: [
-  { id: '2-1', vehicle_id: '2', image_url: 'https://images.pexels.com/photos/36581984/pexels-photo-36581984.png', display_order: 1, is_primary: true, created_at: new Date().toISOString() }
+      { id: '2-1', vehicle_id: '2', image_url: '/cars/Honda Civic/129.webp', display_order: 1, is_primary: true, created_at: new Date().toISOString() },
+      { id: '2-2', vehicle_id: '2', image_url: '/cars/Honda Civic/130.webp', display_order: 2, is_primary: false, created_at: new Date().toISOString() },
+      { id: '2-3', vehicle_id: '2', image_url: '/cars/Honda Civic/131.webp', display_order: 3, is_primary: false, created_at: new Date().toISOString() },
+      { id: '2-4', vehicle_id: '2', image_url: '/cars/Honda Civic/132.webp', display_order: 4, is_primary: false, created_at: new Date().toISOString() },
+      { id: '2-5', vehicle_id: '2', image_url: '/cars/Honda Civic/133.webp', display_order: 5, is_primary: false, created_at: new Date().toISOString() },
+      { id: '2-6', vehicle_id: '2', image_url: '/cars/Honda Civic/134.webp', display_order: 6, is_primary: false, created_at: new Date().toISOString() }
     ]
   },
   {
@@ -545,7 +547,12 @@ export const ALL_VEHICLES: Vehicle[] = [
     created_at: new Date().toISOString(),
     updated_at: new Date().toISOString(),
     images: [
-  { id: '4-1', vehicle_id: '4', image_url: 'https://images.pexels.com/photos/36580896/pexels-photo-36580896.png', display_order: 1, is_primary: true, created_at: new Date().toISOString() }
+      { id: '4-1', vehicle_id: '4', image_url: '/cars/Honda C-RV/57.webp', display_order: 1, is_primary: true, created_at: new Date().toISOString() },
+      { id: '4-2', vehicle_id: '4', image_url: '/cars/Honda C-RV/58.webp', display_order: 2, is_primary: false, created_at: new Date().toISOString() },
+      { id: '4-3', vehicle_id: '4', image_url: '/cars/Honda C-RV/59.webp', display_order: 3, is_primary: false, created_at: new Date().toISOString() },
+      { id: '4-4', vehicle_id: '4', image_url: '/cars/Honda C-RV/60.webp', display_order: 4, is_primary: false, created_at: new Date().toISOString() },
+      { id: '4-5', vehicle_id: '4', image_url: '/cars/Honda C-RV/61.webp', display_order: 5, is_primary: false, created_at: new Date().toISOString() },
+      { id: '4-6', vehicle_id: '4', image_url: '/cars/Honda C-RV/62.webp', display_order: 6, is_primary: false, created_at: new Date().toISOString() }
     ]
   },
   {
@@ -602,10 +609,145 @@ export const ALL_VEHICLES: Vehicle[] = [
     created_at: new Date().toISOString(),
     updated_at: new Date().toISOString(),
     images: [
-      { id: '6-1', vehicle_id: '6', image_url: 'https://images.pexels.com/photos/36324034/pexels-photo-36324034.png', display_order: 1, is_primary: true, created_at: new Date().toISOString() },
-      { id: '6-2', vehicle_id: '6', image_url: 'https://images.pexels.com/photos/36324033/pexels-photo-36324033.png', display_order: 2, is_primary: false, created_at: new Date().toISOString() },
-      { id: '6-3', vehicle_id: '6', image_url: 'https://images.pexels.com/photos/36324031/pexels-photo-36324031.png', display_order: 3, is_primary: false, created_at: new Date().toISOString() },
-      { id: '6-4', vehicle_id: '6', image_url: 'https://images.pexels.com/photos/36324032/pexels-photo-36324032.png', display_order: 4, is_primary: false, created_at: new Date().toISOString() },
+      { id: '6-1', vehicle_id: '6', image_url: '/cars/Toyota C-HR/176.webp', display_order: 1, is_primary: true, created_at: new Date().toISOString() },
+      { id: '6-2', vehicle_id: '6', image_url: '/cars/Toyota C-HR/177.webp', display_order: 2, is_primary: false, created_at: new Date().toISOString() },
+      { id: '6-3', vehicle_id: '6', image_url: '/cars/Toyota C-HR/178.webp', display_order: 3, is_primary: false, created_at: new Date().toISOString() },
+      { id: '6-4', vehicle_id: '6', image_url: '/cars/Toyota C-HR/179.webp', display_order: 4, is_primary: false, created_at: new Date().toISOString() },
+      { id: '6-5', vehicle_id: '6', image_url: '/cars/Toyota C-HR/180.webp', display_order: 5, is_primary: false, created_at: new Date().toISOString() },
+      { id: '6-6', vehicle_id: '6', image_url: '/cars/Toyota C-HR/181.webp', display_order: 6, is_primary: false, created_at: new Date().toISOString() }
+    ]
+  }
+  ,
+  // Mazda - Axela (Price on request)
+  {
+    id: 'axela-001',
+    stock_number: 'AXELA-001',
+    brand_name: 'Mazda',
+    model: 'Axela',
+    year: 2020,
+  price: 0,
+    mileage: 45000,
+    fuel_type: 'Petrol',
+    transmission: 'Automatic',
+    engine_capacity: '2.0L',
+    color_exterior: 'Silver',
+    color_interior: 'Gray Fabric',
+    body_type: 'Sedan',
+    condition: 'Used',
+    description_en: 'Mazda Axela in good condition',
+    description_bn: 'ভাল অবস্থার মাজাদা অ্যাক্সেলা',
+    is_available: true,
+    is_featured: false,
+    video_url: '',
+    view_count: 0,
+    created_at: new Date().toISOString(),
+    updated_at: new Date().toISOString(),
+    images: [
+      { id: 'axela-1', vehicle_id: 'axela-001', image_url: '/cars/Mazda Axela/209.webp', display_order: 1, is_primary: true, created_at: new Date().toISOString() },
+      { id: 'axela-2', vehicle_id: 'axela-001', image_url: '/cars/Mazda Axela/210.webp', display_order: 2, is_primary: false, created_at: new Date().toISOString() },
+      { id: 'axela-3', vehicle_id: 'axela-001', image_url: '/cars/Mazda Axela/211.webp', display_order: 3, is_primary: false, created_at: new Date().toISOString() },
+      { id: 'axela-4', vehicle_id: 'axela-001', image_url: '/cars/Mazda Axela/212.webp', display_order: 4, is_primary: false, created_at: new Date().toISOString() },
+      { id: 'axela-5', vehicle_id: 'axela-001', image_url: '/cars/Mazda Axela/213.webp', display_order: 5, is_primary: false, created_at: new Date().toISOString() },
+      { id: 'axela-6', vehicle_id: 'axela-001', image_url: '/cars/Mazda Axela/214.webp', display_order: 6, is_primary: false, created_at: new Date().toISOString() }
+    ]
+  },
+  // TOYOTA - Aqua (Price on request)
+  {
+    id: 'aqua-001',
+    stock_number: 'AQUA-001',
+    brand_name: 'Toyota',
+    model: 'Aqua',
+    year: 2019,
+  price: 0,
+    mileage: 38000,
+    fuel_type: 'Hybrid',
+    transmission: 'Automatic',
+    engine_capacity: '1.5L Hybrid',
+    color_exterior: 'White',
+    color_interior: 'Gray Fabric',
+    body_type: 'Hatchback',
+    condition: 'Used',
+    description_en: 'Toyota Aqua — economical city hybrid',
+    description_bn: 'অর্থনৈতিক সিটি হাইব্রিড',
+    is_available: true,
+    is_featured: false,
+    video_url: '',
+    view_count: 0,
+    created_at: new Date().toISOString(),
+    updated_at: new Date().toISOString(),
+    images: [
+      { id: 'aqua-1', vehicle_id: 'aqua-001', image_url: '/cars/Toyota Aqua/116.webp', display_order: 1, is_primary: true, created_at: new Date().toISOString() },
+      { id: 'aqua-2', vehicle_id: 'aqua-001', image_url: '/cars/Toyota Aqua/117.webp', display_order: 2, is_primary: false, created_at: new Date().toISOString() },
+      { id: 'aqua-3', vehicle_id: 'aqua-001', image_url: '/cars/Toyota Aqua/118.webp', display_order: 3, is_primary: false, created_at: new Date().toISOString() },
+      { id: 'aqua-4', vehicle_id: 'aqua-001', image_url: '/cars/Toyota Aqua/119.webp', display_order: 4, is_primary: false, created_at: new Date().toISOString() },
+      { id: 'aqua-5', vehicle_id: 'aqua-001', image_url: '/cars/Toyota Aqua/120.webp', display_order: 5, is_primary: false, created_at: new Date().toISOString() },
+      { id: 'aqua-6', vehicle_id: 'aqua-001', image_url: '/cars/Toyota Aqua/121.webp', display_order: 6, is_primary: false, created_at: new Date().toISOString() }
+    ]
+  },
+  // TOYOTA - Fielder (Price on request)
+  {
+    id: 'fielder-001',
+    stock_number: 'FIELDER-001',
+    brand_name: 'Toyota',
+    model: 'Fielder',
+    year: 2018,
+  price: 0,
+    mileage: 60000,
+    fuel_type: 'Petrol',
+    transmission: 'Automatic',
+    engine_capacity: '1.5L',
+    color_exterior: 'Gray',
+    color_interior: 'Black Fabric',
+    body_type: 'Wagon',
+    condition: 'Used',
+    description_en: 'Toyota Fielder — reliable family wagon',
+    description_bn: 'নির্ভরযোগ্য পারিবারিক ওয়াগন',
+    is_available: true,
+    is_featured: false,
+    video_url: '',
+    view_count: 0,
+    created_at: new Date().toISOString(),
+    updated_at: new Date().toISOString(),
+    images: [
+      { id: 'fielder-1', vehicle_id: 'fielder-001', image_url: '/cars/Toyota Fielder/199.webp', display_order: 1, is_primary: true, created_at: new Date().toISOString() },
+      { id: 'fielder-2', vehicle_id: 'fielder-001', image_url: '/cars/Toyota Fielder/200.webp', display_order: 2, is_primary: false, created_at: new Date().toISOString() },
+      { id: 'fielder-3', vehicle_id: 'fielder-001', image_url: '/cars/Toyota Fielder/201.webp', display_order: 3, is_primary: false, created_at: new Date().toISOString() },
+      { id: 'fielder-4', vehicle_id: 'fielder-001', image_url: '/cars/Toyota Fielder/202.webp', display_order: 4, is_primary: false, created_at: new Date().toISOString() },
+      { id: 'fielder-5', vehicle_id: 'fielder-001', image_url: '/cars/Toyota Fielder/203.webp', display_order: 5, is_primary: false, created_at: new Date().toISOString() },
+      { id: 'fielder-6', vehicle_id: 'fielder-001', image_url: '/cars/Toyota Fielder/204.webp', display_order: 6, is_primary: false, created_at: new Date().toISOString() }
+    ]
+  },
+  // TOYOTA - Voxy
+  {
+    id: 'voxy-001',
+    stock_number: 'VOXY-001',
+    brand_name: 'Toyota',
+    model: 'Voxy',
+    year: 2022,
+    price: 4400000,
+    mileage: 12000,
+    fuel_type: 'Petrol',
+    transmission: 'CVT',
+    engine_capacity: '2.0L',
+    color_exterior: 'Black',
+    color_interior: 'Gray Fabric',
+    body_type: 'MPV',
+    condition: 'Used',
+    description_en: 'Spacious MPV perfect for family travel',
+    description_bn: 'পরিবার ভ্রমণের জন্য উপযুক্ত প্রশস্ত এমপিভি',
+    is_available: true,
+    is_featured: false,
+    video_url: '',
+    view_count: 0,
+    created_at: new Date().toISOString(),
+    updated_at: new Date().toISOString(),
+    images: [
+      { id: 'voxy-1', vehicle_id: 'voxy-001', image_url: '/cars/Toyota Voxy/235.webp', display_order: 1, is_primary: true, created_at: new Date().toISOString() },
+      { id: 'voxy-2', vehicle_id: 'voxy-001', image_url: '/cars/Toyota Voxy/236.webp', display_order: 2, is_primary: false, created_at: new Date().toISOString() },
+      { id: 'voxy-3', vehicle_id: 'voxy-001', image_url: '/cars/Toyota Voxy/237.webp', display_order: 3, is_primary: false, created_at: new Date().toISOString() },
+      { id: 'voxy-4', vehicle_id: 'voxy-001', image_url: '/cars/Toyota Voxy/238.webp', display_order: 4, is_primary: false, created_at: new Date().toISOString() },
+      { id: 'voxy-5', vehicle_id: 'voxy-001', image_url: '/cars/Toyota Voxy/239.webp', display_order: 5, is_primary: false, created_at: new Date().toISOString() },
+      { id: 'voxy-6', vehicle_id: 'voxy-001', image_url: '/cars/Toyota Voxy/240.webp', display_order: 6, is_primary: false, created_at: new Date().toISOString() }
     ]
   }
 ];

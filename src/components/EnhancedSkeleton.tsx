@@ -38,8 +38,8 @@ export const EnhancedSkeleton = ({
       case 'text':
         return (
           <motion.div
-            className="rounded-md"
-            variants={shimmerVariants}
+            className="rounded-lg"
+            variants={shimmerVariants as any}
             initial="initial"
             animate="animate"
             style={{
@@ -55,7 +55,7 @@ export const EnhancedSkeleton = ({
         return (
           <motion.div
             className="rounded-full"
-            variants={shimmerVariants}
+            variants={shimmerVariants as any}
             initial="initial"
             animate="animate"
             style={{
@@ -71,7 +71,7 @@ export const EnhancedSkeleton = ({
         return (
           <motion.div
             className="rounded-lg"
-            variants={shimmerVariants}
+            variants={shimmerVariants as any}
             initial="initial"
             animate="animate"
             style={{
@@ -95,7 +95,7 @@ export const EnhancedSkeleton = ({
           >
             {/* Header skeleton */}
             <motion.div
-              variants={shimmerVariants}
+              variants={shimmerVariants as any}
               initial="initial"
               animate="animate"
               className="rounded-lg"
@@ -111,7 +111,7 @@ export const EnhancedSkeleton = ({
             {[1, 2, 3].map((i) => (
               <motion.div
                 key={i}
-                variants={shimmerVariants}
+                variants={shimmerVariants as any}
                 initial="initial"
                 animate="animate"
                 className="rounded-lg"
@@ -126,7 +126,7 @@ export const EnhancedSkeleton = ({
 
             {/* Footer skeleton */}
             <motion.div
-              variants={shimmerVariants}
+              variants={shimmerVariants as any}
               initial="initial"
               animate="animate"
               className="rounded-lg mt-4"
@@ -152,7 +152,7 @@ export const EnhancedSkeleton = ({
           >
             <motion.div
               className="w-full h-full rounded-2xl"
-              variants={shimmerVariants}
+              variants={shimmerVariants as any}
               initial="initial"
               animate="animate"
               style={{
@@ -175,7 +175,7 @@ export const EnhancedSkeleton = ({
           >
             <motion.div
               className="w-full h-full rounded-3xl"
-              variants={shimmerVariants}
+              variants={shimmerVariants as any}
               initial="initial"
               animate="animate"
               style={{
@@ -190,7 +190,7 @@ export const EnhancedSkeleton = ({
         return (
           <motion.div
             className="rounded-full px-4 py-2 w-24 h-8"
-            variants={shimmerVariants}
+            variants={shimmerVariants as any}
             initial="initial"
             animate="animate"
             style={{

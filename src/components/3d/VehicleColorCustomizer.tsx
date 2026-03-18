@@ -4,7 +4,6 @@ import {
   Save,
   Share2,
   RotateCcw,
-  Download,
   Eye,
   Palette,
 } from 'lucide-react';

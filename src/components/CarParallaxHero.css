@@ -42,3 +42,27 @@
     font-size: 1rem;
   }
 }
+
+/* Force-visible utility to override accidental hiding from cached CSS/JS or SW race conditions.
+   This is intentionally specific and high-priority so it won't be overridden easily. */
+.carousel-force-visible {
+  opacity: 1 !important;
+  visibility: visible !important;
+  display: block !important;
+  transform: none !important;
+}
+
+/* Snap-enabled transitions: applied only when track has .carousel-snap to avoid
+   per-frame transition overhead during continuous rAF animations. */
+.carousel-track.carousel-snap .carousel-slide {
+  transition: transform 360ms cubic-bezier(0.22,1,0.36,1), opacity 360ms cubic-bezier(0.22,1,0.36,1);
+}
+.carousel-track.carousel-snap .carousel-image {
+  transition: transform 360ms cubic-bezier(0.22,1,0.36,1);
+}
+
+/* Force GPU compositing for slides and images for smoother animation */
+.carousel-slide, .carousel-image {
+  will-change: transform, opacity;
+  backface-visibility: hidden;
+}

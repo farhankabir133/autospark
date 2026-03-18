@@ -1,7 +1,7 @@
 import { ResponsiveCarImage } from '../components/ResponsiveCarImage';
 import { useEffect, useState, useRef, lazy, Suspense } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Link } from 'react-router-dom';
-import { motion, MotionConfig } from 'framer-motion';
 import { ArrowRight, Car, Wrench, Shield, Users, Award, ChevronDown, Zap, Fuel } from 'lucide-react';
 import { useLanguage } from '../contexts/LanguageContext';
 import { useTheme } from '../contexts/ThemeContext';
@@ -14,24 +14,22 @@ import type { Vehicle, Testimonial } from '../types';
 import { formatPrice } from '../utils/format';
 
 import { carSlides } from '../data/carSlides';
-import type { CarFocusCarouselHandle } from '../components/CarFocusCarousel';
+import type { CarFocusCarouselHandle } from '../components/CarFocusCarouselLite';
 import type { VehicleColor } from '../components/InteractiveColorCustomizer';
 import { FilterAnimations } from '../components/FilterAnimations';
 
-// Lazy-load heavy visual components to keep initial bundle small on low-end devices
-const CarFocusCarousel = lazy(() => import('../components/CarFocusCarousel').then(m => ({ default: m.default })));
-const ParallaxBackground = lazy(() => import('../components/ParallaxBackground').then(m => ({ default: m.ParallaxBackground })));
+// CarFocusCarousel should mount immediately for autoplay and visibility — import directly
+import CarFocusCarousel from '../components/CarFocusCarouselLite';
 const MorphingShapeTransition = lazy(() => import('../components/MorphingShapeTransition').then(m => ({ default: m.MorphingShapeTransition })));
 const AnimatedComparisonSlider = lazy(() => import('../components/AnimatedComparisonSlider').then(m => ({ default: m.AnimatedComparisonSlider })));
-const FloatingParticlesBackground = lazy(() => import('../components/FloatingParticlesBackground').then(m => ({ default: m.FloatingParticlesBackground })));
-const UnicornBackground = lazy(() => import('../components/UnicornBackground').then(m => ({ default: m.UnicornBackground })));
+// Floating/background animations intentionally disabled on the homepage to keep it static and distraction-free.
 const EnhancedFlipCard = lazy(() => import('../components/EnhancedFlipCard').then(m => ({ default: m.EnhancedFlipCard })));
 const InteractiveColorCustomizer = lazy(() => import('../components/InteractiveColorCustomizer').then(m => ({ default: m.InteractiveColorCustomizer })));
-import { ComparisonSidebar } from '../components/ComparisonSidebar';
-import { VehicleSpecCardBack } from '../components/VehicleSpecCardBack';
-import { PerformanceGauge } from '../components/PerformanceGauge';
-import { ScrollTriggerCounter } from '../components/ScrollTriggerCounter';
+const ComparisonSidebar = lazy(() => import('../components/ComparisonSidebar').then(m => ({ default: m.ComparisonSidebar })));
+const ScrollTriggerCounter = lazy(() => import('../components/ScrollTriggerCounter').then(m => ({ default: m.ScrollTriggerCounter })));
 import { LazySection } from '../components/LazySection';
+import { PerformanceGauge } from '../components/PerformanceGauge';
+const MotionVehicleFlipCard = lazy(() => import('../components/VehicleFlipCardMotion').then(m => ({ default: m.default })));
 
 // ─── Only CarShowcase3D stays lazy (pulls in three.js ≈ 1 MB) ─────
 const CarShowcase3D = lazy(() => import('../components/3d/CarShowcase3D'));
@@ -129,74 +127,27 @@ interface VehicleFlipCardProps {
   flipTimeoutRef: React.MutableRefObject<ReturnType<typeof setTimeout> | null>;
   animate: boolean;
 }
-const VehicleFlipCard = ({
-  vehicle, index, theme, language, isSelected, onSelect, flipTimeoutRef, animate,
-}: VehicleFlipCardProps) => {
-  const [isFlipped, setIsFlipped] = useState(false);
-
-  return (
-    <motion.div
-      className={`relative h-32 cursor-pointer group ${isSelected ? 'ring-2 ring-offset-2 ring-blue-500' : ''}`}
-      style={{ perspective: '1000px' }}
-      initial={animate ? { opacity: 0, x: 30 } : false}
-      whileInView={animate ? { opacity: 1, x: 0 } : undefined}
-      transition={{ duration: 0.4, delay: index * 0.1 }}
-      viewport={{ once: true }}
-      onClick={onSelect}
-    >
-      <motion.div
-        className="relative w-full h-full"
-        style={{ transformStyle: 'preserve-3d' }}
-        animate={isFlipped ? { rotateY: 180 } : { rotateY: 0 }}
-        transition={{ duration: 0.6, ease: 'easeInOut' }}
-        onHoverStart={() => {
-          if (!animate) return;
-          setIsFlipped(true);
-          if (flipTimeoutRef.current) clearTimeout(flipTimeoutRef.current);
-          flipTimeoutRef.current = setTimeout(() => setIsFlipped(false), 3000);
-        }}
-        onHoverEnd={() => {
-          if (!animate) return;
-          if (flipTimeoutRef.current) clearTimeout(flipTimeoutRef.current);
-          flipTimeoutRef.current = setTimeout(() => setIsFlipped(false), 500);
-        }}
-      >
-        {/* FRONT */}
-        <div
-          className={`absolute inset-0 rounded-xl p-4 flex items-center gap-4 bg-gradient-to-br ${
-            theme === 'dark' ? vehicle.gradient : vehicle.lightGradient
-          } shadow-lg`}
-          style={{ backfaceVisibility: 'hidden' }}
-        >
-          <div className="relative w-24 h-20 rounded-lg overflow-hidden flex-shrink-0 bg-black/20">
-            <ResponsiveCarImage
-              alt={vehicle.name}
-              images={{ webp: vehicle.image.replace(/\.(jpg|jpeg|png)$/i, '.webp'), fallback: vehicle.image, width: 96, height: 80 }}
-              className="w-full h-full object-cover"
-            />
-            <span className="absolute top-1 left-1 px-1.5 py-0.5 text-[9px] font-bold bg-white/90 text-gray-800 rounded">{vehicle.year}</span>
-            {vehicle.fuel === 'Hybrid' && (
-              <span className="absolute bottom-1 right-1 px-1.5 py-0.5 text-[8px] font-bold bg-green-500 text-white rounded">HYBRID</span>
-            )}
-          </div>
-          <div className="flex-1 min-w-0">
-            <h3 className="text-white font-bold text-base truncate">{vehicle.name}</h3>
-            <p className="text-white/80 text-xs mt-0.5 truncate">{vehicle.subtitle}</p>
-            <p className="text-white font-bold text-sm mt-2">{vehicle.price}</p>
-          </div>
-          {isSelected && <div className="absolute top-2 right-2 w-3 h-3 bg-white rounded-full animate-pulse" />}
-          {animate && (
-            <div className="absolute bottom-2 right-2 text-white/60 text-[10px] opacity-0 group-hover:opacity-100 transition-opacity">
-              {language === 'en' ? 'Hover to see specs →' : 'স্পেক দেখতে হোভার করুন →'}
-            </div>
-          )}
+// Lightweight fallback flip card (CSS-only, no framer-motion)
+const VehicleFlipCardFallback = ({ vehicle, index: _index, theme, language, isSelected, onSelect, flipTimeoutRef: _flipTimeoutRef, animate }: VehicleFlipCardProps) => (
+  <div className={`relative h-32 cursor-pointer group ${isSelected ? 'ring-2 ring-offset-2 ring-blue-500' : ''}`} style={{ perspective: '1000px' }} onClick={onSelect}>
+    <div className="relative w-full h-full">
+      <div className={`absolute inset-0 rounded-xl p-4 flex items-center gap-4 bg-gradient-to-br ${theme === 'dark' ? vehicle.gradient : vehicle.lightGradient} shadow-lg`} style={{ backfaceVisibility: 'hidden' }}>
+        <div className="relative w-24 h-20 rounded-lg overflow-hidden flex-shrink-0 bg-black/20">
+          <ResponsiveCarImage alt={vehicle.name} images={{ webp: vehicle.image.replace(/\.(jpg|jpeg|png)$/i, '.webp'), fallback: vehicle.image, width: 96, height: 80 }} className="w-full h-full object-cover" />
+          <span className="absolute top-1 left-1 px-1.5 py-0.5 text-[9px] font-bold bg-white/90 text-gray-800 rounded">{vehicle.year}</span>
+          {vehicle.fuel === 'Hybrid' && <span className="absolute bottom-1 right-1 px-1.5 py-0.5 text-[8px] font-bold bg-green-500 text-white rounded">HYBRID</span>}
         </div>
-        {/* BACK */}
-        <VehicleSpecCardBack vehicle={vehicle} theme={theme} />
-      </motion.div>
-    </motion.div>
-  );
-};
+        <div className="flex-1 min-w-0">
+          <h3 className="text-white font-bold text-base truncate">{vehicle.name}</h3>
+          <p className="text-white/80 text-xs mt-0.5 truncate">{vehicle.subtitle}</p>
+          <p className="text-white font-bold text-sm mt-2">{vehicle.price}</p>
+        </div>
+        {isSelected && <div className="absolute top-2 right-2 w-3 h-3 bg-white rounded-full animate-pulse" />}
+        {animate && <div className="absolute bottom-2 right-2 text-white/60 text-[10px] opacity-0 group-hover:opacity-100 transition-opacity">{language === 'en' ? 'Hover to see specs →' : 'স্পেক দেখতে হোভার করুন →'}</div>}
+      </div>
+    </div>
+  </div>
+);
 
 // ─── Showcase vehicle data ─────────────────────────────────────────
 const SHOWCASE_VEHICLES = (language: string): ShowcaseVehicle[] => [
@@ -285,29 +236,37 @@ const CAROUSEL_IMAGES: Record<string, { url: string; alt: string }[]> = {
   noah: [{ url: 'https://images.pexels.com/photos/35516440/pexels-photo-35516440.png?auto=compress&cs=tinysrgb&w=400&fm=webp', alt: 'Noah Front' }],
 };
 
-// ─── Fade-in wrapper — zero-cost on reduced-motion devices ─────────
-const FadeIn = ({
-  children,
-  delay = 0,
-  animate,
-  className = '',
-}: {
-  children: React.ReactNode;
-  delay?: number;
-  animate: boolean;
-  className?: string;
-}) => {
-  if (!animate) return <div className={className}>{children}</div>;
+// ─── Fade-in wrapper — zero-dependency implementation using IntersectionObserver
+// Replaces dynamic framer-motion import to avoid runtime errors and keep initial bundle small.
+const FadeIn = ({ children, delay = 0, animate, className = '' }: { children: React.ReactNode; delay?: number; animate: boolean; className?: string }) => {
+  const ref = useRef<HTMLDivElement | null>(null);
+  const [inView, setInView] = useState<boolean>(!animate);
+
+  useEffect(() => {
+    if (!animate) { setInView(true); return; }
+    const el = ref.current;
+    if (!el) return;
+    const obs = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          // small delay support (seconds)
+          const timeout = setTimeout(() => setInView(true), Math.max(0, Math.floor(delay * 1000)));
+          obs.disconnect();
+          return () => clearTimeout(timeout);
+        }
+      });
+    }, { threshold: 0.12 });
+    obs.observe(el);
+    return () => obs.disconnect();
+  }, [animate, delay]);
+
   return (
-    <motion.div
-      className={className}
-      initial={{ opacity: 0, y: 24 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.55, delay }}
-      viewport={{ once: true }}
+    <div
+      ref={ref}
+      className={`${className} transform transition-all duration-500 ease-out ${inView ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6'}`}
     >
       {children}
-    </motion.div>
+    </div>
   );
 };
 
@@ -334,6 +293,7 @@ export const HomePage = () => {
 
   const animate = device.supportsRichAnimations;
   const showcaseVehicles = SHOWCASE_VEHICLES(language);
+  const navigate = useNavigate();
 
   useEffect(() => {
     fetchFeaturedVehicles();
@@ -362,7 +322,7 @@ export const HomePage = () => {
       if (data) setFeaturedVehicles(data);
     } catch (err) {
       // Network or import errors — fail gracefully
-      // eslint-disable-next-line no-console
+       
       console.warn('fetchFeaturedVehicles failed:', err);
       setFeaturedVehicles([]);
     }
@@ -384,7 +344,7 @@ export const HomePage = () => {
       }
       if (data) setTestimonials(data);
     } catch (err) {
-      // eslint-disable-next-line no-console
+       
       console.warn('fetchTestimonials failed:', err);
       setTestimonials([]);
     }
@@ -396,9 +356,10 @@ export const HomePage = () => {
   };
 
   const handleCarSelect = (carId: string) => {
-    setSelectedCarId(carId);
-    carouselRef.current?.goToCarById(carId);
-    carouselSectionRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    // Open vehicle details page (inventory context) instead of showing in the carousel
+    // This navigates to the vehicle details page which includes a "Back to Inventory" link.
+    // Navigate to the inventory page and request the item to be opened in the drawer
+    navigate(`/inventory?open=${encodeURIComponent(carId)}`);
   };
 
   const handleAddToComparison = (vehicle: Vehicle) => {
@@ -460,8 +421,7 @@ export const HomePage = () => {
   };
 
   return (
-    <MotionConfig reducedMotion="user">
-      <div className={`min-h-screen ${theme === 'dark' ? 'bg-[#0a0a0a]' : 'bg-gray-50'}`}>
+    <div className={`min-h-screen ${theme === 'dark' ? 'bg-[#0a0a0a]' : 'bg-gray-50'}`}>
 
         {/* ══ HERO ══════════════════════════════════════════════════ */}
         <section className="relative h-dvh overflow-hidden">
@@ -469,12 +429,7 @@ export const HomePage = () => {
             <Suspense fallback={<CarShowcase3DFallback />}>
               <CarShowcase3D
                 ctaButtons={
-                  <motion.div
-                    className="flex flex-row flex-wrap gap-2 sm:gap-3 justify-center"
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.8, delay: 1 }}
-                  >
+                  <div className="flex flex-row flex-wrap gap-2 sm:gap-3 justify-center">
                     <Link to="/inventory">
                       <Button size="sm" className="text-xs sm:text-sm md:text-base md:px-6 md:py-3">
                         {t('hero.browse')}<ArrowRight className="ml-1.5 h-3.5 w-3.5 md:h-5 md:w-5" />
@@ -490,34 +445,30 @@ export const HomePage = () => {
                         {t('hero.sell')}
                       </Button>
                     </Link>
-                  </motion.div>
+                    </div>
                 }
               />
             </Suspense>
           ) : (
             <LightweightHero language={language} t={t} />
           )}
-          <motion.button
+          <button
             onClick={scrollToContent}
             aria-label="Scroll to content"
             className="absolute bottom-2 left-1/2 -translate-x-1/2 text-white/40 z-10 hidden md:block"
-            animate={animate ? { y: [0, 8, 0] } : undefined}
-            transition={{ duration: 2, repeat: Infinity }}
           >
             <ChevronDown className="h-6 w-6" />
-          </motion.button>
+          </button>
         </section>
 
-        {/* ══ PREMIUM CAR FOCUS CAROUSEL ════════════════════════════ */}
-        <LazySection minHeight="500px" rootMargin="300px">
-          <div ref={carouselSectionRef}>
-            <CarFocusCarousel
-              ref={carouselRef}
-              initialCarId={selectedCarId}
-              onCarChange={setSelectedCarId}
-            />
-          </div>
-        </LazySection>
+        {/* ══ PREMIUM CAR FOCUS CAROUSEL (always-mounted for immediate autoplay) ════════════════════════════ */}
+        <div ref={carouselSectionRef}>
+          <CarFocusCarousel
+            ref={carouselRef}
+            initialCarId={selectedCarId}
+            onCarChange={setSelectedCarId}
+          />
+        </div>
 
         {/* ══ PREMIUM COLLECTION GRID ═══════════════════════════════ */}
         <section className={`section-padding ${theme === 'dark' ? 'bg-gray-900/80' : 'bg-gray-50'}`}>
@@ -566,7 +517,7 @@ export const HomePage = () => {
                       theme === 'dark' ? 'bg-blue-500/20' : 'bg-blue-500/10'
                     }`}>
                       <span className={`px-4 py-2 rounded-full text-sm font-semibold ${theme === 'dark' ? 'bg-white text-gray-900' : 'bg-gray-900 text-white'}`}>
-                        {language === 'en' ? 'View in Carousel' : 'ক্যারোসেলে দেখুন'}
+                        {language === 'en' ? 'View in Inventory' : 'ইনভেন্টরিতে দেখুন'}
                       </span>
                     </div>
                   </div>
@@ -579,12 +530,7 @@ export const HomePage = () => {
         {/* ══ FEATURED VEHICLES (flip cards) ════════════════════════ */}
         <LazySection minHeight="400px" rootMargin="300px">
           <section className={`section-padding relative overflow-hidden ${theme === 'dark' ? 'bg-[#0a0a0a]' : 'bg-gray-900'}`}>
-            {/* Only show UnicornBackground on capable devices */}
-            {device.supportsRichAnimations && (
-              <div className="absolute inset-0 pointer-events-none">
-                <UnicornBackground width="100%" height="100%" />
-              </div>
-            )}
+            {/* Background animations removed from homepage (dark-mode friendly) */}
 
             <div className="container-fluid relative z-10">
               <FadeIn animate={animate} className="text-center mb-6">
@@ -667,7 +613,7 @@ export const HomePage = () => {
                       <Card className={`overflow-hidden cursor-pointer transition-all ${theme === 'dark' ? 'hover:shadow-lg' : 'hover:shadow-xl'}`}>
                         <div className="relative h-64 overflow-hidden">
                           <img
-                            src={vehicle.images?.[0]?.image_url || 'https://images.pexels.com/photos/3964962/pexels-photo-3964962.jpeg?auto=compress&cs=tinysrgb&w=400&fm=webp'}
+                            src={encodeURI(vehicle.images?.[0]?.image_url || 'https://images.pexels.com/photos/3964962/pexels-photo-3964962.jpeg?auto=compress&cs=tinysrgb&w=400&fm=webp')}
                             alt={vehicle.model}
                             className="w-full h-full object-contain car-img-hover transition-transform duration-300 hover:scale-110"
                             loading="lazy"
@@ -749,11 +695,7 @@ export const HomePage = () => {
           <section className={`section-padding relative overflow-hidden ${
             theme === 'dark' ? 'bg-gradient-to-br from-gray-900 to-gray-800' : 'bg-gradient-to-br from-blue-50 to-indigo-50'
           }`}>
-            {/* Particles only on capable devices */}
-            {device.particleCount > 0 && (
-              <FloatingParticlesBackground theme={theme} particleCount={device.particleCount} intensity="subtle" />
-            )}
-            {device.supportsRichAnimations && <ParallaxBackground theme={theme} />}
+            {/* Background animations removed from homepage (particles/parallax disabled) */}
 
             <div className="container-fluid relative z-10">
               <FadeIn animate={animate} className="text-center mb-8">
@@ -804,17 +746,32 @@ export const HomePage = () => {
                 {/* Right: flip cards */}
                 <div className="space-y-3">
                   {showcaseVehicles.map((vehicle, index) => (
-                    <VehicleFlipCard
-                      key={vehicle.id}
-                      vehicle={vehicle}
-                      index={index}
-                      theme={theme}
-                      language={language}
-                      isSelected={showcaseVehicle === vehicle.id}
-                      onSelect={() => handleVehicleSelect(vehicle.id as typeof showcaseVehicle)}
-                      flipTimeoutRef={flipTimeoutRef}
-                      animate={animate}
-                    />
+                    animate ? (
+                      <Suspense key={vehicle.id} fallback={<div className="h-32" />}>
+                        <MotionVehicleFlipCard
+                          vehicle={vehicle}
+                          index={index}
+                          theme={theme}
+                          language={language}
+                          isSelected={showcaseVehicle === vehicle.id}
+                          onSelect={() => handleVehicleSelect(vehicle.id as typeof showcaseVehicle)}
+                          flipTimeoutRef={flipTimeoutRef}
+                          animate={animate}
+                        />
+                      </Suspense>
+                    ) : (
+                      <VehicleFlipCardFallback
+                        key={vehicle.id}
+                        vehicle={vehicle}
+                        index={index}
+                        theme={theme}
+                        language={language}
+                        isSelected={showcaseVehicle === vehicle.id}
+                        onSelect={() => handleVehicleSelect(vehicle.id as typeof showcaseVehicle)}
+                        flipTimeoutRef={flipTimeoutRef}
+                        animate={animate}
+                      />
+                    )
                   ))}
                 </div>
               </div>
@@ -1178,7 +1135,8 @@ export const HomePage = () => {
         </section>
 
         {/* ══ COMPARISON SIDEBAR ════════════════════════════════════ */}
-        <ComparisonSidebar
+        <Suspense fallback={null}>
+          <ComparisonSidebar
           vehicles={comparisonVehicles.map(v => ({
             id: v.id,
             name: v.model,
@@ -1194,7 +1152,7 @@ export const HomePage = () => {
           theme={theme}
           language={language}
         />
+        </Suspense>
       </div>
-    </MotionConfig>
   );
 };

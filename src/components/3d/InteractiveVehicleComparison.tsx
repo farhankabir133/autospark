@@ -11,7 +11,6 @@ import {
   TrendingUp,
   Award,
   DollarSign,
-  Zap as Performance,
   Leaf
 } from 'lucide-react';
 

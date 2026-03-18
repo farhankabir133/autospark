@@ -37,7 +37,7 @@ export const CarouselPlaceholder = ({
       {/* Main shimmer overlay */}
       <motion.div
         className="absolute inset-0"
-        variants={shimmerVariants}
+        variants={shimmerVariants as any}
         initial="initial"
         animate="animate"
         style={{

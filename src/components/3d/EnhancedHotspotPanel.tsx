@@ -3,8 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { 
   X, 
   Play, 
-  Zap, 
-  Gauge, 
+  Zap,
   CheckCircle2,
   ArrowRight,
   Share2,

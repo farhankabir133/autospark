@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef, useMemo } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { motion, AnimatePresence, useScroll, useTransform } from 'framer-motion';
 import { 
   Search, 
@@ -690,6 +690,13 @@ export const InventoryPage = () => {
   useSeedPradoImages();
   useSeedChrImages();
 
+  // Refs for each rendered vehicle DOM node so we can scroll/focus them
+  const vehicleRefs = useRef<Record<string, HTMLDivElement | null>>({});
+  const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const [openVehicleId, setOpenVehicleId] = useState<string | null>(null);
+  const [showDrawer, setShowDrawer] = useState(false);
+
   // Fetch vehicles
   useEffect(() => {
     setLoading(true);
@@ -699,6 +706,42 @@ export const InventoryPage = () => {
       setLoading(false);
     }, 500);
   }, []);
+
+  // If the URL contains ?open=<id>, open the drawer and scroll the item into view
+  useEffect(() => {
+    const id = searchParams.get('open');
+    if (!id) return;
+
+    // Wait until vehicles are loaded and mounted
+    const tryOpen = () => {
+      const found = vehicles.find((v) => v.id === id);
+      if (!found) return;
+
+      setOpenVehicleId(id);
+      setShowDrawer(true);
+
+      // Scroll into view and focus the card
+      requestAnimationFrame(() => {
+        const el = vehicleRefs.current[id];
+        if (el && typeof el.scrollIntoView === 'function') {
+          el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          const focusable = el.querySelector('a,button,input,select,textarea');
+          if (focusable && (focusable as HTMLElement).focus) {
+            (focusable as HTMLElement).focus();
+          }
+        }
+      });
+    };
+
+    // If vehicles not yet loaded, wait a tick and try again
+    if (vehicles.length === 0) {
+      const idTimeout = setTimeout(tryOpen, 250);
+      return () => clearTimeout(idTimeout);
+    }
+
+    tryOpen();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [searchParams, vehicles]);
 
   // Calculate counts for filters
   const filterCounts = useMemo(() => {
@@ -1180,6 +1223,8 @@ export const InventoryPage = () => {
                     return (
                       <motion.div
                         key={vehicle.id}
+                        // register DOM node so we can scrollTo / focus later when ?open=<id>
+                        ref={(el: HTMLDivElement | null) => { vehicleRefs.current[vehicle.id] = el; }}
                         layout
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
@@ -1223,7 +1268,7 @@ export const InventoryPage = () => {
                               </h3>
                               <div className="flex items-center justify-between mb-4">
                                 <span className="text-2xl font-bold text-blue-500">
-                                  {formatPrice(vehicle.price, language)}
+                                  {vehicle.price && vehicle.price > 0 ? formatPrice(vehicle.price, language) : (language === 'en' ? 'Price on request' : 'মূল্য অনুরোধে')}
                                 </span>
                                 <span className={`text-sm ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>
                                   {vehicle.mileage.toLocaleString()} km
@@ -1258,6 +1303,71 @@ export const InventoryPage = () => {
           </div>
         </div>
       </div>
+      {/* Drawer / detail panel when ?open=<id> is present */}
+      <AnimatePresence>
+        {showDrawer && openVehicleId && (
+          (() => {
+            const vehicle = vehicles.find(v => v.id === openVehicleId);
+            if (!vehicle) return null;
+            return (
+              <motion.aside
+                key={`drawer-${openVehicleId}`}
+                initial={{ opacity: 0, x: 300 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: 300 }}
+                transition={{ duration: 0.28 }}
+                className={`fixed top-0 right-0 h-full w-full sm:w-96 z-50 shadow-2xl p-6 ${isDark ? 'bg-gray-900 text-white' : 'bg-white text-gray-900'}`}
+              >
+                <div className="flex items-start justify-between gap-4">
+                  <div>
+                    <h3 className="text-lg font-bold">{vehicle.brand_name} {vehicle.model}</h3>
+                    <div className="text-sm text-gray-400">{vehicle.stock_number}</div>
+                  </div>
+                  <div className="ml-auto flex items-center gap-2">
+                    <Button onClick={() => {
+                      // close and remove query param
+                      setShowDrawer(false);
+                      setOpenVehicleId(null);
+                      const params = new URLSearchParams(searchParams as any);
+                      params.delete('open');
+                      const search = params.toString();
+                      const path = search ? `/inventory?${search}` : '/inventory';
+                      navigate(path, { replace: true });
+                    }} className="rounded-full p-2">
+                      <X className="w-4 h-4" />
+                    </Button>
+                  </div>
+                </div>
+
+                <div className="mt-4 space-y-4 overflow-auto h-[calc(100vh-120px)]">
+                  {/* Image / small carousel */}
+                    <div className="w-full h-48 bg-gray-100 rounded-lg overflow-hidden">
+                    {vehicle.images && vehicle.images.length > 0 ? (
+                      <img src={encodeURI((vehicle.images[0] as any).image_url || (vehicle.images[0] as any).url)} alt={`${vehicle.brand_name} ${vehicle.model}`} className="w-full h-full object-cover" />
+                    ) : (
+                      <div className="w-full h-full flex items-center justify-center text-gray-400">No image</div>
+                    )}
+                  </div>
+
+                  <div className="space-y-2">
+                    <div className="text-2xl font-bold text-blue-500">{vehicle.price && vehicle.price > 0 ? formatPrice(vehicle.price, language) : (language === 'en' ? 'Price on request' : 'মূল্য অনুরোধে')}</div>
+                    <div className="text-sm text-gray-400">{vehicle.mileage.toLocaleString()} km • {vehicle.fuel_type} • {vehicle.transmission}</div>
+                    {vehicle.color_exterior && (
+                      <div className="text-sm">Color: {vehicle.color_exterior}</div>
+                    )}
+                  </div>
+
+                  <div className="pt-2">
+                    <Button onClick={() => navigate(`/vehicle/${vehicle.id}`)} className="w-full">
+                      {t('vehicle.view_details')}
+                    </Button>
+                  </div>
+                </div>
+              </motion.aside>
+            );
+          })()
+        )}
+      </AnimatePresence>
     </div>
   );
 };

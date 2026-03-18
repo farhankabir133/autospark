@@ -67,7 +67,7 @@ export const ImageCarousel = ({
       <AnimatePresence mode="wait">
         <motion.img
           key={currentIndex}
-          src={images[currentIndex].url}
+          src={encodeURI(images[currentIndex].url)}
           alt={images[currentIndex].alt || `Slide ${currentIndex + 1}`}
           className="w-full h-full object-cover"
           initial={{ opacity: 0 }}

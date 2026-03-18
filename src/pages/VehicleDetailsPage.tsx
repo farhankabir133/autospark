@@ -7,6 +7,7 @@ import { Button } from '../components/ui/Button';
 import { Card } from '../components/ui/Card';
 import { supabase } from '../lib/supabase';
 import { ALL_VEHICLES } from '../hooks/vehicleDataAll';
+import { carSlides } from '../data/carSlides';
 import type { Vehicle } from '../types';
 import { formatPrice, calculateEMI } from '../utils/format';
 
@@ -38,6 +39,45 @@ export const VehicleDetailsPage = () => {
     
     if (localVehicle) {
       setVehicle(localVehicle);
+      setLoading(false);
+      return;
+    }
+
+    // If not found in local dataset, try to match against the lightweight carousel slides
+    // (some landing carousel items use different IDs than the inventory dataset)
+    const slideMatch: any = carSlides.find((s) => s.id === id);
+    if (slideMatch) {
+      // Convert the slide representation into the Vehicle shape the details page expects
+      const parsedPrice = typeof slideMatch.price === 'string' ? Number(String(slideMatch.price).replace(/[^0-9.-]+/g, '')) : (slideMatch.price || 0);
+      const constructed: any = {
+        id: slideMatch.id,
+        stock_number: slideMatch.id,
+        brand_name: slideMatch.brand || slideMatch.title || 'Unknown',
+        model: slideMatch.model || slideMatch.title || '',
+        year: slideMatch.year || new Date().getFullYear(),
+        price: parsedPrice,
+        mileage: 0,
+        fuel_type: slideMatch.fuel || 'Unknown',
+        transmission: slideMatch.transmission || 'Unknown',
+        engine_capacity: slideMatch.engine_capacity || undefined,
+        color_exterior: slideMatch.color || undefined,
+        color_interior: undefined,
+        body_type: slideMatch.bodyType || undefined,
+        condition: 'New',
+        description_en: slideMatch.tagline || slideMatch.subtitle || '',
+        description_bn: '',
+        is_available: true,
+        is_featured: false,
+        video_url: '',
+        view_count: 0,
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString(),
+        images: [
+          { id: `${slideMatch.id}-1`, vehicle_id: slideMatch.id, image_url: slideMatch.image, display_order: 1, is_primary: true, created_at: new Date().toISOString() }
+        ]
+      };
+
+      setVehicle(constructed as any);
       setLoading(false);
       return;
     }
@@ -84,7 +124,7 @@ export const VehicleDetailsPage = () => {
 
   const isDark = theme === 'dark';
 
-  if (loading || !vehicle) {
+  if (loading) {
     return (
       <div className={`min-h-screen flex items-center justify-center pt-20 ${isDark ? 'bg-gray-900' : 'bg-gray-50'}`}>
         <div className="text-center">
@@ -95,8 +135,22 @@ export const VehicleDetailsPage = () => {
     );
   }
 
+  if (!vehicle) {
+    return (
+      <div className={`min-h-screen flex items-center justify-center pt-20 ${isDark ? 'bg-gray-900' : 'bg-gray-50'}`}>
+        <div className="text-center">
+          <h2 className={isDark ? 'text-white text-xl' : 'text-gray-900 text-xl'}>Vehicle not found</h2>
+          <p className={isDark ? 'text-gray-400' : 'text-gray-600'}>We couldn't find that vehicle. It may have been removed or the link is incorrect.</p>
+          <div className="mt-4">
+            <Link to="/inventory" className="text-[var(--accent)] underline">Back to inventory</Link>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   const images = vehicle.images || [];
-  const currentImage = images[currentImageIndex]?.image_url || 'https://images.pexels.com/photos/3802508/pexels-photo-3802508.jpeg?auto=compress&cs=tinysrgb&w=1200';
+  const currentImage = encodeURI(images[currentImageIndex]?.image_url || 'https://images.pexels.com/photos/3802508/pexels-photo-3802508.jpeg?auto=compress&cs=tinysrgb&w=1200');
 
   return (
     <div className={`min-h-screen pt-20 ${isDark ? 'bg-gray-900' : 'bg-gray-50'}`}>
@@ -148,7 +202,7 @@ export const VehicleDetailsPage = () => {
                     }`}
                   >
                     <img
-                      src={img.image_url}
+                      src={encodeURI(img.image_url)}
                       alt=""
                       className="w-full h-20 object-cover"
                       loading="lazy"
@@ -171,7 +225,7 @@ export const VehicleDetailsPage = () => {
                 {vehicle.brand_name} {vehicle.model}
               </h1>
               <div className="text-4xl font-bold text-blue-600 mb-6">
-                {formatPrice(vehicle.price, language)}
+                {vehicle.price && vehicle.price > 0 ? formatPrice(vehicle.price, language) : (language === 'en' ? 'Price on request' : 'মূল্য অনুরোধে')}
               </div>
 
               <div className={`grid grid-cols-2 gap-4 mb-6 pb-6 border-b ${isDark ? 'border-gray-700' : 'border-gray-200'}`}>

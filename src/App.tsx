@@ -1,9 +1,11 @@
 import { lazy, Suspense, useState, useEffect } from 'react';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { HashRouter as Router, Routes, Route } from 'react-router-dom';
+import { ScrollToTop } from './components/ScrollToTop';
 import { LanguageProvider } from './contexts/LanguageContext';
 import { ThemeProvider } from './contexts/ThemeContext';
 import { Layout } from './components/Layout';
 import ErrorBoundary from './components/ErrorBoundary';
+import CursorFollower from './components/CursorFollower';
 import { SplashScreen } from './components/SplashScreen';
 
 // Lazy load pages for better code splitting and performance
@@ -25,8 +27,6 @@ const PageLoader = () => (
   </div>
 );
 
-// Use root for custom domain deployment
-const basename = '/';
 
 function App() {
   const [showSplash, setShowSplash] = useState(true);
@@ -58,7 +58,8 @@ function App() {
     <ThemeProvider>
       <LanguageProvider>
         <ErrorBoundary>
-        <Router basename={basename}>
+  <Router>
+          <ScrollToTop />
           <Layout>
             {/* Splash overlay — shown on first visit, auto-removed after duration */}
             {isFirstVisit && showSplash && (
@@ -78,6 +79,8 @@ function App() {
                 <Route path="/contact" element={<ContactPage />} />
               </Routes>
             </Suspense>
+            {/* Global cursor follower (theme-aware) */}
+            <CursorFollower />
           </Layout>
         </Router>
         </ErrorBoundary>

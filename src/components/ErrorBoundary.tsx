@@ -16,9 +16,9 @@ export class ErrorBoundary extends React.Component<React.PropsWithChildren<{}>, 
   }
 
   componentDidCatch(error: Error, info: any) {
-    // eslint-disable-next-line no-console
+     
     console.error('Unhandled error captured by ErrorBoundary:', error, info);
-    // eslint-disable-next-line no-console
+     
     console.error('COMPONENT STACK:\n', info?.componentStack || '(unavailable)');
   }
 

@@ -59,7 +59,7 @@
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 1, delay: 1 }}
             >
-              {['2014','2016','2018','2020','2023','2026'].map((year, idx) => (
+              {['2014','2016','2018','2020','2023','2026'].map((year) => (
                 <motion.button
                   key={year}
                   className="text-white font-bold text-lg px-3 py-1 rounded-full bg-gradient-to-r from-[#C00000] to-[#FF1A1A] focus:outline-none focus:ring-2 focus:ring-[#FF1A1A] transition-all hover:scale-110"
