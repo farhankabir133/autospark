@@ -10,7 +10,7 @@ interface LayoutProps {
 
 export const Layout = ({ children }: LayoutProps) => {
   const { theme } = useTheme();
-  const whatsappNumber = '8801700000000';
+  const whatsappNumber = '8801760401605';
   const whatsappMessage = encodeURIComponent('Hello! I would like to inquire about your vehicles.');
 
   return (

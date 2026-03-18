@@ -23,6 +23,12 @@ const CarFocusCarouselInner = ({ initialCarId, onCarChange }: CarFocusCarouselPr
   const { theme } = useTheme();
 
   const [flippedFullIndex, setFlippedFullIndex] = useState<number | null>(null);
+  const [isPaused, setIsPaused] = useState(false);
+  const interactionRef = useRef<{ last: number }>({ last: Date.now() });
+  const dragRef = useRef<{ active: boolean; startX: number; startScrollLeft: number; lastX: number; lastTime: number }>({ active: false, startX: 0, startScrollLeft: 0, lastX: 0, lastTime: 0 });
+
+  // Update last interaction timestamp to temporarily pause autoplay after manual interactions
+  const markInteraction = () => { interactionRef.current.last = Date.now(); };
 
   useImperativeHandle(ref, () => ({
     goToCarById: (carId: string) => {
@@ -65,6 +71,8 @@ const CarFocusCarouselInner = ({ initialCarId, onCarChange }: CarFocusCarouselPr
     if (onCarChange) onCarChange(carSlides[index].id, index);
   };
 
+  
+
   useEffect(() => {
     setTimeout(() => {
       if (initialCarId) {
@@ -77,6 +85,127 @@ const CarFocusCarouselInner = ({ initialCarId, onCarChange }: CarFocusCarouselPr
     }, 50);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [initialCarId]);
+
+  // Continuous auto-scroll left <-> right using requestAnimationFrame for very smooth motion.
+  useEffect(() => {
+  // target speed: controlled fast glide
+  const speedPxPerSec = 600; // 600 px/s per user's request
+  const bouncePauseMs = 100; // very short pause when reversing
+
+    const directionRef = { current: 1 } as { current: number };
+    const pausedUntilRef = { current: 0 } as { current: number };
+    let rafId: number | null = null;
+    let lastTime = performance.now();
+
+    const step = (now: number) => {
+      const track = trackRef.current;
+  // dt in seconds, capped to avoid large jumps after tab switch
+  const dt = Math.min(32, now - lastTime) / 1000;
+      lastTime = now;
+
+  if (track && !isPaused && flippedFullIndex === null && (Date.now() - interactionRef.current.last >= 100)) {
+        const maxScroll = Math.max(0, track.scrollWidth - track.clientWidth);
+        if (maxScroll > 0) {
+          if (performance.now() < pausedUntilRef.current) {
+            // still in bounce pause
+          } else {
+            const delta = directionRef.current * speedPxPerSec * dt;
+            let next = track.scrollLeft + delta;
+            if (next <= 0) {
+              next = 0;
+              directionRef.current = 1;
+              pausedUntilRef.current = performance.now() + bouncePauseMs;
+            } else if (next >= maxScroll) {
+              next = maxScroll;
+              directionRef.current = -1;
+              pausedUntilRef.current = performance.now() + bouncePauseMs;
+            }
+
+            // variable smoothing based on dt -> alpha in (0,1)
+            // larger dt -> larger alpha (catch up faster), smaller dt -> smaller alpha (smoother)
+            const lambda = 18; // higher responsiveness factor for snappier motion
+            const alpha = 1 - Math.exp(-lambda * dt);
+            const cur = track.scrollLeft;
+            const lerped = cur + (next - cur) * alpha;
+            track.scrollLeft = lerped;
+          }
+        }
+      }
+
+      rafId = window.requestAnimationFrame(step);
+    };
+
+    // Start after layout is ready
+    const startWhenReady = () => {
+      const track = trackRef.current;
+      const first = slidesRef.current[0];
+      if (track && first && first.offsetWidth && slides.length > 0) {
+        lastTime = performance.now();
+        rafId = window.requestAnimationFrame(step);
+        } else {
+        // try again very quickly to reduce perceived startup latency
+        setTimeout(startWhenReady, 10);
+      }
+    };
+
+    startWhenReady();
+
+    const onVisibility = () => {
+      if (document.hidden) {
+        if (rafId) { window.cancelAnimationFrame(rafId); rafId = null; }
+      } else {
+        if (!rafId) { lastTime = performance.now(); rafId = window.requestAnimationFrame(step); }
+      }
+    };
+
+    document.addEventListener('visibilitychange', onVisibility);
+
+    return () => {
+      if (rafId) window.cancelAnimationFrame(rafId);
+      document.removeEventListener('visibilitychange', onVisibility);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isPaused, flippedFullIndex, slides.length]);
+
+  // Pointer drag handlers to allow manual swipe/drag to control scroll
+  const onPointerDownHandler = (e: React.PointerEvent) => {
+    const track = trackRef.current;
+    if (!track) return;
+    // capture pointer so we continue receiving move/up events
+    try { (e.target as Element).setPointerCapture?.(e.pointerId); } catch {}
+    dragRef.current.active = true;
+    dragRef.current.startX = e.clientX;
+    dragRef.current.startScrollLeft = track.scrollLeft;
+    dragRef.current.lastX = e.clientX;
+    dragRef.current.lastTime = performance.now();
+    markInteraction();
+    setIsPaused(true);
+  };
+
+  const onPointerMoveHandler = (e: React.PointerEvent) => {
+    const track = trackRef.current;
+    if (!track || !dragRef.current.active) return;
+    // compute delta and apply to scroll
+    const delta = e.clientX - dragRef.current.startX;
+    track.scrollLeft = dragRef.current.startScrollLeft - delta;
+    // update last positions for potential velocity calc (not used now)
+    dragRef.current.lastX = e.clientX;
+    dragRef.current.lastTime = performance.now();
+  };
+
+  const endDrag = (pointerId?: number) => {
+    const track = trackRef.current;
+    if (!track) return;
+    dragRef.current.active = false;
+    // release pointer capture if possible
+    if (pointerId != null) {
+      try { track.releasePointerCapture?.(pointerId); } catch {}
+    }
+    markInteraction();
+    // resume autoplay after short delay to avoid immediate takeover
+    setTimeout(() => setIsPaused(false), 300);
+  };
+
 
   const FlipInner = ({ car, flipped }: { car: any; flipped: boolean }) => {
     const innerStyle: React.CSSProperties = { width: '100%', height: '100%', transformStyle: 'preserve-3d', transition: 'transform 560ms ease', transform: flipped ? 'rotateY(180deg)' : 'rotateY(0deg)' };
@@ -115,17 +244,29 @@ const CarFocusCarouselInner = ({ initialCarId, onCarChange }: CarFocusCarouselPr
         <div className="flex items-center justify-between mb-4">
           <h3 className="text-lg font-semibold text-white">Featured Vehicles</h3>
           <div className="flex gap-2">
-            <button aria-label="Previous" onClick={() => { const idx = Math.max(0, findNearestIndex() - 1); goToIndex(idx); }} className="p-2 rounded-full bg-white/6"><ChevronLeft className="w-5 h-5 text-white" /></button>
-            <button aria-label="Next" onClick={() => { const idx = Math.min(carSlides.length - 1, findNearestIndex() + 1); goToIndex(idx); }} className="p-2 rounded-full bg-white/6"><ChevronRight className="w-5 h-5 text-white" /></button>
+            <button aria-label="Previous" onClick={() => { markInteraction(); const idx = Math.max(0, findNearestIndex() - 1); goToIndex(idx); }} className="p-2 rounded-full bg-white/6"><ChevronLeft className="w-5 h-5 text-white" /></button>
+            <button aria-label="Next" onClick={() => { markInteraction(); const idx = Math.min(carSlides.length - 1, findNearestIndex() + 1); goToIndex(idx); }} className="p-2 rounded-full bg-white/6"><ChevronRight className="w-5 h-5 text-white" /></button>
           </div>
         </div>
 
-        <div ref={trackRef} className="carousel-track relative z-10 flex gap-6 overflow-x-auto no-scrollbar py-6 px-2 touch-pan-x" style={{ WebkitOverflowScrolling: 'touch' }}>
+        <div
+          ref={trackRef}
+          className="carousel-track relative z-10 flex gap-6 overflow-x-auto no-scrollbar py-6 px-2 touch-pan-x"
+          style={{ WebkitOverflowScrolling: 'touch' }}
+          onMouseEnter={() => { markInteraction(); setIsPaused(true); }}
+          onMouseLeave={() => setIsPaused(false)}
+          onFocusCapture={() => { markInteraction(); setIsPaused(true); }}
+          onBlurCapture={() => setIsPaused(false)}
+          onPointerDown={onPointerDownHandler}
+          onPointerMove={onPointerMoveHandler}
+          onPointerUp={(e) => { onPointerMoveHandler(e); endDrag(e.pointerId); }}
+          onPointerCancel={(e) => { endDrag(e.pointerId); }}
+        >
           {slides.map((car, idx) => {
             const isFlipped = flippedFullIndex === idx;
             return (
               <div key={car.id} ref={(el) => (slidesRef.current[idx] = el)} className={`group carousel-slide snap-center flex-none rounded-xl overflow-hidden bg-transparent border border-white/5 shadow-lg focus:outline-none transform transition-transform duration-300 ease-out w-[90%] sm:w-[70%] md:w-[60%] lg:w-[50%] xl:w-[40%] 2xl:w-[36%] max-w-[1400px] min-h-[320px] md:min-h-[420px] lg:min-h-[520px] aspect-square flex flex-col justify-between`} style={{ cursor: 'pointer' }} role="group" tabIndex={0}
-                onClick={() => { const nearest = findNearestIndex(); if (nearest === idx) { setFlippedFullIndex((p) => (p === idx ? null : idx)); } else { goToIndex(idx); } }}
+                onClick={() => { markInteraction(); const nearest = findNearestIndex(); if (nearest === idx) { setFlippedFullIndex((p) => (p === idx ? null : idx)); } else { goToIndex(idx); } }}
                 onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); const nearest = findNearestIndex(); if (nearest === idx) setFlippedFullIndex((p) => (p === idx ? null : idx)); else goToIndex(idx); } }}>
                 <div className="relative h-[70%] w-full bg-gray-800 overflow-hidden" style={{ perspective: 1200 }}>
                   <FlipInner car={car} flipped={isFlipped} />

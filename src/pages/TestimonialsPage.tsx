@@ -1183,7 +1183,7 @@ export const TestimonialsPage = () => {
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <motion.a
-                href="https://wa.me/8801234567890?text=I%20want%20to%20share%20my%20Auto%20Spark%20experience"
+                href="https://wa.me/8801760401605?text=I%20want%20to%20share%20my%20Auto%20Spark%20experience"
                 target="_blank"
                 rel="noopener noreferrer"
                 whileHover={{ y: -3 }}

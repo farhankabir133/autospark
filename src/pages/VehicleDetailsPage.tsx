@@ -267,14 +267,14 @@ export const VehicleDetailsPage = () => {
                 </Link>
                 <div className="grid grid-cols-2 gap-3">
                   <a
-                    href={`tel:+8801700000000`}
-                    className="flex items-center justify-center space-x-2 px-4 py-3 bg-gray-900 hover:bg-gray-800 text-white rounded-lg transition-colors"
-                  >
+                      href={`tel:+8801760401605`}
+                      className="flex items-center justify-center space-x-2 px-4 py-3 bg-gray-900 hover:bg-gray-800 text-white rounded-lg transition-colors"
+                    >
                     <Phone className="h-5 w-5" />
                     <span>{t('vehicle.contact')}</span>
                   </a>
                   <a
-                    href={`https://wa.me/8801700000000?text=${encodeURIComponent(`I'm interested in ${vehicle.brand_name} ${vehicle.model}`)}`}
+                      href={`https://wa.me/8801760401605?text=${encodeURIComponent(`I'm interested in ${vehicle.brand_name} ${vehicle.model}`)}`}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="flex items-center justify-center space-x-2 px-4 py-3 bg-green-500 hover:bg-green-600 text-white rounded-lg transition-colors"
