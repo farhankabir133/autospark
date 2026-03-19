@@ -6,10 +6,10 @@ export const ALL_VEHICLES: Vehicle[] = [
   {
     id: '7',
     stock_number: 'HARRIER-001',
-    brand_name: 'Toyota',
-    model: 'Harrier Advance Premium',
+  brand_name: 'Toyota Lexus',
+  model: 'NX',
     year: 2024,
-    price: 6900000, // Pre-Order Price
+    price: 11500000, // Updated price
     mileage: 0,
     fuel_type: 'Hybrid',
     transmission: 'Automatic',
