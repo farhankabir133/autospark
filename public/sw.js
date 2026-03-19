@@ -5,7 +5,7 @@ const CACHE_NAME = 'autospark-v3';
 // Ferrari GLB + DRACO removed — cached on-demand when 3D scene loads
 const PRECACHE_URLS = [
   '/',
-  '/logo/aslogo.svg',
+  '/logo/logoAS3.svg',
 ];
 
 // Cache-first patterns (static assets that rarely change)

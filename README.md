@@ -12,217 +12,162 @@ A production-ready, bilingual (English + Bengali) luxury car dealership website 
 
 ### Pages & Features
 
-#### 1. Home Page
-- Full-screen hero section with call-to-actions
-- Statistics showcase
-- Featured vehicles carousel
-- Customer testimonials
-- Service highlights
+# Auto Spark BD — Premium Car Dealership Website
 
-#### 2. Inventory Page
-- Dynamic vehicle listing with grid/list views
-- Advanced filtering system:
-  - Brand, Model, Year
-  - Price range slider
-  - Fuel type, Transmission
-  - Real-time AJAX filtering
-- Vehicle cards with images, specs, and pricing
+![React](https://img.shields.io/badge/React-18-blue?logo=react)
+![TypeScript](https://img.shields.io/badge/TypeScript-5.5-blue?logo=typescript)
+![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-3.4-cyan?logo=tailwindcss)
+![Supabase](https://img.shields.io/badge/Supabase-1.0-teal?logo=supabase)
 
-#### 3. Vehicle Details Page
-- Image gallery with navigation
-- Complete vehicle specifications
-- EMI Calculator
-- WhatsApp & Phone quick contact
-- Reserve vehicle functionality
-- Features list
+[Live site](https://autosparkbd.com/) • [Portfolio — Farhan Kabir](https://farhankabir.me/)
 
-#### 4. Service Center
-- Multi-step service booking system
-- Service types:
-  - Oil Change
-  - AC Service
-  - Diagnostics
-  - Battery Replacement
-  - Parking Sensors
-  - Engine Repair
-- Calendar-based appointment scheduling
-- Real-time availability
+---
 
-#### 5. Accessories & Parts E-Commerce
-- Product catalog with categories
-- Search and filter functionality
-- Shopping cart system
-- Stock status indicators
-- Add to cart functionality
+## Executive Summary
 
-#### 6. Sell Your Car
-- Vehicle valuation form
-- Trade-in request system
-- Photo upload capability
-- Instant submission to admin
+Auto Spark BD modernizes luxury car retail across North Bengal by providing a fast, bilingual online showroom that replicates the in-person premium purchase experience. The platform consolidates inventory, sales leads, and after-sales service into a single, scalable web application so dealers can convert visitors into customers faster and operate more efficiently across distributed locations.
 
-#### 7. About Page
-- Company history and story
-- Core values showcase
-- Statistics display
-- Brand positioning
+This technical solution addresses market fragmentation and language friction with built-in bilingual support (English/Bengali), real-time lead generation via Supabase, and an integrated service booking engine. The result: measurable improvement in lead capture, faster time-to-contact, and a streamlined service workflow for both sales and operations teams.
 
-#### 8. Contact Page
-- Contact information display
-- Interactive Google Maps integration
-- Contact form
-- Business hours
-- Click-to-call and email links
+---
 
-### Design Elements
-- **Color Palette**: Matte Black, Electric Blue accents, White backgrounds
-- **Typography**: Inter for English, Hind Siliguri for Bengali
-- **Animations**: Smooth fade-ins, hover effects, transitions
-- **UI Components**: Custom buttons, cards, forms with consistent styling
+## Quick Links
 
-### Technical Features
-- **Database**: Supabase with comprehensive schema
-- **Authentication Ready**: RLS policies configured
-- **Type Safety**: Full TypeScript implementation
-- **State Management**: React Context for language switching
-- **Routing**: React Router v6
-- **Styling**: Tailwind CSS with custom utilities
+- Live: https://autosparkbd.com/
+- Portfolio: https://farhankabir.me/
+- Repo: https://github.com/farhankabir133/autospark
 
-## Database Schema
+---
 
-### Tables
-- `vehicles` - Vehicle inventory management
-- `vehicle_images` - Multiple images per vehicle
-- `vehicle_features` - Feature lists
-- `products` - Accessories and parts
-- `product_images` - Product image gallery
-- `service_types` - Available services
-- `service_appointments` - Service bookings
-- `car_reservations` - Vehicle purchase reservations
-- `trade_in_requests` - Sell car submissions
-- `testimonials` - Customer reviews
-- `blog_posts` - SEO content
-- `brands` - Car brands
-- `cart_items` - Shopping cart
-- `orders` - Order management
-- `order_items` - Order details
+## Technical Deep Dive
 
-All tables include Row Level Security (RLS) policies for data protection.
+### Why Supabase & Row Level Security (RLS)
 
-## Setup Instructions
+- Supabase was chosen for its PostgreSQL foundation, realtime subscriptions, and first-class developer ergonomics. RLS policies are applied to enforce fine-grained access control directly at the database layer. This prevents accidental data leaks and simplifies backend logic: policies restrict row visibility by user role (public, authenticated, admin) and by resource ownership (e.g., a user may only see their service appointments).
+
+- Benefits:
+  - Centralized security: move authorization rules to the DB and reduce duplication in application code.
+  - Realtime updates: lead notifications and appointment changes are emitted via realtime channels.
+  - Simplified operational model: use Supabase Auth + RLS for most API protection needs without a custom server.
+
+### Bilingual Architecture
+
+- Language state is managed via a React Context (`contexts/LanguageContext.tsx`). The context exposes a compact API: current language, setter, and translation helper. All text nodes use this context to render EN/BN copies.
+
+- For Bengali performance we use selective font subsetting: only the Bengali glyph subset is loaded when the user chooses Bengali, reducing payload and improving First Contentful Paint (FCP). Fonts are loaded with `font-display: swap` and conditionally imported via dynamic imports to avoid blocking the initial render.
+
+### Performance & Lighthouse
+
+- Key optimizations applied:
+  - Image lazy-loading and responsive `srcset`/`sizes` usage for all car and product images.
+  - Code-splitting via dynamic `import()` for large routes (Inventory, Vehicle Details) and non-critical components (3D viewers, maps).
+  - CSS purging and Tailwind JIT for compact runtime CSS.
+  - Critical CSS inlined for hero and above-the-fold sections.
+  - Asset caching headers (set at deployment) and compressed bundles.
+
+- Target Lighthouse scores: Performance ≥ 90, Accessibility ≥ 90, Best Practices ≥ 90, SEO ≥ 90 (desktop baseline). Actual scores vary by page; Inventory and Vehicle Details are prioritized for high performance.
+
+---
+
+## Feature Breakdown
+
+| Area | Key Capabilities |
+|---|---|
+| Inventory Engine | Dynamic filtering, sort, server-side pagination, inventory sync with Supabase, high-res galleries, price formatting (BDT) |
+| Vehicle Details | Image gallery, EMI calculator, WhatsApp & direct call links, reserve flow, related vehicles, multilingual content |
+| Service Booking | Multi-step booking wizard, calendar availability, SMS/WhatsApp notifications, admin schedule management |
+| E‑commerce | Accessories catalog, cart, stock checks, order flow, payment hooks (placeholder for gateway integrations) |
+| Lead Gen & CRM | Realtime lead capture, contact routing, admin dashboard hooks, reservation tracking |
+
+### Notable UX features
+
+- Flip-to-reveal carousel cards on landing page
+- Smooth, continuous auto-scroll carousel with pointer drag support
+- Persisted dark-mode by domain (custom domain defaults to dark)
+
+---
+
+## Developer Experience (DX)
+
+Everything in this repo is designed to be easy to run locally and to extend.
 
 ### Prerequisites
-- Node.js 18+ and npm
-- Supabase account
 
-### Installation
+- Node.js 18+ and npm (or pnpm)
+- Supabase account and project
+- (Optional) supabase CLI for local DB and migrations
 
-1. Clone the repository
-2. Install dependencies:
-   ```bash
-   npm install
-   ```
+### Environment Variables
 
-3. Configure environment variables in `.env`:
-   ```
-   VITE_SUPABASE_URL=your_supabase_url
-   VITE_SUPABASE_ANON_KEY=your_supabase_anon_key
-   ```
+Create a `.env` (or use a `.env.local`) with these keys:
 
-4. Run development server:
-   ```bash
-   npm run dev
-   ```
-
-5. Build for production:
-   ```bash
-   npm run build
-   ```
-
-## Configuration
-
-### Customization Points
-
-1. **Contact Information**:
-   - Update phone numbers in `Header.tsx`, `Footer.tsx`, `ContactPage.tsx`
-   - Update email addresses in `Footer.tsx`, `ContactPage.tsx`
-   - Update address in `Footer.tsx`, `ContactPage.tsx`
-
-2. **WhatsApp Integration**:
-   - Update WhatsApp number in `Layout.tsx` and `VehicleDetailsPage.tsx`
-
-3. **Google Maps**:
-   - Update coordinates in `ContactPage.tsx`
-
-4. **Translations**:
-   - Add/modify translations in `contexts/LanguageContext.tsx`
-
-5. **Styling**:
-   - Modify colors in `tailwind.config.js` or component files
-   - Update fonts in `index.css`
-
-## Project Structure
-
-```
-src/
-├── components/
-│   ├── ui/              # Reusable UI components
-│   ├── Header.tsx       # Navigation header
-│   ├── Footer.tsx       # Footer with links
-│   └── Layout.tsx       # Main layout wrapper
-├── contexts/
-│   └── LanguageContext.tsx  # Bilingual support
-├── lib/
-│   └── supabase.ts      # Supabase client
-├── pages/
-│   ├── HomePage.tsx
-│   ├── InventoryPage.tsx
-│   ├── VehicleDetailsPage.tsx
-│   ├── ServicesPage.tsx
-│   ├── AccessoriesPage.tsx
-│   ├── AboutPage.tsx
-│   ├── SellCarPage.tsx
-│   └── ContactPage.tsx
-├── types/
-│   └── index.ts         # TypeScript definitions
-├── utils/
-│   └── format.ts        # Helper functions
-├── App.tsx              # Main app with routing
-├── main.tsx             # App entry point
-└── index.css            # Global styles
+```bash
+VITE_SUPABASE_URL=your_supabase_url
+VITE_SUPABASE_ANON_KEY=your_supabase_anon_key
+VITE_SUPABASE_SERVICE_ROLE=your_service_role_key   # for migrations and server tasks only
+VITE_MAPS_API_KEY=your_maps_api_key                # optional (Google Maps)
 ```
 
-## Performance Optimizations
+### Local Development
 
-- Image lazy loading
-- Code splitting with dynamic imports
-- Optimized bundle size
-- Bengali font subsetting
-- CSS purging for production
-- Minification of JS and CSS
+```bash
+git clone git@github.com:farhankabir133/autospark.git
+cd autospark
+npm install
+npm run dev
+```
 
-## SEO Features
+### Database: schema & migrations
 
-- Comprehensive meta tags
-- Open Graph tags for social sharing
-- Twitter Card support
-- Semantic HTML structure
-- Structured data ready
-- Mobile-friendly design
-- Fast page load times
+- Schema highlights (Postgres tables): `vehicles`, `vehicle_images`, `vehicle_features`, `service_types`, `service_appointments`, `car_reservations`, `products`, `orders`, `order_items`, `testimonials`, `users`.
+- Migrations: use Supabase CLI or SQL migration files in `supabase/migrations/` (if present). Example commands:
 
-## Browser Support
+```bash
+# install supabase CLI and login
+supabase login
+supabase db remote set <your-db-connection>
+supabase db push --schema public
+```
 
-- Chrome (latest)
-- Firefox (latest)
-- Safari (latest)
-- Edge (latest)
-- Mobile browsers (iOS Safari, Chrome Mobile)
+### Seeds & Admin
 
-## License
+- Example seed data is provided in `src/hooks/vehicleDataAll.ts` for development and testing. For production, run SQL seed scripts or import CSVs via the Supabase UI.
 
-Proprietary - Auto Spark BD
+### Testing & Typecheck
 
-## Support
+```bash
+npm run typecheck   # run TypeScript checks
+npm run lint        # ESLint
+npm test            # If tests are added
+```
 
-For support, contact: info@autosparkbd.com
+---
+
+## Deployment
+
+- The project builds to a static bundle via Vite (`npm run build`) and can be deployed to any static host (Netlify, Vercel, GitHub Pages) with Supabase providing the backend. Ensure environment variables are set in the deployment platform.
+
+---
+
+## Security Notes
+
+- RLS policies should be audited before production. Keep the service role key (`VITE_SUPABASE_SERVICE_ROLE`) out of client-side code and CI logs.
+- Rate-limit public endpoints and validate uploaded files (images) on the server-side or using Supabase Storage policies.
+
+---
+
+## Meet the Developer
+
+**A. S. M. Farhan Kabir Redoy** — Lead Developer, Auto Spark
+
+I am a Computer Science graduate from RUET and lead the engineering efforts at Auto Spark. My focus is building performant, user-centered web platforms that combine modern frontend engineering with pragmatic backend design and AI-enabled tooling.
+
+- Portfolio: https://farhankabir.me/
+- Medium: https://medium.com/@farhankabir
+- Email: farhankabir133@gmail.com
+
+---
+
+If you'd like a tailored developer walkthrough or a live code review session, open an issue or contact me directly via the email above.
+
+> This README is crafted to be both a technical reference and a portfolio showcase — feel free to suggest edits to tailor tone or detail level for prospective employers or clients.
