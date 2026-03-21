@@ -6,6 +6,7 @@ const CACHE_NAME = 'autospark-v3';
 const PRECACHE_URLS = [
   '/',
   '/logo/logoAS3.svg',
+  '/preview/preview-image.webp',
 ];
 
 // Cache-first patterns (static assets that rarely change)
