@@ -1,12 +1,14 @@
 import { motion, AnimatePresence } from 'framer-motion';
 import React, { useState, useRef } from 'react';
 import { X, Check } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 
 export interface VehicleColor {
   name: string;
   hex: string;
   rgb: string;
   filterClass: string;
+  image?: string;
 }
 
 interface InteractiveColorCustomizerProps {
@@ -32,6 +34,8 @@ export const InteractiveColorCustomizer = ({
   );
   const [imageFilter, setImageFilter] = useState('');
   const imageRef = useRef<HTMLDivElement>(null);
+  const [displayImage, setDisplayImage] = useState<string>(vehicleImage);
+  const navigate = useNavigate();
 
   const getColorFilter = (color: VehicleColor) => {
     // Use CSS filters to create color overlay effects
@@ -53,6 +57,7 @@ export const InteractiveColorCustomizer = ({
     const filter = getColorFilter(color);
     setImageFilter(filter);
     onColorSelect?.(color);
+    if (color.image) setDisplayImage(color.image);
     
     // Save to localStorage
     try {
@@ -106,7 +111,7 @@ export const InteractiveColorCustomizer = ({
           transition={{ duration: 0.3 }}
         >
           <motion.img
-            src={vehicleImage}
+            src={displayImage}
             alt={vehicleModel}
             className="w-full h-full object-cover"
             style={{
@@ -244,6 +249,17 @@ export const InteractiveColorCustomizer = ({
                   <p className={secondaryText}>
                     RGB: <span className="font-mono">{selectedColor.rgb}</span>
                   </p>
+                </div>
+                <div className="mt-4">
+                  <button
+                    onClick={() => {
+                      // Navigate to inventory with model + color query
+                      navigate(`/inventory?model=${encodeURIComponent(vehicleModel)}&color=${encodeURIComponent(selectedColor.name)}`);
+                    }}
+                    className="mt-3 inline-flex items-center px-4 py-2 bg-[var(--accent)] text-white rounded-lg font-semibold"
+                  >
+                    {language === 'en' ? 'View this color' : 'এই রঙ দেখুন'}
+                  </button>
                 </div>
               </motion.div>
             )}

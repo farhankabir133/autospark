@@ -395,12 +395,12 @@ export const HomePage = () => {
   // Color customizer colors (extracted to avoid repetition)
   const vehicleColors: Record<string, VehicleColor[]> = {
     prado: [
-      { name: 'Pearl White', hex: '#F5F5F5', rgb: '245,245,245', filterClass: 'brightness(1.1) saturate(0.8)' },
-      { name: 'Black Metallic', hex: '#1A1A1A', rgb: '26,26,26', filterClass: 'brightness(0.7) contrast(1.2)' },
-      { name: 'Steel Blue', hex: '#4A6FA5', rgb: '74,111,165', filterClass: 'hue-rotate(200deg) saturate(1.2)' },
-      { name: 'Crimson Red', hex: '#DC143C', rgb: '220,20,60', filterClass: 'hue-rotate(-30deg) saturate(1.3)' },
-      { name: 'Forest Green', hex: '#228B22', rgb: '34,139,34', filterClass: 'hue-rotate(120deg) saturate(1.1)' },
-      { name: 'Gold', hex: '#FFD700', rgb: '255,215,0', filterClass: 'hue-rotate(40deg) saturate(1.4)' },
+      { name: 'Pearl White', hex: '#F5F5F5', rgb: '245,245,245', filterClass: 'brightness(1.1) saturate(0.8)', image: `${import.meta.env.BASE_URL}customize-cars/prado/white.webp` },
+      { name: 'Black Metallic', hex: '#1A1A1A', rgb: '26,26,26', filterClass: 'brightness(0.7) contrast(1.2)', image: `${import.meta.env.BASE_URL}customize-cars/prado/black.webp` },
+      { name: 'Steel Blue', hex: '#4A6FA5', rgb: '74,111,165', filterClass: 'hue-rotate(200deg) saturate(1.2)', image: `${import.meta.env.BASE_URL}customize-cars/prado/blue.webp` },
+      { name: 'Crimson Red', hex: '#DC143C', rgb: '220,20,60', filterClass: 'hue-rotate(-30deg) saturate(1.3)', image: `${import.meta.env.BASE_URL}customize-cars/prado/red.webp` },
+      { name: 'Forest Green', hex: '#228B22', rgb: '34,139,34', filterClass: 'hue-rotate(120deg) saturate(1.1)', image: `${import.meta.env.BASE_URL}customize-cars/prado/green.webp` },
+      { name: 'Gold', hex: '#FFD700', rgb: '255,215,0', filterClass: 'hue-rotate(40deg) saturate(1.4)', image: `${import.meta.env.BASE_URL}customize-cars/prado/gold.webp` },
     ],
     harrier: [
       { name: 'Pearl White', hex: '#F5F5F5', rgb: '245,245,245', filterClass: 'brightness(1.1) saturate(0.8)' },
@@ -801,7 +801,7 @@ export const HomePage = () => {
               <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
                 {(['prado','harrier','crown'] as const).map((model, i) => {
                   const imgs: Record<string, string> = {
-                    prado: 'https://images.pexels.com/photos/36318402/pexels-photo-36318402.png?auto=compress&cs=tinysrgb&w=400&fm=webp',
+                    prado: `${import.meta.env.BASE_URL}customize-cars/prado/white.webp`,
                     harrier: 'https://images.pexels.com/photos/35515996/pexels-photo-35515996.png?auto=compress&cs=tinysrgb&w=400&fm=webp',
                     crown: 'https://images.pexels.com/photos/35509198/pexels-photo-35509198.png?auto=compress&cs=tinysrgb&w=400&fm=webp',
                   };
