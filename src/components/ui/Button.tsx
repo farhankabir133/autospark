@@ -1,10 +1,13 @@
 import { ButtonHTMLAttributes, ReactNode } from 'react';
 import { useTheme } from '../../contexts/ThemeContext';
+import { Link } from 'react-router-dom';
 
 interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   children: ReactNode;
   variant?: 'primary' | 'secondary' | 'outline';
   size?: 'sm' | 'md' | 'lg';
+  /** Optional router destination. When provided the Button renders as a Link */
+  to?: string;
 }
 
 export const Button = ({
@@ -12,6 +15,7 @@ export const Button = ({
   variant = 'primary',
   size = 'md',
   className = '',
+  to,
   ...props
 }: ButtonProps) => {
   const { theme } = useTheme();
@@ -36,9 +40,20 @@ export const Button = ({
     lg: 'px-8 py-4 text-lg min-h-[48px]',
   };
 
+  const classNames = `${baseStyles} ${variantStyles[variant]} ${sizeStyles[size]} ${className}`;
+
+  if (to) {
+    // Render as a router Link when a destination is provided
+    return (
+      <Link to={to} className={classNames} {...(props as any)}>
+        {children}
+      </Link>
+    );
+  }
+
   return (
     <button
-      className={`${baseStyles} ${variantStyles[variant]} ${sizeStyles[size]} ${className}`}
+      className={classNames}
       {...props}
     >
       {children}
