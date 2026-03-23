@@ -411,12 +411,12 @@ export const HomePage = () => {
       { name: 'Charcoal Grey', hex: '#36454F', rgb: '54,69,79', filterClass: 'brightness(0.85) saturate(0.6)', image: `${import.meta.env.BASE_URL}customize-cars/harrier/grey.webp` },
     ],
     crown: [
-      { name: 'Pearl White', hex: '#F5F5F5', rgb: '245,245,245', filterClass: 'brightness(1.1) saturate(0.8)' },
-      { name: 'Midnight Black', hex: '#0D0D0D', rgb: '13,13,13', filterClass: 'brightness(0.5) contrast(1.3)' },
-      { name: 'Burgundy Red', hex: '#800020', rgb: '128,0,32', filterClass: 'hue-rotate(-40deg) saturate(1.2)' },
-      { name: 'Deep Blue', hex: '#00008B', rgb: '0,0,139', filterClass: 'hue-rotate(220deg) saturate(1.3)' },
-      { name: 'Titanium Grey', hex: '#A9ACB5', rgb: '169,172,181', filterClass: 'brightness(0.95) saturate(0.4)' },
-      { name: 'Champagne Gold', hex: '#F7E7CE', rgb: '247,231,206', filterClass: 'hue-rotate(30deg) saturate(1.2)' },
+      { name: 'Pearl White', hex: '#F5F5F5', rgb: '245,245,245', filterClass: 'brightness(1.1) saturate(0.8)', image: `${import.meta.env.BASE_URL}customize-cars/crown/pearl.webp` },
+      { name: 'Midnight Black', hex: '#0D0D0D', rgb: '13,13,13', filterClass: 'brightness(0.5) contrast(1.3)', image: `${import.meta.env.BASE_URL}customize-cars/crown/black.webp` },
+      { name: 'Burgundy Red', hex: '#800020', rgb: '128,0,32', filterClass: 'hue-rotate(-40deg) saturate(1.2)', image: `${import.meta.env.BASE_URL}customize-cars/crown/red.webp` },
+      { name: 'Deep Blue', hex: '#00008B', rgb: '0,0,139', filterClass: 'hue-rotate(220deg) saturate(1.3)', image: `${import.meta.env.BASE_URL}customize-cars/crown/blue.webp` },
+      { name: 'Titanium Grey', hex: '#A9ACB5', rgb: '169,172,181', filterClass: 'brightness(0.95) saturate(0.4)', image: `${import.meta.env.BASE_URL}customize-cars/crown/grey.webp` },
+      { name: 'Champagne Gold', hex: '#F7E7CE', rgb: '247,231,206', filterClass: 'hue-rotate(30deg) saturate(1.2)', image: `${import.meta.env.BASE_URL}customize-cars/crown/silver.webp` },
     ],
   };
 
