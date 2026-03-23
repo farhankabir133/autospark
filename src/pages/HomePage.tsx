@@ -902,7 +902,7 @@ export const HomePage = () => {
               </FadeIn>
               <AnimatedComparisonSlider
                 standardImage="https://images.pexels.com/photos/35515996/pexels-photo-35515996.png?auto=compress&cs=tinysrgb&w=400&fm=webp"
-                premiumImage="https://images.pexels.com/photos/35515996/pexels-photo-35515996.png?auto=compress&cs=tinysrgb&w=400&fm=webp"
+                premiumImage={`${import.meta.env.BASE_URL}customize-cars/harrier/pearl.webp`}
                 standardModel={language === 'en' ? 'Harrier Standard' : 'হ্যারিয়ার স্ট্যান্ডার্ড'}
                 premiumModel={language === 'en' ? 'Harrier Premium' : 'হ্যারিয়ার প্রিমিয়াম'}
                 specs={[
