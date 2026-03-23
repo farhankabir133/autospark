@@ -36,6 +36,40 @@ export const ALL_VEHICLES: Vehicle[] = [
     ]
   },
 
+  // TOYOTA - Harrier (Inventory add for Personalize)
+  {
+    id: 'harrier-001',
+    stock_number: 'HARRIER-002',
+    brand_name: 'Toyota',
+    model: 'Harrier',
+    year: 2024,
+    price: 6800000,
+    mileage: 0,
+    fuel_type: 'Hybrid',
+    transmission: 'Automatic',
+    engine_capacity: '2.5L Hybrid',
+    color_exterior: 'Pearl White',
+    color_interior: 'Black Leather',
+    body_type: 'Premium SUV',
+    condition: 'New',
+    description_en: 'Elegant crossover combining comfort and efficiency with modern safety features',
+    description_bn: 'আরাম ও দক্ষতা একত্রিতকারী এলিগেন্ট ক্রসওভার, আধুনিক নিরাপত্তা বৈশিষ্ট্য সহ',
+    is_available: true,
+    is_featured: true,
+    video_url: '',
+    view_count: 0,
+    created_at: new Date().toISOString(),
+    updated_at: new Date().toISOString(),
+    images: [
+      { id: 'harrier-1', vehicle_id: 'harrier-001', image_url: '/customize-cars/harrier/pearl.webp', display_order: 1, is_primary: true, created_at: new Date().toISOString() },
+      { id: 'harrier-2', vehicle_id: 'harrier-001', image_url: '/customize-cars/harrier/black.webp', display_order: 2, is_primary: false, created_at: new Date().toISOString() },
+      { id: 'harrier-3', vehicle_id: 'harrier-001', image_url: '/customize-cars/harrier/blue.webp', display_order: 3, is_primary: false, created_at: new Date().toISOString() },
+      { id: 'harrier-4', vehicle_id: 'harrier-001', image_url: '/customize-cars/harrier/purple.webp', display_order: 4, is_primary: false, created_at: new Date().toISOString() },
+      { id: 'harrier-5', vehicle_id: 'harrier-001', image_url: '/customize-cars/harrier/grey.webp', display_order: 5, is_primary: false, created_at: new Date().toISOString() },
+      { id: 'harrier-6', vehicle_id: 'harrier-001', image_url: '/customize-cars/harrier/silver.webp', display_order: 6, is_primary: false, created_at: new Date().toISOString() }
+    ]
+  },
+
   // TOYOTA - Prado TX-L
   {
     id: 'prado-001',

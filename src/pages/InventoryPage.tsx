@@ -805,6 +805,33 @@ export const InventoryPage = () => {
     return counts;
   }, [vehicles]);
 
+// Small inline EMI calculator component (local to this file)
+const EMICalculator: React.FC<{ principal: number }> = ({ principal }) => {
+  const [rate, setRate] = useState(9.5); // annual %
+  const [tenure, setTenure] = useState(60); // months
+
+  const monthlyRate = rate / 100 / 12;
+  const n = tenure;
+  const P = principal;
+  let emi = 0;
+  if (P > 0 && monthlyRate > 0 && n > 0) {
+    const x = Math.pow(1 + monthlyRate, n);
+    emi = (P * monthlyRate * x) / (x - 1);
+  }
+
+  return (
+    <div className="space-y-3">
+      <div className="grid grid-cols-2 gap-2">
+        <label className="text-xs">Rate (%)</label>
+        <label className="text-xs">Tenure (months)</label>
+        <input type="number" value={rate} onChange={(e) => setRate(Number(e.target.value))} className="p-2 rounded border" />
+        <input type="number" value={tenure} onChange={(e) => setTenure(Number(e.target.value))} className="p-2 rounded border" />
+      </div>
+      <div className="text-sm">Estimated EMI: <strong>{emi > 0 ? formatPrice(Math.round(emi), 'en') : '-'}</strong></div>
+    </div>
+  );
+};
+
   // Apply filters
   useEffect(() => {
     let filtered = [...vehicles];
@@ -1388,7 +1415,7 @@ export const InventoryPage = () => {
 
                 <div className="mt-4 space-y-4 overflow-auto h-[calc(100vh-120px)]">
                   {/* Image / small carousel */}
-                    <div className="w-full h-48 bg-gray-100 rounded-lg overflow-hidden">
+                  <div className="w-full h-48 bg-gray-100 rounded-lg overflow-hidden">
                     {vehicle.images && vehicle.images.length > 0 ? (
                       <img src={encodeURI((vehicle.images[0] as any).image_url || (vehicle.images[0] as any).url)} alt={`${vehicle.brand_name} ${vehicle.model}`} className="w-full h-full object-cover" />
                     ) : (
@@ -1398,16 +1425,49 @@ export const InventoryPage = () => {
 
                   <div className="space-y-2">
                     <div className="text-2xl font-bold text-blue-500">{vehicle.price && vehicle.price > 0 ? formatPrice(vehicle.price, language) : (language === 'en' ? 'Price on request' : 'মূল্য অনুরোধে')}</div>
-                    <div className="text-sm text-gray-400">{vehicle.mileage.toLocaleString()} km • {vehicle.fuel_type} • {vehicle.transmission}</div>
+                    <div className="text-sm text-gray-400">Year {vehicle.year} • {vehicle.mileage.toLocaleString()} km</div>
+                    <div className="text-sm">Fuel: {vehicle.fuel_type} • Transmission: {vehicle.transmission}</div>
                     {vehicle.color_exterior && (
                       <div className="text-sm">Color: {vehicle.color_exterior}</div>
                     )}
                   </div>
 
-                  <div className="pt-2">
-                    <Button onClick={() => navigate(`/vehicle/${vehicle.id}`)} className="w-full">
-                      {t('vehicle.view_details')}
-                    </Button>
+                  <div className="pt-2 grid grid-cols-1 sm:grid-cols-3 gap-2">
+                    <Button onClick={() => navigate(`/sell?reserve=${encodeURIComponent(vehicle.id)}`)} className="w-full">Reserve Now</Button>
+                    <Button onClick={() => navigate('/contact')} className="w-full">Contact Us</Button>
+                    <a
+                      href={`https://wa.me/8801760401605?text=${encodeURIComponent(`I'm interested in ${vehicle.brand_name} ${vehicle.model} (Stock #: ${vehicle.stock_number})`)}`}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="w-full"
+                    >
+                      <Button className="w-full">WhatsApp</Button>
+                    </a>
+                  </div>
+
+                  {/* EMI Calculator */}
+                  <div className="pt-4 border-t pt-4">
+                    <h4 className="font-semibold mb-2">Calculate EMI</h4>
+                    <EMICalculator principal={vehicle.price || 0} />
+                  </div>
+
+                  {/* Description */}
+                  {vehicle.description_en && (
+                    <div className="pt-4">
+                      <h4 className="font-semibold mb-2">Description</h4>
+                      <p className="text-sm text-gray-600 dark:text-gray-300">{vehicle.description_en}</p>
+                    </div>
+                  )}
+
+                  {/* Specifications */}
+                  <div className="pt-4">
+                    <h4 className="font-semibold mb-2">Specifications</h4>
+                    <div className="grid grid-cols-2 gap-2 text-sm text-gray-700 dark:text-gray-300">
+                      <div>Engine: {vehicle.engine_capacity}</div>
+                      <div>Condition: {vehicle.condition}</div>
+                      <div>Body Type: {vehicle.body_type}</div>
+                      <div>Interior: {vehicle.color_interior}</div>
+                    </div>
                   </div>
                 </div>
               </motion.aside>

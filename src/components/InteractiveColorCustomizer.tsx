@@ -313,8 +313,18 @@ export const InteractiveColorCustomizer = ({
                       onClick={() => {
                         // Open full-screen color preview page with state for full functionality
                         try {
-                          // Navigate directly to inventory with model and color as query params
-                          const url = `/inventory?model=${encodeURIComponent(vehicleModel)}&color=${encodeURIComponent(selectedColor?.name || '')}`;
+                          // Map short model keys to inventory IDs when available
+                          const modelToId: Record<string, string> = {
+                            prado: 'prado-001',
+                            harrier: 'harrier-001',
+                            crown: '9',
+                          };
+                          const openId = modelToId[vehicleModel as string];
+                          const params = new URLSearchParams();
+                          params.set('model', vehicleModel);
+                          if (selectedColor?.name) params.set('color', selectedColor.name);
+                          if (openId) params.set('open', openId);
+                          const url = `/inventory?${params.toString()}`;
                           // eslint-disable-next-line @typescript-eslint/no-floating-promises
                           navigate(url, { state: { from: 'personalize', selectedColor, displayImage } });
                         } catch (e) {
