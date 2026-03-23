@@ -2,6 +2,8 @@
 export class AudioManager {
   private static audioContext: AudioContext | null = null;
   private static sounds: Record<string, HTMLAudioElement> = {};
+  // Only allow audio playback after an explicit user gesture (pointerdown/touchstart)
+  private static userGestureAllowed = false;
 
   static initialize() {
     if (!this.audioContext) {
@@ -17,6 +19,11 @@ export class AudioManager {
 
   static playSound(name: string, volume: number = 0.3) {
     try {
+      // Respect global user-gesture guard
+      if (!this.userGestureAllowed) {
+        // Do not attempt playback until a user gesture is observed (prevents autoplay noise)
+        return;
+      }
       this.initialize();
       if (this.sounds[name]) {
         const audio = this.sounds[name].cloneNode() as HTMLAudioElement;
@@ -27,6 +34,19 @@ export class AudioManager {
       }
     } catch (error) {
       console.debug('Audio playback not available');
+    }
+  }
+
+  /**
+   * Allow audio playback after observing a user gesture (pointerdown/touchstart).
+   * Call this from a one-time global event handler so later clicks can play sounds.
+   */
+  static allowUserGesture() {
+    try {
+      this.userGestureAllowed = true;
+      this.initialize();
+    } catch (e) {
+      /* ignore */
     }
   }
 

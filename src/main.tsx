@@ -61,3 +61,16 @@ window.addEventListener('load', () => {
     document.head.appendChild(link);
   }
 });
+
+// One-time user-gesture listener: enable AudioManager only after a real user gesture
+// (pointerdown/touchstart happens before click, so enabling on pointerdown allows
+// click handlers in the same gesture to play audio as expected).
+const enableAudioOnUserGesture = () => {
+  try {
+    import('./utils/AudioManager').then(mod => mod.AudioManager.allowUserGesture()).catch(() => {});
+  } catch (e) {
+    /* ignore */
+  }
+};
+window.addEventListener('pointerdown', enableAudioOnUserGesture, { once: true, passive: true });
+window.addEventListener('touchstart', enableAudioOnUserGesture, { once: true, passive: true });
