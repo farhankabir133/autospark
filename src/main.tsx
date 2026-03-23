@@ -74,3 +74,33 @@ const enableAudioOnUserGesture = () => {
 };
 window.addEventListener('pointerdown', enableAudioOnUserGesture, { once: true, passive: true });
 window.addEventListener('touchstart', enableAudioOnUserGesture, { once: true, passive: true });
+
+// Silence any playing sounds when the user is scrolling or performing non-audio interactions.
+// Some UI interactions (hover while scrolling, auto animations) can accidentally trigger
+// audio. As a safety net, pause all <audio>/<video> elements and stop AudioManager sounds
+// when scroll-like events occur.
+const silenceOnScrollLike = () => {
+  try {
+    import('./utils/AudioManager').then(mod => mod.AudioManager.stopAll()).catch(() => {});
+  } catch (e) {
+    /* ignore */
+  }
+
+  try {
+    const medias = Array.from(document.querySelectorAll<HTMLMediaElement>('audio, video'));
+    medias.forEach(m => {
+      try {
+        if (!m.paused) {
+          m.pause();
+          m.currentTime = 0;
+        }
+      } catch (_) { /* ignore media that can't be controlled */ }
+    });
+  } catch (_) {
+    /* ignore */
+  }
+};
+
+window.addEventListener('scroll', silenceOnScrollLike, { passive: true });
+window.addEventListener('wheel', silenceOnScrollLike, { passive: true });
+window.addEventListener('touchmove', silenceOnScrollLike, { passive: true });
