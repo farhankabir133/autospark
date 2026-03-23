@@ -1,5 +1,5 @@
 import { motion, AnimatePresence } from 'framer-motion';
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { X, Check } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
@@ -37,6 +37,9 @@ export const InteractiveColorCustomizer = ({
   const [displayImage, setDisplayImage] = useState<string>(vehicleImage);
   const navigate = useNavigate();
   const [isLargeOpen, setIsLargeOpen] = useState(false);
+  const modalRef = useRef<HTMLDivElement | null>(null);
+  const prevActiveRef = useRef<HTMLElement | null>(null);
+  const [imageLoaded, setImageLoaded] = useState(false);
 
   const getColorFilter = (color: VehicleColor) => {
     // Use CSS filters to create color overlay effects
@@ -105,6 +108,52 @@ export const InteractiveColorCustomizer = ({
 
   const textColor = theme === 'dark' ? 'text-white' : 'text-gray-900';
   const secondaryText = theme === 'dark' ? 'text-gray-400' : 'text-gray-600';
+
+  // Focus trap + ESC + body scroll lock for the large modal
+  useEffect(() => {
+    if (!isLargeOpen) return;
+    const modalEl = modalRef.current;
+    prevActiveRef.current = document.activeElement as HTMLElement | null;
+    const prevOverflow = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+
+    const focusableSelector = 'a[href], button:not([disabled]), textarea, input, select, [tabindex]:not([tabindex="-1"])';
+    const focusable = modalEl ? Array.from(modalEl.querySelectorAll<HTMLElement>(focusableSelector)) : [];
+    if (focusable.length) {
+      try { focusable[0].focus(); } catch (e) { /* ignore focus errors */ }
+    }
+
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        setIsLargeOpen(false);
+        return;
+      }
+      if (e.key === 'Tab') {
+        if (!focusable.length) return;
+        const first = focusable[0];
+        const last = focusable[focusable.length - 1];
+        if (e.shiftKey) {
+          if (document.activeElement === first) {
+            e.preventDefault();
+            last.focus();
+          }
+        } else {
+          if (document.activeElement === last) {
+            e.preventDefault();
+            first.focus();
+          }
+        }
+      }
+    };
+
+    document.addEventListener('keydown', handleKeyDown);
+
+    return () => {
+      document.removeEventListener('keydown', handleKeyDown);
+      document.body.style.overflow = prevOverflow;
+      try { prevActiveRef.current?.focus(); } catch (e) { /* ignore */ }
+    };
+  }, [isLargeOpen]);
 
   return (
     <motion.div
@@ -284,10 +333,28 @@ export const InteractiveColorCustomizer = ({
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 0.18 }}
+            role="dialog"
+            aria-modal="true"
+            aria-label={`${vehicleModel} color preview`}
+            ref={modalRef}
+            onClick={(e) => e.stopPropagation()}
           >
             <div className="grid grid-cols-1 md:grid-cols-2">
-              <div className="md:col-span-1 h-96 md:h-[560px] bg-black/5 dark:bg-black">
-                <img src={displayImage} alt={`${vehicleModel} ${selectedColor?.name}`} className="w-full h-full object-contain p-6" />
+              <div className="md:col-span-1 h-72 md:h-[560px] bg-black/5 dark:bg-black flex items-center justify-center">
+                {/* Image skeleton / placeholder */}
+                {!imageLoaded && (
+                  <div className="w-full h-full flex items-center justify-center p-6">
+                    <div className="w-full h-full rounded-lg bg-gray-200 dark:bg-gray-700 animate-pulse" />
+                  </div>
+                )}
+
+                <img
+                  src={displayImage}
+                  alt={`${vehicleModel} ${selectedColor?.name}`}
+                  className={`w-full h-full object-contain p-6 ${imageLoaded ? 'opacity-100' : 'opacity-0'}`}
+                  onLoad={() => setImageLoaded(true)}
+                  loading="lazy"
+                />
               </div>
               <div className="p-6 md:p-8">
                 <div className="flex items-start justify-between">
@@ -334,6 +401,7 @@ export const InteractiveColorCustomizer = ({
           </motion.div>
         </div>
       )}
+      
     </motion.div>
   );
 };
