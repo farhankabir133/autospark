@@ -309,15 +309,22 @@ export const InteractiveColorCustomizer = ({
                   </p>
                 </div>
                 <div className="mt-4">
-                  <button
-                    onClick={() => {
-                      // Open larger view modal showing this color with full functionality
-                      setIsLargeOpen(true);
-                    }}
-                    className="mt-3 inline-flex items-center px-4 py-2 bg-[var(--accent)] text-white rounded-lg font-semibold"
-                  >
-                    {language === 'en' ? 'View this color' : 'এই রঙ দেখুন'}
-                  </button>
+                    <button
+                      onClick={() => {
+                        // Open full-screen color preview page with state for full functionality
+                        try {
+                          // use navigate with state so the new page has full access to available colors
+                          // eslint-disable-next-line @typescript-eslint/no-floating-promises
+                          navigate('/color-preview', { state: { vehicleModel, selectedColor, availableColors, displayImage } });
+                        } catch (e) {
+                          // fallback: open the modal if navigation fails
+                          setIsLargeOpen(true);
+                        }
+                      }}
+                      className="mt-3 inline-flex items-center px-4 py-2 bg-[var(--accent)] text-white rounded-lg font-semibold"
+                    >
+                      {language === 'en' ? 'View this color' : 'এই রঙ দেখুন'}
+                    </button>
                 </div>
               </motion.div>
             )}

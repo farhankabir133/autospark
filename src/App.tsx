@@ -5,7 +5,6 @@ import { LanguageProvider } from './contexts/LanguageContext';
 import { ThemeProvider } from './contexts/ThemeContext';
 import { Layout } from './components/Layout';
 import ErrorBoundary from './components/ErrorBoundary';
-import CursorFollower from './components/CursorFollower';
 import { SplashScreen } from './components/SplashScreen';
 
 // Lazy load pages for better code splitting and performance
@@ -19,6 +18,7 @@ const SellCarPage = lazy(() => import('./pages/SellCarPage').then(m => ({ defaul
 const ContactPage = lazy(() => import('./pages/ContactPage').then(m => ({ default: m.ContactPage })));
 const VehicleExperiencePage = lazy(() => import('./pages/VehicleExperiencePage').then(m => ({ default: m.VehicleExperiencePage })));
 const TestimonialsPage = lazy(() => import('./pages/TestimonialsPage').then(m => ({ default: m.TestimonialsPage })));
+const ColorPreviewPage = lazy(() => import('./pages/ColorPreviewPage').then(m => ({ default: m.ColorPreviewPage })));
 
 // Minimal loading fallback to prevent CLS
 const PageLoader = () => (
@@ -77,10 +77,9 @@ function App() {
                 <Route path="/testimonials" element={<TestimonialsPage />} />
                 <Route path="/sell" element={<SellCarPage />} />
                 <Route path="/contact" element={<ContactPage />} />
+                <Route path="/color-preview" element={<ColorPreviewPage />} />
               </Routes>
             </Suspense>
-            {/* Global cursor follower (theme-aware) */}
-            <CursorFollower />
           </Layout>
         </Router>
         </ErrorBoundary>
