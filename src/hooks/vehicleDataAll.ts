@@ -36,6 +36,40 @@ export const ALL_VEHICLES: Vehicle[] = [
     ]
   },
 
+  // TOYOTA - Prado TX-L
+  {
+    id: 'prado-001',
+    stock_number: 'PRADO-001',
+    brand_name: 'Toyota',
+    model: 'Prado TX-L',
+    year: 2024,
+    price: 8200000,
+    mileage: 0,
+    fuel_type: 'Petrol',
+    transmission: 'Automatic',
+    engine_capacity: '2.7L',
+    color_exterior: 'Pearl White',
+    color_interior: 'Beige Leather',
+    body_type: 'SUV',
+    condition: 'New',
+    description_en: 'Robust off-road capable SUV with luxurious interior and modern features',
+    description_bn: 'আধুনিক ফিচার এবং বিলাসবহুল ইন্টারিয়র সহ শক্তিশালী অফ-রোড এসইউভি',
+    is_available: true,
+    is_featured: true,
+    video_url: '',
+    view_count: 0,
+    created_at: new Date().toISOString(),
+    updated_at: new Date().toISOString(),
+    images: [
+      { id: 'prado-1', vehicle_id: 'prado-001', image_url: '/customize-cars/prado/white.webp', display_order: 1, is_primary: true, created_at: new Date().toISOString() },
+      { id: 'prado-2', vehicle_id: 'prado-001', image_url: '/customize-cars/prado/black.webp', display_order: 2, is_primary: false, created_at: new Date().toISOString() },
+      { id: 'prado-3', vehicle_id: 'prado-001', image_url: '/customize-cars/prado/blue.webp', display_order: 3, is_primary: false, created_at: new Date().toISOString() },
+      { id: 'prado-4', vehicle_id: 'prado-001', image_url: '/customize-cars/prado/red.webp', display_order: 4, is_primary: false, created_at: new Date().toISOString() },
+      { id: 'prado-5', vehicle_id: 'prado-001', image_url: '/customize-cars/prado/green.webp', display_order: 5, is_primary: false, created_at: new Date().toISOString() },
+      { id: 'prado-6', vehicle_id: 'prado-001', image_url: '/customize-cars/prado/gold.webp', display_order: 6, is_primary: false, created_at: new Date().toISOString() }
+    ]
+  },
+
   // TOYOTA - Corolla Cross Z
   {
     id: '8',

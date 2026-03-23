@@ -313,9 +313,10 @@ export const InteractiveColorCustomizer = ({
                       onClick={() => {
                         // Open full-screen color preview page with state for full functionality
                         try {
-                          // use navigate with state so the new page has full access to available colors
+                          // Navigate directly to inventory with model and color as query params
+                          const url = `/inventory?model=${encodeURIComponent(vehicleModel)}&color=${encodeURIComponent(selectedColor?.name || '')}`;
                           // eslint-disable-next-line @typescript-eslint/no-floating-promises
-                          navigate('/color-preview', { state: { vehicleModel, selectedColor, availableColors, displayImage } });
+                          navigate(url, { state: { from: 'personalize', selectedColor, displayImage } });
                         } catch (e) {
                           // fallback: open the modal if navigation fails
                           setIsLargeOpen(true);
