@@ -34,7 +34,8 @@ export const VehicleShowcase = ({
   // Auto-play muted video on hover
   const handleShowcaseHover = () => {
     if (videoUrl) {
-      AudioManager.playClick();
+      // Avoid playing sounds on hover (hover can be triggered by scrolling when elements
+      // move under the cursor). Only trigger the visual/video preview callback.
       onPlay?.();
     }
   };
