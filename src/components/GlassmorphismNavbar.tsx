@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Menu, X, Moon, Sun, Globe, Search } from 'lucide-react';
+import { Menu, X, Moon, Sun, Globe, Search, Volume2, VolumeX } from 'lucide-react';
 import { m, LazyMotion, domMax, AnimatePresence } from 'framer-motion';
 import { useLanguage } from '../contexts/LanguageContext';
 import { useTheme } from '../contexts/ThemeContext';
@@ -16,10 +16,23 @@ export const GlassmorphismNavbar = () => {
   const { language, setLanguage, t } = useLanguage();
   const { theme, toggleTheme } = useTheme();
   const location = useLocation();
+  const [audioEnabled, setAudioEnabled] = useState<boolean>(true);
 
   useEffect(() => {
     setActiveLink(location.pathname);
   }, [location.pathname]);
+
+  // Load persisted audio preference
+  useEffect(() => {
+    try {
+      const stored = localStorage.getItem('audio_enabled');
+      const enabled = stored === null ? true : stored === 'true';
+      setAudioEnabled(enabled);
+      import('../utils/AudioManager').then(mod => mod.AudioManager.setEnabled(enabled)).catch(() => {});
+    } catch (e) {
+      // ignore
+    }
+  }, []);
 
   // Determine which logo to show based on current page
   const isServicesOrAccessories = location.pathname === '/services' || location.pathname === '/accessories';
@@ -54,6 +67,17 @@ export const GlassmorphismNavbar = () => {
   const handleToggleTheme = () => {
     playClick();
     toggleTheme();
+  };
+
+  const handleToggleAudio = () => {
+    const next = !audioEnabled;
+    setAudioEnabled(next);
+    try {
+      localStorage.setItem('audio_enabled', String(next));
+      import('../utils/AudioManager').then(mod => mod.AudioManager.setEnabled(next)).catch(() => {});
+    } catch (e) {
+      // ignore
+    }
   };
 
   const handleNavClick = (to: string) => {
@@ -236,6 +260,21 @@ export const GlassmorphismNavbar = () => {
                 aria-label="Search"
               >
                 <Search className="h-4 w-4" />
+              </m.button>
+
+              {/* Audio Toggle Button */}
+              <m.button
+                whileHover={{ scale: 1.1 }}
+                whileTap={{ scale: 0.95 }}
+                onClick={handleToggleAudio}
+                className={`hidden md:flex p-1.5 rounded-lg transition-all ${
+                  theme === 'dark'
+                    ? 'hover:bg-gray-700/50 text-gray-400 hover:text-white'
+                    : 'hover:bg-gray-100/50 text-gray-600 hover:text-gray-900'
+                }`}
+                aria-label={audioEnabled ? 'Mute site audio' : 'Unmute site audio'}
+              >
+                {audioEnabled ? <Volume2 className="h-4 w-4" /> : <VolumeX className="h-4 w-4" />}
               </m.button>
 
               {/* Theme Toggle */}

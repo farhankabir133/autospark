@@ -4,6 +4,8 @@ export class AudioManager {
   private static sounds: Record<string, HTMLAudioElement> = {};
   // Only allow audio playback after an explicit user gesture (pointerdown/touchstart)
   private static userGestureAllowed = false;
+  // Whether audio is globally enabled by user (site-level mute)
+  private static enabled = true;
 
   static initialize() {
     if (!this.audioContext) {
@@ -19,9 +21,9 @@ export class AudioManager {
 
   static playSound(name: string, volume: number = 0.3) {
     try {
-      // Respect global user-gesture guard
-      if (!this.userGestureAllowed) {
-        // Do not attempt playback until a user gesture is observed (prevents autoplay noise)
+      // Respect global user-gesture guard and global enabled flag
+      if (!this.userGestureAllowed || !this.enabled) {
+        // Do not attempt playback until a user gesture is observed and audio enabled
         return;
       }
       this.initialize();
@@ -48,6 +50,23 @@ export class AudioManager {
     } catch (e) {
       /* ignore */
     }
+  }
+
+  /**
+   * Globally enable or disable audio playback (site-level mute).
+   * When disabling, stop all currently-playing sounds.
+   */
+  static setEnabled(flag: boolean) {
+    try {
+      this.enabled = Boolean(flag);
+      if (!this.enabled) this.stopAll();
+    } catch (e) {
+      /* ignore */
+    }
+  }
+
+  static isEnabled() {
+    return this.enabled;
   }
 
   static playButtonClick() {
