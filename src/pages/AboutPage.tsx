@@ -801,7 +801,7 @@ export const AboutPage = () => {
                   <div className="flex flex-col md:flex-row md:items-center gap-4">
                     <div className="relative w-36 h-36 sm:w-44 sm:h-44 md:w-52 md:h-52 mx-auto md:mx-0 flex-shrink-0">
                       <img
-                        src="https://images.pexels.com/photos/3184611/pexels-photo-3184611.jpeg?auto=compress&cs=tinysrgb&w=300&fm=webp"
+                        src="https://images.pexels.com/photos/36705238/pexels-photo-36705238.png"
                         alt="Abu Hasan"
                         className="w-full h-full rounded-full object-cover border-3 border-[#C00000]/30 group-hover:border-[#C00000] transition-colors duration-300"
                         loading="lazy"
@@ -865,7 +865,7 @@ export const AboutPage = () => {
                   <div className="flex flex-col md:flex-row-reverse md:items-center gap-4">
                     <div className="relative w-36 h-36 sm:w-44 sm:h-44 md:w-52 md:h-52 mx-auto md:mx-0 flex-shrink-0">
                       <img
-                        src="https://images.pexels.com/photos/1516680/pexels-photo-1516680.jpeg?auto=compress&cs=tinysrgb&w=300&fm=webp"
+                        src="https://images.pexels.com/photos/36705239/pexels-photo-36705239.png"
                         alt="Sohan Ahmed"
                         className="w-full h-full rounded-full object-cover border-3 border-[#C00000]/30 group-hover:border-[#C00000] transition-colors duration-300"
                         loading="lazy"
