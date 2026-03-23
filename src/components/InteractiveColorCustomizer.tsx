@@ -317,7 +317,7 @@ export const InteractiveColorCustomizer = ({
                           const modelToId: Record<string, string> = {
                             prado: 'prado-001',
                             harrier: 'harrier-001',
-                            crown: '9',
+                            crown: 'crown-001',
                           };
                           const openId = modelToId[vehicleModel as string];
                           const params = new URLSearchParams();
@@ -326,7 +326,7 @@ export const InteractiveColorCustomizer = ({
                           if (openId) params.set('open', openId);
                           const url = `/inventory?${params.toString()}`;
                           // eslint-disable-next-line @typescript-eslint/no-floating-promises
-                          navigate(url, { state: { from: 'personalize', selectedColor, displayImage } });
+                          navigate(url, { state: { from: 'personalize', selectedColor, displayImage, openId } });
                         } catch (e) {
                           // fallback: open the modal if navigation fails
                           setIsLargeOpen(true);

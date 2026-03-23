@@ -35,6 +35,39 @@ export const ALL_VEHICLES: Vehicle[] = [
       { id: '7-6', vehicle_id: '7', image_url: '/cars/Toyota Harrier/227.webp', display_order: 6, is_primary: false, created_at: new Date().toISOString() }
     ]
   },
+  // TOYOTA - Crown (Inventory add for Personalize)
+  {
+    id: 'crown-001',
+    stock_number: 'CROWN-001',
+    brand_name: 'Toyota',
+    model: 'Crown',
+    year: 2024,
+    price: 7300000,
+    mileage: 0,
+    fuel_type: 'Hybrid',
+    transmission: 'Automatic',
+    engine_capacity: '2.5L Hybrid',
+    color_exterior: 'Pearl White',
+    color_interior: 'Black Leather',
+    body_type: 'Premium Sedan',
+    condition: 'New',
+    description_en: 'Premium executive sedan with state-of-the-art hybrid technology',
+    description_bn: 'অত্যাধুনিক হাইব্রিড প্রযুক্তি সহ প্রিমিয়াম এক্সিকিউটিভ সেডান',
+    is_available: true,
+    is_featured: true,
+    video_url: '',
+    view_count: 0,
+    created_at: new Date().toISOString(),
+    updated_at: new Date().toISOString(),
+    images: [
+      { id: 'crown-1', vehicle_id: 'crown-001', image_url: '/customize-cars/crown/pearl.webp', display_order: 1, is_primary: true, created_at: new Date().toISOString() },
+      { id: 'crown-2', vehicle_id: 'crown-001', image_url: '/customize-cars/crown/black.webp', display_order: 2, is_primary: false, created_at: new Date().toISOString() },
+      { id: 'crown-3', vehicle_id: 'crown-001', image_url: '/customize-cars/crown/red.webp', display_order: 3, is_primary: false, created_at: new Date().toISOString() },
+      { id: 'crown-4', vehicle_id: 'crown-001', image_url: '/customize-cars/crown/blue.webp', display_order: 4, is_primary: false, created_at: new Date().toISOString() },
+      { id: 'crown-5', vehicle_id: 'crown-001', image_url: '/customize-cars/crown/grey.webp', display_order: 5, is_primary: false, created_at: new Date().toISOString() },
+      { id: 'crown-6', vehicle_id: 'crown-001', image_url: '/customize-cars/crown/silver.webp', display_order: 6, is_primary: false, created_at: new Date().toISOString() }
+    ]
+  },
 
   // TOYOTA - Harrier (Inventory add for Personalize)
   {

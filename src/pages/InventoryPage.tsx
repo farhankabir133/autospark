@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef, useMemo } from 'react';
-import { Link, useNavigate, useSearchParams } from 'react-router-dom';
+import { Link, useNavigate, useSearchParams, useLocation } from 'react-router-dom';
 import { motion, AnimatePresence, useScroll, useTransform } from 'framer-motion';
 import { 
   Search, 
@@ -694,6 +694,7 @@ export const InventoryPage = () => {
   const vehicleRefs = useRef<Record<string, HTMLDivElement | null>>({});
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
+  const location = useLocation();
   const [openVehicleId, setOpenVehicleId] = useState<string | null>(null);
   const [showDrawer, setShowDrawer] = useState(false);
 
@@ -749,7 +750,7 @@ export const InventoryPage = () => {
     const colorQ = searchParams.get('color');
     if (!modelQ && !colorQ) return;
 
-    const tryApply = () => {
+  const tryApply = () => {
       // Apply as filters so existing filter logic will run
       setFilters((prev) => ({
         ...prev,
@@ -789,6 +790,37 @@ export const InventoryPage = () => {
     tryApply();
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [searchParams, vehicles]);
+
+  // Also respond to router location.state.openId (navigate state) for immediate open without relying on URL change
+  useEffect(() => {
+    const state = (location.state || {}) as any;
+    const openId = state?.openId || state?.open || null;
+    if (!openId) return;
+
+    const tryOpen = () => {
+      const found = vehicles.find((v) => v.id === openId);
+      if (!found) return;
+      setOpenVehicleId(openId);
+      setShowDrawer(true);
+
+      requestAnimationFrame(() => {
+        const el = vehicleRefs.current[openId];
+        if (el && typeof el.scrollIntoView === 'function') {
+          el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          const focusable = el.querySelector('a,button,input,select,textarea');
+          if (focusable && (focusable as HTMLElement).focus) (focusable as HTMLElement).focus();
+        }
+      });
+    };
+
+    if (vehicles.length === 0) {
+      const t = setTimeout(tryOpen, 250);
+      return () => clearTimeout(t);
+    }
+
+    tryOpen();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [location, vehicles]);
 
   // Calculate counts for filters
   const filterCounts = useMemo(() => {
