@@ -110,7 +110,7 @@ export const ALL_VEHICLES: Vehicle[] = [
     brand_name: 'Toyota',
     model: 'Prado TX-L',
     year: 2024,
-    price: 8200000,
+    price: 13800000,
     mileage: 0,
     fuel_type: 'Petrol',
     transmission: 'Automatic',
