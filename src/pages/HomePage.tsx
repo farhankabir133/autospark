@@ -403,12 +403,12 @@ export const HomePage = () => {
       { name: 'Gold', hex: '#FFD700', rgb: '255,215,0', filterClass: 'hue-rotate(40deg) saturate(1.4)', image: `${import.meta.env.BASE_URL}customize-cars/prado/gold.webp` },
     ],
     harrier: [
-      { name: 'Pearl White', hex: '#F5F5F5', rgb: '245,245,245', filterClass: 'brightness(1.1) saturate(0.8)' },
-      { name: 'Black Metallic', hex: '#1A1A1A', rgb: '26,26,26', filterClass: 'brightness(0.7) contrast(1.2)' },
-      { name: 'Silver', hex: '#C0C0C0', rgb: '192,192,192', filterClass: 'brightness(1) saturate(0.5)' },
-      { name: 'Midnight Purple', hex: '#2D1B4E', rgb: '45,27,78', filterClass: 'hue-rotate(280deg) saturate(1.2)' },
-      { name: 'Ocean Blue', hex: '#0066CC', rgb: '0,102,204', filterClass: 'hue-rotate(200deg) saturate(1.1)' },
-      { name: 'Charcoal Grey', hex: '#36454F', rgb: '54,69,79', filterClass: 'brightness(0.85) saturate(0.6)' },
+      { name: 'Pearl White', hex: '#F5F5F5', rgb: '245,245,245', filterClass: 'brightness(1.1) saturate(0.8)', image: `${import.meta.env.BASE_URL}customize-cars/harrier/pearl.webp` },
+      { name: 'Black Metallic', hex: '#1A1A1A', rgb: '26,26,26', filterClass: 'brightness(0.7) contrast(1.2)', image: `${import.meta.env.BASE_URL}customize-cars/harrier/black.webp` },
+      { name: 'Silver', hex: '#C0C0C0', rgb: '192,192,192', filterClass: 'brightness(1) saturate(0.5)', image: `${import.meta.env.BASE_URL}customize-cars/harrier/silver.webp` },
+      { name: 'Midnight Purple', hex: '#2D1B4E', rgb: '45,27,78', filterClass: 'hue-rotate(280deg) saturate(1.2)', image: `${import.meta.env.BASE_URL}customize-cars/harrier/purple.webp` },
+      { name: 'Steel Blue', hex: '#0066CC', rgb: '0,102,204', filterClass: 'hue-rotate(200deg) saturate(1.1)', image: `${import.meta.env.BASE_URL}customize-cars/harrier/blue.webp` },
+      { name: 'Charcoal Grey', hex: '#36454F', rgb: '54,69,79', filterClass: 'brightness(0.85) saturate(0.6)', image: `${import.meta.env.BASE_URL}customize-cars/harrier/grey.webp` },
     ],
     crown: [
       { name: 'Pearl White', hex: '#F5F5F5', rgb: '245,245,245', filterClass: 'brightness(1.1) saturate(0.8)' },
