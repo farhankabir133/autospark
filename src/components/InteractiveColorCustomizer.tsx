@@ -36,6 +36,7 @@ export const InteractiveColorCustomizer = ({
   const imageRef = useRef<HTMLDivElement>(null);
   const [displayImage, setDisplayImage] = useState<string>(vehicleImage);
   const navigate = useNavigate();
+  const [isLargeOpen, setIsLargeOpen] = useState(false);
 
   const getColorFilter = (color: VehicleColor) => {
     // Use CSS filters to create color overlay effects
@@ -57,6 +58,7 @@ export const InteractiveColorCustomizer = ({
     const filter = getColorFilter(color);
     setImageFilter(filter);
     onColorSelect?.(color);
+    // Immediately switch to the selected color's exact image for snappy UX
     if (color.image) setDisplayImage(color.image);
     
     // Save to localStorage
@@ -82,6 +84,16 @@ export const InteractiveColorCustomizer = ({
       console.debug('Could not load saved color');
     }
   }, [vehicleModel, availableColors]);
+
+  // Preload images for all available colors for instant swapping
+  React.useEffect(() => {
+    availableColors.forEach((c) => {
+      if (c.image) {
+        const img = new Image();
+        img.src = c.image;
+      }
+    });
+  }, [availableColors]);
 
   const bgColor = theme === 'dark'
     ? 'bg-gray-900'
@@ -111,16 +123,13 @@ export const InteractiveColorCustomizer = ({
           transition={{ duration: 0.3 }}
         >
           <motion.img
+            key={displayImage}
             src={displayImage}
             alt={vehicleModel}
             className="w-full h-full object-cover"
-            style={{
-              filter: imageFilter,
-            }}
-            animate={{
-              filter: imageFilter,
-            }}
-            transition={{ duration: 0.6 }}
+            style={{ filter: imageFilter, transition: 'filter 120ms linear' }}
+            animate={{ filter: imageFilter }}
+            transition={{ duration: 0.12 }}
           />
 
           {/* Click to customize overlay */}
@@ -253,8 +262,8 @@ export const InteractiveColorCustomizer = ({
                 <div className="mt-4">
                   <button
                     onClick={() => {
-                      // Navigate to inventory with model + color query
-                      navigate(`/inventory?model=${encodeURIComponent(vehicleModel)}&color=${encodeURIComponent(selectedColor.name)}`);
+                      // Open larger view modal showing this color with full functionality
+                      setIsLargeOpen(true);
                     }}
                     className="mt-3 inline-flex items-center px-4 py-2 bg-[var(--accent)] text-white rounded-lg font-semibold"
                   >
@@ -266,6 +275,65 @@ export const InteractiveColorCustomizer = ({
           </motion.div>
         )}
       </AnimatePresence>
+      {/* Large modal view for 'View this color' */}
+      {isLargeOpen && (
+        <div className="fixed inset-0 z-[60] flex items-center justify-center">
+          <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={() => setIsLargeOpen(false)} />
+          <motion.div
+            className="relative max-w-5xl w-full mx-4 bg-white dark:bg-gray-900 rounded-2xl overflow-hidden shadow-2xl"
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.18 }}
+          >
+            <div className="grid grid-cols-1 md:grid-cols-2">
+              <div className="md:col-span-1 h-96 md:h-[560px] bg-black/5 dark:bg-black">
+                <img src={displayImage} alt={`${vehicleModel} ${selectedColor?.name}`} className="w-full h-full object-contain p-6" />
+              </div>
+              <div className="p-6 md:p-8">
+                <div className="flex items-start justify-between">
+                  <div>
+                    <h3 className="text-2xl font-bold text-gray-900 dark:text-white">{vehicleModel}</h3>
+                    <p className="text-sm text-gray-500 dark:text-gray-400">{selectedColor?.name}</p>
+                  </div>
+                  <button onClick={() => setIsLargeOpen(false)} className="text-gray-500 hover:text-gray-700 dark:text-gray-300">Close</button>
+                </div>
+
+                {/* Reuse swatches to allow switching inside large view */}
+                <div className="mt-6">
+                  <div className="grid grid-cols-3 sm:grid-cols-6 gap-3">
+                    {availableColors.map((color) => (
+                      <button
+                        key={color.name}
+                        onClick={() => handleColorSelect(color)}
+                        className="group relative"
+                      >
+                        <div
+                          className={`w-full aspect-square rounded-xl border-2 ${selectedColor?.name === color.name ? 'border-blue-500 shadow-lg' : 'border-gray-300 dark:border-gray-700'}`}
+                          style={{ backgroundColor: color.hex }}
+                        />
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Details & actions */}
+                <div className="mt-6">
+                  <p className="text-sm text-gray-600 dark:text-gray-300">{selectedColor?.name}</p>
+                  <div className="mt-4 flex gap-3">
+                    <button
+                      onClick={() => navigate(`/inventory?model=${encodeURIComponent(vehicleModel)}&color=${encodeURIComponent(selectedColor?.name || '')}`)}
+                      className="px-4 py-2 bg-[var(--accent)] text-white rounded-lg font-semibold"
+                    >
+                      {language === 'en' ? 'Open in Inventory' : 'ইনভেন্টরিতে খোলুন'}
+                    </button>
+                    <button onClick={() => setIsLargeOpen(false)} className="px-4 py-2 border rounded-lg">{language === 'en' ? 'Close' : 'বন্ধ করুন'}</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </motion.div>
+        </div>
+      )}
     </motion.div>
   );
 };
