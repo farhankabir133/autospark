@@ -743,6 +743,53 @@ export const InventoryPage = () => {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [searchParams, vehicles]);
 
+  // If URL contains ?model=... or ?color=..., apply filters and focus first matching vehicle
+  useEffect(() => {
+    const modelQ = searchParams.get('model');
+    const colorQ = searchParams.get('color');
+    if (!modelQ && !colorQ) return;
+
+    const tryApply = () => {
+      // Apply as filters so existing filter logic will run
+      setFilters((prev) => ({
+        ...prev,
+        search: modelQ ? modelQ : prev.search,
+        color: colorQ ? colorQ : prev.color,
+      }));
+
+      // Find the first matching vehicle after vehicles loaded
+      const found = vehicles.find((v) => {
+        const modelMatch = modelQ ? v.model.toLowerCase().includes(modelQ.toLowerCase()) : true;
+        const colorMatch = colorQ ? (v.color_exterior || '').toLowerCase().includes(colorQ.toLowerCase()) : true;
+        return modelMatch && colorMatch;
+      });
+
+      if (found) {
+        setOpenVehicleId(found.id as string);
+        setShowDrawer(true);
+
+        requestAnimationFrame(() => {
+          const el = vehicleRefs.current[found.id as string];
+          if (el && typeof el.scrollIntoView === 'function') {
+            el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            const focusable = el.querySelector('a,button,input,select,textarea');
+            if (focusable && (focusable as HTMLElement).focus) {
+              (focusable as HTMLElement).focus();
+            }
+          }
+        });
+      }
+    };
+
+    if (vehicles.length === 0) {
+      const t = setTimeout(tryApply, 250);
+      return () => clearTimeout(t);
+    }
+
+    tryApply();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [searchParams, vehicles]);
+
   // Calculate counts for filters
   const filterCounts = useMemo(() => {
     const counts: Record<string, number> = {};

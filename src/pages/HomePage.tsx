@@ -802,8 +802,8 @@ export const HomePage = () => {
                 {(['prado','harrier','crown'] as const).map((model, i) => {
                   const imgs: Record<string, string> = {
                     prado: `${import.meta.env.BASE_URL}customize-cars/prado/white.webp`,
-                    harrier: 'https://images.pexels.com/photos/35515996/pexels-photo-35515996.png?auto=compress&cs=tinysrgb&w=400&fm=webp',
-                    crown: 'https://images.pexels.com/photos/35509198/pexels-photo-35509198.png?auto=compress&cs=tinysrgb&w=400&fm=webp',
+                    harrier: `${import.meta.env.BASE_URL}customize-cars/harrier/pearl.webp`,
+                    crown: `${import.meta.env.BASE_URL}customize-cars/crown/pearl.webp`,
                   };
                   return (
                     <FadeIn key={model} animate={animate} delay={i * 0.1}>
