@@ -822,6 +822,9 @@ export const InventoryPage = () => {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [location, vehicles]);
 
+  // Expose router state for use in the drawer (displayImage, selectedColor)
+  const routerState = (location.state || {}) as any;
+
   // Calculate counts for filters
   const filterCounts = useMemo(() => {
     const counts: Record<string, number> = {};
@@ -1447,13 +1450,16 @@ const EMICalculator: React.FC<{ principal: number }> = ({ principal }) => {
 
                 <div className="mt-4 space-y-4 overflow-auto h-[calc(100vh-120px)]">
                   {/* Image / small carousel */}
-                  <div className="w-full h-48 bg-gray-100 rounded-lg overflow-hidden">
-                    {vehicle.images && vehicle.images.length > 0 ? (
-                      <img src={encodeURI((vehicle.images[0] as any).image_url || (vehicle.images[0] as any).url)} alt={`${vehicle.brand_name} ${vehicle.model}`} className="w-full h-full object-cover" />
-                    ) : (
-                      <div className="w-full h-full flex items-center justify-center text-gray-400">No image</div>
-                    )}
-                  </div>
+                        <div className="w-full h-48 bg-gray-100 rounded-lg overflow-hidden">
+                          {/* Prefer displayImage from router state when present (user clicked a color on landing) */}
+                          {routerState?.displayImage && routerState.openId === vehicle.id ? (
+                            <img src={encodeURI(routerState.displayImage)} alt={`${vehicle.brand_name} ${vehicle.model}`} className="w-full h-full object-contain" />
+                          ) : vehicle.images && vehicle.images.length > 0 ? (
+                            <img src={encodeURI((vehicle.images[0] as any).image_url || (vehicle.images[0] as any).url)} alt={`${vehicle.brand_name} ${vehicle.model}`} className="w-full h-full object-cover" />
+                          ) : (
+                            <div className="w-full h-full flex items-center justify-center text-gray-400">No image</div>
+                          )}
+                        </div>
 
                   <div className="space-y-2">
                     <div className="text-2xl font-bold text-blue-500">{vehicle.price && vehicle.price > 0 ? formatPrice(vehicle.price, language) : (language === 'en' ? 'Price on request' : 'মূল্য অনুরোধে')}</div>

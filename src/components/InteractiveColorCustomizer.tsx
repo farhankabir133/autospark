@@ -40,6 +40,7 @@ export const InteractiveColorCustomizer = ({
   const modalRef = useRef<HTMLDivElement | null>(null);
   const prevActiveRef = useRef<HTMLElement | null>(null);
   const [imageLoaded, setImageLoaded] = useState(false);
+  const [isNavigating, setIsNavigating] = useState(false);
 
   const getColorFilter = (color: VehicleColor) => {
     // Use CSS filters to create color overlay effects
@@ -311,8 +312,9 @@ export const InteractiveColorCustomizer = ({
                 <div className="mt-4">
                     <button
                       onClick={() => {
-                        // Open full-screen color preview page with state for full functionality
+                        // Open inventory and request the drawer for this vehicle
                         try {
+                          setIsNavigating(true);
                           // Map short model keys to inventory IDs when available
                           const modelToId: Record<string, string> = {
                             prado: 'prado-001',
@@ -330,11 +332,19 @@ export const InteractiveColorCustomizer = ({
                         } catch (e) {
                           // fallback: open the modal if navigation fails
                           setIsLargeOpen(true);
+                          setIsNavigating(false);
                         }
                       }}
                       className="mt-3 inline-flex items-center px-4 py-2 bg-[var(--accent)] text-white rounded-lg font-semibold"
                     >
-                      {language === 'en' ? 'View this color' : 'এই রঙ দেখুন'}
+                      {isNavigating ? (
+                        <span className="flex items-center gap-2">
+                          <span className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                          {language === 'en' ? 'Opening...' : 'লোড হচ্ছে...'}
+                        </span>
+                      ) : (
+                        language === 'en' ? 'View this color' : 'এই রঙ দেখুন'
+                      )}
                     </button>
                 </div>
               </motion.div>
