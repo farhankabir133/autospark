@@ -8,6 +8,7 @@ import { useTheme } from '../contexts/ThemeContext';
 // (useCounter and useAnimationOnScroll were used by removed helpers; not required here)
 import { useDeviceCapability } from '../hooks/useDeviceCapability';
 import { Button } from '../components/ui/Button';
+import PageHead from '../components/PageHead';
 import { Card } from '../components/ui/Card';
 import { ImageCarousel } from '../components/ImageCarousel';
 import type { Vehicle, Testimonial } from '../types';
@@ -19,7 +20,11 @@ import type { VehicleColor } from '../components/InteractiveColorCustomizer';
 import { FilterAnimations } from '../components/FilterAnimations';
 
 // CarFocusCarousel should mount immediately for autoplay and visibility — import directly
-import CarFocusCarousel from '../components/CarFocusCarouselLite';
+// CarFocusCarousel is heavy-ish and not required for first paint — dynamically import after initial paint
+// to reduce initial bundle and improve LCP on mobile.
+// We'll load it during idle time and show a lightweight placeholder in the meantime.
+// Note: keep the type import for the handle to preserve typing.
+// import CarFocusCarousel from '../components/CarFocusCarouselLite';
 const MorphingShapeTransition = lazy(() => import('../components/MorphingShapeTransition').then(m => ({ default: m.MorphingShapeTransition })));
 const AnimatedComparisonSlider = lazy(() => import('../components/AnimatedComparisonSlider').then(m => ({ default: m.AnimatedComparisonSlider })));
 // Floating/background animations intentionally disabled on the homepage to keep it static and distraction-free.
@@ -294,11 +299,39 @@ export const HomePage = () => {
   const animate = device.supportsRichAnimations;
   const showcaseVehicles = SHOWCASE_VEHICLES(language);
   const navigate = useNavigate();
+  const [CarFocusCarouselComp, setCarFocusCarouselComp] = useState<React.ComponentType<any> | null>(null);
+  const [show3D, setShow3D] = useState(false);
+
+  const pageTitle = language === 'en' ? 'Autospark — Premium Cars in Rajshahi' : 'রাজশাহী প্রিমিয়াম গাড়ি — অটোস্পার্ক';
+  const pageDescription = language === 'en'
+    ? "Autospark — Rajshahi's trusted premium car dealership. Browse curated Toyota, Honda and luxury imports with transparent pricing and certified service."
+    : 'অটোস্পার্ক — রাজশাহীর বিশ্বাসযোগ্য প্রিমিয়াম গাড়ি ডিলারশিপ। কিউরেটেড টয়োটা, হোন্ডা ও লাক্সারি ইম্পোর্টস।';
 
   useEffect(() => {
     fetchFeaturedVehicles();
     fetchTestimonials();
     return () => { if (flipTimeoutRef.current) clearTimeout(flipTimeoutRef.current); };
+  }, []);
+
+  // Dynamically import the homepage carousel after initial paint / during idle
+  useEffect(() => {
+    let mounted = true;
+    const load = async () => {
+      try {
+        const mod = await import('../components/CarFocusCarouselLite');
+        if (!mounted) return;
+        setCarFocusCarouselComp(() => (mod && (mod.default || mod)) as any);
+      } catch (e) {
+        // ignore — carousel will remain placeholder
+      }
+    };
+    if ('requestIdleCallback' in window) {
+      (window as any).requestIdleCallback(load, { timeout: 1500 });
+    } else {
+      const t = setTimeout(load, 800);
+      return () => { clearTimeout(t); mounted = false; };
+    }
+    return () => { mounted = false; };
   }, []);
 
   const scrollToContent = () => {
@@ -422,33 +455,62 @@ export const HomePage = () => {
 
   return (
     <div className={`min-h-screen ${theme === 'dark' ? 'bg-[#0a0a0a]' : 'bg-gray-50'}`}>
+      <PageHead
+        title={pageTitle}
+        description={pageDescription}
+        url={'https://autosparkbd.com/'}
+        image={'https://images.pexels.com/photos/36318402/pexels-photo-36318402.png?auto=compress&cs=tinysrgb&w=1200&fm=webp'}
+        jsonLd={{
+          "@context": "https://schema.org",
+          "@type": "WebSite",
+          name: 'Autospark',
+          url: 'https://autosparkbd.com',
+        }}
+      />
 
         {/* ══ HERO ══════════════════════════════════════════════════ */}
         <section className="relative h-dvh overflow-hidden">
           {device.supports3D ? (
-            <Suspense fallback={<CarShowcase3DFallback />}>
-              <CarShowcase3D
-                ctaButtons={
-                  <div className="flex flex-row flex-wrap gap-2 sm:gap-3 justify-center">
-                    <Link to="/inventory">
-                      <Button size="sm" className="text-xs sm:text-sm md:text-base md:px-6 md:py-3">
-                        {t('hero.browse')}<ArrowRight className="ml-1.5 h-3.5 w-3.5 md:h-5 md:w-5" />
-                      </Button>
-                    </Link>
-                    <Link to="/services">
-                      <Button size="sm" variant="outline" className="text-xs sm:text-sm md:text-base md:px-6 md:py-3 bg-white/10 backdrop-blur-sm border-white text-white hover:bg-white">
-                        {t('hero.book_service')}
-                      </Button>
-                    </Link>
-                    <Link to="/sell">
-                      <Button size="sm" variant="secondary" className="text-xs sm:text-sm md:text-base md:px-6 md:py-3">
-                        {t('hero.sell')}
-                      </Button>
-                    </Link>
+            show3D ? (
+              <Suspense fallback={<CarShowcase3DFallback />}>
+                <CarShowcase3D
+                  ctaButtons={
+                    <div className="flex flex-row flex-wrap gap-2 sm:gap-3 justify-center">
+                      <Link to="/inventory">
+                        <Button size="sm" className="text-xs sm:text-sm md:text-base md:px-6 md:py-3">
+                          {t('hero.browse')}<ArrowRight className="ml-1.5 h-3.5 w-3.5 md:h-5 md:w-5" />
+                        </Button>
+                      </Link>
+                      <Link to="/services">
+                        <Button size="sm" variant="outline" className="text-xs sm:text-sm md:text-base md:px-6 md:py-3 bg-white/10 backdrop-blur-sm border-white text-white hover:bg-white">
+                          {t('hero.book_service')}
+                        </Button>
+                      </Link>
+                      <Link to="/sell">
+                        <Button size="sm" variant="secondary" className="text-xs sm:text-sm md:text-base md:px-6 md:py-3">
+                          {t('hero.sell')}
+                        </Button>
+                      </Link>
                     </div>
-                }
-              />
-            </Suspense>
+                  }
+                />
+              </Suspense>
+            ) : (
+              <div className="relative h-dvh flex items-center justify-center overflow-hidden hero-lite-bg">
+                <LightweightHero language={language} t={t} />
+                <div className="absolute inset-0 flex items-end justify-center pb-12 pointer-events-none">
+                  <div className="pointer-events-auto">
+                    <Button size="lg" onClick={async () => {
+                      // Preload heavy 3D chunk and then show it
+                      try { import('../components/3d/CarShowcase3D'); } catch (_) {}
+                      setShow3D(true);
+                    }}>
+                      {language === 'en' ? 'Enter 3D Experience' : '৩ডি অভিজ্ঞতা দেখুন'}
+                    </Button>
+                  </div>
+                </div>
+              </div>
+            )
           ) : (
             <LightweightHero language={language} t={t} />
           )}
@@ -463,11 +525,20 @@ export const HomePage = () => {
 
         {/* ══ PREMIUM CAR FOCUS CAROUSEL (always-mounted for immediate autoplay) ════════════════════════════ */}
         <div ref={carouselSectionRef}>
-          <CarFocusCarousel
-            ref={carouselRef}
-            initialCarId={selectedCarId}
-            onCarChange={setSelectedCarId}
-          />
+          {CarFocusCarouselComp ? (
+            <CarFocusCarouselComp
+              ref={carouselRef}
+              initialCarId={selectedCarId}
+              onCarChange={setSelectedCarId}
+            />
+          ) : (
+            <div className="w-full h-64 sm:h-80 md:h-96 flex items-center justify-center bg-gradient-to-b from-black/50 to-black/30 text-white">
+              <div className="animate-fade-in text-center">
+                <div className="spinner-red mx-auto mb-4" />
+                <p className="text-sm opacity-80">{language === 'en' ? 'Loading showcase…' : 'শোকেস লোড হচ্ছে…'}</p>
+              </div>
+            </div>
+          )}
         </div>
 
         {/* ══ PREMIUM COLLECTION GRID ═══════════════════════════════ */}

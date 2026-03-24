@@ -4,8 +4,8 @@ import { ChevronLeft, ChevronRight, Phone, MessageCircle, Calculator, Fuel, Sett
 import { useLanguage } from '../contexts/LanguageContext';
 import { useTheme } from '../contexts/ThemeContext';
 import { Button } from '../components/ui/Button';
+import PageHead from '../components/PageHead';
 import { Card } from '../components/ui/Card';
-import { supabase } from '../lib/supabase';
 import { ALL_VEHICLES } from '../hooks/vehicleDataAll';
 import { carSlides } from '../data/carSlides';
 import type { Vehicle } from '../types';
@@ -82,20 +82,22 @@ export const VehicleDetailsPage = () => {
       return;
     }
     
-    // Fallback to Supabase if not found locally
+    // Fallback to Supabase if not found locally — dynamically import to keep initial bundle small
     try {
-      const { data } = await supabase
-        .from('vehicles')
-        .select(`
-          *,
-          images:vehicle_images(*),
-          features:vehicle_features(*)
-        `)
-        .eq('id', id)
-        .single();
+      const mod = await import('../lib/supabase');
+      const { supabase } = mod as any;
+      if (supabase && supabase.from) {
+        const { data } = await supabase
+          .from('vehicles')
+          .select(`
+            *,
+            images:vehicle_images(*),
+            features:vehicle_features(*)
+          `)
+          .eq('id', id)
+          .single();
 
-      if (data) {
-        setVehicle(data);
+        if (data) setVehicle(data);
       }
     } catch (error) {
       console.error('Error fetching vehicle:', error);
@@ -152,8 +154,35 @@ export const VehicleDetailsPage = () => {
   const images = vehicle.images || [];
   const currentImage = encodeURI(images[currentImageIndex]?.image_url || 'https://images.pexels.com/photos/3802508/pexels-photo-3802508.jpeg?auto=compress&cs=tinysrgb&w=1200');
 
+  // Build structured data for Product (if we have vehicle)
+  const jsonLd = vehicle ? {
+    "@context": "https://schema.org",
+    "@type": "Product",
+    name: `${vehicle.brand_name} ${vehicle.model}`,
+    description: language === 'en' ? vehicle.description_en : (vehicle.description_bn || vehicle.description_en),
+    sku: vehicle.stock_number || vehicle.id,
+    brand: { "@type": "Brand", name: vehicle.brand_name },
+    offers: {
+      "@type": "Offer",
+      priceCurrency: "BDT",
+      price: vehicle.price > 0 ? String(vehicle.price) : undefined,
+      availability: vehicle.is_available ? "https://schema.org/InStock" : "https://schema.org/OutOfStock",
+      url: typeof window !== 'undefined' ? window.location.href : `https://autosparkbd.com/vehicle/${vehicle.id}`,
+    },
+    image: (vehicle.images || []).map(img => img.image_url)
+  } : null;
+
   return (
     <div className={`min-h-screen pt-20 ${isDark ? 'bg-gray-900' : 'bg-gray-50'}`}>
+      {vehicle && (
+        <PageHead
+          title={`${vehicle.brand_name} ${vehicle.model} — Autospark`}
+          description={language === 'en' ? vehicle.description_en : (vehicle.description_bn || vehicle.description_en)}
+          url={`https://autosparkbd.com/vehicle/${vehicle.id}`}
+          image={encodeURI(currentImage)}
+          jsonLd={jsonLd}
+        />
+      )}
       <div className="container mx-auto px-4 py-8">
         <Link to="/inventory" className="inline-flex items-center text-blue-600 hover:text-blue-700 mb-6">
           <ChevronLeft className="h-5 w-5 mr-1" />
@@ -174,15 +203,17 @@ export const VehicleDetailsPage = () => {
               {images.length > 1 && (
                 <>
                   <button
+                    type="button"
                     onClick={prevImage}
-                    className="absolute left-4 top-1/2 transform -translate-y-1/2 bg-black/50 hover:bg-black/70 text-white p-2 rounded-full transition-colors"
+                    className="absolute left-4 top-1/2 transform -translate-y-1/2 bg-black/50 hover:bg-black/70 text-white p-2 rounded-full transition-colors touch-target-large"
                     aria-label="Previous image"
                   >
                     <ChevronLeft className="h-6 w-6" />
                   </button>
                   <button
+                    type="button"
                     onClick={nextImage}
-                    className="absolute right-4 top-1/2 transform -translate-y-1/2 bg-black/50 hover:bg-black/70 text-white p-2 rounded-full transition-colors"
+                    className="absolute right-4 top-1/2 transform -translate-y-1/2 bg-black/50 hover:bg-black/70 text-white p-2 rounded-full transition-colors touch-target-large"
                     aria-label="Next image"
                   >
                     <ChevronRight className="h-6 w-6" />
@@ -197,13 +228,15 @@ export const VehicleDetailsPage = () => {
                   <button
                     key={img.id}
                     onClick={() => setCurrentImageIndex(index)}
+                    type="button"
+                    aria-label={`View thumbnail ${index + 1}`}
                     className={`rounded-lg overflow-hidden ${
                       currentImageIndex === index ? 'ring-2 ring-blue-600' : ''
                     }`}
                   >
                     <img
                       src={encodeURI(img.image_url)}
-                      alt=""
+                      alt={`${vehicle.brand_name} ${vehicle.model} thumbnail ${index + 1}`}
                       className="w-full h-20 object-cover"
                       loading="lazy"
                       width={150}
@@ -260,7 +293,7 @@ export const VehicleDetailsPage = () => {
               </div>
 
               <div className="space-y-3">
-                <Link to={`/reserve/${vehicle.id}`}>
+                <Link to={`/reserve/${vehicle.id}`} onClick={() => { try { (async () => (await import('../lib/analytics')).trackEvent('reserve_clicked', { vehicleId: vehicle.id }))(); } catch (_) {} }}>
                   <Button className="w-full" size="lg">
                     {t('vehicle.reserve')}
                   </Button>

@@ -67,7 +67,7 @@ export const Footer = () => {
               <span className="font-semibold text-xs text-[#C00000]">Showroom:</span>
               <div className="text-xs text-gray-300">{showroom.address}</div>
               <div className="text-xs text-gray-400">{showroom.city}</div>
-              <div className="text-xs">Phone: <a href={`tel:${showroom.phone}`} className="underline hover:text-[#FF1A1A]">{showroom.phone}</a></div>
+              <div className="text-xs">Phone: <a href={`tel:${showroom.phone}`} aria-label={`Call showroom ${showroom.phone}`} className="inline-flex items-center px-3 py-2 rounded-lg underline hover:text-[#FF1A1A] touch-target-large">{showroom.phone}</a></div>
               <div className="text-xs">Email: <a href={`mailto:${showroom.email}`} className="underline hover:text-[#FF1A1A]">{showroom.email}</a></div>
               <div className="text-xs">Website: <a href={`https://${showroom.website}`} className="underline hover:text-[#FF1A1A]">{showroom.website}</a></div>
             </div>
@@ -75,7 +75,7 @@ export const Footer = () => {
               <span className="font-semibold text-xs text-[#C00000]">Service Center:</span>
               <div className="text-xs text-gray-300">{serviceCenter.address}</div>
               <div className="text-xs text-gray-400">{serviceCenter.city}</div>
-              <div className="text-xs">Phone: <a href={`tel:${serviceCenter.phone}`} className="underline hover:text-[#FF1A1A]">{serviceCenter.phone}</a></div>
+              <div className="text-xs">Phone: <a href={`tel:${serviceCenter.phone}`} aria-label={`Call service center ${serviceCenter.phone}`} className="inline-flex items-center px-3 py-2 rounded-lg underline hover:text-[#FF1A1A] touch-target-large">{serviceCenter.phone}</a></div>
               <div className="text-xs">Email: <a href={`mailto:${serviceCenter.email}`} className="underline hover:text-[#FF1A1A]">{serviceCenter.email}</a></div>
               <div className="text-xs">Website: <a href={`https://${serviceCenter.website}`} className="underline hover:text-[#FF1A1A]">{serviceCenter.website}</a></div>
             </div>
@@ -126,7 +126,7 @@ export const Footer = () => {
               <a href="https://www.tiktok.com/@auto_spark0" target="_blank" rel="noopener noreferrer" className="hover:text-[#FF1A1A]">
                 <MapPin className="w-6 h-6" />
               </a>
-              <a href={`tel:${showroom.phone}`} className="hover:text-[#FF1A1A]">
+              <a href={`tel:${showroom.phone}`} aria-label={`Call showroom ${showroom.phone}`} className="inline-flex items-center px-2 py-2 rounded-lg hover:text-[#FF1A1A] touch-target-large">
                 <Phone className="w-6 h-6" />
               </a>
               <a href={`mailto:${showroom.email}`} className="hover:text-[#FF1A1A]">

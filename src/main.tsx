@@ -1,13 +1,23 @@
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
+import { HelmetProvider } from 'react-helmet-async';
 import App from './App.tsx';
 import './index.css';
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
-    <App />
+    <HelmetProvider>
+      <App />
+    </HelmetProvider>
   </StrictMode>
 );
+
+// Window augmentation for service worker refresh flag
+declare global {
+  interface Window {
+    __swRefreshing?: boolean;
+  }
+}
 
 // Enable theme transitions only after first paint (avoids Lighthouse penalty)
 requestAnimationFrame(() => {
@@ -20,9 +30,80 @@ requestAnimationFrame(() => {
 if ('serviceWorker' in navigator && import.meta.env.PROD) {
   window.addEventListener('load', () => {
     navigator.serviceWorker
-  .register('/sw.js', { scope: '/' })
+      .register('/sw.js', { scope: '/' })
+      .then((registration) => {
+        // If there's an already-waiting SW, prompt the user to update
+        if (registration.waiting) {
+          showUpdateAvailable(registration);
+        }
+
+        // Listen for updates found (new installing worker)
+        registration.addEventListener('updatefound', () => {
+          const newWorker = registration.installing;
+          if (newWorker) {
+            newWorker.addEventListener('statechange', () => {
+              if (newWorker.state === 'installed' && registration.waiting) {
+                showUpdateAvailable(registration);
+              }
+            });
+          }
+        });
+
+        // If a new service worker takes control, reload to load the new assets
+        navigator.serviceWorker.addEventListener('controllerchange', () => {
+          // Avoid infinite reload loop
+          if (!window.__swRefreshing) {
+            window.__swRefreshing = true;
+            window.location.reload();
+          }
+        });
+      })
       .catch(() => {/* SW registration failed — non-critical */});
   });
+}
+
+function showUpdateAvailable(registration: ServiceWorkerRegistration) {
+  try {
+    // Create or reuse a banner element
+    let banner = document.getElementById('sw-update-banner');
+    if (!banner) {
+      banner = document.createElement('div');
+      banner.id = 'sw-update-banner';
+      banner.style.position = 'fixed';
+      banner.style.bottom = '20px';
+      banner.style.left = '50%';
+      banner.style.transform = 'translateX(-50%)';
+      banner.style.zIndex = '9999';
+      banner.style.background = '#111';
+      banner.style.color = '#fff';
+      banner.style.padding = '12px 16px';
+      banner.style.borderRadius = '8px';
+      banner.style.boxShadow = '0 6px 24px rgba(0,0,0,0.4)';
+      banner.style.fontFamily = 'Inter, system-ui, -apple-system, sans-serif';
+      banner.innerHTML = `
+        <span style="margin-right:12px;">A new version is available.</span>
+        <button id="sw-update-refresh" style="background:#C00000;border:none;color:#fff;padding:8px 10px;border-radius:6px;cursor:pointer;font-weight:600">Refresh</button>
+        <button id="sw-update-dismiss" style="background:transparent;border:none;color:#aaa;margin-left:8px;cursor:pointer">Dismiss</button>
+      `;
+      document.body.appendChild(banner);
+
+      const refreshBtn = document.getElementById('sw-update-refresh');
+      const dismissBtn = document.getElementById('sw-update-dismiss');
+      refreshBtn?.addEventListener('click', () => {
+        try {
+          if (registration.waiting) {
+            registration.waiting.postMessage({ type: 'SKIP_WAITING' });
+          }
+        } catch (e) { /* ignore */ }
+      });
+      dismissBtn?.addEventListener('click', () => {
+        banner?.remove();
+      });
+    }
+  } catch (e) {
+    // best-effort only
+    console.warn('SW update UI failed', e);
+  }
 }
 
 // In development, unregister any previously-registered service workers to avoid cached

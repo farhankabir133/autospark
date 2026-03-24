@@ -9,6 +9,8 @@
     "build": "vite build",
     "lint": "eslint .",
     "preview": "vite preview",
+  "audit:pa11y": "npx pa11y http://127.0.0.1:4173 --standard wcag2aa --timeout 20000 > pa11y-report.txt",
+  "audit:lighthouse": "npx lighthouse http://127.0.0.1:4173 --only-categories=performance,accessibility,best-practices,seo --output=json --output-path=lh-report.json --chrome-flags='--headless'",
     "typecheck": "tsc --noEmit -p tsconfig.app.json",
     "predeploy": "npm run build",
     "deploy": "gh-pages -d dist"
@@ -24,6 +26,7 @@
     "lucide-react": "^0.344.0",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
+    "react-helmet-async": "^1.3.0",
     "react-router-dom": "^7.13.1",
     "three": "^0.183.2"
   },

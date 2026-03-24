@@ -54,6 +54,7 @@ export const Button = ({
   return (
     <button
       className={classNames}
+      type={(props as any).type || 'button'}
       {...props}
     >
       {children}

@@ -232,6 +232,9 @@ const CarFocusCarouselInner = ({ initialCarId, onCarChange }: CarFocusCarouselPr
             </div>
           </div>
         </div>
+
+  {/* Announce current slide for screen readers */}
+  <div className="sr-only" aria-live="polite">{`Slide ${currentIdx + 1} of ${slides.length}: ${carSlides[currentIdx]?.model || ''}`}</div>
       </div>
     );
   };
@@ -244,8 +247,8 @@ const CarFocusCarouselInner = ({ initialCarId, onCarChange }: CarFocusCarouselPr
         <div className="flex items-center justify-between mb-4">
           <h3 className="text-lg font-semibold text-white">Featured Vehicles</h3>
           <div className="flex gap-2">
-            <button aria-label="Previous" onClick={() => { markInteraction(); const idx = Math.max(0, findNearestIndex() - 1); goToIndex(idx); }} className="p-2 rounded-full bg-white/6"><ChevronLeft className="w-5 h-5 text-white" /></button>
-            <button aria-label="Next" onClick={() => { markInteraction(); const idx = Math.min(carSlides.length - 1, findNearestIndex() + 1); goToIndex(idx); }} className="p-2 rounded-full bg-white/6"><ChevronRight className="w-5 h-5 text-white" /></button>
+            <button aria-label="Previous" title="Previous" onClick={() => { markInteraction(); const idx = Math.max(0, findNearestIndex() - 1); goToIndex(idx); }} className="p-3 rounded-full bg-white/6 touch-target-large"><ChevronLeft className="w-5 h-5 text-white" /></button>
+            <button aria-label="Next" title="Next" onClick={() => { markInteraction(); const idx = Math.min(carSlides.length - 1, findNearestIndex() + 1); goToIndex(idx); }} className="p-3 rounded-full bg-white/6 touch-target-large"><ChevronRight className="w-5 h-5 text-white" /></button>
           </div>
         </div>
 
@@ -253,6 +256,29 @@ const CarFocusCarouselInner = ({ initialCarId, onCarChange }: CarFocusCarouselPr
           ref={trackRef}
           className="carousel-track relative z-10 flex gap-6 overflow-x-auto no-scrollbar py-6 px-2 touch-pan-x"
           style={{ WebkitOverflowScrolling: 'touch' }}
+          role="region"
+          aria-roledescription="carousel"
+          aria-label="Featured vehicles carousel"
+          tabIndex={0}
+          onKeyDown={(e) => {
+            if (e.key === 'ArrowLeft') {
+              e.preventDefault();
+              markInteraction();
+              const idx = Math.max(0, findNearestIndex() - 1);
+              goToIndex(idx);
+            } else if (e.key === 'ArrowRight') {
+              e.preventDefault();
+              markInteraction();
+              const idx = Math.min(carSlides.length - 1, findNearestIndex() + 1);
+              goToIndex(idx);
+            } else if (e.key === 'Home') {
+              e.preventDefault();
+              goToIndex(0);
+            } else if (e.key === 'End') {
+              e.preventDefault();
+              goToIndex(carSlides.length - 1);
+            }
+          }}
           onMouseEnter={() => { markInteraction(); setIsPaused(true); }}
           onMouseLeave={() => setIsPaused(false)}
           onFocusCapture={() => { markInteraction(); setIsPaused(true); }}
@@ -265,7 +291,7 @@ const CarFocusCarouselInner = ({ initialCarId, onCarChange }: CarFocusCarouselPr
           {slides.map((car, idx) => {
             const isFlipped = flippedFullIndex === idx;
             return (
-              <div key={car.id} ref={(el) => (slidesRef.current[idx] = el)} className={`group carousel-slide snap-center flex-none rounded-xl overflow-hidden bg-transparent border border-white/5 shadow-lg focus:outline-none transform transition-transform duration-300 ease-out w-[90%] sm:w-[70%] md:w-[60%] lg:w-[50%] xl:w-[40%] 2xl:w-[36%] max-w-[1400px] min-h-[320px] md:min-h-[420px] lg:min-h-[520px] aspect-square flex flex-col justify-between`} style={{ cursor: 'pointer' }} role="group" tabIndex={0}
+                <div key={car.id} ref={(el) => (slidesRef.current[idx] = el)} className={`group carousel-slide snap-center flex-none rounded-xl overflow-hidden bg-transparent border border-white/5 shadow-lg focus:outline-none transform transition-transform duration-300 ease-out w-[90%] sm:w-[70%] md:w-[60%] lg:w-[50%] xl:w-[40%] 2xl:w-[36%] max-w-[1400px] min-h-[320px] md:min-h-[420px] lg:min-h-[520px] aspect-square flex flex-col justify-between`} style={{ cursor: 'pointer' }} role="group" aria-roledescription={"slide"} aria-label={`Slide ${idx+1} of ${slides.length}: ${car.model}`} tabIndex={0}
                 onClick={() => { markInteraction(); const nearest = findNearestIndex(); if (nearest === idx) { setFlippedFullIndex((p) => (p === idx ? null : idx)); } else { goToIndex(idx); } }}
                 onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); const nearest = findNearestIndex(); if (nearest === idx) setFlippedFullIndex((p) => (p === idx ? null : idx)); else goToIndex(idx); } }}>
                 <div className="relative h-[70%] w-full bg-gray-800 overflow-hidden" style={{ perspective: 1200 }}>

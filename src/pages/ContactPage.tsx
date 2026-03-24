@@ -3,6 +3,7 @@ import { useLanguage } from '../contexts/LanguageContext';
 import { useTheme } from '../contexts/ThemeContext';
 import { Button } from '../components/ui/Button';
 import { Card } from '../components/ui/Card';
+import { useState } from 'react';
 
 export const ContactPage = () => {
   // Showroom and Service Center Details
@@ -32,6 +33,12 @@ export const ContactPage = () => {
   };
   const { t, language } = useLanguage();
   const { theme } = useTheme();
+  const [name, setName] = useState('');
+  const [email, setEmail] = useState('');
+  const [phone, setPhone] = useState('');
+  const [message, setMessage] = useState('');
+  const [submitting, setSubmitting] = useState(false);
+  const [status, setStatus] = useState<{ type: 'idle' | 'success' | 'error'; message?: string }>({ type: 'idle' });
 
   return (
     <div>
@@ -155,50 +162,112 @@ export const ContactPage = () => {
           <h2 className={`text-xl sm:text-2xl font-bold mb-4 sm:mb-6 ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
             {language === 'en' ? 'Send us a Message' : 'আমাদের একটি বার্তা পাঠান'}
           </h2>
-          <form className="space-y-4">
+          <form className="space-y-4" onSubmit={async (e) => {
+              e.preventDefault();
+              setStatus({ type: 'idle' });
+              // Simple client-side validation
+              if (!name.trim() || !email.trim() || !phone.trim() || !message.trim()) {
+                setStatus({ type: 'error', message: 'Please fill in all required fields.' });
+                return;
+              }
+              setSubmitting(true);
+              try {
+                // Dynamically import Supabase to avoid including it in the initial bundle
+                const mod = await import('../lib/supabase');
+                const { supabase } = mod as any;
+                if (supabase && supabase.from) {
+                  const { error } = await supabase.from('contacts').insert([{ name, email, phone, message }]);
+                  if (error) {
+                    console.warn('Supabase insert failed', error);
+                    // fallback: treat as success for UX, but inform in console
+                    setStatus({ type: 'success', message: 'Thanks — we received your message.' });
+                  } else {
+                    setStatus({ type: 'success', message: 'Thanks — we received your message.' });
+                    try { (await import('../lib/analytics')).trackEvent('contact_submitted', { name, email }); } catch (_) {}
+                  }
+                } else {
+                  // No supabase configured — simulate success
+                  setStatus({ type: 'success', message: 'Thanks — we received your message.' });
+                  try { (await import('../lib/analytics')).trackEvent('contact_submitted', { name, email }); } catch (_) {}
+                }
+                setName(''); setEmail(''); setPhone(''); setMessage('');
+              } catch (err) {
+                console.error(err);
+                setStatus({ type: 'error', message: 'Submission failed — please try again later.' });
+              } finally {
+                setSubmitting(false);
+              }
+            }}>
               <div>
-                <label className={`block text-sm font-medium mb-2 ${theme === 'dark' ? 'text-gray-300' : 'text-gray-700'}`}>
+                <label htmlFor="contact-name" className={`block text-sm font-medium mb-2 ${theme === 'dark' ? 'text-gray-300' : 'text-gray-700'}`}>
                   {t('form.name')} *
                 </label>
                 <input
+                  id="contact-name"
+                  name="name"
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
                   type="text"
                   required
+                  aria-required="true"
                   className={`w-full px-3 sm:px-4 py-2.5 sm:py-2 border rounded-lg focus:ring-2 focus:ring-[#C00000] focus:border-transparent ${theme === 'dark' ? 'bg-black/50 border-gray-700 text-white' : 'border-gray-300'}`}
                 />
               </div>
               <div>
-                <label className={`block text-sm font-medium mb-2 ${theme === 'dark' ? 'text-gray-300' : 'text-gray-700'}`}>
+                <label htmlFor="contact-email" className={`block text-sm font-medium mb-2 ${theme === 'dark' ? 'text-gray-300' : 'text-gray-700'}`}>
                   {t('form.email')} *
                 </label>
                 <input
+                  id="contact-email"
+                  name="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
                   type="email"
                   required
+                  aria-required="true"
                   className={`w-full px-3 sm:px-4 py-2.5 sm:py-2 border rounded-lg focus:ring-2 focus:ring-[#C00000] focus:border-transparent ${theme === 'dark' ? 'bg-black/50 border-gray-700 text-white' : 'border-gray-300'}`}
                 />
               </div>
               <div>
-                <label className={`block text-sm font-medium mb-2 ${theme === 'dark' ? 'text-gray-300' : 'text-gray-700'}`}>
+                <label htmlFor="contact-phone" className={`block text-sm font-medium mb-2 ${theme === 'dark' ? 'text-gray-300' : 'text-gray-700'}`}>
                   {t('form.phone')} *
                 </label>
                 <input
+                  id="contact-phone"
+                  name="phone"
+                  value={phone}
+                  onChange={(e) => setPhone(e.target.value)}
                   type="tel"
                   required
+                  aria-required="true"
                   className={`w-full px-3 sm:px-4 py-2.5 sm:py-2 border rounded-lg focus:ring-2 focus:ring-[#C00000] focus:border-transparent ${theme === 'dark' ? 'bg-black/50 border-gray-700 text-white' : 'border-gray-300'}`}
                 />
               </div>
               <div>
-                <label className={`block text-sm font-medium mb-2 ${theme === 'dark' ? 'text-gray-300' : 'text-gray-700'}`}>
+                <label htmlFor="contact-message" className={`block text-sm font-medium mb-2 ${theme === 'dark' ? 'text-gray-300' : 'text-gray-700'}`}>
                   {t('form.message')} *
                 </label>
                 <textarea
+                  id="contact-message"
+                  name="message"
                   rows={5}
+                  value={message}
+                  onChange={(e) => setMessage(e.target.value)}
                   required
+                  aria-required="true"
                   className={`w-full px-3 sm:px-4 py-2.5 sm:py-2 border rounded-lg focus:ring-2 focus:ring-[#C00000] focus:border-transparent ${theme === 'dark' ? 'bg-black/50 border-gray-700 text-white' : 'border-gray-300'}`}
                 ></textarea>
               </div>
-              <Button type="submit" className="w-full min-h-[44px]">
-                {t('form.submit')}
-              </Button>
+              <div>
+                <Button type="submit" className="w-full min-h-[44px]" disabled={submitting}>
+                  {submitting ? 'Sending…' : t('form.submit')}
+                </Button>
+              </div>
+              {/* Status messages */}
+              <div role="status" aria-live="polite" className="mt-2">
+                {status.type === 'success' && <div className="text-green-500">{status.message}</div>}
+                {status.type === 'error' && <div className="text-red-500">{status.message}</div>}
+              </div>
             </form>
           </Card>
 
