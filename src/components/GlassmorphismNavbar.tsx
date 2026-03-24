@@ -262,12 +262,12 @@ export const GlassmorphismNavbar = () => {
                 <Search className="h-4 w-4" />
               </m.button>
 
-              {/* Audio Toggle Button */}
+              {/* Audio Toggle Button (visible on mobile and desktop) */}
               <m.button
                 whileHover={{ scale: 1.1 }}
                 whileTap={{ scale: 0.95 }}
                 onClick={handleToggleAudio}
-                className={`hidden md:flex p-1.5 rounded-lg transition-all ${
+                className={`p-1.5 rounded-lg transition-all ${
                   theme === 'dark'
                     ? 'hover:bg-gray-700/50 text-gray-400 hover:text-white'
                     : 'hover:bg-gray-100/50 text-gray-600 hover:text-gray-900'
