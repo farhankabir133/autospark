@@ -1,84 +1,14 @@
-          {/* Animated SVG Logo/Spark */}
-          <motion.div
-            className="absolute left-1/2 top-10 -translate-x-1/2 z-20"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 1, delay: 0.2 }}
-          >
-            <svg width="80" height="80" viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <motion.path
-                d="M10 40 Q40 10 70 40 Q40 70 10 40 Z"
-                stroke="#FF1A1A"
-                strokeWidth="4"
-                fill="none"
-                initial={{ pathLength: 0 }}
-                animate={{ pathLength: 1 }}
-                transition={{ duration: 2 }}
-              />
-              <motion.circle
-                cx="40" cy="40" r="8"
-                stroke="#C00000"
-                strokeWidth="3"
-                fill="#FF1A1A"
-                initial={{ scale: 0 }}
-                animate={{ scale: 1 }}
-                transition={{ duration: 1, delay: 1.5 }}
-              />
-            </svg>
-          </motion.div>
 
-          {/* Dynamic Particle System */}
-          <motion.div
-            className="absolute inset-0 z-10 pointer-events-none"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 0.7 }}
-            transition={{ duration: 1, delay: 0.5 }}
-          >
-            {[...Array(18)].map((_, i) => (
-              <motion.div
-                key={i}
-                className="absolute rounded-full bg-white/20"
-                style={{
-                  left: `${Math.random() * 90 + 5}%`,
-                  top: `${Math.random() * 80 + 10}%`,
-                  width: `${Math.random() * 8 + 4}px`,
-                  height: `${Math.random() * 8 + 4}px`,
-                  filter: 'blur(2px)',
-                }}
-                animate={{ y: [0, Math.random() * 30 - 15, 0], opacity: [0.7, 1, 0.7] }}
-                transition={{ duration: 6 + Math.random() * 2, repeat: Infinity, delay: i * 0.2 }}
-              />
-            ))}
-          </motion.div>
-
-          {/* Interactive Timeline */}
-          <div className="absolute bottom-6 left-1/2 -translate-x-1/2 z-30 w-full max-w-xl">
-            <motion.div
-              className="flex justify-center gap-6 bg-black/30 rounded-xl py-3 px-6 shadow-lg backdrop-blur-md"
-              initial={{ opacity: 0, y: 30 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 1, delay: 1 }}
-            >
-              {['2014','2016','2018','2020','2023','2026'].map((year) => (
-                <motion.button
-                  key={year}
-                  className="text-white font-bold text-lg px-3 py-1 rounded-full bg-gradient-to-r from-[#C00000] to-[#FF1A1A] focus:outline-none focus:ring-2 focus:ring-[#FF1A1A] transition-all hover:scale-110"
-                  whileHover={{ scale: 1.12 }}
-                  whileTap={{ scale: 0.95 }}
-                  aria-label={`Milestone ${year}`}
-                  tabIndex={0}
-                >
-                  {year}
-                </motion.button>
-              ))}
-            </motion.div>
-          </div>
 import { Award, Shield, Users, TrendingUp, Target, Eye, Star, Car, CheckCircle, Quote, Phone, Mail, Linkedin, Facebook, Instagram, MapPin } from 'lucide-react';
 import { useLanguage } from '../contexts/LanguageContext';
 import { useTheme } from '../contexts/ThemeContext';
 import { Card } from '../components/ui/Card';
-import { motion } from 'framer-motion';
+import { motion, useReducedMotion } from 'framer-motion';
 import { Link } from 'react-router-dom';
+import PageHead from '../components/PageHead';
+import { lazy, Suspense, useEffect, useState } from 'react';
+const Testimonials = lazy(() => import('../components/about/Testimonials'));
+const TeamCard = lazy(() => import('../components/about/TeamCard'));
 
 export const AboutPage = () => {
   // Showroom and Service Center Details
@@ -108,6 +38,13 @@ export const AboutPage = () => {
   };
   const { language } = useLanguage();
   const { theme } = useTheme();
+  const reduceMotion = useReducedMotion();
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const m = typeof window !== 'undefined' && (window.innerWidth || 0) < 768;
+    setIsMobile(Boolean(m));
+  }, []);
 
   // Company Statistics
   const stats = [
@@ -218,6 +155,36 @@ export const AboutPage = () => {
   };
 
   return (
+    <>
+      <PageHead
+        title={language === 'en' ? 'About — AutoSpark' : 'অটো স্পার্ক সম্পর্কে'}
+        description={language === 'en'
+          ? 'AutoSpark BD — premier premium car dealership and service center in Rajshahi. Learn about our mission, team, and milestones.'
+          : 'অটো স্পার্ক বিডি — রাজশাহীর একটি প্রিমিয়াম গাড়ি ডিলার এবং সার্ভিস সেন্টার। আমাদের মিশন, টিম এবং মাইলস্টোন সম্পর্কে জানুন।'
+        }
+        url={`${typeof window !== 'undefined' ? window.location.origin : ''}/about`}
+        image={`${import.meta.env.BASE_URL}img/og/about-og.jpg`}
+        jsonLd={{
+          "@context": "https://schema.org",
+          "@type": "AutoDealer",
+          name: showroom.name,
+          url: `https://${showroom.website}`,
+          logo: `${import.meta.env.BASE_URL}logo/logoAS3.svg`,
+          telephone: showroom.phone,
+          address: {
+            "@type": "PostalAddress",
+            streetAddress: showroom.address,
+            addressLocality: showroom.city,
+            addressCountry: "BD",
+          },
+        }}
+      />
+      <main>
+        <header className="max-w-6xl mx-auto px-4 py-8">
+          <h1 className="text-4xl sm:text-5xl font-bold">
+            {language === 'en' ? 'About AutoSpark' : 'অটো স্পার্ক সম্পর্কে'}
+          </h1>
+        </header>
     <div>
       <section className="container mx-auto px-4 py-8">
         <h2 className="text-2xl font-bold mb-8 text-center">Showroom & Service Center Details</h2>
@@ -609,12 +576,12 @@ export const AboutPage = () => {
                 
                 {/* Social Links */}
                 <div className="flex gap-4 pt-4">
-                  <a href="#" className="w-10 h-10 bg-[#C00000]/10 hover:bg-[#C00000] text-[#C00000] hover:text-white rounded-lg flex items-center justify-center transition-colors" aria-label="Facebook">
-                    <Facebook className="w-5 h-5" />
-                  </a>
-                  <a href="#" className="w-10 h-10 bg-[#C00000]/10 hover:bg-[#C00000] text-[#C00000] hover:text-white rounded-lg flex items-center justify-center transition-colors" aria-label="LinkedIn">
-                    <Linkedin className="w-5 h-5" />
-                  </a>
+                    <a href={showroom.youtube} target="_blank" rel="noopener noreferrer" className="w-10 h-10 bg-[#C00000]/10 hover:bg-[#C00000] text-[#C00000] hover:text-white rounded-lg flex items-center justify-center transition-colors" aria-label="YouTube">
+                      <Facebook className="w-5 h-5" />
+                    </a>
+                    <a href={`https://${showroom.website}`} target="_blank" rel="noopener noreferrer" className="w-10 h-10 bg-[#C00000]/10 hover:bg-[#C00000] text-[#C00000] hover:text-white rounded-lg flex items-center justify-center transition-colors" aria-label="Website">
+                      <Linkedin className="w-5 h-5" />
+                    </a>
                   <a href="mailto:founder@autosparkbd.com" className="w-10 h-10 bg-[#C00000]/10 hover:bg-[#C00000] text-[#C00000] hover:text-white rounded-lg flex items-center justify-center transition-colors" aria-label="Email">
                     <Mail className="w-5 h-5" />
                   </a>
@@ -733,53 +700,20 @@ export const AboutPage = () => {
               className="relative flex items-center mb-6 sm:mb-8 md:flex-row"
             >
               <div className="w-full md:w-5/12 md:pr-12 md:text-right pl-8 sm:pl-12 md:pl-0">
-                <Card className={`p-4 sm:p-6 ${theme === 'dark' ? 'bg-gray-900/50 border-gray-800' : 'bg-white'} overflow-hidden group hover:shadow-xl transition-all duration-300`}>
-                  <div className="flex flex-col md:flex-row-reverse md:items-center gap-4">
-                    <div className="relative w-36 h-36 sm:w-44 sm:h-44 md:w-52 md:h-52 mx-auto md:mx-0 flex-shrink-0">
-                      <img
-                        src="https://images.pexels.com/photos/34067041/pexels-photo-34067041.png?auto=compress&cs=tinysrgb&w=300&fm=webp"
-                        alt="Farhan Kabir"
-                        className="w-full h-full rounded-full object-cover border-3 border-[#C00000]/30 group-hover:border-[#C00000] transition-colors duration-300"
-                        loading="lazy"
-                        width={208}
-                        height={208}
-                        decoding="async"
-                      />
-                      <motion.div 
-                        className="absolute -top-1 -right-1 bg-[#C00000] text-white p-1.5 rounded-full text-xs shadow-lg"
-                        animate={{ scale: [1, 1.1, 1] }}
-                        transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
-                      >
-                        💻
-                      </motion.div>
-                    </div>
-                    <div className="text-center md:text-right flex-1">
-                      <span className="text-[#C00000] font-bold text-xs sm:text-sm">💻 Lead Engineer</span>
-                      <h4 className={`text-lg sm:text-xl font-bold ${theme === 'dark' ? 'text-white' : 'text-gray-900'} mt-1`}>
-                        {language === 'en' ? 'Farhan Kabir' : 'ফারহান কবির'}
-                      </h4>
-                      <p className="text-[#C00000] font-semibold text-xs sm:text-sm mb-2">
-                        {language === 'en' ? 'Lead Engineer / Lead Developer' : 'প্রধান প্রকৌশলী / প্রধান ডেভেলপার'}
-                      </p>
-                      <p className={`${theme === 'dark' ? 'text-gray-400' : 'text-gray-600'} text-xs sm:text-sm`}>
-                        {language === 'en' 
-                          ? 'Driving digital innovation and creating seamless experiences for our customers.'
-                          : 'ডিজিটাল উদ্ভাবন চালনা এবং গ্রাহকদের জন্য নিরবচ্ছিন্ন অভিজ্ঞতা তৈরি করছেন।'}
-                      </p>
-                      <div className="flex justify-center md:justify-end gap-2 mt-3">
-                        <a href="#" className="w-8 h-8 rounded-full bg-[#C00000]/10 flex items-center justify-center hover:bg-[#C00000] hover:text-white transition-colors" aria-label="LinkedIn">
-                          <Linkedin className="w-4 h-4" />
-                        </a>
-                        <a href="#" className="w-8 h-8 rounded-full bg-[#C00000]/10 flex items-center justify-center hover:bg-[#C00000] hover:text-white transition-colors" aria-label="Facebook">
-                          <Facebook className="w-4 h-4" />
-                        </a>
-                        <a href="#" className="w-8 h-8 rounded-full bg-[#C00000]/10 flex items-center justify-center hover:bg-[#C00000] hover:text-white transition-colors" aria-label="Email">
-                          <Mail className="w-4 h-4" />
-                        </a>
-                      </div>
-                    </div>
-                  </div>
-                </Card>
+                <Suspense fallback={<div className="p-6">Loading team member…</div>}>
+                  <TeamCard
+                    person={{
+                      name: language === 'en' ? 'Farhan Kabir' : 'ফারহান কবির',
+                      role: language === 'en' ? 'Lead Engineer / Lead Developer' : 'প্রধান প্রকৌশলী / প্রধান ডেভেলপার',
+                      title: language === 'en' ? '💻 Lead Engineer' : '💻 লিড ইঞ্জিনিয়ার',
+                      image: 'https://images.pexels.com/photos/34067041/pexels-photo-34067041.png?auto=compress&cs=tinysrgb&w=600&fm=webp',
+                      bio: language === 'en' ? 'Driving digital innovation and creating seamless experiences for our customers.' : 'ডিজিটাল উদ্ভাবন চালনা এবং গ্রাহকদের জন্য নিরবচ্ছিন্ন অভিজ্ঞতা তৈরি করছেন।',
+                    }}
+                    language={language}
+                    theme={theme}
+                    showroom={showroom}
+                  />
+                </Suspense>
               </div>
               
               {/* Timeline Dot */}
@@ -797,53 +731,20 @@ export const AboutPage = () => {
               className="relative flex items-center mb-6 sm:mb-8 md:flex-row-reverse"
             >
               <div className="w-full md:w-5/12 md:pl-12 pl-8 sm:pl-12 md:text-left">
-                <Card className={`p-4 sm:p-6 ${theme === 'dark' ? 'bg-gray-900/50 border-gray-800' : 'bg-white'} overflow-hidden group hover:shadow-xl transition-all duration-300`}>
-                  <div className="flex flex-col md:flex-row md:items-center gap-4">
-                    <div className="relative w-36 h-36 sm:w-44 sm:h-44 md:w-52 md:h-52 mx-auto md:mx-0 flex-shrink-0">
-                      <img
-                        src="https://images.pexels.com/photos/36705238/pexels-photo-36705238.png"
-                        alt="Abu Hasan"
-                        className="w-full h-full rounded-full object-cover border-3 border-[#C00000]/30 group-hover:border-[#C00000] transition-colors duration-300"
-                        loading="lazy"
-                        width={208}
-                        height={208}
-                        decoding="async"
-                      />
-                      <motion.div 
-                        className="absolute -top-1 -right-1 bg-[#C00000] text-white p-1.5 rounded-full text-xs shadow-lg"
-                        animate={{ scale: [1, 1.1, 1] }}
-                        transition={{ duration: 2, repeat: Infinity, ease: "easeInOut", delay: 0.3 }}
-                      >
-                        👔
-                      </motion.div>
-                    </div>
-                    <div className="text-center md:text-left flex-1">
-                      <span className="text-[#C00000] font-bold text-xs sm:text-sm">👔 Leadership</span>
-                      <h4 className={`text-lg sm:text-xl font-bold ${theme === 'dark' ? 'text-white' : 'text-gray-900'} mt-1`}>
-                        {language === 'en' ? 'Abu Hasan' : 'আবু হাসান'}
-                      </h4>
-                      <p className="text-[#C00000] font-semibold text-xs sm:text-sm mb-2">
-                        {language === 'en' ? 'General Manager' : 'জেনারেল ম্যানেজার'}
-                      </p>
-                      <p className={`${theme === 'dark' ? 'text-gray-400' : 'text-gray-600'} text-xs sm:text-sm`}>
-                        {language === 'en' 
-                          ? 'Leading our operations with strategic vision and excellence in customer service.'
-                          : 'কৌশলগত দৃষ্টিভঙ্গি এবং গ্রাহক সেবায় উৎকর্ষতার সাথে আমাদের কার্যক্রম পরিচালনা করছেন।'}
-                      </p>
-                      <div className="flex justify-center md:justify-start gap-2 mt-3">
-                        <a href="#" className="w-8 h-8 rounded-full bg-[#C00000]/10 flex items-center justify-center hover:bg-[#C00000] hover:text-white transition-colors" aria-label="LinkedIn">
-                          <Linkedin className="w-4 h-4" />
-                        </a>
-                        <a href="#" className="w-8 h-8 rounded-full bg-[#C00000]/10 flex items-center justify-center hover:bg-[#C00000] hover:text-white transition-colors" aria-label="Facebook">
-                          <Facebook className="w-4 h-4" />
-                        </a>
-                        <a href="#" className="w-8 h-8 rounded-full bg-[#C00000]/10 flex items-center justify-center hover:bg-[#C00000] hover:text-white transition-colors" aria-label="Phone">
-                          <Phone className="w-4 h-4" />
-                        </a>
-                      </div>
-                    </div>
-                  </div>
-                </Card>
+                <Suspense fallback={<div className="p-6">Loading team member…</div>}>
+                  <TeamCard
+                    person={{
+                      name: language === 'en' ? 'Abu Hasan' : 'আবু হাসান',
+                      role: language === 'en' ? 'General Manager' : 'জেনারেল ম্যানেজার',
+                      title: language === 'en' ? '👔 Leadership' : '👔 নেতৃত্ব',
+                      image: 'https://images.pexels.com/photos/36705238/pexels-photo-36705238.png?auto=compress&cs=tinysrgb&w=600&fm=webp',
+                      bio: language === 'en' ? 'Leading our operations with strategic vision and excellence in customer service.' : 'কৌশলগত দৃষ্টিভঙ্গি এবং গ্রাহক সেবায় উৎকর্ষতার সাথে আমাদের কার্যক্রম পরিচালনা করছেন।',
+                    }}
+                    language={language}
+                    theme={theme}
+                    showroom={showroom}
+                  />
+                </Suspense>
               </div>
               
               {/* Timeline Dot */}
@@ -895,13 +796,13 @@ export const AboutPage = () => {
                           : 'ব্যক্তিগত নির্দেশনার মাধ্যমে গ্রাহকদের তাদের নিখুঁত গাড়ি খুঁজে পেতে সাহায্য করছেন।'}
                       </p>
                       <div className="flex justify-center md:justify-end gap-2 mt-3">
-                        <a href="#" className="w-8 h-8 rounded-full bg-[#C00000]/10 flex items-center justify-center hover:bg-[#C00000] hover:text-white transition-colors" aria-label="LinkedIn">
+                        <a href={`https://${showroom.website}`} target="_blank" rel="noopener noreferrer" className="w-8 h-8 rounded-full bg-[#C00000]/10 flex items-center justify-center hover:bg-[#C00000] hover:text-white transition-colors" aria-label="Website">
                           <Linkedin className="w-4 h-4" />
                         </a>
-                        <a href="#" className="w-8 h-8 rounded-full bg-[#C00000]/10 flex items-center justify-center hover:bg-[#C00000] hover:text-white transition-colors" aria-label="Facebook">
+                        <a href={showroom.youtube} target="_blank" rel="noopener noreferrer" className="w-8 h-8 rounded-full bg-[#C00000]/10 flex items-center justify-center hover:bg-[#C00000] hover:text-white transition-colors" aria-label="YouTube">
                           <Facebook className="w-4 h-4" />
                         </a>
-                        <a href="#" className="w-8 h-8 rounded-full bg-[#C00000]/10 flex items-center justify-center hover:bg-[#C00000] hover:text-white transition-colors" aria-label="Phone">
+                        <a href={`tel:${showroom.phone}`} className="w-8 h-8 rounded-full bg-[#C00000]/10 flex items-center justify-center hover:bg-[#C00000] hover:text-white transition-colors" aria-label="Phone">
                           <Phone className="w-4 h-4" />
                         </a>
                       </div>
@@ -925,53 +826,20 @@ export const AboutPage = () => {
               className="relative flex items-center mb-6 sm:mb-8 md:flex-row-reverse"
             >
               <div className="w-full md:w-5/12 md:pl-12 pl-8 sm:pl-12 md:text-left">
-                <Card className={`p-4 sm:p-6 ${theme === 'dark' ? 'bg-gray-900/50 border-gray-800' : 'bg-white'} overflow-hidden group hover:shadow-xl transition-all duration-300`}>
-                  <div className="flex flex-col md:flex-row md:items-center gap-4">
-                    <div className="relative w-36 h-36 sm:w-44 sm:h-44 md:w-52 md:h-52 mx-auto md:mx-0 flex-shrink-0">
-                      <img
-                        src="https://images.pexels.com/photos/8961065/pexels-photo-8961065.jpeg?auto=compress&cs=tinysrgb&w=300&fm=webp"
-                        alt="Amir Rahman"
-                        className="w-full h-full rounded-full object-cover border-3 border-[#C00000]/30 group-hover:border-[#C00000] transition-colors duration-300"
-                        loading="lazy"
-                        width={208}
-                        height={208}
-                        decoding="async"
-                      />
-                      <motion.div 
-                        className="absolute -top-1 -right-1 bg-[#C00000] text-white p-1.5 rounded-full text-xs shadow-lg"
-                        animate={{ scale: [1, 1.1, 1] }}
-                        transition={{ duration: 2, repeat: Infinity, ease: "easeInOut", delay: 0.9 }}
-                      >
-                        🔧
-                      </motion.div>
-                    </div>
-                    <div className="text-center md:text-left flex-1">
-                      <span className="text-[#C00000] font-bold text-xs sm:text-sm">🔧 Tech Expert</span>
-                      <h4 className={`text-lg sm:text-xl font-bold ${theme === 'dark' ? 'text-white' : 'text-gray-900'} mt-1`}>
-                        {language === 'en' ? 'Amir Rahman' : 'আমির রহমান'}
-                      </h4>
-                      <p className="text-[#C00000] font-semibold text-xs sm:text-sm mb-2">
-                        {language === 'en' ? 'Senior Technician' : 'সিনিয়র টেকনিশিয়ান'}
-                      </p>
-                      <p className={`${theme === 'dark' ? 'text-gray-400' : 'text-gray-600'} text-xs sm:text-sm`}>
-                        {language === 'en' 
-                          ? 'Ensuring every vehicle meets our rigorous quality and safety standards.'
-                          : 'প্রতিটি গাড়ি আমাদের কঠোর মান এবং নিরাপত্তা মানদণ্ড পূরণ করছে তা নিশ্চিত করছেন।'}
-                      </p>
-                      <div className="flex justify-center md:justify-start gap-2 mt-3">
-                        <a href="#" className="w-8 h-8 rounded-full bg-[#C00000]/10 flex items-center justify-center hover:bg-[#C00000] hover:text-white transition-colors" aria-label="LinkedIn">
-                          <Linkedin className="w-4 h-4" />
-                        </a>
-                        <a href="#" className="w-8 h-8 rounded-full bg-[#C00000]/10 flex items-center justify-center hover:bg-[#C00000] hover:text-white transition-colors" aria-label="Facebook">
-                          <Facebook className="w-4 h-4" />
-                        </a>
-                        <a href="#" className="w-8 h-8 rounded-full bg-[#C00000]/10 flex items-center justify-center hover:bg-[#C00000] hover:text-white transition-colors" aria-label="Phone">
-                          <Phone className="w-4 h-4" />
-                        </a>
-                      </div>
-                    </div>
-                  </div>
-                </Card>
+                <Suspense fallback={<div className="p-6">Loading team member…</div>}>
+                  <TeamCard
+                    person={{
+                      name: language === 'en' ? 'Amir Rahman' : 'আমির রহমান',
+                      role: language === 'en' ? 'Senior Technician' : 'সিনিয়র টেকনিশিয়ান',
+                      title: language === 'en' ? '🔧 Tech Expert' : '🔧 টেক এক্সপার্ট',
+                      image: 'https://images.pexels.com/photos/8961065/pexels-photo-8961065.jpeg?auto=compress&cs=tinysrgb&w=600&fm=webp',
+                      bio: language === 'en' ? 'Ensuring every vehicle meets our rigorous quality and safety standards.' : 'প্রতিটি গাড়ি আমাদের কঠোর মান এবং নিরাপত্তা মানদণ্ড পূরণ করছে তা নিশ্চিত করছেন।',
+                    }}
+                    language={language}
+                    theme={theme}
+                    showroom={showroom}
+                  />
+                </Suspense>
               </div>
               
               {/* Timeline Dot */}
@@ -1000,42 +868,9 @@ export const AboutPage = () => {
           </div>
           
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {testimonials.map((testimonial, index) => (
-              <motion.div
-                key={index}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.5, delay: index * 0.1 }}
-              >
-                <Card className={`p-6 h-full ${theme === 'dark' ? 'bg-gray-900/50 border-gray-800' : 'bg-white'} relative`}>
-                  <Quote className="absolute top-4 right-4 w-10 h-10 text-[#C00000]/10" />
-                  <div className="flex items-center gap-4 mb-4">
-                    <img
-                      src={testimonial.image}
-                      alt={testimonial.name}
-                      className="w-14 h-14 rounded-full object-cover border-2 border-[#C00000]/30"
-                      loading="lazy"
-                      width={56}
-                      height={56}
-                      decoding="async"
-                    />
-                    <div>
-                      <h4 className={`font-bold ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>{testimonial.name}</h4>
-                      <p className="text-[#C00000] text-sm">{testimonial.role}</p>
-                    </div>
-                  </div>
-                  <div className="flex gap-1 mb-3">
-                    {[...Array(5)].map((_, i) => (
-                      <Star key={i} className="w-4 h-4 text-yellow-500 fill-yellow-500" />
-                    ))}
-                  </div>
-                  <p className={`${theme === 'dark' ? 'text-gray-400' : 'text-gray-600'} text-sm leading-relaxed italic`}>
-                    "{testimonial.quote}"
-                  </p>
-                </Card>
-              </motion.div>
-            ))}
+            <Suspense fallback={<div className="p-6">Loading testimonials…</div>}>
+              <Testimonials items={testimonials} language={language} theme={theme} />
+            </Suspense>
           </div>
         </motion.div>
 
@@ -1080,5 +915,7 @@ export const AboutPage = () => {
     </div>
     {/* Close main parent div */}
   </div>
+      </main>
+    </>
   );
 };
