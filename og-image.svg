@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="1200" height="630" viewBox="0 0 1200 630" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="title desc">
+  <title id="title">AutoSpark BD — Reliable Automotive Services You Can Trust</title>
+  <desc id="desc">Open Graph image for AutoSpark BD</desc>
+
+  <!-- Background gradient -->
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#0B0B0B"/>
+      <stop offset="100%" stop-color="#1A1A1A"/>
+    </linearGradient>
+
+    <!-- subtle red glow -->
+    <radialGradient id="glow" cx="80%" cy="18%" r="50%">
+      <stop offset="0%" stop-color="#E10600" stop-opacity="0.35"/>
+      <stop offset="40%" stop-color="#E10600" stop-opacity="0.15"/>
+      <stop offset="100%" stop-color="#E10600" stop-opacity="0"/>
+    </radialGradient>
+
+    <!-- Car icon stroke style -->
+    <style type="text/css"><![CDATA[
+      .title { font-family: Inter, Arial, Helvetica, sans-serif; font-weight: 700; font-size: 72px; fill: #FFFFFF; }
+      .tagline { font-family: Inter, Arial, Helvetica, sans-serif; font-weight: 600; font-size: 36px; fill: #B3B3B3; }
+      .site { font-family: Inter, Arial, Helvetica, sans-serif; font-weight: 700; font-size: 28px; fill: #E10600; }
+      .car-stroke { fill: none; stroke: #FFFFFF; stroke-width: 6; stroke-linecap: round; stroke-linejoin: round; opacity: 0.95 }
+    ]]></style>
+  </defs>
+
+  <!-- background -->
+  <rect width="1200" height="630" fill="url(#bg)"/>
+
+  <!-- glow accent -->
+  <rect width="1200" height="630" fill="url(#glow)"/>
+
+  <!-- subtle diagonal band for depth -->
+  <g opacity="0.04">
+    <rect x="-400" y="-200" width="1600" height="1200" transform="rotate(-12 400 300)" fill="#FFFFFF" />
+  </g>
+
+  <!-- Top center car icon -->
+  <g transform="translate(600,120) scale(1)" aria-hidden="true">
+    <!-- simple car silhouette icon -->
+    <path class="car-stroke" d="M-180,40 Q-140,-20  -40,-20 L40,-20 Q140,-20 180,40 L180,80 Q160,110 120,110 L-120,110 Q-160,110 -180,80 Z" />
+    <!-- wheels -->
+    <circle cx="-70" cy="120" r="20" fill="#0B0B0B" stroke="#FFFFFF" stroke-width="6" />
+    <circle cx="70" cy="120" r="20" fill="#0B0B0B" stroke="#FFFFFF" stroke-width="6" />
+  </g>
+
+  <!-- Center text block -->
+  <g text-anchor="middle">
+    <text x="600" y="320" class="title">AUTOSPARK BD</text>
+    <text x="600" y="380" class="tagline">Reliable Automotive Services You Can Trust</text>
+  </g>
+
+  <!-- Bottom website -->
+  <g>
+    <text x="600" y="560" class="site" text-anchor="middle">autosparkbd.com</text>
+  </g>
+
+  <!-- small subtle border line -->
+  <rect x="40" y="40" width="1120" height="550" fill="none" stroke="#FFFFFF" stroke-opacity="0.02" rx="8"/>
+
+</svg>

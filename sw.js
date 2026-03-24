@@ -5,7 +5,8 @@ const CACHE_NAME = 'autospark-v3';
 // Ferrari GLB + DRACO removed — cached on-demand when 3D scene loads
 const PRECACHE_URLS = [
   '/',
-  '/logo/aslogo.svg',
+  '/logo/logoAS3.svg',
+  '/preview/preview-image.webp',
 ];
 
 // Cache-first patterns (static assets that rarely change)
@@ -56,11 +57,13 @@ self.addEventListener('fetch', (event) => {
     event.respondWith(
       fetch(event.request)
         .then((response) => {
-          const clone = response.clone();
-          caches.open(CACHE_NAME).then((cache) => cache.put(event.request, clone));
+          if (response && response.ok) {
+            const clone = response.clone();
+            caches.open(CACHE_NAME).then((cache) => cache.put(event.request, clone));
+          }
           return response;
         })
-        .catch(() => caches.match(event.request))
+        .catch(() => caches.match(event.request).then((m) => m || caches.match('/')).then((r) => r || new Response('Service Unavailable', { status: 503 })))
     );
     return;
   }
@@ -70,14 +73,16 @@ self.addEventListener('fetch', (event) => {
     event.respondWith(
       caches.match(event.request).then((cached) => {
         if (cached) return cached;
-        return fetch(event.request).then((response) => {
-          // Only cache successful responses
-          if (response.ok) {
-            const clone = response.clone();
-            caches.open(CACHE_NAME).then((cache) => cache.put(event.request, clone));
-          }
-          return response;
-        });
+        return fetch(event.request)
+          .then((response) => {
+            // Only cache successful responses
+            if (response && response.ok) {
+              const clone = response.clone();
+              caches.open(CACHE_NAME).then((cache) => cache.put(event.request, clone));
+            }
+            return response;
+          })
+          .catch(() => caches.match('/').then((r) => r || new Response('', { status: 404 })));
       })
     );
     return;
@@ -95,10 +100,7 @@ self.addEventListener('fetch', (event) => {
           }
           return response;
         })
-        .catch(() => {
-          // If network fails, fall back to cache (site shell)
-          return caches.match('/') || caches.match(event.request) || caches.match('/');
-        })
+        .catch(() => caches.match('/').then((r) => r || new Response('<h1>Offline</h1>', { status: 503, headers: { 'Content-Type': 'text/html' } })))
     );
     return;
   }
