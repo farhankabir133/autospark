@@ -300,7 +300,6 @@ export const HomePage = () => {
   const showcaseVehicles = SHOWCASE_VEHICLES(language);
   const navigate = useNavigate();
   const [CarFocusCarouselComp, setCarFocusCarouselComp] = useState<React.ComponentType<any> | null>(null);
-  const [show3D, setShow3D] = useState(false);
 
   const pageTitle = language === 'en' ? 'Autospark — Premium Cars in Rajshahi' : 'রাজশাহী প্রিমিয়াম গাড়ি — অটোস্পার্ক';
   const pageDescription = language === 'en'
@@ -471,46 +470,29 @@ export const HomePage = () => {
         {/* ══ HERO ══════════════════════════════════════════════════ */}
         <section className="relative h-dvh overflow-hidden">
           {device.supports3D ? (
-            show3D ? (
-              <Suspense fallback={<CarShowcase3DFallback />}>
-                <CarShowcase3D
-                  ctaButtons={
-                    <div className="flex flex-row flex-wrap gap-2 sm:gap-3 justify-center">
-                      <Link to="/inventory">
-                        <Button size="sm" className="text-xs sm:text-sm md:text-base md:px-6 md:py-3">
-                          {t('hero.browse')}<ArrowRight className="ml-1.5 h-3.5 w-3.5 md:h-5 md:w-5" />
-                        </Button>
-                      </Link>
-                      <Link to="/services">
-                        <Button size="sm" variant="outline" className="text-xs sm:text-sm md:text-base md:px-6 md:py-3 bg-white/10 backdrop-blur-sm border-white text-white hover:bg-white">
-                          {t('hero.book_service')}
-                        </Button>
-                      </Link>
-                      <Link to="/sell">
-                        <Button size="sm" variant="secondary" className="text-xs sm:text-sm md:text-base md:px-6 md:py-3">
-                          {t('hero.sell')}
-                        </Button>
-                      </Link>
-                    </div>
-                  }
-                />
-              </Suspense>
-            ) : (
-              <div className="relative h-dvh flex items-center justify-center overflow-hidden hero-lite-bg">
-                <LightweightHero language={language} t={t} />
-                <div className="absolute inset-0 flex items-end justify-center pb-12 pointer-events-none">
-                  <div className="pointer-events-auto">
-                    <Button size="lg" onClick={async () => {
-                      // Preload heavy 3D chunk and then show it
-                      try { import('../components/3d/CarShowcase3D'); } catch (_) {}
-                      setShow3D(true);
-                    }}>
-                      {language === 'en' ? 'Enter 3D Experience' : '৩ডি অভিজ্ঞতা দেখুন'}
-                    </Button>
+            <Suspense fallback={<CarShowcase3DFallback />}>
+              <CarShowcase3D
+                ctaButtons={
+                  <div className="flex flex-row flex-wrap gap-2 sm:gap-3 justify-center">
+                    <Link to="/inventory">
+                      <Button size="sm" className="text-xs sm:text-sm md:text-base md:px-6 md:py-3">
+                        {t('hero.browse')}<ArrowRight className="ml-1.5 h-3.5 w-3.5 md:h-5 md:w-5" />
+                      </Button>
+                    </Link>
+                    <Link to="/services">
+                      <Button size="sm" variant="outline" className="text-xs sm:text-sm md:text-base md:px-6 md:py-3 bg-white/10 backdrop-blur-sm border-white text-white hover:bg-white">
+                        {t('hero.book_service')}
+                      </Button>
+                    </Link>
+                    <Link to="/sell">
+                      <Button size="sm" variant="secondary" className="text-xs sm:text-sm md:text-base md:px-6 md:py-3">
+                        {t('hero.sell')}
+                      </Button>
+                    </Link>
                   </div>
-                </div>
-              </div>
-            )
+                }
+              />
+            </Suspense>
           ) : (
             <LightweightHero language={language} t={t} />
           )}
