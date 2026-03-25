@@ -1,0 +1,37 @@
+name: DNS Monitor
+
+on:
+  schedule:
+    - cron: '0 6 * * 1' # weekly on Mon 06:00 UTC
+  workflow_dispatch: {}
+
+jobs:
+  check-dns:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Ensure script is executable
+        run: |
+          chmod +x ./scripts/check-dns.sh
+
+      - name: Run DNS check
+        id: check
+        continue-on-error: true
+        run: |
+          ./scripts/check-dns.sh
+
+      - name: Upload report artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: dns-report
+          path: scripts/dns-report.txt
+
+      - name: Create issue on failure
+        if: ${{ steps.check.outcome == 'failure' }}
+        uses: peter-evans/create-issue-from-file@v4
+        with:
+          title: 'DNS Monitor: mismatch detected for autosparkbd.com'
+          content-file: scripts/dns-report.txt
