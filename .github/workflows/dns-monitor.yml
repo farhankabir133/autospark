@@ -2,7 +2,7 @@ name: DNS Monitor
 
 on:
   schedule:
-    - cron: '0 6 * * 1' # weekly on Mon 06:00 UTC
+    - cron: '0 * * * *' # hourly at minute 0 UTC
   workflow_dispatch: {}
 
 jobs:

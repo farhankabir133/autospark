@@ -45,9 +45,9 @@ for ns in $NSLIST; do
   echo "" | tee -a "$REPORT_FILE"
 done
 
-# Check public resolvers
+# Check public resolvers (include Google, Cloudflare, Quad9, OpenDNS and common fallbacks)
 echo "Public resolver checks:" | tee -a "$REPORT_FILE"
-for resolver in 8.8.8.8 1.1.1.1 9.9.9.9; do
+for resolver in 8.8.8.8 8.8.4.4 1.1.1.1 9.9.9.9 208.67.222.222 208.67.220.220 4.2.2.2; do
   echo "Resolver $resolver:" | tee -a "$REPORT_FILE"
   dig +short A "$DOMAIN" @"$resolver" | tee -a "$REPORT_FILE"
 done
