@@ -3,6 +3,7 @@ import { Header } from './Header';
 import { Footer } from './Footer';
 import { MessageCircle } from 'lucide-react';
 import { useTheme } from '../contexts/ThemeContext';
+// Chat widget removed. ChatProvider and ChatWidget were deleted.
 
 interface LayoutProps {
   children: ReactNode;
@@ -27,11 +28,12 @@ export const Layout = ({ children }: LayoutProps) => {
         href={`https://wa.me/${whatsappNumber}?text=${whatsappMessage}`}
         target="_blank"
         rel="noopener noreferrer"
-        className="fixed bottom-6 right-6 z-40 bg-green-500 hover:bg-green-600 text-white p-4 rounded-full shadow-lg hover:shadow-xl transition-all transform hover:scale-110"
+        className="fixed bottom-6 left-6 z-40 bg-green-500 hover:bg-green-600 text-white p-4 rounded-full shadow-lg hover:shadow-xl transition-all transform hover:scale-110"
         aria-label="Contact on WhatsApp"
       >
         <MessageCircle className="h-6 w-6" />
       </a>
+      {/* Chat assistant removed */}
     </div>
   );
 };

@@ -18,6 +18,8 @@ interface InteractiveColorCustomizerProps {
   theme: string;
   language: string;
   onColorSelect?: (color: VehicleColor) => void;
+  /** Optional initial color name to use on first render (won't override saved preference) */
+  initialColorName?: string;
 }
 
 export const InteractiveColorCustomizer = ({
@@ -27,6 +29,7 @@ export const InteractiveColorCustomizer = ({
   theme,
   language,
   onColorSelect,
+  initialColorName,
 }: InteractiveColorCustomizerProps) => {
   const [isOpen, setIsOpen] = useState(false);
   const [selectedColor, setSelectedColor] = useState<VehicleColor | null>(
@@ -88,6 +91,25 @@ export const InteractiveColorCustomizer = ({
       console.debug('Could not load saved color');
     }
   }, [vehicleModel, availableColors]);
+
+  // Apply initialColorName if provided and no saved preference exists
+  React.useEffect(() => {
+    if (!initialColorName) return;
+    try {
+      const saved = localStorage.getItem(`vehicle_color_${vehicleModel}`);
+      if (saved) return; // don't override user's saved preference
+    } catch (e) {
+      // continue if localStorage unavailable
+    }
+
+    const match = availableColors.find(c => c.name === initialColorName);
+    if (match) {
+      // apply color visually but don't persist to localStorage
+      setSelectedColor(match);
+      setImageFilter(getColorFilter(match));
+      if (match.image) setDisplayImage(match.image);
+    }
+  }, [initialColorName, availableColors, vehicleModel]);
 
   // Preload images for all available colors for instant swapping
   React.useEffect(() => {

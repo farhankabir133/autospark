@@ -10,7 +10,7 @@ type Testimonial = {
   quote: string;
 };
 
-const Testimonials: React.FC<{ items: Testimonial[]; language: string; theme: string }> = ({ items, language, theme }) => {
+const Testimonials: React.FC<{ items: Testimonial[]; language: string; theme: string }> = ({ items, language: _language, theme }) => {
   return (
     <>
       {items.map((testimonial, index) => (

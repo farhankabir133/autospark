@@ -1,0 +1,34 @@
+DNS Monitor Report for autosparkbd.com
+Generated: Wed Mar 25 21:48:25 UTC 2026
+
+Authoritative nameservers:
+tipuitbd.earth.orderbox-dns.com
+tipuitbd.mars.orderbox-dns.com
+
+Querying tipuitbd.earth.orderbox-dns.com for A records...
+  -> answers: 185.199.108.153 185.199.109.153 185.199.110.153 185.199.111.153 
+
+Querying tipuitbd.mars.orderbox-dns.com for A records...
+  -> answers: 185.199.108.153 185.199.109.153 185.199.110.153 185.199.111.153 
+
+Public resolver checks:
+Resolver 8.8.8.8:
+185.199.110.153
+185.199.109.153
+185.199.111.153
+185.199.108.153
+Resolver 1.1.1.1:
+185.199.111.153
+185.199.108.153
+185.199.109.153
+185.199.110.153
+Resolver 9.9.9.9:
+185.199.108.153
+185.199.111.153
+185.199.110.153
+185.199.109.153
+
+HTTP check (may follow redirects):
+HTTP_CODE:301 FINAL_URL:http://autosparkbd.com/ REMOTE_IP:185.199.108.153
+
+RESULT: All authoritative NS returned expected GitHub Pages IPs.

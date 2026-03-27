@@ -19,6 +19,17 @@ export default defineConfig({
       ext: '.br',
     }),
   ],
+    server: {
+      // during local development forward /api/agent to the proxy server
+      proxy: {
+        '/api/agent': {
+          target: 'http://localhost:8787',
+          changeOrigin: true,
+          secure: false,
+          ws: false,
+        }
+      }
+    },
   // Custom domain deployment - use relative base for GitHub Pages root
   base: './',
   build: {

@@ -1,12 +1,12 @@
 
-import { Award, Shield, Users, TrendingUp, Target, Eye, Star, Car, CheckCircle, Quote, Phone, Mail, Linkedin, Facebook, Instagram, MapPin } from 'lucide-react';
+import { Award, Shield, Users, TrendingUp, Target, Eye, Star, Car, CheckCircle, Phone, Mail, Linkedin, Facebook, Instagram, MapPin } from 'lucide-react';
 import { useLanguage } from '../contexts/LanguageContext';
 import { useTheme } from '../contexts/ThemeContext';
 import { Card } from '../components/ui/Card';
-import { motion, useReducedMotion } from 'framer-motion';
+import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import PageHead from '../components/PageHead';
-import { lazy, Suspense, useEffect, useState } from 'react';
+import { lazy, Suspense } from 'react';
 const Testimonials = lazy(() => import('../components/about/Testimonials'));
 const TeamCard = lazy(() => import('../components/about/TeamCard'));
 
@@ -38,13 +38,7 @@ export const AboutPage = () => {
   };
   const { language } = useLanguage();
   const { theme } = useTheme();
-  const reduceMotion = useReducedMotion();
-  const [isMobile, setIsMobile] = useState(false);
-
-  useEffect(() => {
-    const m = typeof window !== 'undefined' && (window.innerWidth || 0) < 768;
-    setIsMobile(Boolean(m));
-  }, []);
+  // reduced motion and isMobile checks removed (unused in this page)
 
   // Company Statistics
   const stats = [

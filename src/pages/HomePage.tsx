@@ -452,6 +452,37 @@ export const HomePage = () => {
     ],
   };
 
+  // Models to show in the Personalize section
+  const personalizeModels = ['prado','harrier','crown'] as const;
+
+  // Choose a distinct color name for each model on load and rotate periodically
+  const [initialColors, setInitialColors] = useState<Record<string, string>>({});
+
+  const pickUniqueColors = () => {
+    const result: Record<string, string> = {};
+    const used = new Set<string>();
+    personalizeModels.forEach((model) => {
+      const colors = vehicleColors[model];
+      if (!colors || colors.length === 0) return;
+      const names = colors.map(c => c.name);
+      let available = names.filter(n => !used.has(n));
+      if (available.length === 0) available = names;
+      const pick = available[Math.floor(Math.random() * available.length)];
+      result[model] = pick;
+      used.add(pick);
+    });
+    return result;
+  };
+
+  useEffect(() => {
+    // initial pick
+    setInitialColors(pickUniqueColors());
+    // rotate every 8 seconds
+    const id = setInterval(() => setInitialColors(pickUniqueColors()), 8000);
+    return () => clearInterval(id);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   return (
     <div className={`min-h-screen ${theme === 'dark' ? 'bg-[#0a0a0a]' : 'bg-gray-50'}`}>
       <PageHead
@@ -866,6 +897,7 @@ export const HomePage = () => {
                         availableColors={vehicleColors[model]}
                         theme={theme}
                         language={language}
+                        initialColorName={initialColors[model]}
                         onColorSelect={(color: VehicleColor) => {
                           setSelectedVehicleColor(color);
                           import('../utils/AudioManager').then(m => m.AudioManager.playClick());
