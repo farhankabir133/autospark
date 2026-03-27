@@ -1,11 +1,14 @@
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 import viteCompression from 'vite-plugin-compression';
+import { visualizer } from 'rollup-plugin-visualizer';
 
 // https://vitejs.dev/config/
 export default defineConfig({
   plugins: [
     react(),
+    // bundle visualizer - generates dist/stats.html to inspect bundle composition
+    visualizer({ filename: 'dist/stats.html', gzipSize: true, brotliSize: true, open: false }),
     // Gzip pre-compression for all assets > 1KB
     viteCompression({
       algorithm: 'gzip',

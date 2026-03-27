@@ -1,0 +1,33 @@
+.wrapper {
+  position: relative;
+  display: block;
+  overflow: hidden;
+  background-size: cover;
+  background-position: center;
+  /* Provide a fallback background color while placeholder is not available */
+  background-color: #f3f4f6;
+}
+
+.img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: opacity 400ms ease, filter 400ms ease;
+  opacity: 0;
+  will-change: opacity, filter;
+}
+
+.loaded {
+  opacity: 1;
+  filter: none;
+}
+
+/* When placeholder is applied via wrapper background, keep it blurred-looking */
+.wrapper::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  /* We do not force a blur here to let authors provide an already-blurred base64 placeholder. */
+}

@@ -359,6 +359,8 @@ export const VehicleViewer360Enhanced: React.FC<VehicleViewer360Props> = ({
   const isDragging = useRef(false);
   const lastX = useRef(0);
   const animationRef = useRef<number>();
+  const lastPointerX = useRef<number | null>(null);
+  const ticking = useRef(false);
 
   // Get selected vehicle
   const selectedVehicle = vehicleData.find(v => v.id === selectedVehicleId) || vehicleData[0];
@@ -433,9 +435,21 @@ export const VehicleViewer360Enhanced: React.FC<VehicleViewer360Props> = ({
 
   const handleMouseMove = useCallback((e: React.MouseEvent) => {
     if (!isDragging.current) return;
-    const delta = e.clientX - lastX.current;
-    setRotation(prev => prev + delta * 0.5);
-    lastX.current = e.clientX;
+    lastPointerX.current = e.clientX;
+    if (!ticking.current) {
+      ticking.current = true;
+      requestAnimationFrame(() => {
+        if (lastPointerX.current == null) {
+          ticking.current = false;
+          return;
+        }
+        const clientX = lastPointerX.current;
+        const delta = clientX - lastX.current;
+        setRotation(prev => prev + delta * 0.5);
+        lastX.current = clientX;
+        ticking.current = false;
+      });
+    }
   }, []);
 
   const handleMouseUp = useCallback(() => {
@@ -450,9 +464,21 @@ export const VehicleViewer360Enhanced: React.FC<VehicleViewer360Props> = ({
 
   const handleTouchMove = useCallback((e: React.TouchEvent) => {
     if (!isDragging.current) return;
-    const delta = e.touches[0].clientX - lastX.current;
-    setRotation(prev => prev + delta * 0.5);
-    lastX.current = e.touches[0].clientX;
+    lastPointerX.current = e.touches[0].clientX;
+    if (!ticking.current) {
+      ticking.current = true;
+      requestAnimationFrame(() => {
+        if (lastPointerX.current == null) {
+          ticking.current = false;
+          return;
+        }
+        const clientX = lastPointerX.current;
+        const delta = clientX - lastX.current;
+        setRotation(prev => prev + delta * 0.5);
+        lastX.current = clientX;
+        ticking.current = false;
+      });
+    }
   }, []);
 
   // Zoom handlers

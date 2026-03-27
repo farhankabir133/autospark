@@ -31,24 +31,72 @@ export const AnimatedComparisonSlider = ({
 }: AnimatedComparisonSliderProps) => {
   const [sliderPosition, setSliderPosition] = useState(50);
   const [isDragging, setIsDragging] = useState(false);
-  const sliderRef = useRef<HTMLDivElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
+  const handleRef = useRef<HTMLDivElement>(null);
+  const workerRef = useRef<Worker | null>(null);
+  const lastClientX = useRef<number | null>(null);
+  const ticking = useRef(false);
 
   // Handle mouse drag
   const handleMouseDown = () => {
     setIsDragging(true);
   };
 
+  // Initialize web worker for position calculations and message handler
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    try {
+      workerRef.current = new Worker('/workers/positionWorker.js');
+      workerRef.current.onmessage = (ev: MessageEvent) => {
+        const { percent, x } = ev.data as { percent: number; x: number };
+        // Update overlay width (layout) and internal state
+        if (containerRef.current) {
+          const overlay = containerRef.current.querySelector('.overlay') as HTMLElement | null;
+          if (overlay) overlay.style.width = `${percent}%`;
+        }
+        setSliderPosition(percent);
+
+        // Move handle using GPU-accelerated transform
+        if (handleRef.current) {
+          handleRef.current.style.transform = `translate3d(${x}px, 0, 0)`;
+        }
+
+        ticking.current = false;
+      };
+    } catch (err) {
+      console.warn('Worker could not be created', err);
+    }
+
+    return () => {
+      workerRef.current?.terminate();
+      workerRef.current = null;
+    };
+  }, []);
+
+  // Mouse move handling (throttled via rAF and computed in worker)
   useEffect(() => {
     if (!isDragging) return;
 
+    const rect = containerRef.current?.getBoundingClientRect();
+    if (rect && workerRef.current) {
+      // send initial rect to worker so it can compute percent and x
+      workerRef.current.postMessage({ type: 'init', rect: { left: rect.left, width: rect.width } });
+      // set initial handle position
+      const initialX = (sliderPosition / 100) * rect.width;
+      if (handleRef.current) handleRef.current.style.transform = `translate3d(${initialX}px, 0, 0)`;
+    }
+
     const handleMouseMove = (e: MouseEvent) => {
-      if (!containerRef.current) return;
-
-      const rect = containerRef.current.getBoundingClientRect();
-      const newPosition = ((e.clientX - rect.left) / rect.width) * 100;
-
-      setSliderPosition(Math.max(0, Math.min(100, newPosition)));
+      lastClientX.current = e.clientX;
+      if (!ticking.current && workerRef.current) {
+        ticking.current = true;
+        // throttle to rAF
+        requestAnimationFrame(() => {
+          if (lastClientX.current != null) {
+            workerRef.current!.postMessage({ type: 'compute', clientX: lastClientX.current });
+          }
+        });
+      }
     };
 
     const handleMouseUp = () => {
@@ -62,27 +110,28 @@ export const AnimatedComparisonSlider = ({
       document.removeEventListener('mousemove', handleMouseMove);
       document.removeEventListener('mouseup', handleMouseUp);
     };
-  }, [isDragging]);
+  }, [isDragging, sliderPosition]);
 
   // Touch support
   useEffect(() => {
     if (!isDragging) return;
 
     const handleTouchMove = (e: TouchEvent) => {
-      if (!containerRef.current) return;
-
-      const rect = containerRef.current.getBoundingClientRect();
       const touch = e.touches[0];
-      const newPosition = ((touch.clientX - rect.left) / rect.width) * 100;
-
-      setSliderPosition(Math.max(0, Math.min(100, newPosition)));
+      lastClientX.current = touch.clientX;
+      if (!ticking.current && workerRef.current) {
+        ticking.current = true;
+        requestAnimationFrame(() => {
+          if (lastClientX.current != null) {
+            workerRef.current!.postMessage({ type: 'compute', clientX: lastClientX.current });
+          }
+        });
+      }
     };
 
-    const handleTouchEnd = () => {
-      setIsDragging(false);
-    };
+    const handleTouchEnd = () => setIsDragging(false);
 
-    document.addEventListener('touchmove', handleTouchMove);
+    document.addEventListener('touchmove', handleTouchMove, { passive: true });
     document.addEventListener('touchend', handleTouchEnd);
 
     return () => {
@@ -142,24 +191,26 @@ export const AnimatedComparisonSlider = ({
 
           {/* Standard Image (Overlay) */}
           <div
-            className="absolute inset-0 overflow-hidden"
+            className="absolute inset-0 overflow-hidden overlay"
             style={{ width: `${sliderPosition}%` }}
           >
             <img
               src={standardImage}
               alt={standardModel}
               className="w-full h-full object-cover"
-              style={{ marginLeft: `-${sliderPosition}%` }}
+              // use transform for GPU-accelerated movement instead of marginLeft
+              style={{ transform: `translate3d(-${sliderPosition}%, 0, 0)` }}
             />
           </div>
 
           {/* Slider Handle */}
           <motion.div
-            ref={sliderRef}
+            ref={handleRef as any}
             className={`absolute top-0 bottom-0 w-1 bg-white shadow-2xl cursor-col-resize ${
               isDragging ? 'bg-blue-400' : ''
             }`}
-            style={{ left: `${sliderPosition}%` }}
+            // start with left so SSR shows correct location; runtime updates use translate3d from worker
+            style={{ left: `${sliderPosition}%`, willChange: 'transform' }}
             onMouseDown={handleMouseDown}
             onTouchStart={handleMouseDown}
             animate={{ x: isDragging ? 0 : 0 }}
