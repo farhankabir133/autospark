@@ -235,45 +235,6 @@
     border-radius: 0.5rem;
   }
 
-  /* =============================================
-     Global interactive / button defaults
-     - ensure mobile touch targets (44x44 minimum)
-     - use touch-action: manipulation to improve scroll/gesture
-     - subtle active scale + saturation for haptic-like feedback
-  ============================================= */
-  button,
-  .button,
-  a.button,
-  [role="button"] {
-    touch-action: manipulation;
-    -webkit-tap-highlight-color: rgba(0,0,0,0);
-    min-width: 44px;
-    min-height: 44px;
-    padding: 0.5rem 0.75rem;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: 0.5rem;
-    transition: transform 120ms cubic-bezier(.2,.8,.2,1), filter 120ms linear, box-shadow 120ms;
-    will-change: transform, filter;
-  }
-
-  button:active,
-  .button:active,
-  a.button:active,
-  [role="button"]:active {
-    transform: scale(0.98);
-    filter: saturate(0.98);
-  }
-
-  button:focus,
-  .button:focus,
-  a.button:focus,
-  [role="button"]:focus {
-    outline: 2px solid rgba(192,0,0,0.18);
-    outline-offset: 2px;
-  }
-
   /* â”€â”€â”€ Lightweight hero (low-end fallback) â”€â”€â”€â”€â”€â”€â”€ */
   .hero-lite-bg {
     background: linear-gradient(135deg, #0a0a0a 0%, #1a0a0a 50%, #0d0d0d 100%);
