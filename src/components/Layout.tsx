@@ -1,7 +1,8 @@
 import { ReactNode } from 'react';
 import { Header } from './Header';
 import { Footer } from './Footer';
-import { MessageCircle } from 'lucide-react';
+import { MessageCircle, Phone } from 'lucide-react';
+import FloatingButton from './ui/FloatingButton';
 import { useTheme } from '../contexts/ThemeContext';
 // Chat widget removed. ChatProvider and ChatWidget were deleted.
 
@@ -24,15 +25,30 @@ export const Layout = ({ children }: LayoutProps) => {
       <main id="main-content" className="flex-grow relative z-10">{children}</main>
       <Footer />
 
-      <a
+      {/* Left: WhatsApp floating button */}
+      <FloatingButton
         href={`https://wa.me/${whatsappNumber}?text=${whatsappMessage}`}
-        target="_blank"
-        rel="noopener noreferrer"
-        className="fixed bottom-6 left-6 z-40 bg-green-500 hover:bg-green-600 text-white p-4 rounded-full shadow-lg hover:shadow-xl transition-all transform hover:scale-110"
-        aria-label="Contact on WhatsApp"
+        ariaLabel="Contact on WhatsApp"
+        position="left"
+        bgClass="bg-green-500 hover:bg-green-600"
       >
-        <MessageCircle className="h-6 w-6" />
-      </a>
+        <MessageCircle className="h-5 w-5 sm:h-6 sm:w-6" />
+      </FloatingButton>
+
+      {/* Right on desktop, but on mobile we place this above the WhatsApp button on the left */}
+      <FloatingButton
+        href={`tel:+8801760401605`}
+        ariaLabel="Call showroom"
+        // default position used on larger screens; we'll override responsively via posClass
+        position="right"
+        posClass={`left-4 md:left-auto md:right-6`}
+        // On mobile, sit above the WhatsApp button. On md+ keep compact bottom spacing.
+        bottomClass={`bottom-[calc(env(safe-area-inset-bottom,0px)+4.5rem)] md:bottom-[calc(env(safe-area-inset-bottom,0px)+1rem)]`}
+        bgClass="bg-[#C00000] hover:bg-[#b00000]"
+        className="ml-2"
+      >
+        <Phone className="h-5 w-5 sm:h-6 sm:w-6" />
+      </FloatingButton>
       {/* Chat assistant removed */}
     </div>
   );
