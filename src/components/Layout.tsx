@@ -30,6 +30,10 @@ export const Layout = ({ children }: LayoutProps) => {
         href={`https://wa.me/${whatsappNumber}?text=${whatsappMessage}`}
         ariaLabel="Contact on WhatsApp"
         position="left"
+        posClass={`left-4 sm:left-6`}
+        // Keep WhatsApp near the bottom
+        bottomClass={`bottom-[calc(env(safe-area-inset-bottom,0px)+1rem)] md:bottom-[calc(env(safe-area-inset-bottom,0px)+1rem)]`}
+        className="z-50"
         bgClass="bg-green-500 hover:bg-green-600"
       >
         <MessageCircle className="h-5 w-5 sm:h-6 sm:w-6" />
@@ -39,13 +43,13 @@ export const Layout = ({ children }: LayoutProps) => {
       <FloatingButton
         href={`tel:+8801760401605`}
         ariaLabel="Call showroom"
-        // default position used on larger screens; we'll override responsively via posClass
-        position="right"
-        posClass={`left-4 md:left-auto md:right-6`}
-        // On mobile, sit above the WhatsApp button. On md+ keep compact bottom spacing.
-        bottomClass={`bottom-[calc(env(safe-area-inset-bottom,0px)+4.5rem)] md:bottom-[calc(env(safe-area-inset-bottom,0px)+1rem)]`}
+        // Place on the left side (like WhatsApp) across sizes and sit above it
+        position="left"
+        posClass={`left-4 sm:left-6`}
+        // Keep the call button visually above the WhatsApp button on all sizes
+          bottomClass={`bottom-[calc(env(safe-area-inset-bottom,0px)+9rem)] md:bottom-[calc(env(safe-area-inset-bottom,0px)+5rem)]`}
         bgClass="bg-[#C00000] hover:bg-[#b00000]"
-        className="ml-2"
+        className="z-50"
       >
         <Phone className="h-5 w-5 sm:h-6 sm:w-6" />
       </FloatingButton>
