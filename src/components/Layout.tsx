@@ -2,7 +2,7 @@ import { ReactNode } from 'react';
 import { Header } from './Header';
 import { Footer } from './Footer';
 import { MessageCircle, Phone } from 'lucide-react';
-import FloatingButton from './ui/FloatingButton';
+import CompositeFAB from './ui/CompositeFAB';
 import { useTheme } from '../contexts/ThemeContext';
 // Chat widget removed. ChatProvider and ChatWidget were deleted.
 
@@ -25,34 +25,29 @@ export const Layout = ({ children }: LayoutProps) => {
       <main id="main-content" className="flex-grow relative z-10">{children}</main>
       <Footer />
 
-      {/* Left: WhatsApp floating button */}
-      <FloatingButton
-        href={`https://wa.me/${whatsappNumber}?text=${whatsappMessage}`}
-        ariaLabel="Contact on WhatsApp"
+      {/* Composite floating actions (left side). actions[0] will be lowest (WhatsApp). */}
+      <CompositeFAB
+        actions={[
+          {
+            href: `https://wa.me/${whatsappNumber}?text=${whatsappMessage}`,
+            ariaLabel: 'Contact on WhatsApp',
+            icon: <MessageCircle className="h-5 w-5 sm:h-6 sm:w-6" />,
+            bgClass: 'bg-green-500 hover:bg-green-600',
+          },
+          {
+            href: `tel:+8801760401605`,
+            ariaLabel: 'Call showroom',
+            icon: <Phone className="h-5 w-5 sm:h-6 sm:w-6" />,
+            bgClass: 'bg-[#C00000] hover:bg-[#b00000]',
+          },
+        ]}
         position="left"
-        posClass={`left-4 sm:left-6`}
-        // Keep WhatsApp near the bottom
-        bottomClass={`bottom-[calc(env(safe-area-inset-bottom,0px)+1rem)] md:bottom-[calc(env(safe-area-inset-bottom,0px)+1rem)]`}
-        className="z-50"
-        bgClass="bg-green-500 hover:bg-green-600"
-      >
-        <MessageCircle className="h-5 w-5 sm:h-6 sm:w-6" />
-      </FloatingButton>
-
-      {/* Right on desktop, but on mobile we place this above the WhatsApp button on the left */}
-      <FloatingButton
-        href={`tel:+8801760401605`}
-        ariaLabel="Call showroom"
-        // Place on the left side (like WhatsApp) across sizes and sit above it
-        position="left"
-        posClass={`left-4 sm:left-6`}
-        // Keep the call button visually above the WhatsApp button on all sizes
-          bottomClass={`bottom-[calc(env(safe-area-inset-bottom,0px)+9rem)] md:bottom-[calc(env(safe-area-inset-bottom,0px)+5rem)]`}
-        bgClass="bg-[#C00000] hover:bg-[#b00000]"
-        className="z-50"
-      >
-        <Phone className="h-5 w-5 sm:h-6 sm:w-6" />
-      </FloatingButton>
+        posClass="left-4 sm:left-6"
+        stackIndex={0}
+        baseOffsetPx={16}
+        gapPx={12}
+        sizePx={56}
+      />
       {/* Chat assistant removed */}
     </div>
   );
