@@ -586,11 +586,11 @@ export const HomePage = () => {
                     {selectedCarId === car.id && (
                       <div className="absolute top-2 right-2 z-10 w-3 h-3 bg-blue-500 rounded-full animate-pulse" />
                     )}
-                    <div className="relative car-card-img overflow-hidden">
+                    <div className="relative car-card-img overflow-hidden bg-[#0b0b0b]">
                       <ResponsiveCarImage
                         alt={`${car.brand} ${car.model}`}
                         images={{ webp: car.image.replace(/\.(jpg|jpeg|png)$/i, '.webp'), fallback: car.image, width: 320, height: 160 }}
-                        className="w-full h-full object-cover car-img-hover"
+                        className="w-full h-full object-contain object-center car-img-hover"
                       />
                     </div>
                     <div className="p-3">
