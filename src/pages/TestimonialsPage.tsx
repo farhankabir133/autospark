@@ -15,6 +15,7 @@ import {
   Share2,
   CheckCircle,
   Users,
+  Truck,
   TrendingUp,
   MapPin,
   Phone,
@@ -31,6 +32,7 @@ interface CustomerTestimonial extends Testimonial {
   vehicle_model?: string;
   vehicle_year?: number;
   vehicle_image?: string;
+  gallery?: string[];
   customer_occupation?: string;
   helpful_count?: number;
   verified_purchase?: boolean;
@@ -54,7 +56,7 @@ const MOCK_TESTIMONIALS: CustomerTestimonial[] = [
     vehicle_purchased: 'Toyota Land Cruiser Prado',
     vehicle_model: 'Land Cruiser Prado TX',
     vehicle_year: 2021,
-    vehicle_image: 'https://images.pexels.com/photos/36435471/pexels-photo-36435471.png?auto=compress&cs=tinysrgb&w=800&fm=webp',
+  vehicle_image: '/car-delivery/1.webp',
     is_featured: true,
     is_approved: true,
     created_at: '2025-11-15',
@@ -78,7 +80,7 @@ const MOCK_TESTIMONIALS: CustomerTestimonial[] = [
     vehicle_purchased: 'Toyota Yaris Cross',
     vehicle_model: 'Yaris Cross Hybrid',
     vehicle_year: 2023,
-    vehicle_image: 'https://images.pexels.com/photos/36435468/pexels-photo-36435468.png?auto=compress&cs=tinysrgb&w=800&fm=webp',
+  vehicle_image: '/car-delivery/2.webp',
     is_featured: true,
     is_approved: true,
     created_at: '2025-12-03',
@@ -102,7 +104,7 @@ const MOCK_TESTIMONIALS: CustomerTestimonial[] = [
     vehicle_purchased: 'Toyota Harrier',
     vehicle_model: 'Harrier Z Leather',
     vehicle_year: 2022,
-    vehicle_image: 'https://images.pexels.com/photos/36435469/pexels-photo-36435469.png?auto=compress&cs=tinysrgb&w=800&fm=webp',
+  vehicle_image: '/car-delivery/3.webp',
     is_featured: true,
     is_approved: true,
     created_at: '2025-09-22',
@@ -126,7 +128,7 @@ const MOCK_TESTIMONIALS: CustomerTestimonial[] = [
     vehicle_purchased: 'Toyota Crown',
     vehicle_model: 'Crown RS Advance',
     vehicle_year: 2022,
-    vehicle_image: 'https://images.pexels.com/photos/36435468/pexels-photo-36435468.png?auto=compress&cs=tinysrgb&w=800&fm=webp',
+  vehicle_image: '/car-delivery/4.webp',
     is_featured: false,
     is_approved: true,
     created_at: '2025-08-10',
@@ -150,7 +152,7 @@ const MOCK_TESTIMONIALS: CustomerTestimonial[] = [
     vehicle_purchased: 'Toyota Noah',
     vehicle_model: 'Noah S-Z Hybrid',
     vehicle_year: 2023,
-    vehicle_image: 'https://images.pexels.com/photos/36435470/pexels-photo-36435470.png?auto=compress&cs=tinysrgb&w=800&fm=webp',
+  vehicle_image: '/car-delivery/5.webp',
     is_featured: false,
     is_approved: true,
     created_at: '2025-10-05',
@@ -174,7 +176,7 @@ const MOCK_TESTIMONIALS: CustomerTestimonial[] = [
     vehicle_purchased: 'Toyota Premio',
     vehicle_model: 'Premio F EX Package',
     vehicle_year: 2020,
-    vehicle_image: 'https://images.pexels.com/photos/36435472/pexels-photo-36435472.png?auto=compress&cs=tinysrgb&w=800&fm=webp',
+  vehicle_image: '/car-delivery/6.webp',
     is_featured: false,
     is_approved: true,
     created_at: '2025-07-18',
@@ -198,7 +200,7 @@ const MOCK_TESTIMONIALS: CustomerTestimonial[] = [
     vehicle_purchased: 'Toyota C-HR',
     vehicle_model: 'C-HR G-T Hybrid',
     vehicle_year: 2023,
-    vehicle_image: 'https://images.pexels.com/photos/36435469/pexels-photo-36435469.png?auto=compress&cs=tinysrgb&w=800&fm=webp',
+  vehicle_image: '/car-delivery/7.webp',
     is_featured: true,
     is_approved: true,
     created_at: '2026-01-08',
@@ -222,7 +224,7 @@ const MOCK_TESTIMONIALS: CustomerTestimonial[] = [
     vehicle_purchased: 'Toyota Allion',
     vehicle_model: 'Allion A20',
     vehicle_year: 2019,
-    vehicle_image: 'https://images.pexels.com/photos/170811/pexels-photo-170811.jpeg?auto=compress&cs=tinysrgb&w=800&fm=webp',
+  vehicle_image: '/car-delivery/8.webp',
     is_featured: false,
     is_approved: true,
     created_at: '2025-06-20',
@@ -246,7 +248,7 @@ const MOCK_TESTIMONIALS: CustomerTestimonial[] = [
     vehicle_purchased: 'Toyota Axio',
     vehicle_model: 'Axio X Grade',
     vehicle_year: 2018,
-    vehicle_image: 'https://images.pexels.com/photos/116675/pexels-photo-116675.jpeg?auto=compress&cs=tinysrgb&w=800&fm=webp',
+  vehicle_image: '/car-delivery/9.webp',
     is_featured: false,
     is_approved: true,
     created_at: '2025-05-12',
@@ -270,7 +272,7 @@ const MOCK_TESTIMONIALS: CustomerTestimonial[] = [
     vehicle_purchased: 'Toyota Harrier',
     vehicle_model: 'Harrier Premium',
     vehicle_year: 2023,
-    vehicle_image: 'https://images.pexels.com/photos/36435471/pexels-photo-36435471.png?auto=compress&cs=tinysrgb&w=800&fm=webp',
+  vehicle_image: '/car-delivery/10.webp',
     is_featured: true,
     is_approved: true,
     created_at: '2026-02-14',
@@ -294,7 +296,7 @@ const MOCK_TESTIMONIALS: CustomerTestimonial[] = [
     vehicle_purchased: 'Toyota Land Cruiser Prado',
     vehicle_model: 'Prado TZ-G',
     vehicle_year: 2022,
-    vehicle_image: 'https://images.pexels.com/photos/36435470/pexels-photo-36435470.png?auto=compress&cs=tinysrgb&w=800&fm=webp',
+  vehicle_image: '/car-delivery/11.webp',
     is_featured: false,
     is_approved: true,
     created_at: '2026-01-20',
@@ -318,7 +320,7 @@ const MOCK_TESTIMONIALS: CustomerTestimonial[] = [
     vehicle_purchased: 'Toyota C-HR',
     vehicle_model: 'C-HR S Hybrid',
     vehicle_year: 2022,
-    vehicle_image: 'https://images.pexels.com/photos/36435472/pexels-photo-36435472.png?auto=compress&cs=tinysrgb&w=800&fm=webp',
+  vehicle_image: '/car-delivery/12.webp',
     is_featured: false,
     is_approved: true,
     created_at: '2025-11-30',
@@ -329,6 +331,16 @@ const MOCK_TESTIMONIALS: CustomerTestimonial[] = [
     verified_purchase: true,
     tags: ['Young Professional', 'Hybrid', 'Stylish'],
   },
+];
+
+// ─── Car delivery images from public folder ───
+const CAR_DELIVERY_IMAGES: string[] = [
+  '/car-delivery/1.webp', '/car-delivery/2.webp', '/car-delivery/3.webp', '/car-delivery/4.webp', '/car-delivery/5.webp',
+  '/car-delivery/6.webp', '/car-delivery/7.webp', '/car-delivery/8.webp', '/car-delivery/9.webp', '/car-delivery/10.webp',
+  '/car-delivery/11.webp', '/car-delivery/12.webp', '/car-delivery/13.webp', '/car-delivery/14.webp', '/car-delivery/15.webp',
+  '/car-delivery/16.webp', '/car-delivery/17.webp', '/car-delivery/18.webp', '/car-delivery/19.webp', '/car-delivery/20.webp',
+  '/car-delivery/21.webp', '/car-delivery/22.webp', '/car-delivery/23.webp', '/car-delivery/24.webp', '/car-delivery/25.webp',
+  '/car-delivery/26.webp', '/car-delivery/27.webp',
 ];
 
 // ─── Star Rating Component ───
@@ -343,6 +355,62 @@ const StarRating = ({ rating, size = 16 }: { rating: number; size?: number }) =>
     ))}
   </div>
 );
+
+// ─── Typewriter (fast, looping) ───
+const Typewriter: React.FC<{ text: string; speed?: number; pause?: number; className?: string }> = ({
+  text,
+  speed = 25,
+  pause = 900,
+  className = '',
+}) => {
+  const [pos, setPos] = useState(0);
+  const indexRef = useRef(0);
+  const timerRef = useRef<number | null>(null);
+
+  useEffect(() => {
+    // clear any existing timers
+    if (timerRef.current) window.clearTimeout(timerRef.current);
+    indexRef.current = 0;
+    setPos(0);
+
+    const tick = () => {
+      indexRef.current += 1;
+      if (indexRef.current <= text.length) {
+        setPos(indexRef.current);
+        timerRef.current = window.setTimeout(tick, speed);
+      } else {
+        // finished typing; pause, then restart
+        timerRef.current = window.setTimeout(() => {
+          indexRef.current = 0;
+          setPos(0);
+          timerRef.current = window.setTimeout(tick, speed);
+        }, pause);
+      }
+    };
+
+    // start typing
+    timerRef.current = window.setTimeout(tick, speed);
+
+    return () => {
+      if (timerRef.current) window.clearTimeout(timerRef.current);
+    };
+  }, [text, speed, pause]);
+
+  return (
+    <span className={className} aria-hidden={false}>
+      {text.slice(0, pos)}
+      <motion.span
+        aria-hidden
+        initial={{ opacity: 1 }}
+        animate={{ opacity: [0, 1, 0] }}
+        transition={{ repeat: Infinity, duration: 0.7 }}
+        className="inline-block w-[1ch]"
+      >
+        |
+      </motion.span>
+    </span>
+  );
+};
 
 // ─── Stats Overview Component ───
 const StatsOverview = ({ testimonials, theme, language }: { testimonials: CustomerTestimonial[]; theme: string; language: string }) => {
@@ -512,6 +580,22 @@ const FeaturedTestimonialCard = ({
         <p className={`text-sm md:text-base leading-relaxed mb-6 ${theme === 'dark' ? 'text-gray-300' : 'text-gray-600'}`}>
           "{language === 'bn' && t.review_bn ? t.review_bn : t.review_en}"
         </p>
+
+        {/* Inline gallery for featured testimonials: small thumbnails shown with the review */}
+        {t.gallery && t.gallery.length > 0 && (
+          <div className="mb-4 flex items-center gap-3 overflow-x-auto">
+            {t.gallery.map((src, i) => (
+              <img
+                key={i}
+                src={src}
+                alt={`${language === 'bn' && t.customer_name_bn ? t.customer_name_bn : t.customer_name} - ${i + 1}`}
+                className="w-20 h-12 object-cover rounded-md border shadow-sm flex-shrink-0"
+                loading="lazy"
+                decoding="async"
+              />
+            ))}
+          </div>
+        )}
 
         <div className="flex items-center gap-4">
           <img
@@ -786,10 +870,44 @@ export const TestimonialsPage = () => {
     return result;
   }, [testimonials, searchQuery, sortBy, filterRating]);
 
-  const featuredTestimonials = useMemo(
-    () => testimonials.filter((t) => t.is_featured),
-    [testimonials],
-  );
+  const featuredTestimonials = useMemo(() => {
+    const featured = testimonials.filter((t) => t.is_featured);
+    // Distribute delivery images across featured testimonials and assign when missing
+    const count = featured.length || 1;
+    const galleries = featured.map((_, i) => CAR_DELIVERY_IMAGES.filter((_, idx) => idx % count === i));
+
+    // Optional overrides for the first four featured testimonials' vehicle names/years
+    const featuredOverrides: { purchased?: string; year?: number }[] = [
+      { purchased: 'Toyota Corolla Cross', year: 2022 },
+      { purchased: 'Toyota Corolla Cross', year: 2021 },
+      { purchased: 'Toyota Sienta', year: 2021 },
+      { purchased: 'Toyota Axio', year: 2020 },
+    ];
+
+    return featured.map((t, i) => ({
+      ...t,
+      vehicle_purchased: (featuredOverrides[i] && featuredOverrides[i].purchased) || t.vehicle_purchased,
+      vehicle_year: (featuredOverrides[i] && featuredOverrides[i].year) || t.vehicle_year,
+      vehicle_image: t.vehicle_image || (galleries[i] && galleries[i][0]) || CAR_DELIVERY_IMAGES[i % CAR_DELIVERY_IMAGES.length],
+      gallery: galleries[i] || [],
+    }));
+  }, [testimonials]);
+
+  // Gallery sources: prepend public car-delivery images so they appear first
+  const extraPexels = [
+    'https://images.pexels.com/photos/36435423/pexels-photo-36435423.png',
+    'https://images.pexels.com/photos/36435424/pexels-photo-36435424.png',
+    'https://images.pexels.com/photos/36435425/pexels-photo-36435425.png',
+    'https://images.pexels.com/photos/36435427/pexels-photo-36435427.png',
+    'https://images.pexels.com/photos/36435428/pexels-photo-36435428.png',
+    'https://images.pexels.com/photos/36435471/pexels-photo-36435471.png',
+    'https://images.pexels.com/photos/36435470/pexels-photo-36435470.png',
+    'https://images.pexels.com/photos/36435469/pexels-photo-36435469.png',
+    'https://images.pexels.com/photos/36435468/pexels-photo-36435468.png',
+    'https://images.pexels.com/photos/36435472/pexels-photo-36435472.png',
+  ];
+
+  const gallerySources = useMemo(() => [...CAR_DELIVERY_IMAGES, ...extraPexels], []);
 
   const handleLike = (id: string) => {
     setLikedIds((prev) => {
@@ -873,6 +991,50 @@ export const TestimonialsPage = () => {
                 : 'অটো স্পার্ক বিডিতে তাদের স্বপ্নের গাড়ি খুঁজে পাওয়া প্রকৃত গ্রাহকদের বাস্তব গল্প। উত্তরবঙ্গের সবচেয়ে বিশ্বস্ত গাড়ি ডিলারশিপ সম্পর্কে তারা কী বলেন পড়ুন।'}
             </p>
 
+            {/* Delivered Highlighter */}
+            <motion.div
+              role="status"
+              aria-label={language === 'en' ? "We've Delivered 700+ Cars from our Company Till Now!" : 'আমাদের কোম্পানি থেকে এ পর্যন্ত ৭০০+ গাড়ি সরবরাহ করেছি!'}
+              initial={{ opacity: 0, y: 8 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.45, delay: 0.12 }}
+              className="inline-flex items-center gap-3 px-6 py-3 rounded-full mb-6 border shadow-sm"
+              style={{
+                background: theme === 'dark' ? 'linear-gradient(90deg, rgba(16,185,129,0.08), rgba(34,197,94,0.06))' : 'linear-gradient(90deg, rgba(16,185,129,0.07), rgba(34,197,94,0.05))',
+                borderColor: theme === 'dark' ? 'rgba(16,185,129,0.18)' : 'rgba(34,197,94,0.18)'
+              }}
+            >
+              <Truck className="text-green-500" size={22} />
+              <Typewriter
+                text={
+                  language === 'en'
+                    ? "We've Delivered 700+ Cars from our Company Till Now!"
+                    : 'আমাদের কোম্পানি থেকে এ পর্যন্ত ৭০০+ গাড়ি সরবরাহ করেছি!'
+                }
+                speed={12}
+                className={`text-2xl md:text-3xl font-semibold ${theme === 'dark' ? 'text-green-300' : 'text-green-800'}`}
+              />
+            </motion.div>
+
+            {/* Top car-delivery gallery (horizontal) */}
+            <div className="mt-6 mb-6">
+              <div className="overflow-x-auto -mx-4 px-4">
+                <div className="flex gap-3 items-center">
+                  {CAR_DELIVERY_IMAGES.map((src, i) => (
+                    <div key={src} className="flex-shrink-0 w-36 md:w-44 lg:w-52 h-24 md:h-28 lg:h-32 rounded-lg overflow-hidden border bg-gray-50 dark:bg-gray-800">
+                      <img
+                        src={src}
+                        alt={`Car delivery ${i + 1}`}
+                        className="w-full h-full object-cover"
+                        loading="lazy"
+                        decoding="async"
+                      />
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+
             {/* Quick Trust Badges */}
             <div className="flex flex-wrap justify-center gap-3 md:gap-4">
               {[
@@ -918,6 +1080,7 @@ export const TestimonialsPage = () => {
             <Award className="inline mr-2 text-yellow-500" size={22} />
             {language === 'en' ? 'Featured Customer Stories' : 'ফিচার্ড গ্রাহক গল্প'}
           </motion.h2>
+          {/* Delivery image row removed per request: images are now shown inside featured cards */}
           <div className="grid md:grid-cols-2 gap-6">
             {featuredTestimonials.slice(0, 4).map((t) => (
               <FeaturedTestimonialCard key={t.id} testimonial={t} theme={theme} language={language} />
@@ -1111,18 +1274,7 @@ export const TestimonialsPage = () => {
         </motion.div>
 
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3 md:gap-4">
-          {[
-            'https://images.pexels.com/photos/36435423/pexels-photo-36435423.png',
-            'https://images.pexels.com/photos/36435424/pexels-photo-36435424.png',
-            'https://images.pexels.com/photos/36435425/pexels-photo-36435425.png',
-            'https://images.pexels.com/photos/36435427/pexels-photo-36435427.png',
-            'https://images.pexels.com/photos/36435428/pexels-photo-36435428.png',
-            'https://images.pexels.com/photos/36435471/pexels-photo-36435471.png',
-            'https://images.pexels.com/photos/36435470/pexels-photo-36435470.png',
-            'https://images.pexels.com/photos/36435469/pexels-photo-36435469.png',
-            'https://images.pexels.com/photos/36435468/pexels-photo-36435468.png',
-            'https://images.pexels.com/photos/36435472/pexels-photo-36435472.png',
-          ].map((src, i) => (
+          {gallerySources.map((src, i) => (
             <motion.div
               key={src}
               initial={{ opacity: 0, scale: 0.9 }}
@@ -1133,13 +1285,17 @@ export const TestimonialsPage = () => {
                 theme === 'dark' ? 'border-gray-700/50' : 'border-gray-200'
               }`}
             >
-              <img
-                src={`${src}?auto=compress&cs=tinysrgb&w=600&fm=webp`}
-                alt={language === 'en' ? `Happy customer ${i + 1}` : `সুখী গ্রাহক ${i + 1}`}
-                className="w-full h-auto object-contain transition-transform duration-500 group-hover:scale-105"
-                loading="lazy"
-                decoding="async"
-              />
+              {/* Fixed-aspect image tile for consistent, premium grid */}
+              <div className="w-full relative overflow-hidden bg-gray-50 dark:bg-gray-900">
+                <div style={{ paddingTop: '66.6667%' }} className="w-full" />
+                <img
+                  src={src.startsWith('http') ? `${src}?auto=compress&cs=tinysrgb&w=800&fm=webp` : src}
+                  alt={language === 'en' ? `Happy customer ${i + 1}` : `সুখী গ্রাহক ${i + 1}`}
+                  className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                  loading="lazy"
+                  decoding="async"
+                />
+              </div>
               {/* Hover overlay */}
               <div className={`absolute inset-0 transition-opacity duration-300 opacity-0 group-hover:opacity-100 ${
                 theme === 'dark'
