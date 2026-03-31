@@ -1776,10 +1776,28 @@ const demoProductsWithP2 = demoProducts.map((p, i) => {
   const isSparkplug = name.includes('sparkplug') || name.includes('spark plug') || name.includes('spark-plug');
   const isJda = name.includes('jda');
   const isAndroidPlayer = name.includes('android player') || name.includes('android-player') || name.includes('androidplayer');
+  const isGulf = name.includes('gulf formula g 0w-20 full synthetic') || name.includes('gulf formula g 0w-20');
+  const isGloboil = name.includes('globoil premium 0w-20 synthetic') || name.includes('globoil 0w-20') || name.includes('globoil0w20') || name.includes('globoil 0w20');
+  const isAluminumRim = name.includes('car aluminum alloy rim') || name.includes('aluminum rim') || name.includes('alloy rim') || name.includes('aluminium rim');
+  const isWirelessCharger = name.includes('wireless car charger') || name.includes('wireless charger') || name.includes('charger mount') || name.includes('car charger mount');
+  // Specific brake-pad mapping for product 'Brake pad 715/52240' (and common variants)
+  const isBrakePadSpecific = name.includes('brake pad 715/52240') || name.includes('715/52240') || name.includes('715 52240') || name.includes('715-52240') || name.includes('brake pad 715') || name.includes('pad 715/52240');
+  // Explicit mappings requested: ensure these products use P2/1 Background Removed Medium.webp
+  const isCarWax = name.includes('car wax polish') || name.includes('car wax') || name.includes('wax polish');
+  const isCarallWiper = name.includes('carall wiper blade') || name.includes('carall wiper') || name.includes('carall wiperblade');
+  const isCarbulatorCleaner = name.includes('carbulator cleaner') || name.includes('carbulator-cleaner') || name.includes('carbulator');
   // Match 'Air Filter' and common 'AC Filter' variants (e.g. 'AC Filter 37021', 'AC/Cabin Filter-40')
   const isAirFilter = name.includes('air filter') || name.includes('air-filter') || name.includes('airfilter') || name.includes('ac filter') || name.includes('ac-filter') || name.includes('acfilter') || name.includes('ac/cabin') || name.includes('ac cabin');
   // Match user's exact spelling plus the common variant 'air purifier'
   const isAirPurifierr = name.includes('air purifierr') || name.includes('air-purifierr') || name.includes('airpurifierr') || name.includes('air purifier') || name.includes('air-purifier') || name.includes('airpurifier');
+  // Specific mapping for 'Car Air Purifier' (prefer the provided P2 image)
+  const isCarAirPurifier = name.includes('car air purifier') || name.includes('car-air-purifier') || (name.includes('car') && name.includes('air purifier'));
+  // Map vanilla-scented car perfume product to NP CarPerfume.webp
+  const isVanillaFlowerCent = name.includes('vanilla flower cent') || name.includes('vanilla flower scent') || name.includes('vanilla flower') || name.includes('vanilla scent');
+  // Map any Flamingo-branded product to the P2/1 placeholder image
+  const isFlamingo = name.includes('flamingo');
+  // Axio/Fielder Bati High Fiting mapping (many variants/typos handled)
+  const isAxioFielderBati = name.includes('axio') || name.includes('fielder') || name.includes('bati') || name.includes('bati fitting') || name.includes('high fit') || name.includes('high fitting') || name.includes('fiting');
   const isCarCover = name.includes('car cover') || name.includes('car-cover') || name.includes('carcover') || name.includes(' cover') || name.includes('cover');
   const isSeatCover = name.includes('seatcover') || name.includes('seat cover') || name.includes('seat-cover');
   const isBumper = name.includes('bumper');
@@ -1790,9 +1808,33 @@ const demoProductsWithP2 = demoProducts.map((p, i) => {
   const npMatch = findNPForName(name);
   return {
     ...p,
-    // Priority: JDA-specific image, then Mitasu, then android player, then air filter, then air purifierr/purifier, then seat cover, then car cover, then bumper, then brake pad, then horn, then sparkplug, otherwise P2 round-robin
+    // Priority: JDA-specific image, then Gulf-specific P2 image, then NP fuzzy matches, then Mitasu, then android player, then air filter, then air purifierr/purifier, then seat cover, then car cover, then bumper, then brake pad, then horn, then sparkplug, otherwise P2 round-robin
     images: [
-      { image_url: isJda ? '/P2/7 Background Removed Medium.webp' : npMatch ? npMatch : isMitasu ? '/P2/5 Background Removed Medium.webp' : isAndroidPlayer ? '/P2/androidplayer Background Removed.png' : isAirFilter ? '/P2/4 Background Removed Medium.webp' : isAirPurifierr ? '/P2/9 Background Removed Medium.webp' : isSeatCover ? '/P2/SeatCover Background Removed.png' : isCarCover ? '/P2/CarCoverBackground Removed.png' : isBumper ? '/P2/8 Background Removed Medium.webp' : isWiperBlade ? '/NP/WiperBlade.webp' : isBrakePad ? '/P2/BrakePad.png' : isHorn ? '/P2/DensoHorn.png' : isSparkplug ? '/P2/sparkplug Background Removed.png' : P2_IMAGES[i % P2_IMAGES.length] },
+  { image_url: isJda ? '/P2/7 Background Removed Medium.webp'
+    : isGulf ? '/P2/Gulf Formula G 0W-20 Full Synthetic.webp'
+  : isGloboil ? '/P2/Globoil0W20.webp'
+  // explicit product matches (user-specified)
+  : isCarallWiper ? '/NP/WiperBlade.webp'
+  : isVanillaFlowerCent ? '/NP/CarPerfume.webp'
+  : isAxioFielderBati ? '/P2/AxioHighBatiFitting.webp'
+  : isCarAirPurifier ? '/P2/Car Air Purifier.webp'
+  : (isCarWax || isCarbulatorCleaner || isFlamingo) ? '/P2/1 Background Removed Medium.webp'
+  : isAluminumRim ? '/P2/Globoil0W20.webp'
+  : isWirelessCharger ? '/P2/Wireless Car Charger Mount.webp'
+    : isBrakePadSpecific ? '/P2/BrakPar731927.png'
+    : isSeatCover ? '/P2/SeatCover Background Removed.png'
+    : isCarCover ? '/P2/CarCoverBackground Removed.png'
+    : npMatch ? npMatch
+    : isMitasu ? '/P2/5 Background Removed Medium.webp'
+    : isAndroidPlayer ? '/P2/androidplayer Background Removed.png'
+    : isAirFilter ? '/P2/4 Background Removed Medium.webp'
+    : isAirPurifierr ? '/P2/9 Background Removed Medium.webp'
+    : isBumper ? '/P2/8 Background Removed Medium.webp'
+    : isWiperBlade ? '/NP/WiperBlade.webp'
+    : isBrakePad ? '/P2/BrakePad.png'
+    : isHorn ? '/P2/DensoHorn.png'
+    : isSparkplug ? '/P2/sparkplug Background Removed.png'
+    : P2_IMAGES[i % P2_IMAGES.length] },
     ],
   };
 });
