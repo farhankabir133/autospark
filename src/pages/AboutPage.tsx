@@ -948,7 +948,7 @@ export const AboutPage = () => {
                 <Suspense fallback={<div className="p-6">Loading team member…</div>}>
                   <TeamCard
                     person={{
-                      name: language === 'en' ? 'Shuvo Rahman' : 'শুভ রাহমান',
+                      name: language === 'en' ? 'Mazfuz Ahmed Shuvo' : 'শুভ রাহমান',
                       role: language === 'en' ? 'Accountant' : 'হিসাবরক্ষক',
                       title: language === 'en' ? '📊 Accountant' : '📊 হিসাবরক্ষক',
                       image: 'https://images.pexels.com/photos/36833339/pexels-photo-36833339.png',
