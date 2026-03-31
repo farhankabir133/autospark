@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo, useCallback } from 'react';
+import React, { useState, useEffect, useMemo, useCallback, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useTheme } from '../contexts/ThemeContext';
 import { useLanguage } from '../contexts/LanguageContext';
@@ -1733,6 +1733,70 @@ const demoProducts: AccessoryProduct[] = [
   }
 ];
 
+// Public P2 images (user-supplied). We'll round-robin these across demo products when a product lacks images.
+const P2_IMAGES = [
+  '/P2/1 Background Removed Medium.webp', '/P2/2 Background Removed Medium.webp', '/P2/3 Background Removed Medium.webp',
+  '/P2/4 Background Removed Medium.webp', '/P2/5 Background Removed Medium.webp', '/P2/6 Background Removed Medium.webp',
+  '/P2/7 Background Removed Medium.webp', '/P2/8 Background Removed Medium.webp', '/P2/9 Background Removed Medium.webp',
+  '/P2/10 Background Removed Medium.webp', '/P2/11 Background Removed Medium.webp', '/P2/12 Background Removed Medium.webp',
+  '/P2/13 Background Removed Medium.webp', '/P2/14 Background Removed Medium.webp', '/P2/15 Background Removed Medium.webp',
+  '/P2/16 Background Removed Medium.webp', '/P2/17 Background Removed Medium.webp', '/P2/18 Background Removed Medium.webp',
+  '/P2/19 Background Removed Medium.webp',
+];
+
+// NP images (user-supplied). We'll try to attach these to demo products when the filename
+// suggests a match with the product name (fuzzy token match).
+const NP_IMAGES = [
+  '/NP/Belt.webp', '/NP/Belts.webp', '/NP/BrakePad.webp', '/NP/Bromance.webp', '/NP/CVTFluidAT.webp', '/NP/CarLights.webp',
+  '/NP/CarPerfume.webp', '/NP/CarallWiperBlade.webp', '/NP/Champion5W30.webp', '/NP/ChampionBrakeFluid.webp', '/NP/ChampionCoolant.webp',
+  '/NP/ChampionMobil.webp', '/NP/ChokeCleaner.webp', '/NP/DVD-Catching.webp', '/NP/FuelInjection.webp', '/NP/GreaseToyo.webp',
+  '/NP/HCF2.webp', '/NP/HondaLeo.webp', '/NP/HybridBattery.png', '/NP/IMG_2699-removebg-preview.webp', '/NP/IMG_2727-removebg-preview.webp',
+  '/NP/2770_processed.webp', '/NP/JBLBoomBox.webp', '/NP/JDA10W40.webp', '/NP/JDA5W30.webp', '/NP/Mobil10W20.webp',
+  '/NP/Nakamichi.webp', '/NP/Paste.webp', '/NP/Pro10.webp', '/NP/SP0W20.webp', '/NP/SparkPlug-II.webp', '/NP/Tire.webp',
+  '/NP/WiperBlade.webp', '/NP/nakamichi-car-android-player-model-no-nam-5510-in-bd.webp', '/NP/s-l1200.webp'
+];
+
+// Helper: find best NP image for a product name (lowercased). Returns the image path or null.
+function findNPForName(productNameLower: string) {
+  for (const p of NP_IMAGES) {
+    const filename = p.split('/').pop() || p;
+    const base = filename.replace(/\.[^/.]+$/, '').toLowerCase().replace(/[^a-z0-9]+/g, ' ').trim();
+    if (!base) continue;
+    // exact inclusion or token overlap
+    if (productNameLower.includes(base) || base.includes(productNameLower)) return p;
+    const toks = base.split(/\s+/).filter(Boolean);
+    if (toks.some(t => t.length > 2 && productNameLower.includes(t))) return p;
+  }
+  return null;
+}
+
+// Ensure demo products have an image (use P2 images round-robin where missing)
+const demoProductsWithP2 = demoProducts.map((p, i) => {
+  const name = (p.name_en || '').toLowerCase();
+  const isSparkplug = name.includes('sparkplug') || name.includes('spark plug') || name.includes('spark-plug');
+  const isJda = name.includes('jda');
+  const isAndroidPlayer = name.includes('android player') || name.includes('android-player') || name.includes('androidplayer');
+  // Match 'Air Filter' and common 'AC Filter' variants (e.g. 'AC Filter 37021', 'AC/Cabin Filter-40')
+  const isAirFilter = name.includes('air filter') || name.includes('air-filter') || name.includes('airfilter') || name.includes('ac filter') || name.includes('ac-filter') || name.includes('acfilter') || name.includes('ac/cabin') || name.includes('ac cabin');
+  // Match user's exact spelling plus the common variant 'air purifier'
+  const isAirPurifierr = name.includes('air purifierr') || name.includes('air-purifierr') || name.includes('airpurifierr') || name.includes('air purifier') || name.includes('air-purifier') || name.includes('airpurifier');
+  const isCarCover = name.includes('car cover') || name.includes('car-cover') || name.includes('carcover') || name.includes(' cover') || name.includes('cover');
+  const isSeatCover = name.includes('seatcover') || name.includes('seat cover') || name.includes('seat-cover');
+  const isBumper = name.includes('bumper');
+  const isWiperBlade = name.includes('wiper blade') || name.includes('wiper-blade') || name.includes('wiperblade') || name.includes('wiper');
+  const isBrakePad = name.includes('brakepad') || name.includes('brake pad') || name.includes('brake-pad');
+  const isHorn = name.includes('horn');
+  const isMitasu = name.includes('mitasu');
+  const npMatch = findNPForName(name);
+  return {
+    ...p,
+    // Priority: JDA-specific image, then Mitasu, then android player, then air filter, then air purifierr/purifier, then seat cover, then car cover, then bumper, then brake pad, then horn, then sparkplug, otherwise P2 round-robin
+    images: [
+      { image_url: isJda ? '/P2/7 Background Removed Medium.webp' : npMatch ? npMatch : isMitasu ? '/P2/5 Background Removed Medium.webp' : isAndroidPlayer ? '/P2/androidplayer Background Removed.png' : isAirFilter ? '/P2/4 Background Removed Medium.webp' : isAirPurifierr ? '/P2/9 Background Removed Medium.webp' : isSeatCover ? '/P2/SeatCover Background Removed.png' : isCarCover ? '/P2/CarCoverBackground Removed.png' : isBumper ? '/P2/8 Background Removed Medium.webp' : isWiperBlade ? '/NP/WiperBlade.webp' : isBrakePad ? '/P2/BrakePad.png' : isHorn ? '/P2/DensoHorn.png' : isSparkplug ? '/P2/sparkplug Background Removed.png' : P2_IMAGES[i % P2_IMAGES.length] },
+    ],
+  };
+});
+
 // Categories with icons
 const categoryData: { id: string; name: string; icon: LucideIcon; color: string }[] = [
   { id: 'all', name: 'All Products', icon: Grid, color: 'from-gray-500 to-gray-700' },
@@ -2744,8 +2808,11 @@ export const AccessoriesPage: React.FC = () => {
   const isDark = theme === 'dark';
 
   // State
-  const [products, setProducts] = useState<AccessoryProduct[]>(demoProducts);
+  const [products, setProducts] = useState<AccessoryProduct[]>(demoProductsWithP2);
   const [searchTerm, setSearchTerm] = useState('');
+  // Controlled input separate from the applied search term. Search runs when user clicks Search or presses Enter.
+  const [searchInput, setSearchInput] = useState('');
+  const searchInputRef = useRef<HTMLInputElement | null>(null);
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [selectedBrands, setSelectedBrands] = useState<string[]>([]);
   const [priceRange, setPriceRange] = useState<[number, number]>([0, 50000]);
@@ -2785,7 +2852,7 @@ export const AccessoriesPage: React.FC = () => {
           if (hasImages) return p;
 
           // Try to find a demo product by id or name and copy its images as a fallback
-          const demo = demoProducts.find(dp => dp.id === p.id || dp.name_en === p.name_en);
+          const demo = demoProductsWithP2.find(dp => dp.id === p.id || dp.name_en === p.name_en);
           if (demo && demo.images && demo.images.length > 0) {
             return { ...p, images: demo.images } as AccessoryProduct;
           }
@@ -2801,6 +2868,21 @@ export const AccessoriesPage: React.FC = () => {
   }, []);
 
   // Filter and sort products
+  const applySearch = useCallback(() => {
+    const trimmed = searchInput.trim();
+    if (trimmed.length === 0) {
+      // focus the input if nothing entered
+      searchInputRef.current?.focus();
+      return;
+    }
+    if (trimmed === searchTerm) {
+      // toggle clear when already applied
+      setSearchInput('');
+      setSearchTerm('');
+    } else {
+      setSearchTerm(trimmed);
+    }
+  }, [searchInput, searchTerm]);
   const filteredProducts = useMemo(() => {
     let result = [...products];
 
@@ -2810,25 +2892,48 @@ export const AccessoriesPage: React.FC = () => {
     }
 
     // Search filter with relevance ranking
-    if (searchTerm) {
-      const term = searchTerm.toLowerCase();
-      // Assign relevance score
-      result = result
-        .map(p => {
-          let score = 0;
-          if (p.name_en && p.name_en.toLowerCase().includes(term)) score += 3;
-          if (p.name_bn && p.name_bn.toLowerCase().includes(term)) score += 2;
-          if (p.description_en && p.description_en.toLowerCase().includes(term)) score += 1;
-          return { ...p, _relevanceScore: score };
-        })
-        .filter(p => p._relevanceScore > 0)
-        .sort((a, b) => b._relevanceScore - a._relevanceScore);
-      // Remove _relevanceScore before returning
-      result = (result as any).map((p: any) => {
-        const { _relevanceScore, ...rest } = p as any;
-        return rest;
-      });
-    }
+      if (searchTerm) {
+        const term = searchTerm.trim().toLowerCase();
+        if (term.length > 0) {
+          // helper to get normalized fields
+          const get = (p: AccessoryProduct, fieldNames: string[]) => {
+            for (const f of fieldNames) {
+              // allow either name_en or name
+              const v = (p as any)[f];
+              if (typeof v === 'string' && v.length > 0) return v.toLowerCase();
+            }
+            return '';
+          };
+
+          result = result
+            .map(p => {
+              let score = 0;
+              const nameEn = get(p, ['name_en', 'name']);
+              const nameBn = get(p, ['name_bn']);
+              const descEn = get(p, ['description_en', 'description']);
+              const brand = get(p, ['brand']);
+              const sku = get(p, ['sku']);
+
+              if (nameEn.includes(term)) score += 4;
+              else if (nameEn.split(/\W+/).some(t => t && term.includes(t) || t.includes(term) || term.includes(t))) score += 2;
+
+              if (nameBn.includes(term)) score += 2;
+              if (descEn.includes(term)) score += 1;
+              if (brand.includes(term)) score += 1;
+              if (sku.includes(term)) score += 1;
+
+              return { ...p, _relevanceScore: score };
+            })
+            .filter((p: any) => p._relevanceScore > 0)
+            .sort((a: any, b: any) => b._relevanceScore - a._relevanceScore);
+
+          // strip helper field
+          result = (result as any).map((p: any) => {
+            const { _relevanceScore, ...rest } = p as any;
+            return rest as AccessoryProduct;
+          });
+        }
+      }
 
     // Brand filter
     if (selectedBrands.length > 0) {
@@ -3407,20 +3512,23 @@ export const AccessoriesPage: React.FC = () => {
               }`}>
                 <Search className={`absolute left-4 ${isDark ? 'text-gray-400' : 'text-gray-500'}`} size={22} />
                 <input
+                  ref={(el) => (searchInputRef.current = el)}
                   type="text"
                   placeholder="Search oils, parts, accessories..."
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
+                  value={searchInput}
+                  onChange={(e) => setSearchInput(e.target.value)}
+                  onKeyDown={(e) => { if (e.key === 'Enter') { e.preventDefault(); applySearch(); } }}
                   className={`w-full pl-12 pr-4 py-4 text-lg outline-none ${
                     isDark ? 'bg-gray-800 text-white placeholder-gray-400' : 'bg-white text-gray-900 placeholder-gray-500'
-                  }`}
+                  }`} 
                 />
                 <motion.button
+                  onClick={applySearch}
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
                   className="px-6 py-4 bg-gradient-to-r from-amber-500 to-orange-600 text-white font-semibold"
                 >
-                  Search
+                  {searchTerm && searchTerm === searchInput.trim() ? 'Clear' : 'Search'}
                 </motion.button>
               </div>
 
@@ -3431,7 +3539,7 @@ export const AccessoriesPage: React.FC = () => {
                     key={tag}
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
-                    onClick={() => setSearchTerm(tag)}
+                    onClick={() => { setSearchInput(tag); setSearchTerm(tag); }}
                     className={`px-4 py-2 rounded-full text-sm transition-colors ${
                       isDark
                         ? 'bg-gray-800 text-gray-300 hover:bg-purple-500/20 hover:text-purple-400'
