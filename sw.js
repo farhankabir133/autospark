@@ -1,5 +1,6 @@
 // Service Worker — Cache-first for static assets, network-first for API calls
-const CACHE_NAME = 'autospark-v3';
+// Use a runtime-derived cache name so each new SW install uses a new cache
+const CACHE_NAME = `autospark-${Date.now()}`;
 
 // Assets to precache on install (only lightweight critical assets)
 // Ferrari GLB + DRACO removed — cached on-demand when 3D scene loads
@@ -41,6 +42,19 @@ self.addEventListener('activate', (event) => {
     )
   );
   self.clients.claim();
+});
+
+// Listen for skipWaiting messages from the page so we can activate the new SW immediately
+self.addEventListener('message', (event) => {
+  try {
+    const data = event.data || {};
+    if (data && data.type === 'SKIP_WAITING') {
+      // Activate this SW immediately
+      self.skipWaiting();
+    }
+  } catch (e) {
+    // ignore malformed messages
+  }
 });
 
 self.addEventListener('fetch', (event) => {

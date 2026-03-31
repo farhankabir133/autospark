@@ -87,13 +87,13 @@
     </script>
 
     <!-- Custom domain: Removed GitHub Pages SPA redirect logic -->
-    <script type="module" crossorigin src="./assets/js/index-MhUbGZbt.js"></script>
+    <script type="module" crossorigin src="./assets/js/index-Ct_xXhWF.js"></script>
     <link rel="modulepreload" crossorigin href="./assets/js/react-vendor-CNRN5RT9.js">
-    <link rel="modulepreload" crossorigin href="./assets/js/three-Cb2liAmr.js">
+    <link rel="modulepreload" crossorigin href="./assets/js/three-DMdEJeBi.js">
     <link rel="modulepreload" crossorigin href="./assets/js/router-B4nHEb6x.js">
     <link rel="modulepreload" crossorigin href="./assets/js/framer-motion-Cyo94VEM.js">
-    <link rel="modulepreload" crossorigin href="./assets/js/icons-Egf0dMSe.js">
-    <link rel="stylesheet" crossorigin href="./assets/index-BFG519so.css">
+    <link rel="modulepreload" crossorigin href="./assets/js/icons-BX5pbVgF.js">
+    <link rel="stylesheet" crossorigin href="./assets/index-D23ECJAg.css">
   </head>
   <body>
     <!-- Skip to content link for accessibility (keyboard nav) -->
@@ -105,6 +105,102 @@
       if(window.matchMedia('(min-width: 768px)').matches){
         !function(){var u=window.UnicornStudio;if(u&&u.init){u.init()}else{window.UnicornStudio={isInitialized:!1};var i=document.createElement("script");i.src="https://cdn.jsdelivr.net/gh/hiunicornstudio/unicornstudio.js@v2.0.5/dist/unicornStudio.umd.js";i.defer=true;i.onload=function(){UnicornStudio.init()};(document.head||document.body).appendChild(i)}}();
       }
+    </script>
+    <!-- AutoSpark AI Agent widget configuration and loader -->
+    <script>
+      // Expose a small config object the hosted widget can optionally read.
+      // Our proxy endpoint at /api/agent will forward requests to the real
+      // agent and inject the AGENT_API_KEY server-side, so the widget can
+      // call the same-origin path without exposing secrets.
+      window.AutoSparkAIAgentConfig = {
+        agentEndpoint: '/api/agent',
+        agentId: '0c5b5549-2973-11f1-b074-4e013e2ddde4',
+        chatbotId: 'GNLhRayHvMi7GpfUJE-Yc1T_JiFE4ttI',
+        name: 'autospark-AI Agent',
+  // hint to the hosted widget; many widgets honor a 'position' option
+  position: 'left',
+        primaryColor: '#031B4E',
+        secondaryColor: '#E5E8ED',
+        buttonBackgroundColor: '#0061EB',
+        startingMessage: 'Hello! How can I help you today?',
+        logo: '/static/chatbot/icons/default-agent.svg'
+      }
+    </script>
+    <script async
+      src="https://g2gijzposiffv7d4aqywxamx.agents.do-ai.run/static/chatbot/widget.js"
+      data-agent-id="0c5b5549-2973-11f1-b074-4e013e2ddde4"
+      data-chatbot-id="GNLhRayHvMi7GpfUJE-Yc1T_JiFE4ttI"
+      data-name="autospark-agent Chatbot"
+      data-primary-color="#031B4E"
+      data-secondary-color="#E5E8ED"
+      data-button-background-color="#0061EB"
+      data-starting-message="Hello! How can I help you today?"
+      data-logo="/static/chatbot/icons/default-agent.svg">
+    </script>
+    <script>
+      // Robust fallback: if the hosted widget doesn't respect the `position` config,
+      // observe DOM mutations and relocate the widget container to the right side.
+      (function(){
+        const STARTING_TEXT = 'Hello! How can I help you today?'
+        const applyRight = (el) => {
+            try{
+              // rename behavior: position to left instead of right
+              el.style.position = 'fixed'
+              el.style.left = '20px'
+              el.style.right = 'auto'
+              el.style.bottom = el.style.bottom || '24px'
+              el.style.zIndex = '2147483647'
+              // Ensure pointer events and transform preserve usability
+              el.style.pointerEvents = 'auto'
+            }catch(e){}
+          }
+
+        // Try to find existing candidates immediately
+        const findAndApply = () => {
+          // Heuristics: look for elements that contain the starting message text,
+          // or have role=dialog, or data-* attributes commonly used by widgets.
+          const all = Array.from(document.body.querySelectorAll('div,aside,section'))
+          for (const el of all) {
+            const txt = (el.innerText || '')
+            if (!txt) continue
+            if (txt.includes(STARTING_TEXT) || (el.getAttribute && el.getAttribute('role') === 'dialog')) {
+              applyRight(el)
+              return true
+            }
+          }
+          return false
+        }
+
+        if (document.readyState === 'complete' || document.readyState === 'interactive') {
+          findAndApply()
+        }
+
+        // Observe body for added nodes (the widget may append asynchronously)
+        const mo = new MutationObserver((mutations)=>{
+          for (const m of mutations) {
+            for (const n of m.addedNodes) {
+              if (!(n instanceof HTMLElement)) continue
+              const containsStart = (n.innerText || '').includes(STARTING_TEXT)
+              if (containsStart) {
+                applyRight(n)
+                mo.disconnect()
+                return
+              }
+              // check children quickly
+              if (Array.from(n.querySelectorAll && n.querySelectorAll('*') || []).some(ch => (ch.innerText||'').includes(STARTING_TEXT))) {
+                applyRight(n)
+                mo.disconnect()
+                return
+              }
+            }
+          }
+        })
+        try{ mo.observe(document.body, { childList: true, subtree: true }) }catch(e){}
+        // As a final attempt, run a short interval to catch slow widgets
+        const iv = setInterval(()=>{ if(findAndApply()) { clearInterval(iv); try{ mo.disconnect() }catch(e){} } }, 500)
+        // stop polling after 15s
+        setTimeout(()=>{ clearInterval(iv); try{ mo.disconnect() }catch(e){} }, 15000)
+      })()
     </script>
   </body>
 </html>
