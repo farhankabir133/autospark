@@ -716,6 +716,8 @@ export const AboutPage = () => {
               <div className="hidden md:block w-5/12"></div>
             </motion.div>
 
+            {/* (Removed two experts per request) */}
+
             {/* Expert 2 - Abu Hasan (Right) */}
             <motion.div
               initial={{ opacity: 0, x: 30 }}
@@ -841,6 +843,130 @@ export const AboutPage = () => {
               
               <div className="hidden md:block w-5/12"></div>
             </motion.div>
+            {/* Expert 5 - Shurabhi Jahan (Left) */}
+            <motion.div
+              initial={{ opacity: 0, x: -30 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.5, delay: 0.5 }}
+              className="relative flex items-center mb-6 sm:mb-8 md:flex-row"
+            >
+              <div className="w-full md:w-5/12 md:pr-12 md:text-right pl-8 sm:pl-12 md:pl-0">
+                <Suspense fallback={<div className="p-6">Loading team member…</div>}>
+                  <TeamCard
+                    person={{
+                      name: language === 'en' ? 'Shurabhi Jahan' : 'শুরাভি জাহান',
+                      role: language === 'en' ? 'Sales Executive' : 'সেলস এক্সিকিউটিভ',
+                      title: language === 'en' ? '💼 Sales Executive' : '💼 সেলস এক্সিকিউটিভ',
+                      image: 'https://images.pexels.com/photos/36833099/pexels-photo-36833099.png',
+                      bio: language === 'en' ? 'Delivering exceptional service and helping customers choose the right vehicle.' : 'উত্তম পরিষেবা প্রদান এবং গ্রাহকদের সঠিক গাড়ি বেছে নিতে সাহায্য করছেন।',
+                    }}
+                    language={language}
+                    theme={theme}
+                    showroom={showroom}
+                  />
+                </Suspense>
+              </div>
+
+              {/* Timeline Dot */}
+              <div className="absolute left-1 sm:left-2 md:left-1/2 w-3 h-3 sm:w-4 sm:h-4 bg-[#C00000] rounded-full transform md:-translate-x-1/2 border-2 sm:border-4 border-white dark:border-gray-950 shadow-lg"></div>
+
+              <div className="hidden md:block w-5/12"></div>
+            </motion.div>
+
+            {/* Expert 6 - Tasmia Jui (Right) */}
+            <motion.div
+              initial={{ opacity: 0, x: 30 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.5, delay: 0.6 }}
+              className="relative flex items-center mb-6 sm:mb-8 md:flex-row-reverse"
+            >
+              <div className="w-full md:w-5/12 md:pl-12 pl-8 sm:pl-12 md:text-left">
+                <Suspense fallback={<div className="p-6">Loading team member…</div>}>
+                  <TeamCard
+                    person={{
+                      name: language === 'en' ? 'Tasmia Jui' : 'তাসমিয়া জুই',
+                      role: language === 'en' ? 'Sales Executive' : 'সেলস এক্সিকিউটিভ',
+                      title: language === 'en' ? '💼 Sales Executive' : '💼 সেলস এক্সিকিউটিভ',
+                      image: 'https://images.pexels.com/photos/36833100/pexels-photo-36833100.png',
+                      bio: language === 'en' ? 'Assisting buyers with a friendly approach and thorough product knowledge.' : 'বন্ধুত্বপূর্ণ পদ্ধতি এবং সম্যক পণ্য জ্ঞানের মাধ্যমে ক্রেতাদের সহায়তা করছেন।',
+                    }}
+                    language={language}
+                    theme={theme}
+                    showroom={showroom}
+                  />
+                </Suspense>
+              </div>
+
+              {/* Timeline Dot */}
+              <div className="absolute left-1 sm:left-2 md:left-1/2 w-3 h-3 sm:w-4 sm:h-4 bg-[#C00000] rounded-full transform md:-translate-x-1/2 border-2 sm:border-4 border-white dark:border-gray-950 shadow-lg"></div>
+
+              <div className="hidden md:block w-5/12"></div>
+            </motion.div>
+
+            {/* Expert 7 - Fahim Rahman (Left) */}
+            <motion.div
+              initial={{ opacity: 0, x: -30 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.5, delay: 0.7 }}
+              className="relative flex items-center mb-6 sm:mb-8 md:flex-row"
+            >
+              <div className="w-full md:w-5/12 md:pr-12 md:text-right pl-8 sm:pl-12 md:pl-0">
+                <Suspense fallback={<div className="p-6">Loading team member…</div>}>
+                  <TeamCard
+                    person={{
+                      name: language === 'en' ? 'Fahim Rahman' : 'ফাহিম রহমান',
+                      role: language === 'en' ? 'Sales Executive' : 'সেলস এক্সিকিউটিভ',
+                      title: language === 'en' ? '💼 Sales Executive' : '💼 সেলস এক্সিকিউটিভ',
+                      image: 'https://images.pexels.com/photos/36833340/pexels-photo-36833340.png',
+                      bio: language === 'en' ? 'Committed to matching customers with the perfect vehicle at the right price.' : 'গ্রাহকদের সঠিক দামে উপযুক্ত গাড়ি নির্বাচন করতে সহায়তা করছেন।',
+                    }}
+                    language={language}
+                    theme={theme}
+                    showroom={showroom}
+                  />
+                </Suspense>
+              </div>
+
+              {/* Timeline Dot */}
+              <div className="absolute left-1 sm:left-2 md:left-1/2 w-3 h-3 sm:w-4 sm:h-4 bg-[#C00000] rounded-full transform md:-translate-x-1/2 border-2 sm:border-4 border-white dark:border-gray-950 shadow-lg"></div>
+
+              <div className="hidden md:block w-5/12"></div>
+            </motion.div>
+
+            {/* Expert 8 - Shuvo Rahman (Right) */}
+            <motion.div
+              initial={{ opacity: 0, x: 30 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.5, delay: 0.8 }}
+              className="relative flex items-center mb-6 sm:mb-8 md:flex-row-reverse"
+            >
+              <div className="w-full md:w-5/12 md:pl-12 pl-8 sm:pl-12 md:text-left">
+                <Suspense fallback={<div className="p-6">Loading team member…</div>}>
+                  <TeamCard
+                    person={{
+                      name: language === 'en' ? 'Shuvo Rahman' : 'শুভ রাহমান',
+                      role: language === 'en' ? 'Accountant' : 'হিসাবরক্ষক',
+                      title: language === 'en' ? '📊 Accountant' : '📊 হিসাবরক্ষক',
+                      image: 'https://images.pexels.com/photos/36833339/pexels-photo-36833339.png',
+                      bio: language === 'en' ? 'Maintaining financial records and ensuring operational transparency.' : 'আর্থিক রেকর্ড বজায় রাখা এবং কার্যক্রমের স্বচ্ছতা নিশ্চিত করা।',
+                    }}
+                    language={language}
+                    theme={theme}
+                    showroom={showroom}
+                  />
+                </Suspense>
+              </div>
+
+              {/* Timeline Dot */}
+              <div className="absolute left-1 sm:left-2 md:left-1/2 w-3 h-3 sm:w-4 sm:h-4 bg-[#C00000] rounded-full transform md:-translate-x-1/2 border-2 sm:border-4 border-white dark:border-gray-950 shadow-lg"></div>
+
+              <div className="hidden md:block w-5/12"></div>
+            </motion.div>
+
           </div>
         </motion.div>
 

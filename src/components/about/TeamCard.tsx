@@ -15,17 +15,38 @@ const TeamCard: React.FC<{ person: Person; language: string; theme: string; show
     <Card className={`p-4 sm:p-6 ${theme === 'dark' ? 'bg-gray-900/50 border-gray-800' : 'bg-white'} overflow-hidden group hover:shadow-xl transition-all duration-300`}>
       <div className="flex flex-col md:flex-row md:items-center gap-4">
         <div className="relative w-36 h-36 sm:w-44 sm:h-44 md:w-52 md:h-52 mx-auto md:mx-0 flex-shrink-0">
-          <img
-            src={person.image}
-            alt={person.name}
-            className="w-full h-full rounded-full object-cover border-3 border-[#C00000]/30 group-hover:border-[#C00000] transition-colors duration-300"
-            loading="lazy"
-            width={208}
-            height={208}
-            decoding="async"
-            srcSet={`${person.image}&fm=webp&w=300 300w, ${person.image}&fm=webp&w=600 600w`}
-            sizes="(max-width: 640px) 160px, 208px"
-          />
+          {/* Normalize remote image URLs and provide a local fallback */}
+          {person.image ? (
+            (() => {
+              const isRemote = person.image.startsWith('http');
+              const src = isRemote ? `${person.image}?auto=compress&cs=tinysrgb&w=600&fm=webp` : person.image;
+              const srcSet = isRemote
+                ? `${person.image}?auto=compress&cs=tinysrgb&w=300&fm=webp 300w, ${person.image}?auto=compress&cs=tinysrgb&w=600&fm=webp 600w`
+                : undefined;
+              return (
+                <img
+                  src={src}
+                  alt={person.name}
+                  className="w-full h-full rounded-full object-cover border-3 border-[#C00000]/30 group-hover:border-[#C00000] transition-colors duration-300"
+                  loading="lazy"
+                  width={208}
+                  height={208}
+                  decoding="async"
+                  {...(srcSet ? { srcSet, sizes: '(max-width: 640px) 160px, 208px' } : {})}
+                />
+              );
+            })()
+          ) : (
+            <img
+              src={`https://ui-avatars.com/api/?name=${encodeURIComponent(person.name)}&background=0D8ABC&color=fff&size=208`}
+              alt={person.name}
+              className="w-full h-full rounded-full object-cover border-3 border-[#C00000]/30"
+              loading="lazy"
+              width={208}
+              height={208}
+              decoding="async"
+            />
+          )}
         </div>
         <div className="text-center md:text-left flex-1">
           <span className="text-[#C00000] font-bold text-xs sm:text-sm">{person.title || ''}</span>
