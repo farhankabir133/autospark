@@ -503,8 +503,8 @@ export const AboutPage = () => {
             <div className="absolute bottom-0 left-0 w-48 h-48 bg-[#C00000]/5 rounded-full -ml-24 -mb-24"></div>
             
             <div className="grid md:grid-cols-3 gap-8 items-center relative">
-              {/* Founder Image */}
-              <div className="md:col-span-1">
+              {/* Left Founder Image */}
+              <div className="md:col-span-1 hidden sm:block">
                 <div className="relative">
                   <div className="absolute inset-0 bg-gradient-to-br from-[#C00000] to-[#8B0000] rounded-2xl transform rotate-3"></div>
                   <img
@@ -521,9 +521,9 @@ export const AboutPage = () => {
                   </div>
                 </div>
               </div>
-              
-              {/* Founder Info */}
-              <div className="md:col-span-2 space-y-6">
+
+              {/* Centered Founder Info */}
+              <div className="md:col-span-1 space-y-6 flex flex-col items-center text-center justify-center">
                 <div>
                   <h3 className={`text-3xl font-bold ${theme === 'dark' ? 'text-white' : 'text-gray-900'} mb-2`}>
                     {language === 'en' ? 'A.B.M. Raihanul Amin' : 'এ.বি.এম. রায়হানুল আমিন'}
@@ -532,8 +532,8 @@ export const AboutPage = () => {
                     {language === 'en' ? 'Founder & Managing Director' : 'প্রতিষ্ঠাতা এবং ব্যবস্থাপনা পরিচালক'}
                   </p>
                 </div>
-                
-                <div className={`${theme === 'dark' ? 'text-gray-300' : 'text-gray-600'} space-y-4 leading-relaxed`}>
+
+                <div className={`${theme === 'dark' ? 'text-gray-300' : 'text-gray-600'} space-y-4 leading-relaxed max-w-xl`}>
                   <p>
                     {language === 'en'
                       ? 'With over two decades of experience in the automotive industry, Mohammad Abdul Karim founded Auto Spark BD with a passion for bringing world-class vehicles to his hometown of Rajshahi. His vision was simple yet ambitious: to create a dealership that prioritizes customer trust and vehicle quality above all else.'
@@ -545,9 +545,9 @@ export const AboutPage = () => {
                       : '"আমরা যে প্রতিটি গাড়ি বিক্রি করি তা আমাদের সুনাম বহন করে। এজন্য আমরা মান বা গ্রাহক সেবায় কখনো আপস করি না।"'}
                   </p>
                 </div>
-                
+
                 {/* Founder's Achievements */}
-                <div className="flex flex-wrap gap-4 pt-4">
+                <div className="flex flex-wrap gap-4 pt-4 justify-center">
                   <div className={`flex items-center gap-2 px-4 py-2 ${theme === 'dark' ? 'bg-gray-800' : 'bg-gray-100'} rounded-lg`}>
                     <CheckCircle className="w-5 h-5 text-[#C00000]" />
                     <span className={`text-sm ${theme === 'dark' ? 'text-gray-300' : 'text-gray-700'}`}>
@@ -560,25 +560,38 @@ export const AboutPage = () => {
                       {language === 'en' ? 'Industry Pioneer' : 'শিল্প অগ্রদূত'}
                     </span>
                   </div>
-                  <div className={`flex items-center gap-2 px-4 py-2 ${theme === 'dark' ? 'bg-gray-800' : 'bg-gray-100'} rounded-lg`}>
-                    <CheckCircle className="w-5 h-5 text-[#C00000]" />
-                    <span className={`text-sm ${theme === 'dark' ? 'text-gray-300' : 'text-gray-700'}`}>
-                      {language === 'en' ? 'Community Leader' : 'সম্প্রদায়ের নেতা'}
-                    </span>
-                  </div>
                 </div>
-                
+
                 {/* Social Links */}
-                <div className="flex gap-4 pt-4">
-                    <a href={showroom.youtube} target="_blank" rel="noopener noreferrer" className="w-10 h-10 bg-[#C00000]/10 hover:bg-[#C00000] text-[#C00000] hover:text-white rounded-lg flex items-center justify-center transition-colors" aria-label="YouTube">
-                      <Facebook className="w-5 h-5" />
-                    </a>
-                    <a href={`https://${showroom.website}`} target="_blank" rel="noopener noreferrer" className="w-10 h-10 bg-[#C00000]/10 hover:bg-[#C00000] text-[#C00000] hover:text-white rounded-lg flex items-center justify-center transition-colors" aria-label="Website">
-                      <Linkedin className="w-5 h-5" />
-                    </a>
+                <div className="flex gap-4 pt-4 justify-center">
+                  <a href={showroom.youtube} target="_blank" rel="noopener noreferrer" className="w-10 h-10 bg-[#C00000]/10 hover:bg-[#C00000] text-[#C00000] hover:text-white rounded-lg flex items-center justify-center transition-colors" aria-label="YouTube">
+                    <Facebook className="w-5 h-5" />
+                  </a>
+                  <a href={`https://${showroom.website}`} target="_blank" rel="noopener noreferrer" className="w-10 h-10 bg-[#C00000]/10 hover:bg-[#C00000] text-[#C00000] hover:text-white rounded-lg flex items-center justify-center transition-colors" aria-label="Website">
+                    <Linkedin className="w-5 h-5" />
+                  </a>
                   <a href="mailto:founder@autosparkbd.com" className="w-10 h-10 bg-[#C00000]/10 hover:bg-[#C00000] text-[#C00000] hover:text-white rounded-lg flex items-center justify-center transition-colors" aria-label="Email">
                     <Mail className="w-5 h-5" />
                   </a>
+                </div>
+              </div>
+
+              {/* Right Founder Image */}
+              <div className="md:col-span-1 hidden sm:block">
+                <div className="relative">
+                  <div className="absolute inset-0 bg-gradient-to-br from-[#C00000] to-[#8B0000] rounded-2xl transform -rotate-3"></div>
+                  <img
+                    src="https://images.pexels.com/photos/36843228/pexels-photo-36843228.png"
+                    alt="Co-Founder - Auto Spark BD"
+                    className="relative rounded-2xl w-full h-80 object-cover object-top shadow-2xl transform rotate-0 hover:rotate-0 transition-transform duration-500"
+                    loading="lazy"
+                    width={400}
+                    height={500}
+                    decoding="async"
+                  />
+                  <div className="absolute -bottom-4 -left-4 bg-[#C00000] text-white px-4 py-2 rounded-lg shadow-lg">
+                    <span className="font-bold">{language === 'en' ? 'Co-Founder' : 'সহ-প্রতিষ্ঠাতা'}</span>
+                  </div>
                 </div>
               </div>
             </div>
