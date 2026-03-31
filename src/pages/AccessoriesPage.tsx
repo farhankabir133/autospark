@@ -2912,13 +2912,16 @@ export const AccessoriesPage: React.FC = () => {
   // Filter and sort products
   const applySearch = useCallback(() => {
     const trimmed = searchInput.trim();
+    // If input is empty, clear any applied search and focus input
     if (trimmed.length === 0) {
-      // focus the input if nothing entered
+      setSearchInput('');
+      setSearchTerm('');
       searchInputRef.current?.focus();
       return;
     }
-    if (trimmed === searchTerm) {
-      // toggle clear when already applied
+
+    // If the same term is already applied, toggle clear. Otherwise apply the new term.
+    if (trimmed === (searchTerm || '')) {
       setSearchInput('');
       setSearchTerm('');
     } else {

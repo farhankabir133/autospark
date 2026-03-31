@@ -828,7 +828,7 @@ export const AboutPage = () => {
                       name: language === 'en' ? 'Amir Rahman' : 'আমির রহমান',
                       role: language === 'en' ? 'Senior Technician' : 'সিনিয়র টেকনিশিয়ান',
                       title: language === 'en' ? '🔧 Tech Expert' : '🔧 টেক এক্সপার্ট',
-                      image: 'https://images.pexels.com/photos/8961065/pexels-photo-8961065.jpeg?auto=compress&cs=tinysrgb&w=600&fm=webp',
+                      image: 'https://images.pexels.com/photos/36839140/pexels-photo-36839140.png',
                       bio: language === 'en' ? 'Ensuring every vehicle meets our rigorous quality and safety standards.' : 'প্রতিটি গাড়ি আমাদের কঠোর মান এবং নিরাপত্তা মানদণ্ড পূরণ করছে তা নিশ্চিত করছেন।',
                     }}
                     language={language}
