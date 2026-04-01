@@ -1,6 +1,8 @@
 'use client';
 
-import { useState, ChangeEvent, FormEvent } from 'react';
+import { useState, ChangeEvent, FormEvent, useEffect } from 'react';
+import { useCart } from '../contexts/CartContext';
+import { ShoppingCart } from 'lucide-react';
 
 interface FormData {
   name: string;
@@ -11,6 +13,7 @@ interface FormData {
 }
 
 export default function PaymentPage() {
+  const { cartItems, cartTotal } = useCart();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
@@ -21,6 +24,18 @@ export default function PaymentPage() {
     product: '',
     amount: '',
   });
+
+  // Initialize form with cart data if available
+  useEffect(() => {
+    if (cartItems.length > 0) {
+      const productNames = cartItems.map(item => `${item.name} (${item.quantity}x)`).join(', ');
+      setFormData(prev => ({
+        ...prev,
+        product: productNames,
+        amount: cartTotal.toFixed(2),
+      }));
+    }
+  }, [cartItems, cartTotal]);
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -85,9 +100,41 @@ export default function PaymentPage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 py-12 px-4">
-      <div className="max-w-md mx-auto bg-white rounded-lg shadow-lg p-8">
-        <h1 className="text-3xl font-bold mb-2 text-center text-gray-800">💳 Make Payment</h1>
-        <p className="text-center text-gray-600 mb-6">Secure payment powered by SSLCommerz</p>
+      <div className="max-w-2xl mx-auto">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          {/* Cart Summary (Left side for md and above) */}
+          {cartItems.length > 0 && (
+            <div className="md:col-span-1 md:order-1 order-2">
+              <div className="bg-white rounded-lg shadow-lg p-6 sticky top-4">
+                <h2 className="text-lg font-bold mb-4 flex items-center gap-2 text-gray-800">
+                  <ShoppingCart size={20} /> Order Summary
+                </h2>
+                <div className="space-y-3 mb-4 max-h-64 overflow-y-auto">
+                  {cartItems.map((item) => (
+                    <div key={item.id} className="flex justify-between text-sm pb-2 border-b">
+                      <div>
+                        <p className="font-medium text-gray-700">{item.name}</p>
+                        <p className="text-gray-500 text-xs">Qty: {item.quantity}</p>
+                      </div>
+                      <p className="font-semibold text-gray-800">৳{(item.price * item.quantity).toFixed(2)}</p>
+                    </div>
+                  ))}
+                </div>
+                <div className="pt-4 border-t border-gray-200">
+                  <div className="flex justify-between items-center">
+                    <span className="text-lg font-bold text-gray-800">Total:</span>
+                    <span className="text-2xl font-bold text-blue-600">৳{cartTotal.toFixed(2)}</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Payment Form (Right side) */}
+          <div className={`${cartItems.length > 0 ? 'md:col-span-2 order-1' : 'col-span-1'} md:order-2`}>
+            <div className="bg-white rounded-lg shadow-lg p-8">
+              <h1 className="text-3xl font-bold mb-2 text-center text-gray-800">💳 Make Payment</h1>
+              <p className="text-center text-gray-600 mb-6">Secure payment powered by SSLCommerz</p>
 
         {error && (
           <div className="mb-4 p-4 bg-red-100 border border-red-400 text-red-700 rounded animate-pulse">
@@ -213,6 +260,9 @@ export default function PaymentPage() {
         <p className="text-xs text-gray-500 text-center mt-4">
           🔒 Secure payment gateway. Your data is encrypted.
         </p>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   );

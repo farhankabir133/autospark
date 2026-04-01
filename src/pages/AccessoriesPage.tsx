@@ -1,7 +1,9 @@
 import React, { useState, useEffect, useMemo, useCallback, useRef } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useTheme } from '../contexts/ThemeContext';
 import { useLanguage } from '../contexts/LanguageContext';
+import { useCart } from '../contexts/CartContext';
 import {
   ShoppingCart,
   Search,
@@ -2705,7 +2707,8 @@ const SideCartDrawer: React.FC<{
   isDark: boolean;
   onUpdateQuantity: (productId: string, quantity: number) => void;
   onRemoveItem: (productId: string) => void;
-}> = ({ isOpen, onClose, items, isDark, onUpdateQuantity, onRemoveItem }) => {
+  onCheckout?: () => void;
+}> = ({ isOpen, onClose, items, isDark, onUpdateQuantity, onRemoveItem, onCheckout }) => {
   const totalPrice = items.reduce((sum, item) => {
     const price = item.product.discount
       ? calculateDiscount(item.product.price, item.product.discount)
@@ -2830,7 +2833,8 @@ const SideCartDrawer: React.FC<{
                 <motion.button
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}
-                  className="w-full py-4 bg-gradient-to-r from-blue-600 to-purple-600 text-white font-bold rounded-xl"
+                  onClick={onCheckout}
+                  className="w-full py-4 bg-gradient-to-r from-blue-600 to-purple-600 text-white font-bold rounded-xl hover:shadow-lg transition-shadow"
                 >
                   Proceed to Checkout
                 </motion.button>
@@ -2847,6 +2851,8 @@ const SideCartDrawer: React.FC<{
 export const AccessoriesPage: React.FC = () => {
   const { theme } = useTheme();
   const { language: _language } = useLanguage();
+  const navigate = useNavigate();
+  const { addToCart: addToGlobalCart } = useCart();
   const isDark = theme === 'dark';
 
   // State
@@ -3051,6 +3057,30 @@ export const AccessoriesPage: React.FC = () => {
   const clearCart = useCallback(() => {
     setCart([]);
   }, []);
+
+  // Checkout handler - transfer cart to global context and navigate to payment
+  const handleCheckout = useCallback(() => {
+    if (cart.length === 0) return;
+
+    // Transfer cart items to global cart context
+    cart.forEach((item) => {
+      const price = item.product.discount
+        ? calculateDiscount(item.product.price, item.product.discount)
+        : item.product.price;
+
+      addToGlobalCart({
+        id: item.product.id,
+        name: item.product.name_en,
+        price: price,
+        quantity: item.quantity,
+        image: item.product.images?.[0]?.image_url,
+      });
+    });
+
+    // Close cart drawer and navigate to payment
+    setShowCartDrawer(false);
+    navigate('/payment');
+  }, [cart, navigate, addToGlobalCart]);
 
   // Wishlist functions
   const toggleWishlist = useCallback((product: AccessoryProduct) => {
@@ -4004,6 +4034,7 @@ export const AccessoriesPage: React.FC = () => {
         isDark={isDark}
         onUpdateQuantity={updateCartQuantity}
         onRemoveItem={removeFromCart}
+        onCheckout={handleCheckout}
       />
 
       {/* Bottom Padding for Cart Bar */}

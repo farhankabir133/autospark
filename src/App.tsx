@@ -3,6 +3,7 @@ import { HashRouter as Router, Routes, Route } from 'react-router-dom';
 import { ScrollToTop } from './components/ScrollToTop';
 import { LanguageProvider } from './contexts/LanguageContext';
 import { ThemeProvider } from './contexts/ThemeContext';
+import { CartProvider } from './contexts/CartContext';
 import { Layout } from './components/Layout';
 import ErrorBoundary from './components/ErrorBoundary';
 import { SplashScreen } from './components/SplashScreen';
@@ -58,8 +59,9 @@ function App() {
   return (
     <ThemeProvider>
       <LanguageProvider>
-        <ErrorBoundary>
-  <Router>
+        <CartProvider>
+          <ErrorBoundary>
+            <Router>
           <ScrollToTop />
           <Layout>
             {/* Splash overlay — shown on first visit, auto-removed after duration */}
@@ -83,8 +85,9 @@ function App() {
               </Routes>
             </Suspense>
           </Layout>
-        </Router>
-        </ErrorBoundary>
+            </Router>
+          </ErrorBoundary>
+        </CartProvider>
       </LanguageProvider>
     </ThemeProvider>
   );
