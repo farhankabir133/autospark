@@ -10,8 +10,8 @@ app.use(bodyParser.json())
 // Point to the agent's chat completions path per the OpenAPI spec
 const AGENT_URL = 'https://epbmkschwzip4c6atjl2tgbu.agents.do-ai.run/api/v1/chat/completions'
 
-// Payment API URL - point to DigitalOcean App Platform
-const PAYMENT_API_URL = process.env.PAYMENT_API_URL || 'https://autospark-payment.ondigitalocean.app'
+// Payment API URL - point to Vercel deployment
+const PAYMENT_API_URL = process.env.PAYMENT_API_URL || 'https://autospark-one.vercel.app'
 
 // Simple file-backed conversation store (development). For production use
 // a real DB (Supabase/Postgres). Conversations are stored in ./data/conversations.json
