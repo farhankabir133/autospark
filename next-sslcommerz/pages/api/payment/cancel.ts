@@ -16,24 +16,31 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   if (tran_id) {
     console.log('Payment cancelled for tran_id:', tran_id, 'status:', status);
 
-    // ===== Update database with payment cancellation =====
+    // ===== Save payment cancellation record to database =====
     try {
       const supabase = getSupabase();
-      // Mark the order as cancelled in your database
+      // Insert or update the order as cancelled
       const { error: dbError } = await supabase
         .from('orders')
-        .update({ status: 'cancelled', cancelled_at: new Date().toISOString() })
-        .eq('tran_id', tran_id);
+        .upsert(
+          {
+            tran_id,
+            val_id,
+            status: 'cancelled',
+            cancelled_at: new Date().toISOString()
+          },
+          { onConflict: 'tran_id' }
+        );
       
       if (dbError) {
-        console.error('Failed to update order in Supabase:', dbError);
+        console.error('Failed to save order in Supabase:', dbError);
       } else {
-        console.log('Order marked as cancelled in Supabase for tran_id:', tran_id);
+        console.log('Order saved as cancelled in Supabase for tran_id:', tran_id);
       }
     } catch (dbErr) {
       console.error('Database error:', dbErr);
     }
-    // ===== End database update =====
+    // ===== End database save =====
   }
 
   // Redirect to cancellation page

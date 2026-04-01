@@ -26,28 +26,36 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     if (status === 'VALIDATED' || status === 'VALID' || status === true) {
       console.log('Payment validated for val_id:', val_id, 'tran_id:', tran_id);
       
-      // ===== Update database with payment record =====
+      // ===== Save payment record to database =====
       try {
         const supabase = getSupabase();
-        // Update your orders table when payment is validated
+        
+        // Try to upsert (insert or update) the order
         const { error } = await supabase
           .from('orders')
-          .update({ status: 'paid', val_id, validated_at: new Date().toISOString() })
-          .eq('tran_id', tran_id);
+          .upsert(
+            {
+              tran_id,
+              val_id,
+              status: 'paid',
+              validated_at: new Date().toISOString()
+            },
+            { onConflict: 'tran_id' }
+          );
         
         if (error) {
-          console.error('Failed to update order in Supabase:', error);
+          console.error('Failed to save order in Supabase:', error);
           // Log error but still redirect to success since payment was validated
-          console.log('Proceeding to success page despite DB update error');
+          console.log('Proceeding to success page despite DB error');
         } else {
-          console.log('Order updated in Supabase for tran_id:', tran_id);
+          console.log('Order saved in Supabase for tran_id:', tran_id);
         }
       } catch (dbErr) {
         console.error('Database error:', dbErr);
         // Log error but still redirect to success since payment was validated
         console.log('Proceeding to success page despite database error');
       }
-      // ===== End database update =====
+      // ===== End database save =====
       
       // Redirect to success page (you may customize this URL)
       return res.redirect('/dashboard/payment-success');

@@ -17,24 +17,32 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   if (tran_id) {
     console.log('Payment failed for tran_id:', tran_id, 'status:', status, 'error:', error);
 
-    // ===== Update database with payment failure =====
+    // ===== Save payment failure record to database =====
     try {
       const supabase = getSupabase();
-      // Mark the order as failed in your database
+      // Insert or update the order as failed
       const { error: dbError } = await supabase
         .from('orders')
-        .update({ status: 'failed', failed_reason: error || status, failed_at: new Date().toISOString() })
-        .eq('tran_id', tran_id);
+        .upsert(
+          {
+            tran_id,
+            val_id,
+            status: 'failed',
+            failed_reason: error || status,
+            failed_at: new Date().toISOString()
+          },
+          { onConflict: 'tran_id' }
+        );
       
       if (dbError) {
-        console.error('Failed to update order in Supabase:', dbError);
+        console.error('Failed to save order in Supabase:', dbError);
       } else {
-        console.log('Order marked as failed in Supabase for tran_id:', tran_id);
+        console.log('Order saved as failed in Supabase for tran_id:', tran_id);
       }
     } catch (dbErr) {
       console.error('Database error:', dbErr);
     }
-    // ===== End database update =====
+    // ===== End database save =====
   }
 
   // Redirect to failure page
