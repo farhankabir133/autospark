@@ -17,6 +17,7 @@ import {
   Minus,
 } from 'lucide-react';
 import { supabase } from '../lib/supabase';
+import { getProductById } from '../data/demoProducts';
 
 interface Product {
   id: string;
@@ -54,7 +55,7 @@ export const ProductDetailPage = () => {
   const [isWishlisted, setIsWishlisted] = useState(false);
   const [addedToCart, setAddedToCart] = useState(false);
 
-  // Fetch product details from Supabase
+  // Fetch product details from Supabase or fallback to demo data
   useEffect(() => {
     const fetchProduct = async () => {
       try {
@@ -78,8 +79,13 @@ export const ProductDetailPage = () => {
 
         setProduct(processedProduct);
       } catch (error) {
-        console.error('Error fetching product:', error);
-        // Fallback: try to find in demo data or show error
+        console.error('Error fetching product from Supabase:', error);
+        // Fallback: try to find in shared demo data
+        const demoProduct = getProductById(id || '');
+        if (demoProduct) {
+          setProduct(demoProduct);
+        }
+        // If still not found, product will remain null and show "Product not found"
       } finally {
         setLoading(false);
       }
