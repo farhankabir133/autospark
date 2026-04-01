@@ -10,6 +10,9 @@ app.use(bodyParser.json())
 // Point to the agent's chat completions path per the OpenAPI spec
 const AGENT_URL = 'https://epbmkschwzip4c6atjl2tgbu.agents.do-ai.run/api/v1/chat/completions'
 
+// Payment API URL - point to DigitalOcean App Platform
+const PAYMENT_API_URL = process.env.PAYMENT_API_URL || 'https://autospark-payment.ondigitalocean.app'
+
 // Simple file-backed conversation store (development). For production use
 // a real DB (Supabase/Postgres). Conversations are stored in ./data/conversations.json
 const DATA_DIR = path.resolve(__dirname, '../data')
@@ -52,6 +55,94 @@ app.get('/api/conversations/:id', (req, res)=>{
     if (!found) return res.status(404).json({ error: 'not found' })
     res.json(found)
   }catch(e){ res.status(500).json({ error: 'err' }) }
+})
+
+// Payment API Routes - forward to DigitalOcean App Platform
+app.post('/api/payment/initiate', async (req, res) => {
+  try {
+    console.log('[proxy] POST /api/payment/initiate -> ' + PAYMENT_API_URL + '/api/payment/initiate')
+    const response = await fetch(PAYMENT_API_URL + '/api/payment/initiate', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(req.body),
+    })
+
+    const data = await response.json()
+    console.log('[proxy] payment/initiate response status:', response.status)
+    res.status(response.status).json(data)
+  } catch (err) {
+    console.error('[proxy] payment/initiate error', err)
+    res.status(500).json({ error: 'Payment initiation failed', details: err.message })
+  }
+})
+
+app.post('/api/payment/success', async (req, res) => {
+  try {
+    console.log('[proxy] POST /api/payment/success -> ' + PAYMENT_API_URL + '/api/payment/success')
+    const response = await fetch(PAYMENT_API_URL + '/api/payment/success', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(req.body),
+    })
+
+    const location = response.headers.get('location')
+    if (location) {
+      console.log('[proxy] redirecting to:', location)
+      res.redirect(response.status, location)
+    } else {
+      const data = await response.json()
+      res.status(response.status).json(data)
+    }
+  } catch (err) {
+    console.error('[proxy] payment/success error', err)
+    res.redirect('/payment-failed')
+  }
+})
+
+app.post('/api/payment/fail', async (req, res) => {
+  try {
+    console.log('[proxy] POST /api/payment/fail -> ' + PAYMENT_API_URL + '/api/payment/fail')
+    const response = await fetch(PAYMENT_API_URL + '/api/payment/fail', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(req.body),
+    })
+
+    const location = response.headers.get('location')
+    if (location) {
+      console.log('[proxy] redirecting to:', location)
+      res.redirect(response.status, location)
+    } else {
+      const data = await response.json()
+      res.status(response.status).json(data)
+    }
+  } catch (err) {
+    console.error('[proxy] payment/fail error', err)
+    res.redirect('/payment-failed')
+  }
+})
+
+app.post('/api/payment/cancel', async (req, res) => {
+  try {
+    console.log('[proxy] POST /api/payment/cancel -> ' + PAYMENT_API_URL + '/api/payment/cancel')
+    const response = await fetch(PAYMENT_API_URL + '/api/payment/cancel', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(req.body),
+    })
+
+    const location = response.headers.get('location')
+    if (location) {
+      console.log('[proxy] redirecting to:', location)
+      res.redirect(response.status, location)
+    } else {
+      const data = await response.json()
+      res.status(response.status).json(data)
+    }
+  } catch (err) {
+    console.error('[proxy] payment/cancel error', err)
+    res.redirect('/payment-cancelled')
+  }
 })
 
 // Single handler for GET/POST/OPTIONS so we reliably accept both POST JSON
