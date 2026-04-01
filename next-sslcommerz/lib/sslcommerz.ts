@@ -1,4 +1,3 @@
-// @ts-ignore - sslcommerz-lts doesn't have TypeScript types, but it works fine
 import SSLCommerzPayment from 'sslcommerz-lts';
 
 export function createSSLCommerz() {
