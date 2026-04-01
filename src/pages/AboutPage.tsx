@@ -504,7 +504,7 @@ export const AboutPage = () => {
             
             <div className="grid md:grid-cols-3 gap-8 items-center relative">
               {/* Left Founder Image */}
-              <div className="md:col-span-1 hidden md:block">
+              <div className="md:col-span-1 block">
                 <div className="relative">
                   <div className="absolute inset-0 bg-gradient-to-br from-[#C00000] to-[#8B0000] rounded-2xl transform rotate-3"></div>
                   <img
@@ -577,7 +577,7 @@ export const AboutPage = () => {
               </div>
 
               {/* Right Founder Image */}
-              <div className="md:col-span-1 hidden md:block">
+              <div className="md:col-span-1 block">
                 <div className="relative">
                   <div className="absolute inset-0 bg-gradient-to-br from-[#C00000] to-[#8B0000] rounded-2xl transform -rotate-3"></div>
                   <img
