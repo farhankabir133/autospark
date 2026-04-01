@@ -23,9 +23,15 @@ export default defineConfig({
     }),
   ],
     server: {
-      // during local development forward /api/agent to the proxy server
+      // during local development forward /api/* to the proxy server
       proxy: {
         '/api/agent': {
+          target: 'http://localhost:8787',
+          changeOrigin: true,
+          secure: false,
+          ws: false,
+        },
+        '/api/payment': {
           target: 'http://localhost:8787',
           changeOrigin: true,
           secure: false,
