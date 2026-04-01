@@ -14,6 +14,7 @@ const InventoryPage = lazy(() => import('./pages/InventoryPage').then(m => ({ de
 const VehicleDetailsPage = lazy(() => import('./pages/VehicleDetailsPage').then(m => ({ default: m.VehicleDetailsPage })));
 const ServicesPage = lazy(() => import('./pages/ServicesPage').then(m => ({ default: m.ServicesPage })));
 const AccessoriesPage = lazy(() => import('./pages/AccessoriesPage').then(m => ({ default: m.AccessoriesPage })));
+const ProductDetailPage = lazy(() => import('./pages/ProductDetailPage').then(m => ({ default: m.default })));
 const AboutPage = lazy(() => import('./pages/AboutPage').then(m => ({ default: m.AboutPage })));
 const SellCarPage = lazy(() => import('./pages/SellCarPage').then(m => ({ default: m.SellCarPage })));
 const ContactPage = lazy(() => import('./pages/ContactPage').then(m => ({ default: m.ContactPage })));
@@ -21,6 +22,9 @@ const VehicleExperiencePage = lazy(() => import('./pages/VehicleExperiencePage')
 const TestimonialsPage = lazy(() => import('./pages/TestimonialsPage').then(m => ({ default: m.TestimonialsPage })));
 const ColorPreviewPage = lazy(() => import('./pages/ColorPreviewPage').then(m => ({ default: m.ColorPreviewPage })));
 const PaymentPage = lazy(() => import('./pages/PaymentPage'));
+const CartPage = lazy(() => import('./pages/CartPage'));
+const CheckoutPage = lazy(() => import('./pages/CheckoutPage'));
+const InventoryManagementPage = lazy(() => import('./pages/InventoryManagementPage'));
 
 // Minimal loading fallback to prevent CLS
 const PageLoader = () => (
@@ -76,6 +80,10 @@ function App() {
                 <Route path="/experience" element={<VehicleExperiencePage />} />
                 <Route path="/services" element={<ServicesPage />} />
                 <Route path="/accessories" element={<AccessoriesPage />} />
+                <Route path="/product/:id" element={<ProductDetailPage />} />
+                <Route path="/cart" element={<CartPage />} />
+                <Route path="/checkout" element={<CheckoutPage />} />
+                <Route path="/inventory-management" element={<InventoryManagementPage />} />
                 <Route path="/about" element={<AboutPage />} />
                 <Route path="/testimonials" element={<TestimonialsPage />} />
                 <Route path="/sell" element={<SellCarPage />} />

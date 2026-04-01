@@ -27,10 +27,32 @@ export default function PaymentPage() {
 
   // Initialize form with cart data if available
   useEffect(() => {
+    let nameToUse = formData.name;
+    let emailToUse = formData.email;
+    let phoneToUse = formData.phone;
+
+    // Check if we have checkout data from CheckoutPage
+    const checkoutDataStr = sessionStorage.getItem('checkoutData');
+    if (checkoutDataStr) {
+      try {
+        const checkoutData = JSON.parse(checkoutDataStr);
+        nameToUse = `${checkoutData.customer.firstName} ${checkoutData.customer.lastName}`;
+        emailToUse = checkoutData.customer.email;
+        phoneToUse = checkoutData.customer.phone;
+        // Clear the checkout data after using it
+        sessionStorage.removeItem('checkoutData');
+      } catch (e) {
+        console.error('Error parsing checkout data:', e);
+      }
+    }
+
     if (cartItems.length > 0) {
       const productNames = cartItems.map(item => `${item.name} (${item.quantity}x)`).join(', ');
       setFormData(prev => ({
         ...prev,
+        name: nameToUse,
+        email: emailToUse,
+        phone: phoneToUse,
         product: productNames,
         amount: cartTotal.toFixed(2),
       }));
