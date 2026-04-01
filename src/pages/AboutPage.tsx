@@ -519,6 +519,10 @@ export const AboutPage = () => {
                   <div className="absolute -bottom-4 -right-4 bg-[#C00000] text-white px-4 py-2 rounded-lg shadow-lg">
                     <span className="font-bold">{language === 'en' ? 'CEO & Founder' : 'সিইও এবং প্রতিষ্ঠাতা'}</span>
                   </div>
+                  {/* Left image name caption */}
+                  <div className="absolute -bottom-12 left-4 bg-white/90 text-gray-900 px-3 py-1 rounded-md shadow-sm">
+                    <span className="font-semibold">{language === 'en' ? 'Raju Ahmed' : 'রাজু আহমেদ'}</span>
+                  </div>
                 </div>
               </div>
 
@@ -526,18 +530,18 @@ export const AboutPage = () => {
               <div className="md:col-span-1 space-y-6 flex flex-col items-center text-center justify-center">
                 <div>
                   <h3 className={`text-3xl font-bold ${theme === 'dark' ? 'text-white' : 'text-gray-900'} mb-2`}>
-                    {language === 'en' ? 'A.B.M. Raihanul Amin' : 'এ.বি.এম. রায়হানুল আমিন'}
+                    {language === 'en' ? 'Raju Ahmed' : 'রাজু আহমেদ'}
                   </h3>
                   <p className="text-[#C00000] font-semibold text-lg">
-                    {language === 'en' ? 'Founder & Managing Director' : 'প্রতিষ্ঠাতা এবং ব্যবস্থাপনা পরিচালক'}
+                    {language === 'en' ? 'Founder, Managing Director & CEO' : 'প্রতিষ্ঠাতা, ব্যবস্থাপনা পরিচালক ও সিইও'}
                   </p>
                 </div>
 
                 <div className={`${theme === 'dark' ? 'text-gray-300' : 'text-gray-600'} space-y-4 leading-relaxed max-w-xl`}>
                   <p>
-                    {language === 'en'
-                      ? 'With over two decades of experience in the automotive industry, Mohammad Abdul Karim founded Auto Spark BD with a passion for bringing world-class vehicles to his hometown of Rajshahi. His vision was simple yet ambitious: to create a dealership that prioritizes customer trust and vehicle quality above all else.'
-                      : 'অটোমোটিভ শিল্পে দুই দশকেরও বেশি অভিজ্ঞতার সাথে, মোহাম্মদ আব্দুল করিম তার জন্মস্থান রাজশাহীতে বিশ্বমানের গাড়ি আনার আবেগ নিয়ে অটো স্পার্ক বিডি প্রতিষ্ঠা করেন।'}
+            {language === 'en'
+            ? 'With over two decades of experience in the automotive industry, Raju Ahmed founded Auto Spark BD with a passion for bringing world-class vehicles to his hometown of Rajshahi. His vision was simple yet ambitious: to create a dealership that prioritizes customer trust and vehicle quality above all else.'
+            : 'অটোমোটিভ শিল্পে দুই দশকেরও বেশি অভিজ্ঞতার সাথে, রাজু আহমেদ তার জন্মস্থান রাজশাহীতে বিশ্বমানের গাড়ি আনার আবেগ নিয়ে অটো স্পার্ক বিডি প্রতিষ্ঠা করেন।'}
                   </p>
                   <p>
                     {language === 'en'
@@ -591,6 +595,10 @@ export const AboutPage = () => {
                   />
                   <div className="absolute -bottom-4 -left-4 bg-[#C00000] text-white px-4 py-2 rounded-lg shadow-lg">
                     <span className="font-bold">{language === 'en' ? 'Co-Founder' : 'সহ-প্রতিষ্ঠাতা'}</span>
+                  </div>
+                  {/* Right image name caption */}
+                  <div className="absolute -bottom-12 right-4 bg-white/90 text-gray-900 px-3 py-1 rounded-md shadow-sm">
+                    <span className="font-semibold">{language === 'en' ? 'Tony' : 'টনি'}</span>
                   </div>
                 </div>
               </div>
