@@ -17,9 +17,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   if (tran_id) {
     console.log('Payment failed for tran_id:', tran_id, 'status:', status, 'error:', error);
 
-    // ===== TODO: Update your database here =====
-    // Example (Supabase):
-    /*
+    // ===== Update database with payment failure =====
     try {
       const supabase = getSupabase();
       // Mark the order as failed in your database
@@ -36,8 +34,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     } catch (dbErr) {
       console.error('Database error:', dbErr);
     }
-    */
-    // ===== End TODO =====
+    // ===== End database update =====
   }
 
   // Redirect to failure page

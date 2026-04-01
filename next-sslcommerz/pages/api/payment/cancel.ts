@@ -16,9 +16,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   if (tran_id) {
     console.log('Payment cancelled for tran_id:', tran_id, 'status:', status);
 
-    // ===== TODO: Update your database here =====
-    // Example (Supabase):
-    /*
+    // ===== Update database with payment cancellation =====
     try {
       const supabase = getSupabase();
       // Mark the order as cancelled in your database
@@ -35,8 +33,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     } catch (dbErr) {
       console.error('Database error:', dbErr);
     }
-    */
-    // ===== End TODO =====
+    // ===== End database update =====
   }
 
   // Redirect to cancellation page

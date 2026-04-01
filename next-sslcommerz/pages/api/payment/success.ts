@@ -26,9 +26,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     if (status === 'VALIDATED' || status === 'VALID' || status === true) {
       console.log('Payment validated for val_id:', val_id, 'tran_id:', tran_id);
       
-      // ===== TODO: Update your database here =====
-      // Example (Supabase):
-      /*
+      // ===== Update database with payment record =====
       try {
         const supabase = getSupabase();
         // Update your orders table when payment is validated
@@ -39,15 +37,17 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         
         if (error) {
           console.error('Failed to update order in Supabase:', error);
-          return res.redirect('/payment-failed');
+          // Log error but still redirect to success since payment was validated
+          console.log('Proceeding to success page despite DB update error');
+        } else {
+          console.log('Order updated in Supabase for tran_id:', tran_id);
         }
-        console.log('Order updated in Supabase for tran_id:', tran_id);
       } catch (dbErr) {
         console.error('Database error:', dbErr);
-        return res.redirect('/payment-failed');
+        // Log error but still redirect to success since payment was validated
+        console.log('Proceeding to success page despite database error');
       }
-      */
-      // ===== End TODO =====
+      // ===== End database update =====
       
       // Redirect to success page (you may customize this URL)
       return res.redirect('/dashboard/payment-success');
