@@ -1,291 +1,271 @@
 'use client';
 
-import { useState, ChangeEvent, FormEvent, useEffect } from 'react';
+import { useState, useEffect } from 'react';
+import { useForm, Controller } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import * as z from 'zod';
+import { Loader2 } from 'lucide-react';
+import { supabase } from '../lib/supabase';
+import { bdDistricts, bdThanas } from '../data/bd-locations';
 import { useCart } from '../contexts/CartContext';
-import { ShoppingCart } from 'lucide-react';
 
-interface FormData {
-  name: string;
-  email: string;
-  phone: string;
-  product: string;
-  amount: string;
-}
+const phoneRegex = new RegExp(/^01[3-9]\d{8}$/);
 
-export default function PaymentPage() {
+const billingSchema = z.object({
+  customer_name: z.string().min(2, { message: 'Full name is required' }),
+  mobile: z.string().regex(phoneRegex, { message: 'Must be a valid 11-digit BD number' }),
+  district: z.string().min(1, { message: 'District is required' }),
+  thana: z.string().min(1, { message: 'Thana is required' }),
+  address: z.string().min(5, { message: 'Full address is required' }),
+});
+
+type BillingFormInputs = z.infer<typeof billingSchema>;
+
+const OnePageCheckout = () => {
   const { cartItems, cartTotal } = useCart();
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const [success, setSuccess] = useState(false);
-  const [formData, setFormData] = useState<FormData>({
-    name: '',
-    email: '',
-    phone: '',
-    product: '',
-    amount: '',
+  const [selectedDistrict, setSelectedDistrict] = useState('');
+  const [thanas, setThanas] = useState<{ id: string; name: string }[]>([]);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const {
+    register,
+    handleSubmit,
+    control,
+    watch,
+    resetField,
+    formState: { errors },
+  } = useForm<BillingFormInputs>({
+    resolver: zodResolver(billingSchema),
+    defaultValues: {
+      customer_name: '',
+      mobile: '',
+      district: '',
+      thana: '',
+      address: '',
+    },
   });
 
-  // Initialize form with cart data if available
+  const districtValue = watch('district');
+
   useEffect(() => {
-    let nameToUse = formData.name;
-    let emailToUse = formData.email;
-    let phoneToUse = formData.phone;
-
-    // Check if we have checkout data from CheckoutPage
-    const checkoutDataStr = sessionStorage.getItem('checkoutData');
-    if (checkoutDataStr) {
-      try {
-        const checkoutData = JSON.parse(checkoutDataStr);
-        nameToUse = `${checkoutData.customer.firstName} ${checkoutData.customer.lastName}`;
-        emailToUse = checkoutData.customer.email;
-        phoneToUse = checkoutData.customer.phone;
-        // Clear the checkout data after using it
-        sessionStorage.removeItem('checkoutData');
-      } catch (e) {
-        console.error('Error parsing checkout data:', e);
-      }
+    if (districtValue) {
+      setSelectedDistrict(districtValue);
+      setThanas(bdThanas[districtValue] || []);
+      resetField('thana');
+    } else {
+      setSelectedDistrict('');
+      setThanas([]);
     }
+  }, [districtValue, resetField]);
 
-    if (cartItems.length > 0) {
-      const productNames = cartItems.map(item => `${item.name} (${item.quantity}x)`).join(', ');
-      setFormData(prev => ({
-        ...prev,
-        name: nameToUse,
-        email: emailToUse,
-        phone: phoneToUse,
-        product: productNames,
-        amount: cartTotal.toFixed(2),
-      }));
-    }
-  }, [cartItems, cartTotal]);
-
-  const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
-  };
-
-  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    setLoading(true);
-    setError(null);
-    setSuccess(false);
-
+  const onSubmit = async (data: BillingFormInputs) => {
+    setIsSubmitting(true);
     try {
-      // Validate form data
-      if (!formData.name || !formData.email || !formData.phone || !formData.product || !formData.amount) {
-        throw new Error('All fields are required');
-      }
-
-      if (parseFloat(formData.amount) < 1) {
-        throw new Error('Amount must be at least 1 BDT');
-      }
-
-      // Call local proxy which forwards to DigitalOcean Payment API
-      const response = await fetch('/api/payment/initiate', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+      const { data: responseData, error } = await supabase.functions.invoke('init-ssl-payment', {
         body: JSON.stringify({
-          total_amount: parseFloat(formData.amount),
-          cus_name: formData.name,
-          cus_email: formData.email,
-          cus_phone: formData.phone,
-          product_name: formData.product,
+          ...data,
+          cart: cartItems,
+          total_amount: cartTotal,
         }),
       });
 
-      const result = await response.json();
-      console.log('Payment response:', result);
-
-      if (!response.ok) {
-        throw new Error(result.error || `API error: ${response.status}`);
+      if (error) {
+        throw new Error(`Supabase function error: ${error.message}`);
       }
 
-      if (result.url) {
-        // Redirect to SSLCommerz gateway
-        console.log('Redirecting to SSLCommerz:', result.url);
-        window.location.href = result.url;
-      } else if (result.error) {
-        throw new Error(result.error);
+      if (responseData?.GatewayPageURL) {
+        window.location.replace(responseData.GatewayPageURL);
       } else {
-        throw new Error('Payment initiation failed: no URL returned');
+        throw new Error('Failed to get payment gateway URL.');
       }
-    } catch (err) {
-      console.error('Payment error:', err);
-      const errorMessage = err instanceof Error ? err.message : 'Error processing payment';
-      setError(errorMessage);
-      setLoading(false);
+    } catch (err: any) {
+      console.error('Payment initiation failed:', err);
+      alert(`Payment failed: ${err.message}`);
+      setIsSubmitting(false);
     }
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 py-12 px-4">
-      <div className="max-w-2xl mx-auto">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          {/* Cart Summary (Left side for md and above) */}
-          {cartItems.length > 0 && (
-            <div className="md:col-span-1 md:order-1 order-2">
-              <div className="bg-white rounded-lg shadow-lg p-6 sticky top-4">
-                <h2 className="text-lg font-bold mb-4 flex items-center gap-2 text-gray-800">
-                  <ShoppingCart size={20} /> Order Summary
-                </h2>
-                <div className="space-y-3 mb-4 max-h-64 overflow-y-auto">
-                  {cartItems.map((item) => (
-                    <div key={item.id} className="flex justify-between text-sm pb-2 border-b">
-                      <div>
-                        <p className="font-medium text-gray-700">{item.name}</p>
-                        <p className="text-gray-500 text-xs">Qty: {item.quantity}</p>
-                      </div>
-                      <p className="font-semibold text-gray-800">৳{(item.price * item.quantity).toFixed(2)}</p>
-                    </div>
-                  ))}
+    <div className="min-h-screen bg-gray-50 text-gray-800 p-4 sm:p-6 lg:p-8">
+      <div className="max-w-6xl mx-auto">
+        <header className="text-center mb-8">
+          <h1 className="text-3xl font-bold" style={{ color: '#F28C38' }}>
+            One-Page Checkout
+          </h1>
+          <p className="text-gray-500 mt-2">Complete your purchase in a single step.</p>
+        </header>
+
+        <form onSubmit={handleSubmit(onSubmit)} className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+          {/* Left Column: Billing Details */}
+          <div className="bg-white p-6 rounded-xl shadow-md">
+            <h2 className="text-2xl font-semibold mb-6 border-b pb-4" style={{ color: '#F28C38' }}>
+              Billing Details
+            </h2>
+            <div className="space-y-4">
+              <div>
+                <label htmlFor="customer_name" className="block text-sm font-medium text-gray-700">
+                  Full Name
+                </label>
+                <input
+                  id="customer_name"
+                  type="text"
+                  {...register('customer_name')}
+                  className={`mt-1 block w-full px-3 py-2 border ${
+                    errors.customer_name ? 'border-red-500' : 'border-gray-300'
+                  } rounded-md shadow-sm focus:outline-none focus:ring-orange-500 focus:border-orange-500 sm:text-sm`}
+                />
+                {errors.customer_name && <p className="mt-1 text-xs text-red-500">{errors.customer_name.message}</p>}
+              </div>
+
+              <div>
+                <label htmlFor="mobile" className="block text-sm font-medium text-gray-700">
+                  Mobile Number
+                </label>
+                <input
+                  id="mobile"
+                  type="tel"
+                  {...register('mobile')}
+                  placeholder="01XXXXXXXXX"
+                  className={`mt-1 block w-full px-3 py-2 border ${
+                    errors.mobile ? 'border-red-500' : 'border-gray-300'
+                  } rounded-md shadow-sm focus:outline-none focus:ring-orange-500 focus:border-orange-500 sm:text-sm`}
+                />
+                {errors.mobile && <p className="mt-1 text-xs text-red-500">{errors.mobile.message}</p>}
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label htmlFor="district" className="block text-sm font-medium text-gray-700">
+                    District
+                  </label>
+                  <Controller
+                    name="district"
+                    control={control}
+                    render={({ field }) => (
+                      <select
+                        id="district"
+                        {...field}
+                        className={`mt-1 block w-full px-3 py-2 border ${
+                          errors.district ? 'border-red-500' : 'border-gray-300'
+                        } rounded-md shadow-sm focus:outline-none focus:ring-orange-500 focus:border-orange-500 sm:text-sm`}
+                      >
+                        <option value="">Select District</option>
+                        {bdDistricts.map((d) => (
+                          <option key={d.id} value={d.id}>
+                            {d.name}
+                          </option>
+                        ))}
+                      </select>
+                    )}
+                  />
+                  {errors.district && <p className="mt-1 text-xs text-red-500">{errors.district.message}</p>}
                 </div>
-                <div className="pt-4 border-t border-gray-200">
-                  <div className="flex justify-between items-center">
-                    <span className="text-lg font-bold text-gray-800">Total:</span>
-                    <span className="text-2xl font-bold text-blue-600">৳{cartTotal.toFixed(2)}</span>
-                  </div>
+
+                <div>
+                  <label htmlFor="thana" className="block text-sm font-medium text-gray-700">
+                    Thana
+                  </label>
+                  <Controller
+                    name="thana"
+                    control={control}
+                    render={({ field }) => (
+                      <select
+                        id="thana"
+                        {...field}
+                        disabled={!selectedDistrict}
+                        className={`mt-1 block w-full px-3 py-2 border ${
+                          errors.thana ? 'border-red-500' : 'border-gray-300'
+                        } rounded-md shadow-sm focus:outline-none focus:ring-orange-500 focus:border-orange-500 sm:text-sm disabled:bg-gray-100`}
+                      >
+                        <option value="">Select Thana</option>
+                        {thanas.map((t) => (
+                          <option key={t.id} value={t.name}>
+                            {t.name}
+                          </option>
+                        ))}
+                      </select>
+                    )}
+                  />
+                  {errors.thana && <p className="mt-1 text-xs text-red-500">{errors.thana.message}</p>}
                 </div>
               </div>
+
+              <div>
+                <label htmlFor="address" className="block text-sm font-medium text-gray-700">
+                  Full Address
+                </label>
+                <textarea
+                  id="address"
+                  rows={3}
+                  {...register('address')}
+                  className={`mt-1 block w-full px-3 py-2 border ${
+                    errors.address ? 'border-red-500' : 'border-gray-300'
+                  } rounded-md shadow-sm focus:outline-none focus:ring-orange-500 focus:border-orange-500 sm:text-sm`}
+                />
+                {errors.address && <p className="mt-1 text-xs text-red-500">{errors.address.message}</p>}
+              </div>
             </div>
-          )}
-
-          {/* Payment Form (Right side) */}
-          <div className={`${cartItems.length > 0 ? 'md:col-span-2 order-1' : 'col-span-1'} md:order-2`}>
-            <div className="bg-white rounded-lg shadow-lg p-8">
-              <h1 className="text-3xl font-bold mb-2 text-center text-gray-800">💳 Make Payment</h1>
-              <p className="text-center text-gray-600 mb-6">Secure payment powered by SSLCommerz</p>
-
-        {error && (
-          <div className="mb-4 p-4 bg-red-100 border border-red-400 text-red-700 rounded animate-pulse">
-            <p className="font-semibold">❌ Error</p>
-            <p className="text-sm">{error}</p>
-          </div>
-        )}
-
-        {success && (
-          <div className="mb-4 p-4 bg-green-100 border border-green-400 text-green-700 rounded">
-            <p className="font-semibold">✅ Success</p>
-            <p className="text-sm">Redirecting to payment gateway...</p>
-          </div>
-        )}
-
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div>
-            <label htmlFor="name" className="block font-semibold mb-2 text-gray-700">
-              Full Name <span className="text-red-500">*</span>
-            </label>
-            <input
-              id="name"
-              type="text"
-              name="name"
-              value={formData.name}
-              onChange={handleChange}
-              required
-              placeholder="John Doe"
-              className="w-full border border-gray-300 px-4 py-2 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 transition"
-              disabled={loading}
-            />
           </div>
 
-          <div>
-            <label htmlFor="email" className="block font-semibold mb-2 text-gray-700">
-              Email Address <span className="text-red-500">*</span>
-            </label>
-            <input
-              id="email"
-              type="email"
-              name="email"
-              value={formData.email}
-              onChange={handleChange}
-              required
-              placeholder="john@example.com"
-              className="w-full border border-gray-300 px-4 py-2 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 transition"
-              disabled={loading}
-            />
-          </div>
+          {/* Right Column: Order Summary */}
+          <div className="lg:sticky lg:top-8 h-fit">
+            <div className="bg-white p-6 rounded-xl shadow-md">
+              <h2 className="text-2xl font-semibold mb-6 border-b pb-4" style={{ color: '#F28C38' }}>
+                Order Summary
+              </h2>
+              <div className="space-y-4">
+                {cartItems.length > 0 ? (
+                  cartItems.map((item) => (
+                    <div key={item.id} className="flex items-center space-x-4">
+                      <img
+                        src={item.image || "https://i.ibb.co/GkL0xS4/tree-bookshelf.webp"}
+                        alt={item.name}
+                        className="w-16 h-16 object-cover rounded-lg"
+                      />
+                      <div className="flex-grow">
+                        <h3 className="font-semibold text-md">{item.name}</h3>
+                        <p className="text-gray-500 text-sm">
+                          {item.quantity} x {item.price.toLocaleString()} BDT
+                        </p>
+                      </div>
+                      <p className="font-semibold">
+                        {(item.quantity * item.price).toLocaleString()} BDT
+                      </p>
+                    </div>
+                  ))
+                ) : (
+                  <p className="text-center text-gray-500">Your cart is empty.</p>
+                )}
 
-          <div>
-            <label htmlFor="phone" className="block font-semibold mb-2 text-gray-700">
-              Phone Number <span className="text-red-500">*</span>
-            </label>
-            <input
-              id="phone"
-              type="tel"
-              name="phone"
-              value={formData.phone}
-              onChange={handleChange}
-              required
-              placeholder="01700000000"
-              className="w-full border border-gray-300 px-4 py-2 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 transition"
-              disabled={loading}
-            />
-          </div>
+                <div className="border-t pt-4 flex justify-between items-center">
+                  <p className="text-lg font-semibold">Total</p>
+                  <p className="text-xl font-bold" style={{ color: '#F28C38' }}>
+                    {cartTotal.toLocaleString()} BDT
+                  </p>
+                </div>
+              </div>
 
-          <div>
-            <label htmlFor="product" className="block font-semibold mb-2 text-gray-700">
-              Product/Service <span className="text-red-500">*</span>
-            </label>
-            <input
-              id="product"
-              type="text"
-              name="product"
-              value={formData.product}
-              onChange={handleChange}
-              required
-              placeholder="Car Maintenance Package"
-              className="w-full border border-gray-300 px-4 py-2 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 transition"
-              disabled={loading}
-            />
+              <button
+                type="submit"
+                disabled={isSubmitting || cartItems.length === 0}
+                className="w-full mt-6 py-3 text-white font-semibold rounded-lg shadow-md transition-transform transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
+                style={{ backgroundColor: '#F28C38' }}
+              >
+                {isSubmitting ? (
+                  <>
+                    <Loader2 className="mr-2 h-5 w-5 animate-spin" />
+                    Processing...
+                  </>
+                ) : (
+                  `Confirm Order - ${cartTotal.toLocaleString()} BDT`
+                )}
+              </button>
+            </div>
           </div>
-
-          <div>
-            <label htmlFor="amount" className="block font-semibold mb-2 text-gray-700">
-              Amount (BDT) <span className="text-red-500">*</span>
-            </label>
-            <input
-              id="amount"
-              type="number"
-              name="amount"
-              value={formData.amount}
-              onChange={handleChange}
-              step="0.01"
-              min="1"
-              required
-              placeholder="1000"
-              className="w-full border border-gray-300 px-4 py-2 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 transition"
-              disabled={loading}
-            />
-          </div>
-
-          <button
-            type="submit"
-            disabled={loading}
-            className={`w-full font-bold py-3 rounded transition duration-200 ${
-              loading
-                ? 'bg-gray-400 cursor-not-allowed text-gray-700'
-                : 'bg-blue-600 hover:bg-blue-700 text-white active:scale-95'
-            }`}
-          >
-            {loading ? (
-              <span className="flex items-center justify-center gap-2">
-                <span className="animate-spin">⏳</span> Processing...
-              </span>
-            ) : (
-              '💳 Pay Now'
-            )}
-          </button>
         </form>
-
-        <p className="text-xs text-gray-500 text-center mt-4">
-          🔒 Secure payment gateway. Your data is encrypted.
-        </p>
-            </div>
-          </div>
-        </div>
       </div>
     </div>
   );
-}
+};
+
+export default OnePageCheckout;
