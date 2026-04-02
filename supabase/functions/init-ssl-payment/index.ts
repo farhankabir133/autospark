@@ -12,15 +12,26 @@ Deno.serve(async (req) => {
   }
 
   try {
-    const { cart, total_amount, customer_name, mobile, address, thana, district } = await req.json();
+    const body = await req.json();
+    const { cart, total_amount, customer_name, mobile, address, thana, district } = body;
 
+    // Get environment variables
     const SSLCOMMERZ_STORE_ID = Deno.env.get('SSLCOMMERZ_STORE_ID');
     const SSLCOMMERZ_STORE_PASSWORD = Deno.env.get('SSLCOMMERZ_STORE_PASSWORD');
     const SITE_URL = Deno.env.get('SITE_URL') || 'https://autosparkbd.com';
-    const SSLCOMMERZ_API_URL = 'https://sandbox.sslcommerz.com/gwprocess/v4/api.php';
+
+    console.log('Received payment request:', {
+      total_amount,
+      customer_name,
+      mobile,
+      has_store_id: !!SSLCOMMERZ_STORE_ID,
+      has_store_password: !!SSLCOMMERZ_STORE_PASSWORD,
+      site_url: SITE_URL,
+    });
 
     // Validate required inputs
     if (!cart || !total_amount || !customer_name || !mobile || !address || !thana || !district) {
+      console.error('Missing required fields:', { cart: !!cart, total_amount, customer_name, mobile, address, thana, district });
       return new Response(
         JSON.stringify({ error: 'Missing required payment information' }),
         { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
@@ -29,28 +40,28 @@ Deno.serve(async (req) => {
 
     // Validate Store ID and Password
     if (!SSLCOMMERZ_STORE_ID || !SSLCOMMERZ_STORE_PASSWORD) {
-      console.error('Missing SSLCommerz credentials in environment');
+      console.error('Missing SSLCommerz credentials');
       return new Response(
-        JSON.stringify({ error: 'Payment gateway not configured' }),
+        JSON.stringify({ error: 'Payment gateway not configured. Missing credentials.' }),
         { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }
 
     const tran_id = `autospark-${Date.now()}`;
     const product_name = Array.isArray(cart) 
-      ? cart.map((item: any) => item.name).join(', ')
+      ? cart.map((item: any) => item.name || 'Item').join(', ')
       : 'Order';
 
+    // Create FormData for SSLCommerz
     const formData = new FormData();
     formData.append('store_id', SSLCOMMERZ_STORE_ID);
     formData.append('store_passwd', SSLCOMMERZ_STORE_PASSWORD);
-    formData.append('total_amount', total_amount.toString());
+    formData.append('total_amount', String(total_amount));
     formData.append('currency', 'BDT');
     formData.append('tran_id', tran_id);
     formData.append('success_url', `${SITE_URL}/payment/success?tran_id=${tran_id}`);
     formData.append('fail_url', `${SITE_URL}/payment/fail`);
     formData.append('cancel_url', `${SITE_URL}/payment/cancel`);
-    formData.append('ipn_url', `${SITE_URL}/api/payment-ipn`);
     formData.append('product_name', product_name);
     formData.append('product_category', 'Automotive');
     formData.append('product_profile', 'general');
@@ -74,33 +85,52 @@ Deno.serve(async (req) => {
     formData.append('ship_postcode', '1200');
     formData.append('ship_country', 'Bangladesh');
 
-    console.log('Calling SSLCommerz API:', SSLCOMMERZ_API_URL);
-    const response = await fetch(SSLCOMMERZ_API_URL, {
+    console.log('Calling SSLCommerz API with transaction ID:', tran_id);
+    
+    const sslCommerzUrl = 'https://sandbox.sslcommerz.com/gwprocess/v4/api.php';
+    const response = await fetch(sslCommerzUrl, {
       method: 'POST',
       body: formData,
     });
+
+    console.log('SSLCommerz response status:', response.status);
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      console.error('SSLCommerz API error:', errorText);
+      return new Response(
+        JSON.stringify({ error: `SSLCommerz API error: ${response.status}` }),
+        { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
 
     const sslczResponse = await response.json();
     console.log('SSLCommerz response:', sslczResponse);
 
     if (sslczResponse.status !== 'SUCCESS') {
+      console.error('Payment initialization failed:', sslczResponse);
       return new Response(
-        JSON.stringify({ error: `SSLCommerz error: ${sslczResponse.failedreason || 'Unknown error'}` }),
+        JSON.stringify({ 
+          error: `Payment failed: ${sslczResponse.failedreason || 'Unknown error'}`,
+          details: sslczResponse
+        }),
         { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }
 
     return new Response(
       JSON.stringify(sslczResponse),
-      { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      { status: 200, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     );
 
-  } catch (error) {
-    console.error('Payment function error:', error);
+  } catch (err) {
+    const errorMessage = err instanceof Error ? err.message : String(err);
+    console.error('Payment function exception:', errorMessage);
     return new Response(
-      JSON.stringify({ error: `Server error: ${error.message}` }),
+      JSON.stringify({ error: `Server error: ${errorMessage}` }),
       { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     );
   }
 });
+
 
