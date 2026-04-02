@@ -25,6 +25,9 @@ const PaymentPage = lazy(() => import('./pages/PaymentPage'));
 const CartPage = lazy(() => import('./pages/CartPage'));
 const CheckoutPage = lazy(() => import('./pages/CheckoutPage'));
 const InventoryManagementPage = lazy(() => import('./pages/InventoryManagementPage'));
+const PaymentSuccessPage = lazy(() => import('./pages/PaymentSuccessPage'));
+const PaymentFailPage = lazy(() => import('./pages/PaymentFailPage'));
+const PaymentCancelPage = lazy(() => import('./pages/PaymentCancelPage'));
 
 // Minimal loading fallback to prevent CLS
 const PageLoader = () => (
@@ -90,6 +93,9 @@ function App() {
                 <Route path="/contact" element={<ContactPage />} />
                 <Route path="/color-preview" element={<ColorPreviewPage />} />
                 <Route path="/payment" element={<PaymentPage />} />
+                <Route path="/payment/success" element={<PaymentSuccessPage />} />
+                <Route path="/payment/fail" element={<PaymentFailPage />} />
+                <Route path="/payment/cancel" element={<PaymentCancelPage />} />
               </Routes>
             </Suspense>
           </Layout>

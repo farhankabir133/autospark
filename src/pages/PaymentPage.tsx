@@ -7,6 +7,7 @@ import * as z from 'zod';
 import { Loader2 } from 'lucide-react';
 import { bdDistricts, bdThanas } from '../data/bd-locations';
 import { useCart } from '../contexts/CartContext';
+import { PAYMENT_GATEWAY_URLS, getSupabaseAuthHeader } from '../config/payment';
 
 const phoneRegex = new RegExp(/^01[3-9]\d{8}$/);
 
@@ -25,6 +26,7 @@ const OnePageCheckout = () => {
   const [selectedDistrict, setSelectedDistrict] = useState('');
   const [thanas, setThanas] = useState<{ id: string; name: string }[]>([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   const {
     register,
@@ -57,68 +59,47 @@ const OnePageCheckout = () => {
     }
   }, [districtValue, resetField]);
 
-  const onSubmit = (data: BillingFormInputs) => {
-    // Prevent any async behavior - just create and submit form synchronously
-    const tran_id = `autospark-${Date.now()}`;
-    const product_name = cartItems.map(item => item.name).join(', ') || 'Order';
+  const onSubmit = async (data: BillingFormInputs) => {
+    setIsSubmitting(true);
+    setError(null);
+    try {
+      // Call Supabase Edge Function to initialize payment
+      const response = await fetch(PAYMENT_GATEWAY_URLS.INIT_PAYMENT, {
+        method: 'POST',
+        headers: getSupabaseAuthHeader(),
+        body: JSON.stringify({
+          cart: cartItems,
+          total_amount: cartTotal,
+          customer_name: data.customer_name,
+          mobile: data.mobile,
+          address: data.address,
+          thana: data.thana,
+          district: data.district,
+        }),
+      });
 
-    // Create a complete HTML form and submit it synchronously
-    let formHTML = '<form method="POST" action="https://sandbox.sslcommerz.com/gwprocess/v4/api.php" style="display:none;">';
-    
-    const fields = {
-      store_id: 'autos69cccc023b067',
-      store_passwd: 'autos69cccc023b067@ssl',
-      total_amount: cartTotal.toString(),
-      currency: 'BDT',
-      tran_id: tran_id,
-      success_url: `${window.location.origin}/#/payment/success?tran_id=${tran_id}`,
-      fail_url: `${window.location.origin}/#/payment/fail`,
-      cancel_url: `${window.location.origin}/#/payment/cancel`,
-      product_name: product_name,
-      product_category: 'Automotive',
-      product_profile: 'general',
-      cus_name: data.customer_name,
-      cus_email: 'customer@autosparkbd.com',
-      cus_add1: data.address,
-      cus_city: data.thana,
-      cus_state: data.district,
-      cus_postcode: '1200',
-      cus_country: 'Bangladesh',
-      cus_phone: data.mobile,
-      shipping_method: 'Courier',
-      ship_name: data.customer_name,
-      ship_add1: data.address,
-      ship_city: data.thana,
-      ship_state: data.district,
-      ship_postcode: '1200',
-      ship_country: 'Bangladesh',
-    };
+      const responseData = await response.json();
 
-    // Build form HTML with all fields
-    for (const [key, value] of Object.entries(fields)) {
-      // Escape HTML entities to prevent injection
-      const encodedValue = String(value).replace(/[&<>"']/g, char => ({
-        '&': '&amp;',
-        '<': '&lt;',
-        '>': '&gt;',
-        '"': '&quot;',
-        "'": '&#39;'
-      }[char] || char));
-      formHTML += `<input type="hidden" name="${key}" value="${encodedValue}">`;
-    }
-    
-    formHTML += '</form>';
+      if (!response.ok) {
+        throw new Error(responseData.error || 'Payment initialization failed');
+      }
 
-    // Insert form into DOM and submit immediately
-    const tempDiv = document.createElement('div');
-    tempDiv.innerHTML = formHTML;
-    const form = tempDiv.querySelector('form') as HTMLFormElement;
-    
-    if (form) {
-      document.body.appendChild(form);
-      form.submit();
-      setIsSubmitting(true);
-      // Don't reset setIsSubmitting because page will redirect
+      // SSLCommerz returns a JSON response with payment URLs
+      // Extract the GatewayPageURL from the response
+      if (responseData.GatewayPageURL) {
+        // Redirect to the SSLCommerz payment gateway
+        window.location.href = responseData.GatewayPageURL;
+      } else if (responseData.redirectGatewayURL) {
+        // Fallback to redirectGatewayURL if available
+        window.location.href = responseData.redirectGatewayURL;
+      } else {
+        throw new Error('No payment gateway URL found in response');
+      }
+    } catch (error) {
+      setIsSubmitting(false);
+      const errorMessage = error instanceof Error ? error.message : 'Payment initialization failed';
+      setError(errorMessage);
+      console.error('Payment error:', error);
     }
   };
 
@@ -131,6 +112,19 @@ const OnePageCheckout = () => {
           </h1>
           <p className="text-gray-500 mt-2">Complete your purchase in a single step.</p>
         </header>
+
+        {/* Error Alert */}
+        {error && (
+          <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg">
+            <p className="text-red-700 font-medium">{error}</p>
+            <button
+              onClick={() => setError(null)}
+              className="mt-2 text-sm text-red-600 hover:text-red-800 underline"
+            >
+              Dismiss
+            </button>
+          </div>
+        )}
 
         <form onSubmit={handleSubmit(onSubmit)} className="grid grid-cols-1 lg:grid-cols-2 gap-8">
           {/* Left Column: Billing Details */}
