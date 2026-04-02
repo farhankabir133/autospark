@@ -57,18 +57,19 @@ const OnePageCheckout = () => {
     }
   }, [districtValue, resetField]);
 
-  const onSubmit = async (data: BillingFormInputs) => {
-    setIsSubmitting(true);
+  const onSubmit = (data: BillingFormInputs) => {
     try {
+      setIsSubmitting(true);
+      
       const tran_id = `autospark-${Date.now()}`;
       const product_name = cartItems.map(item => item.name).join(', ') || 'Order';
 
-      // Create a hidden form and submit it directly to SSLCommerz
-      // This avoids CORS issues by using traditional form submission
+      // Create a form element to submit to SSLCommerz
       const form = document.createElement('form');
       form.method = 'POST';
       form.action = 'https://sandbox.sslcommerz.com/gwprocess/v4/api.php';
       form.style.display = 'none';
+      form.target = '_self'; // Open in same window
 
       const fields = {
         store_id: 'autos69cccc023b067',
@@ -110,12 +111,15 @@ const OnePageCheckout = () => {
 
       // Append form to body and submit
       document.body.appendChild(form);
-      form.submit();
       
-      // Form submission will naturally redirect, so no need to reset setIsSubmitting
+      // Submit the form - this will redirect away from the page
+      setTimeout(() => {
+        form.submit();
+      }, 0);
+      
     } catch (err: any) {
       console.error('Payment initiation failed:', err);
-      alert(`Payment failed: ${err.message}`);
+      alert(`Payment failed: ${err.message || 'Unknown error occurred'}`);
       setIsSubmitting(false);
     }
   };
