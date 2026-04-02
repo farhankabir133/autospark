@@ -36,10 +36,18 @@ export default async function handler(
     }
 
     // Get SSLCommerz credentials from environment variables
-    const STORE_ID = process.env.SSLCOMMERZ_STORE_ID || 'autos69cccc023b067';
+    const STORE_ID = process.env.SSLCOMMERZ_STORE_ID || process.env.STORE_ID;
     const STORE_PASSWORD =
-      process.env.SSLCOMMERZ_STORE_PASSWORD || 'autos69cccc023b067@ssl';
+      process.env.SSLCOMMERZ_STORE_PASSWORD || process.env.STORE_PASS;
     const SITE_URL = process.env.SITE_URL || 'https://autosparkbd.com';
+
+    // Validate credentials are available
+    if (!STORE_ID || !STORE_PASSWORD) {
+      console.error('Missing SSLCommerz credentials in environment');
+      return response.status(500).json({
+        error: 'Payment gateway not configured. Missing credentials.',
+      });
+    }
 
     // Generate transaction ID
     const tran_id = `autospark-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;

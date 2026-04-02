@@ -52,45 +52,48 @@ Deno.serve(async (req) => {
       ? cart.map((item: any) => item.name || 'Item').join(', ')
       : 'Order';
 
-    // Create FormData for SSLCommerz
-    const formData = new FormData();
-    formData.append('store_id', SSLCOMMERZ_STORE_ID);
-    formData.append('store_passwd', SSLCOMMERZ_STORE_PASSWORD);
-    formData.append('total_amount', String(total_amount));
-    formData.append('currency', 'BDT');
-    formData.append('tran_id', tran_id);
-    formData.append('success_url', `${SITE_URL}/payment/success?tran_id=${tran_id}`);
-    formData.append('fail_url', `${SITE_URL}/payment/fail`);
-    formData.append('cancel_url', `${SITE_URL}/payment/cancel`);
-    formData.append('product_name', product_name);
-    formData.append('product_category', 'Automotive');
-    formData.append('product_profile', 'general');
+    // Create URLSearchParams for SSLCommerz (FormData may not work in Deno environment)
+    const params = new URLSearchParams();
+    params.append('store_id', SSLCOMMERZ_STORE_ID);
+    params.append('store_passwd', SSLCOMMERZ_STORE_PASSWORD);
+    params.append('total_amount', String(total_amount));
+    params.append('currency', 'BDT');
+    params.append('tran_id', tran_id);
+    params.append('success_url', `${SITE_URL}/payment/success?tran_id=${tran_id}`);
+    params.append('fail_url', `${SITE_URL}/payment/fail`);
+    params.append('cancel_url', `${SITE_URL}/payment/cancel`);
+    params.append('product_name', product_name);
+    params.append('product_category', 'Automotive');
+    params.append('product_profile', 'general');
     
     // Customer details
-    formData.append('cus_name', customer_name);
-    formData.append('cus_email', 'customer@autosparkbd.com');
-    formData.append('cus_add1', address);
-    formData.append('cus_city', thana);
-    formData.append('cus_state', district);
-    formData.append('cus_postcode', '1200');
-    formData.append('cus_country', 'Bangladesh');
-    formData.append('cus_phone', mobile);
+    params.append('cus_name', customer_name);
+    params.append('cus_email', 'customer@autosparkbd.com');
+    params.append('cus_add1', address);
+    params.append('cus_city', thana);
+    params.append('cus_state', district);
+    params.append('cus_postcode', '1200');
+    params.append('cus_country', 'Bangladesh');
+    params.append('cus_phone', mobile);
 
     // Shipping details
-    formData.append('shipping_method', 'Courier');
-    formData.append('ship_name', customer_name);
-    formData.append('ship_add1', address);
-    formData.append('ship_city', thana);
-    formData.append('ship_state', district);
-    formData.append('ship_postcode', '1200');
-    formData.append('ship_country', 'Bangladesh');
+    params.append('shipping_method', 'Courier');
+    params.append('ship_name', customer_name);
+    params.append('ship_add1', address);
+    params.append('ship_city', thana);
+    params.append('ship_state', district);
+    params.append('ship_postcode', '1200');
+    params.append('ship_country', 'Bangladesh');
 
     console.log('Calling SSLCommerz API with transaction ID:', tran_id);
     
     const sslCommerzUrl = 'https://sandbox.sslcommerz.com/gwprocess/v4/api.php';
     const response = await fetch(sslCommerzUrl, {
       method: 'POST',
-      body: formData,
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+      },
+      body: params.toString(),
     });
 
     console.log('SSLCommerz response status:', response.status);

@@ -5,9 +5,14 @@
 
 // Supabase project details - loaded from environment variables
 export const SUPABASE_CONFIG = {
-  URL: import.meta.env.VITE_SUPABASE_URL || 'https://hcdwfxnvmvvkbpeshbqk.supabase.co',
-  ANON_KEY: import.meta.env.VITE_SUPABASE_ANON_KEY || 'sb_publishable_o4V4NsBTa1omeSCyl8GuuA_UppA17sl',
+  URL: import.meta.env.VITE_SUPABASE_URL,
+  ANON_KEY: import.meta.env.VITE_SUPABASE_ANON_KEY,
 };
+
+// Validate Supabase config
+if (!SUPABASE_CONFIG.URL || !SUPABASE_CONFIG.ANON_KEY) {
+  console.error('Missing Supabase configuration. Please set VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY');
+}
 
 // Payment Gateway URLs
 export const PAYMENT_GATEWAY_URLS = {
@@ -15,7 +20,7 @@ export const PAYMENT_GATEWAY_URLS = {
   INIT_PAYMENT: `${SUPABASE_CONFIG.URL}/functions/v1/init-ssl-payment`,
   
   // Fallback: Vercel serverless function
-  INIT_PAYMENT_FALLBACK: `${import.meta.env.VITE_PAYMENT_API_URL || 'https://autospark-one.vercel.app'}/api/payment/init`,
+  INIT_PAYMENT_FALLBACK: `${import.meta.env.VITE_PAYMENT_API_URL}/api/payment/init`,
   
   // SSLCommerz endpoints
   SSLCOMMERZ_SANDBOX: 'https://sandbox.sslcommerz.com',
@@ -29,15 +34,3 @@ export const getSupabaseAuthHeader = () => ({
   'Content-Type': 'application/json',
   'Authorization': `Bearer ${SUPABASE_CONFIG.ANON_KEY}`,
 });
-
-/**
- * SSLCommerz Store Credentials
- * These are loaded from environment variables in production
- * IMPORTANT: These should NEVER be exposed in frontend in production
- * The frontend should only call the backend Edge Function which has these credentials
- */
-export const SSLCOMMERZ_STORE = {
-  ID: import.meta.env.VITE_SSLCOMMERZ_STORE_ID || 'autos69cccc023b067',
-  PASSWORD: import.meta.env.VITE_SSLCOMMERZ_STORE_PASSWORD || 'autos69cccc023b067@ssl',
-  SANDBOX_MODE: import.meta.env.MODE === 'development',
-};
