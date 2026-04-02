@@ -11,10 +11,11 @@ export const SUPABASE_CONFIG = {
 
 // Payment Gateway URLs
 export const PAYMENT_GATEWAY_URLS = {
-  // Try multiple payment endpoints (primary and fallback)
-  INIT_PAYMENT: import.meta.env.VITE_PAYMENT_API_URL 
-    ? `${import.meta.env.VITE_PAYMENT_API_URL}/api/payment/init`
-    : `${SUPABASE_CONFIG.URL}/functions/v1/init-ssl-payment`,
+  // Primary: Supabase Edge Function for payment initialization
+  INIT_PAYMENT: `${SUPABASE_CONFIG.URL}/functions/v1/init-ssl-payment`,
+  
+  // Fallback: Vercel serverless function
+  INIT_PAYMENT_FALLBACK: `${import.meta.env.VITE_PAYMENT_API_URL || 'https://autospark-one.vercel.app'}/api/payment/init`,
   
   // SSLCommerz endpoints
   SSLCOMMERZ_SANDBOX: 'https://sandbox.sslcommerz.com',

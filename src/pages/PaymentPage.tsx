@@ -62,27 +62,34 @@ const OnePageCheckout = () => {
   const onSubmit = async (data: BillingFormInputs) => {
     setIsSubmitting(true);
     setError(null);
-    try {
-      // Prepare headers - use Bearer token if it looks like a Supabase URL
-      const isSupabase = PAYMENT_GATEWAY_URLS.INIT_PAYMENT.includes('supabase');
-      const headers = isSupabase
-        ? getSupabaseAuthHeader()
-        : { 'Content-Type': 'application/json' };
+    
+    const paymentData = {
+      cart: cartItems,
+      total_amount: cartTotal,
+      customer_name: data.customer_name,
+      mobile: data.mobile,
+      address: data.address,
+      thana: data.thana,
+      district: data.district,
+    };
 
-      // Call payment initialization endpoint
-      const response = await fetch(PAYMENT_GATEWAY_URLS.INIT_PAYMENT, {
+    try {
+      // Try Supabase first
+      let response = await fetch(PAYMENT_GATEWAY_URLS.INIT_PAYMENT, {
         method: 'POST',
-        headers: headers,
-        body: JSON.stringify({
-          cart: cartItems,
-          total_amount: cartTotal,
-          customer_name: data.customer_name,
-          mobile: data.mobile,
-          address: data.address,
-          thana: data.thana,
-          district: data.district,
-        }),
+        headers: getSupabaseAuthHeader(),
+        body: JSON.stringify(paymentData),
       });
+
+      // If Supabase fails, try Vercel API as fallback
+      if (!response.ok && response.status !== 500) {
+        console.warn('Supabase endpoint failed, trying Vercel API...');
+        response = await fetch(PAYMENT_GATEWAY_URLS.INIT_PAYMENT_FALLBACK, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(paymentData),
+        });
+      }
 
       const responseData = await response.json();
 
