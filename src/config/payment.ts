@@ -38,5 +38,8 @@ export const PAYMENT_GATEWAY_URLS = {
  */
 export const getSupabaseAuthHeader = () => ({
   'Content-Type': 'application/json',
-  'Authorization': `Bearer ${SUPABASE_CONFIG.ANON_KEY}`,
+  // Use the anon key as an API key header for Supabase Edge Functions.
+  // Do NOT send it as an Authorization bearer token, since the
+  // publishable key is not a JWT and Supabase will return 401.
+  apikey: SUPABASE_CONFIG.ANON_KEY,
 });
