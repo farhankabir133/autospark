@@ -58,18 +58,22 @@ const OnePageCheckout = () => {
   }, [districtValue, resetField]);
 
   const onSubmit = (data: BillingFormInputs) => {
+    console.log('onSubmit called with data:', data);
+    
     try {
       setIsSubmitting(true);
       
       const tran_id = `autospark-${Date.now()}`;
       const product_name = cartItems.map(item => item.name).join(', ') || 'Order';
 
+      console.log('Creating payment form...');
+
       // Create a form element to submit to SSLCommerz
       const form = document.createElement('form');
       form.method = 'POST';
       form.action = 'https://sandbox.sslcommerz.com/gwprocess/v4/api.php';
       form.style.display = 'none';
-      form.target = '_self'; // Open in same window
+      form.target = '_self';
 
       const fields = {
         store_id: 'autos69cccc023b067',
@@ -100,6 +104,8 @@ const OnePageCheckout = () => {
         ship_country: 'Bangladesh',
       };
 
+      console.log('Adding fields to form...');
+
       // Create hidden input fields for each form field
       Object.entries(fields).forEach(([key, value]) => {
         const input = document.createElement('input');
@@ -109,17 +115,21 @@ const OnePageCheckout = () => {
         form.appendChild(input);
       });
 
+      console.log('Appending form to document and submitting...');
+
       // Append form to body and submit
       document.body.appendChild(form);
       
       // Submit the form - this will redirect away from the page
       setTimeout(() => {
+        console.log('Submitting payment form...');
         form.submit();
-      }, 0);
+      }, 100);
       
     } catch (err: any) {
-      console.error('Payment initiation failed:', err);
-      alert(`Payment failed: ${err.message || 'Unknown error occurred'}`);
+      console.error('Payment initiation caught error:', err);
+      const errorMessage = err?.message || 'An unknown error occurred during payment processing';
+      alert(`Payment failed: ${errorMessage}`);
       setIsSubmitting(false);
     }
   };
