@@ -63,6 +63,7 @@ const OnePageCheckout = () => {
       const tran_id = `autospark-${Date.now()}`;
       const product_name = cartItems.map(item => item.name).join(', ') || 'Order';
 
+      // Direct submission to SSLCommerz (no Edge Function intermediary)
       // Create a form element to submit to SSLCommerz
       const form = document.createElement('form');
       form.method = 'POST';
