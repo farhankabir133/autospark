@@ -11,8 +11,10 @@ export const SUPABASE_CONFIG = {
 
 // Payment Gateway URLs
 export const PAYMENT_GATEWAY_URLS = {
-  // Supabase Edge Function for payment initialization
-  INIT_PAYMENT: `${SUPABASE_CONFIG.URL}/functions/v1/init-ssl-payment`,
+  // Try multiple payment endpoints (primary and fallback)
+  INIT_PAYMENT: import.meta.env.VITE_PAYMENT_API_URL 
+    ? `${import.meta.env.VITE_PAYMENT_API_URL}/api/payment/init`
+    : `${SUPABASE_CONFIG.URL}/functions/v1/init-ssl-payment`,
   
   // SSLCommerz endpoints
   SSLCOMMERZ_SANDBOX: 'https://sandbox.sslcommerz.com',

@@ -63,10 +63,16 @@ const OnePageCheckout = () => {
     setIsSubmitting(true);
     setError(null);
     try {
-      // Call Supabase Edge Function to initialize payment
+      // Prepare headers - use Bearer token if it looks like a Supabase URL
+      const isSupabase = PAYMENT_GATEWAY_URLS.INIT_PAYMENT.includes('supabase');
+      const headers = isSupabase
+        ? getSupabaseAuthHeader()
+        : { 'Content-Type': 'application/json' };
+
+      // Call payment initialization endpoint
       const response = await fetch(PAYMENT_GATEWAY_URLS.INIT_PAYMENT, {
         method: 'POST',
-        headers: getSupabaseAuthHeader(),
+        headers: headers,
         body: JSON.stringify({
           cart: cartItems,
           total_amount: cartTotal,
@@ -81,7 +87,7 @@ const OnePageCheckout = () => {
       const responseData = await response.json();
 
       if (!response.ok) {
-        throw new Error(responseData.error || 'Payment initialization failed');
+        throw new Error(responseData.error || responseData.message || 'Payment initialization failed');
       }
 
       // SSLCommerz returns a JSON response with payment URLs
