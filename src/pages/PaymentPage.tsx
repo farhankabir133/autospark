@@ -63,53 +63,49 @@ const OnePageCheckout = () => {
       const tran_id = `autospark-${Date.now()}`;
       const product_name = cartItems.map(item => item.name).join(', ') || 'Order';
 
-      // Direct submission to SSLCommerz (no Edge Function intermediary)
-      // Create a form element to submit to SSLCommerz
-      const form = document.createElement('form');
-      form.method = 'POST';
-      form.action = 'https://sandbox.sslcommerz.com/gwprocess/v4/api.php';
+      // Prepare form data for SSLCommerz
+      const formData = new FormData();
+      formData.append('store_id', 'autos69cccc023b067');
+      formData.append('store_passwd', 'autos69cccc023b067@ssl');
+      formData.append('total_amount', cartTotal.toString());
+      formData.append('currency', 'BDT');
+      formData.append('tran_id', tran_id);
+      formData.append('success_url', `${window.location.origin}/payment/success?tran_id=${tran_id}`);
+      formData.append('fail_url', `${window.location.origin}/payment/fail`);
+      formData.append('cancel_url', `${window.location.origin}/payment/cancel`);
+      formData.append('product_name', product_name);
+      formData.append('product_category', 'Automotive');
+      formData.append('product_profile', 'general');
+      formData.append('cus_name', data.customer_name);
+      formData.append('cus_email', 'customer@autosparkbd.com');
+      formData.append('cus_add1', data.address);
+      formData.append('cus_city', data.thana);
+      formData.append('cus_state', data.district);
+      formData.append('cus_postcode', '1200');
+      formData.append('cus_country', 'Bangladesh');
+      formData.append('cus_phone', data.mobile);
+      formData.append('shipping_method', 'Courier');
+      formData.append('ship_name', data.customer_name);
+      formData.append('ship_add1', data.address);
+      formData.append('ship_city', data.thana);
+      formData.append('ship_state', data.district);
+      formData.append('ship_postcode', '1200');
+      formData.append('ship_country', 'Bangladesh');
 
-      const fields = {
-        store_id: 'autos69cccc023b067',
-        store_passwd: 'autos69cccc023b067@ssl',
-        total_amount: cartTotal.toString(),
-        currency: 'BDT',
-        tran_id: tran_id,
-        success_url: `${window.location.origin}/payment/success?tran_id=${tran_id}`,
-        fail_url: `${window.location.origin}/payment/fail`,
-        cancel_url: `${window.location.origin}/payment/cancel`,
-        product_name: product_name,
-        product_category: 'Automotive',
-        product_profile: 'general',
-        cus_name: data.customer_name,
-        cus_email: 'customer@autosparkbd.com',
-        cus_add1: data.address,
-        cus_city: data.thana,
-        cus_state: data.district,
-        cus_postcode: '1200',
-        cus_country: 'Bangladesh',
-        cus_phone: data.mobile,
-        shipping_method: 'Courier',
-        ship_name: data.customer_name,
-        ship_add1: data.address,
-        ship_city: data.thana,
-        ship_state: data.district,
-        ship_postcode: '1200',
-        ship_country: 'Bangladesh',
-      };
-
-      // Add fields to form
-      Object.entries(fields).forEach(([key, value]) => {
-        const input = document.createElement('input');
-        input.type = 'hidden';
-        input.name = key;
-        input.value = value as string;
-        form.appendChild(input);
+      // Send request to SSLCommerz API
+      const response = await fetch('https://sandbox.sslcommerz.com/gwprocess/v4/api.php', {
+        method: 'POST',
+        body: formData,
       });
 
-      // Submit the form
-      document.body.appendChild(form);
-      form.submit();
+      const result = await response.json();
+
+      if (result.status === 'SUCCESS' && result.GatewayPageURL) {
+        // Redirect to SSLCommerz payment gateway
+        window.location.href = result.GatewayPageURL;
+      } else {
+        throw new Error(result.failedreason || 'Payment gateway initialization failed');
+      }
     } catch (err: any) {
       console.error('Payment initiation failed:', err);
       alert(`Payment failed: ${err.message}`);
