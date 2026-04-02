@@ -81,9 +81,18 @@ const OnePageCheckout = () => {
         body: JSON.stringify(paymentData),
       });
 
-      // If Supabase fails, try Vercel API as fallback
-      if (!response.ok && response.status !== 500) {
-        console.warn('Supabase endpoint failed, trying Vercel API...');
+      // If Supabase fails for ANY reason, try Vercel API as fallback
+      if (!response.ok) {
+        console.warn('Supabase endpoint failed with status', response.status, '- trying Vercel API as fallback');
+        try {
+          const supabaseError = await response.json().catch(() => null);
+          if (supabaseError) {
+            console.warn('Supabase error response:', supabaseError);
+          }
+        } catch {
+          // ignore JSON parse errors
+        }
+
         response = await fetch(PAYMENT_GATEWAY_URLS.INIT_PAYMENT_FALLBACK, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },

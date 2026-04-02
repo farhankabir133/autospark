@@ -3,15 +3,19 @@
  * Centralized configuration for payment gateway integration
  */
 
-// Supabase project details - loaded from environment variables
+// Supabase project details - loaded from environment variables with safe defaults
 export const SUPABASE_CONFIG = {
-  URL: import.meta.env.VITE_SUPABASE_URL,
-  ANON_KEY: import.meta.env.VITE_SUPABASE_ANON_KEY,
+  // These are public values; safe to embed as defaults so static builds (e.g. GitHub Pages) still work
+  URL: import.meta.env.VITE_SUPABASE_URL || 'https://hcdwfxnvmvvkbpeshbqk.supabase.co',
+  ANON_KEY:
+    import.meta.env.VITE_SUPABASE_ANON_KEY ||
+    'sb_publishable_o4V4NsBTa1omeSCyl8GuuA_UppA17sl',
 };
 
-// Validate Supabase config
-if (!SUPABASE_CONFIG.URL || !SUPABASE_CONFIG.ANON_KEY) {
-  console.error('Missing Supabase configuration. Please set VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY');
+if (!import.meta.env.VITE_SUPABASE_URL || !import.meta.env.VITE_SUPABASE_ANON_KEY) {
+  console.warn(
+    'Using fallback Supabase URL/ANON_KEY defaults. For production builds, set VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY.',
+  );
 }
 
 // Payment Gateway URLs
@@ -20,7 +24,9 @@ export const PAYMENT_GATEWAY_URLS = {
   INIT_PAYMENT: `${SUPABASE_CONFIG.URL}/functions/v1/init-ssl-payment`,
   
   // Fallback: Vercel serverless function
-  INIT_PAYMENT_FALLBACK: `${import.meta.env.VITE_PAYMENT_API_URL}/api/payment/init`,
+  INIT_PAYMENT_FALLBACK: `${
+    import.meta.env.VITE_PAYMENT_API_URL || 'https://autospark-one.vercel.app'
+  }/api/payment/init`,
   
   // SSLCommerz endpoints
   SSLCOMMERZ_SANDBOX: 'https://sandbox.sslcommerz.com',

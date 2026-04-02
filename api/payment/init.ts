@@ -1,12 +1,29 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
 
+const corsHeaders = {
+  'Access-Control-Allow-Origin': '*',
+  'Access-Control-Allow-Methods': 'POST, OPTIONS',
+  'Access-Control-Allow-Headers': 'Content-Type',
+};
+
 export default async function handler(
   request: VercelRequest,
   response: VercelResponse
 ) {
+  // Handle CORS preflight
+  if (request.method === 'OPTIONS') {
+    return response.status(200).setHeader('Access-Control-Allow-Origin', '*')
+      .setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS')
+      .setHeader('Access-Control-Allow-Headers', 'Content-Type')
+      .end();
+  }
+
   // Only allow POST requests
   if (request.method !== 'POST') {
-    return response.status(405).json({ error: 'Method not allowed' });
+    return response
+      .status(405)
+      .setHeader('Access-Control-Allow-Origin', '*')
+      .json({ error: 'Method not allowed' });
   }
 
   try {
@@ -30,9 +47,12 @@ export default async function handler(
       !thana ||
       !district
     ) {
-      return response.status(400).json({
-        error: 'Missing required fields',
-      });
+      return response
+        .status(400)
+        .setHeader('Access-Control-Allow-Origin', '*')
+        .json({
+          error: 'Missing required fields',
+        });
     }
 
     // Get SSLCommerz credentials from environment variables
@@ -44,9 +64,12 @@ export default async function handler(
     // Validate credentials are available
     if (!STORE_ID || !STORE_PASSWORD) {
       console.error('Missing SSLCommerz credentials in environment');
-      return response.status(500).json({
-        error: 'Payment gateway not configured. Missing credentials.',
-      });
+      return response
+        .status(500)
+        .setHeader('Access-Control-Allow-Origin', '*')
+        .json({
+          error: 'Payment gateway not configured. Missing credentials.',
+        });
     }
 
     // Generate transaction ID
@@ -102,29 +125,41 @@ export default async function handler(
 
     if (!sslResponse.ok) {
       console.error('SSLCommerz API error:', sslResponse.status);
-      return response.status(400).json({
-        error: `SSLCommerz API error: ${sslResponse.status}`,
-      });
+      return response
+        .status(400)
+        .setHeader('Access-Control-Allow-Origin', '*')
+        .json({
+          error: `SSLCommerz API error: ${sslResponse.status}`,
+        });
     }
 
     const sslczData = await sslResponse.json();
 
     if (sslczData.status !== 'SUCCESS') {
       console.error('Payment initialization failed:', sslczData);
-      return response.status(400).json({
-        error: `Payment failed: ${sslczData.failedreason || 'Unknown error'}`,
-        details: sslczData,
-      });
+      return response
+        .status(400)
+        .setHeader('Access-Control-Allow-Origin', '*')
+        .json({
+          error: `Payment failed: ${sslczData.failedreason || 'Unknown error'}`,
+          details: sslczData,
+        });
     }
 
     // Return success response with gateway URL
-    return response.status(200).json(sslczData);
+    return response
+      .status(200)
+      .setHeader('Access-Control-Allow-Origin', '*')
+      .json(sslczData);
   } catch (error) {
     const errorMessage =
       error instanceof Error ? error.message : 'Unknown error';
     console.error('Payment API error:', errorMessage);
-    return response.status(500).json({
-      error: `Server error: ${errorMessage}`,
-    });
+    return response
+      .status(500)
+      .setHeader('Access-Control-Allow-Origin', '*')
+      .json({
+        error: `Server error: ${errorMessage}`,
+      });
   }
 }
