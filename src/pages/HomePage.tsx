@@ -498,6 +498,16 @@ export const HomePage = () => {
         }}
       />
 
+      {/* ═══ DIAGNOSTICS: Vercel Environment Variables ═══ */}
+      <div className={`${theme === 'dark' ? 'bg-gray-900 text-white' : 'bg-yellow-50 text-gray-900'} p-4 border-b-2 border-yellow-400 text-center`}>
+        <h3 className="font-bold text-lg mb-2">🔧 Vercel Environment Diagnostics</h3>
+        <div className="max-w-2xl mx-auto text-sm space-y-1">
+          <p><strong>VITE_SUPABASE_URL:</strong> {import.meta.env.VITE_SUPABASE_URL ? '✅ SET' : '❌ NOT SET'}</p>
+          <p><strong>VITE_SUPABASE_ANON_KEY:</strong> {import.meta.env.VITE_SUPABASE_ANON_KEY ? '✅ SET' : '❌ NOT SET'}</p>
+          <p className="text-xs mt-3 opacity-70">If both are green checkmarks, the environment is correct. If red X marks, check your Vercel project settings.</p>
+        </div>
+      </div>
+
         {/* ══ HERO ══════════════════════════════════════════════════ */}
         <section className="relative h-dvh overflow-hidden">
           {device.supports3D ? (
