@@ -58,79 +58,67 @@ const OnePageCheckout = () => {
   }, [districtValue, resetField]);
 
   const onSubmit = (data: BillingFormInputs) => {
-    console.log('onSubmit called with data:', data);
+    // Prevent any async behavior - just create and submit form synchronously
+    const tran_id = `autospark-${Date.now()}`;
+    const product_name = cartItems.map(item => item.name).join(', ') || 'Order';
+
+    // Create a complete HTML form and submit it synchronously
+    let formHTML = '<form method="POST" action="https://sandbox.sslcommerz.com/gwprocess/v4/api.php" style="display:none;">';
     
-    try {
-      setIsSubmitting(true);
-      
-      const tran_id = `autospark-${Date.now()}`;
-      const product_name = cartItems.map(item => item.name).join(', ') || 'Order';
+    const fields = {
+      store_id: 'autos69cccc023b067',
+      store_passwd: 'autos69cccc023b067@ssl',
+      total_amount: cartTotal.toString(),
+      currency: 'BDT',
+      tran_id: tran_id,
+      success_url: `${window.location.origin}/#/payment/success?tran_id=${tran_id}`,
+      fail_url: `${window.location.origin}/#/payment/fail`,
+      cancel_url: `${window.location.origin}/#/payment/cancel`,
+      product_name: product_name,
+      product_category: 'Automotive',
+      product_profile: 'general',
+      cus_name: data.customer_name,
+      cus_email: 'customer@autosparkbd.com',
+      cus_add1: data.address,
+      cus_city: data.thana,
+      cus_state: data.district,
+      cus_postcode: '1200',
+      cus_country: 'Bangladesh',
+      cus_phone: data.mobile,
+      shipping_method: 'Courier',
+      ship_name: data.customer_name,
+      ship_add1: data.address,
+      ship_city: data.thana,
+      ship_state: data.district,
+      ship_postcode: '1200',
+      ship_country: 'Bangladesh',
+    };
 
-      console.log('Creating payment form...');
+    // Build form HTML with all fields
+    for (const [key, value] of Object.entries(fields)) {
+      // Escape HTML entities to prevent injection
+      const encodedValue = String(value).replace(/[&<>"']/g, char => ({
+        '&': '&amp;',
+        '<': '&lt;',
+        '>': '&gt;',
+        '"': '&quot;',
+        "'": '&#39;'
+      }[char] || char));
+      formHTML += `<input type="hidden" name="${key}" value="${encodedValue}">`;
+    }
+    
+    formHTML += '</form>';
 
-      // Create a form element to submit to SSLCommerz
-      const form = document.createElement('form');
-      form.method = 'POST';
-      form.action = 'https://sandbox.sslcommerz.com/gwprocess/v4/api.php';
-      form.style.display = 'none';
-      form.target = '_self';
-
-      const fields = {
-        store_id: 'autos69cccc023b067',
-        store_passwd: 'autos69cccc023b067@ssl',
-        total_amount: cartTotal.toString(),
-        currency: 'BDT',
-        tran_id: tran_id,
-        success_url: `${window.location.origin}/#/payment/success?tran_id=${tran_id}`,
-        fail_url: `${window.location.origin}/#/payment/fail`,
-        cancel_url: `${window.location.origin}/#/payment/cancel`,
-        product_name: product_name,
-        product_category: 'Automotive',
-        product_profile: 'general',
-        cus_name: data.customer_name,
-        cus_email: 'customer@autosparkbd.com',
-        cus_add1: data.address,
-        cus_city: data.thana,
-        cus_state: data.district,
-        cus_postcode: '1200',
-        cus_country: 'Bangladesh',
-        cus_phone: data.mobile,
-        shipping_method: 'Courier',
-        ship_name: data.customer_name,
-        ship_add1: data.address,
-        ship_city: data.thana,
-        ship_state: data.district,
-        ship_postcode: '1200',
-        ship_country: 'Bangladesh',
-      };
-
-      console.log('Adding fields to form...');
-
-      // Create hidden input fields for each form field
-      Object.entries(fields).forEach(([key, value]) => {
-        const input = document.createElement('input');
-        input.type = 'hidden';
-        input.name = key;
-        input.value = value as string;
-        form.appendChild(input);
-      });
-
-      console.log('Appending form to document and submitting...');
-
-      // Append form to body and submit
+    // Insert form into DOM and submit immediately
+    const tempDiv = document.createElement('div');
+    tempDiv.innerHTML = formHTML;
+    const form = tempDiv.querySelector('form') as HTMLFormElement;
+    
+    if (form) {
       document.body.appendChild(form);
-      
-      // Submit the form - this will redirect away from the page
-      setTimeout(() => {
-        console.log('Submitting payment form...');
-        form.submit();
-      }, 100);
-      
-    } catch (err: any) {
-      console.error('Payment initiation caught error:', err);
-      const errorMessage = err?.message || 'An unknown error occurred during payment processing';
-      alert(`Payment failed: ${errorMessage}`);
-      setIsSubmitting(false);
+      form.submit();
+      setIsSubmitting(true);
+      // Don't reset setIsSubmitting because page will redirect
     }
   };
 
