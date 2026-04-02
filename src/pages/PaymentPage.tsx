@@ -5,7 +5,6 @@ import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 import { Loader2 } from 'lucide-react';
-import { supabase } from '../lib/supabase';
 import { bdDistricts, bdThanas } from '../data/bd-locations';
 import { useCart } from '../contexts/CartContext';
 
@@ -61,23 +60,55 @@ const OnePageCheckout = () => {
   const onSubmit = async (data: BillingFormInputs) => {
     setIsSubmitting(true);
     try {
-      const { data: responseData, error } = await supabase.functions.invoke('init-ssl-payment', {
-        body: JSON.stringify({
-          ...data,
-          cart: cartItems,
-          total_amount: cartTotal,
-        }),
+      const tran_id = `autospark-${Date.now()}`;
+      const product_name = cartItems.map(item => item.name).join(', ') || 'Order';
+
+      // Create a form element to submit to SSLCommerz
+      const form = document.createElement('form');
+      form.method = 'POST';
+      form.action = 'https://sandbox.sslcommerz.com/gwprocess/v4/api.php';
+
+      const fields = {
+        store_id: 'autos69cccc023b067',
+        store_passwd: 'autos69cccc023b067@ssl',
+        total_amount: cartTotal.toString(),
+        currency: 'BDT',
+        tran_id: tran_id,
+        success_url: `${window.location.origin}/payment/success?tran_id=${tran_id}`,
+        fail_url: `${window.location.origin}/payment/fail`,
+        cancel_url: `${window.location.origin}/payment/cancel`,
+        product_name: product_name,
+        product_category: 'Automotive',
+        product_profile: 'general',
+        cus_name: data.customer_name,
+        cus_email: 'customer@autosparkbd.com',
+        cus_add1: data.address,
+        cus_city: data.thana,
+        cus_state: data.district,
+        cus_postcode: '1200',
+        cus_country: 'Bangladesh',
+        cus_phone: data.mobile,
+        shipping_method: 'Courier',
+        ship_name: data.customer_name,
+        ship_add1: data.address,
+        ship_city: data.thana,
+        ship_state: data.district,
+        ship_postcode: '1200',
+        ship_country: 'Bangladesh',
+      };
+
+      // Add fields to form
+      Object.entries(fields).forEach(([key, value]) => {
+        const input = document.createElement('input');
+        input.type = 'hidden';
+        input.name = key;
+        input.value = value as string;
+        form.appendChild(input);
       });
 
-      if (error) {
-        throw new Error(`Supabase function error: ${error.message}`);
-      }
-
-      if (responseData?.GatewayPageURL) {
-        window.location.replace(responseData.GatewayPageURL);
-      } else {
-        throw new Error('Failed to get payment gateway URL.');
-      }
+      // Submit the form
+      document.body.appendChild(form);
+      form.submit();
     } catch (err: any) {
       console.error('Payment initiation failed:', err);
       alert(`Payment failed: ${err.message}`);
