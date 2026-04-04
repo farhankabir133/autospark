@@ -2,16 +2,36 @@ const express = require('express')
 const bodyParser = require('body-parser')
 const fs = require('fs')
 const path = require('path')
+const SSLCommerzPayment = require('sslcommerz-lts')
 const app = express()
 const PORT = process.env.PORT || 8787
 
 app.use(bodyParser.json())
 
+// Basic CORS for local dev (frontend on 5173, backend on 8787)
+app.use((req, res, next) => {
+  res.header('Access-Control-Allow-Origin', '*')
+  res.header('Access-Control-Allow-Methods', 'GET,POST,PUT,PATCH,DELETE,OPTIONS')
+  res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization')
+  if (req.method === 'OPTIONS') {
+    return res.sendStatus(204)
+  }
+  next()
+})
+
 // Point to the agent's chat completions path per the OpenAPI spec
 const AGENT_URL = 'https://epbmkschwzip4c6atjl2tgbu.agents.do-ai.run/api/v1/chat/completions'
 
-// Payment API URL - point to Vercel deployment
+// Payment API URL - legacy proxy target (no longer used for new SSLCommerz flow)
 const PAYMENT_API_URL = process.env.PAYMENT_API_URL || 'https://autospark-one.vercel.app'
+
+// SSLCommerz credentials (use env vars in real deployments)
+const SSLCZ_STORE_ID = process.env.SSLCZ_STORE_ID || 'autos69cccc023b067'
+const SSLCZ_STORE_PASSWD = process.env.SSLCZ_STORE_PASSWD || 'autos69cccc023b067@ssl'
+const SSLCZ_IS_LIVE = process.env.SSLCZ_IS_LIVE === 'true' // default sandbox
+
+// Base URL of this backend for callback URLs (update in production)
+const BASE_URL = process.env.BASE_URL || 'http://localhost:' + PORT
 
 // Simple file-backed conversation store (development). For production use
 // a real DB (Supabase/Postgres). Conversations are stored in ./data/conversations.json
@@ -57,92 +77,108 @@ app.get('/api/conversations/:id', (req, res)=>{
   }catch(e){ res.status(500).json({ error: 'err' }) }
 })
 
-// Payment API Routes - forward to DigitalOcean App Platform
-app.post('/api/payment/initiate', async (req, res) => {
-  try {
-    console.log('[proxy] POST /api/payment/initiate -> ' + PAYMENT_API_URL + '/api/payment/initiate')
-    const response = await fetch(PAYMENT_API_URL + '/api/payment/initiate', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(req.body),
-    })
+// New SSLCommerz payment API routes (direct integration using sslcommerz-lts)
 
-    const data = await response.json()
-    console.log('[proxy] payment/initiate response status:', response.status)
-    res.status(response.status).json(data)
+// Initialize a transaction: called from React frontend
+app.post('/api/payment/init', async (req, res) => {
+  try {
+    const {
+      total_amount,
+      currency = 'BDT',
+      tran_id,
+      customer_name,
+      mobile,
+      address,
+      thana,
+      district,
+      cart,
+    } = req.body || {}
+
+    if (!total_amount || !customer_name || !mobile) {
+      return res.status(400).json({ error: 'Missing required payment fields' })
+    }
+
+    const uniqueTranId = tran_id || 'AS-' + Date.now()
+
+    const data = {
+      total_amount: Number(total_amount),
+      currency,
+      tran_id: uniqueTranId,
+      success_url: BASE_URL + '/api/payment/success',
+      fail_url: BASE_URL + '/api/payment/fail',
+      cancel_url: BASE_URL + '/api/payment/cancel',
+      ipn_url: BASE_URL + '/api/payment/ipn',
+      shipping_method: 'Courier',
+      product_name: 'AutoSpark Order',
+      product_category: 'Automotive',
+      product_profile: 'general',
+      cus_name: customer_name,
+      cus_email: 'customer@example.com',
+      cus_add1: address,
+      cus_add2: thana,
+      cus_city: district,
+      cus_state: district,
+      cus_postcode: '0000',
+      cus_country: 'Bangladesh',
+      cus_phone: mobile,
+      cus_fax: mobile,
+      ship_name: customer_name,
+      ship_add1: address,
+      ship_add2: thana,
+      ship_city: district,
+      ship_state: district,
+      ship_postcode: '0000',
+      ship_country: 'Bangladesh',
+      emi_option: 0,
+      value_a: JSON.stringify({ cart: cart || [], mobile }),
+    }
+
+    const sslcz = new SSLCommerzPayment(SSLCZ_STORE_ID, SSLCZ_STORE_PASSWD, SSLCZ_IS_LIVE)
+    const apiResponse = await sslcz.init(data)
+
+    if (!apiResponse || !apiResponse.GatewayPageURL) {
+      console.error('[sslcommerz] invalid init response', apiResponse)
+      return res.status(500).json({ error: 'Failed to initialize payment', details: apiResponse })
+    }
+
+    console.log('[sslcommerz] redirecting to:', apiResponse.GatewayPageURL)
+
+    // Frontend expects a JSON with redirectUrl
+    return res.json({
+      redirectUrl: apiResponse.GatewayPageURL,
+      GatewayPageURL: apiResponse.GatewayPageURL,
+      status: apiResponse.status,
+      tran_id: uniqueTranId,
+    })
   } catch (err) {
-    console.error('[proxy] payment/initiate error', err)
-    res.status(500).json({ error: 'Payment initiation failed', details: err.message })
+    console.error('[sslcommerz] /api/payment/init error', err)
+    return res.status(500).json({ error: 'Payment initiation failed', details: err.message })
   }
 })
 
-app.post('/api/payment/success', async (req, res) => {
-  try {
-    console.log('[proxy] POST /api/payment/success -> ' + PAYMENT_API_URL + '/api/payment/success')
-    const response = await fetch(PAYMENT_API_URL + '/api/payment/success', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(req.body),
-    })
-
-    const location = response.headers.get('location')
-    if (location) {
-      console.log('[proxy] redirecting to:', location)
-      res.redirect(response.status, location)
-    } else {
-      const data = await response.json()
-      res.status(response.status).json(data)
-    }
-  } catch (err) {
-    console.error('[proxy] payment/success error', err)
-    res.redirect('/payment-failed')
-  }
+// SSLCommerz success callback
+app.post('/api/payment/success', (req, res) => {
+  console.log('[sslcommerz] payment success', req.body)
+  // For now, just redirect to a static success page on the frontend
+  res.redirect(302, '/payment-success')
 })
 
-app.post('/api/payment/fail', async (req, res) => {
-  try {
-    console.log('[proxy] POST /api/payment/fail -> ' + PAYMENT_API_URL + '/api/payment/fail')
-    const response = await fetch(PAYMENT_API_URL + '/api/payment/fail', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(req.body),
-    })
-
-    const location = response.headers.get('location')
-    if (location) {
-      console.log('[proxy] redirecting to:', location)
-      res.redirect(response.status, location)
-    } else {
-      const data = await response.json()
-      res.status(response.status).json(data)
-    }
-  } catch (err) {
-    console.error('[proxy] payment/fail error', err)
-    res.redirect('/payment-failed')
-  }
+// SSLCommerz fail callback
+app.post('/api/payment/fail', (req, res) => {
+  console.log('[sslcommerz] payment fail', req.body)
+  res.redirect(302, '/payment-failed')
 })
 
-app.post('/api/payment/cancel', async (req, res) => {
-  try {
-    console.log('[proxy] POST /api/payment/cancel -> ' + PAYMENT_API_URL + '/api/payment/cancel')
-    const response = await fetch(PAYMENT_API_URL + '/api/payment/cancel', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(req.body),
-    })
+// SSLCommerz cancel callback
+app.post('/api/payment/cancel', (req, res) => {
+  console.log('[sslcommerz] payment cancel', req.body)
+  res.redirect(302, '/payment-cancelled')
+})
 
-    const location = response.headers.get('location')
-    if (location) {
-      console.log('[proxy] redirecting to:', location)
-      res.redirect(response.status, location)
-    } else {
-      const data = await response.json()
-      res.status(response.status).json(data)
-    }
-  } catch (err) {
-    console.error('[proxy] payment/cancel error', err)
-    res.redirect('/payment-cancelled')
-  }
+// Optional IPN handler
+app.post('/api/payment/ipn', (req, res) => {
+  console.log('[sslcommerz] IPN', req.body)
+  res.json({ received: true })
 })
 
 // Single handler for GET/POST/OPTIONS so we reliably accept both POST JSON

@@ -1,7 +1,8 @@
 
 [functions.init-ssl-payment]
 enabled = true
-verify_jwt = true
+# Allow public invocation from the frontend (no JWT required)
+verify_jwt = false
 import_map = "./functions/init-ssl-payment/deno.json"
 # Uncomment to specify a custom file path to the entrypoint.
 # Supported file extensions are: .ts, .js, .mjs, .jsx, .tsx

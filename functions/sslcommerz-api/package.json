@@ -1,0 +1,10 @@
+{
+  "name": "sslcommerz-api",
+  "version": "1.0.0",
+  "description": "Appwrite function to initialize and handle SSLCommerz payments",
+  "main": "src/main.js",
+  "dependencies": {
+    "appwrite": "^24.1.1",
+    "sslcommerz-lts": "^1.1.0"
+  }
+}

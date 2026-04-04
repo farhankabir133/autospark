@@ -25,6 +25,7 @@
     "@react-three/fiber": "^8.16.8",
     "@supabase/supabase-js": "^2.101.1",
     "@types/three": "^0.163.0",
+    "appwrite": "^24.1.1",
     "framer-motion": "^12.34.3",
     "gsap": "^3.14.2",
     "lucide-react": "^0.344.0",
@@ -36,6 +37,7 @@
     "react-router-dom": "^7.13.1",
     "rehype-sanitize": "^5.0.1",
     "remark-gfm": "^3.0.1",
+    "sslcommerz-lts": "^1.2.0",
     "three": "~0.163.0",
     "zod": "^4.3.6"
   },

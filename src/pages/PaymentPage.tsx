@@ -7,7 +7,9 @@ import * as z from 'zod';
 import { Loader2 } from 'lucide-react';
 import { bdDistricts, bdThanas } from '../data/bd-locations';
 import { useCart } from '../contexts/CartContext';
-import { PAYMENT_GATEWAY_URLS, getSupabaseAuthHeader } from '../config/payment';
+import { PAYMENT_API, type PaymentInitResponse } from '../config/payment';
+import { functions } from '../config/appwrite';
+import { ExecutionMethod } from 'appwrite';
 
 const phoneRegex = new RegExp(/^01[3-9]\d{8}$/);
 
@@ -74,48 +76,38 @@ const OnePageCheckout = () => {
     };
 
     try {
-      // Try Supabase first
-      let response = await fetch(PAYMENT_GATEWAY_URLS.INIT_PAYMENT, {
-        method: 'POST',
-        headers: getSupabaseAuthHeader(),
-        body: JSON.stringify(paymentData),
-      });
+      // Use Appwrite Function to initialize payment securely
+      const execution = await functions.createExecution(
+        PAYMENT_API.INIT_FUNCTION_ID,
+        JSON.stringify(paymentData),
+        false, // async = false (we want to wait for the result)
+        '/init', // path correctly routed in main.js
+        ExecutionMethod.POST // method
+      );
 
-      // If Supabase fails for ANY reason, try Vercel API as fallback
-      if (!response.ok) {
-        console.warn('Supabase endpoint failed with status', response.status, '- trying Vercel API as fallback');
-        try {
-          const supabaseError = await response.json().catch(() => null);
-          if (supabaseError) {
-            console.warn('Supabase error response:', supabaseError);
-          }
-        } catch {
-          // ignore JSON parse errors
-        }
-
-        response = await fetch(PAYMENT_GATEWAY_URLS.INIT_PAYMENT_FALLBACK, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(paymentData),
-        });
+      let responseData: PaymentInitResponse = {};
+      try {
+        responseData = JSON.parse(execution.responseBody);
+      } catch (e) {
+        console.error('Failed to parse function response:', execution.responseBody);
+        throw new Error('Invalid response from payment server');
       }
 
-      const responseData = await response.json();
-
-      if (!response.ok) {
+      if (execution.status === 'failed' || execution.responseStatusCode >= 400 || responseData.error) {
         throw new Error(responseData.error || responseData.message || 'Payment initialization failed');
       }
 
-      // SSLCommerz returns a JSON response with payment URLs
-      // Extract the GatewayPageURL from the response
-      if (responseData.GatewayPageURL) {
-        // Redirect to the SSLCommerz payment gateway
-        window.location.href = responseData.GatewayPageURL;
-      } else if (responseData.redirectGatewayURL) {
-        // Fallback to redirectGatewayURL if available
-        window.location.href = responseData.redirectGatewayURL;
+      // Prefer a generic redirectUrl from the ProKit-style backend,
+      // but also support legacy SSLCommerz-style field names.
+      const redirectUrl =
+        responseData.redirectUrl ||
+        responseData.GatewayPageURL ||
+        responseData.redirectGatewayURL;
+
+      if (redirectUrl) {
+        window.location.href = redirectUrl;
       } else {
-        throw new Error('No payment gateway URL found in response');
+        throw new Error('No payment redirect URL found in response');
       }
     } catch (error) {
       setIsSubmitting(false);
