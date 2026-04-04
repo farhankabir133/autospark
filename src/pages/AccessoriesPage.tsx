@@ -105,7 +105,7 @@ const demoProducts: AccessoryProduct[] = [
   { id: '1021', name_en: 'CHR Casing', name_bn: '', price: 2000, category: 'Accessories', stock_quantity: 10, is_available: true, images: [], brand: '', rating: 0, reviews: 0, discount: 0, compatibility: [], isNew: false, isBestseller: false },
   { id: '1022', name_en: 'Coil Cap Rubber RBI', name_bn: '', price: 950, category: 'Accessories', stock_quantity: 10, is_available: true, images: [], brand: '', rating: 0, reviews: 0, discount: 0, compatibility: [], isNew: false, isBestseller: false },
   { id: '1023', name_en: 'Coolant', name_bn: '', price: 650, category: 'Accessories', stock_quantity: 10, is_available: true, images: [], brand: '', rating: 0, reviews: 0, discount: 0, compatibility: [], isNew: false, isBestseller: false },
-  { id: '1024', name_en: 'Cosmic Wax', name_bn: '', price: 750, category: 'Accessories', stock_quantity: 10, is_available: true, images: [], brand: '', rating: 0, reviews: 0, discount: 0, compatibility: [], isNew: false, isBestseller: false },
+  { id: '1024', name_en: 'Cosmic Wax', name_bn: '', price: 750, category: 'Accessories', stock_quantity: 10, is_available: true, images: [{ image_url: '/P2/cosmicwax.webp' }], brand: '', rating: 0, reviews: 0, discount: 0, compatibility: [], isNew: false, isBestseller: false },
   { id: '1025', name_en: 'CVT Fluid NS-3', name_bn: '', price: 6950, category: 'Accessories', stock_quantity: 10, is_available: true, images: [{ image_url: '/P2/3 Background Removed Medium.webp' }], brand: '', rating: 0, reviews: 0, discount: 0, compatibility: [], isNew: false, isBestseller: false },
   { id: '1026', name_en: 'CVT Fluid TC', name_bn: '', price: 7550, category: 'Accessories', stock_quantity: 10, is_available: true, images: [], brand: '', rating: 0, reviews: 0, discount: 0, compatibility: [], isNew: false, isBestseller: false },
   { id: '1027', name_en: 'Cycle Show Piece', name_bn: '', price: 0, category: 'Accessories', stock_quantity: 10, is_available: true, images: [], brand: '', rating: 0, reviews: 0, discount: 0, compatibility: [], isNew: false, isBestseller: false },
@@ -2929,14 +2929,8 @@ export const AccessoriesPage: React.FC = () => {
       return;
     }
 
-    // If the same term is already applied, toggle clear. Otherwise apply the new term.
-    if (trimmed === (searchTerm || '')) {
-      setSearchInput('');
-      setSearchTerm('');
-    } else {
-      setSearchTerm(trimmed);
-    }
-  }, [searchInput, searchTerm]);
+    setSearchTerm(trimmed);
+  }, [searchInput]);
   const filteredProducts = useMemo(() => {
     let result = [...products];
 
@@ -2945,49 +2939,56 @@ export const AccessoriesPage: React.FC = () => {
       result = result.filter(p => p.category === selectedCategory);
     }
 
-    // Search filter with relevance ranking
-      if (searchTerm) {
-        const term = searchTerm.trim().toLowerCase();
-        if (term.length > 0) {
-          // helper to get normalized fields
-          const get = (p: AccessoryProduct, fieldNames: string[]) => {
-            for (const f of fieldNames) {
-              // allow either name_en or name
-              const v = (p as any)[f];
-              if (typeof v === 'string' && v.length > 0) return v.toLowerCase();
-            }
-            return '';
-          };
+    // Search filter with precision scoring
+    if (searchTerm) {
+      const term = searchTerm.trim().toLowerCase();
+      if (term.length > 0) {
+        const keywords = term.split(/\s+/).filter(k => k.length > 0);
+        
+        const scoredProducts = result.map(p => {
+          let score = 0;
+          const nameEn = (p.name_en || (p as any).name || '').toLowerCase();
+          const nameBn = (p.name_bn || '').toLowerCase();
+          const descEn = (p.description_en || (p as any).description || '').toLowerCase();
+          const brand = (p.brand || '').toLowerCase();
+          const sku = (p.sku || '').toLowerCase();
+          const category = (p.category || '').toLowerCase();
 
-          result = result
-            .map(p => {
-              let score = 0;
-              const nameEn = get(p, ['name_en', 'name']);
-              const nameBn = get(p, ['name_bn']);
-              const descEn = get(p, ['description_en', 'description']);
-              const brand = get(p, ['brand']);
-              const sku = get(p, ['sku']);
+          // 1. Exact phrase match gets highest priority
+          if (nameEn === term || sku === term) score += 100;
+          if (nameEn.includes(term)) score += 50;
+          if (sku.includes(term)) score += 50;
+          if (brand.includes(term)) score += 30;
+          if (nameBn.includes(term)) score += 20;
 
-              if (nameEn.includes(term)) score += 4;
-              else if (nameEn.split(/\W+/).some(t => t && term.includes(t) || t.includes(term) || term.includes(t))) score += 2;
-
-              if (nameBn.includes(term)) score += 2;
-              if (descEn.includes(term)) score += 1;
-              if (brand.includes(term)) score += 1;
-              if (sku.includes(term)) score += 1;
-
-              return { ...p, _relevanceScore: score };
-            })
-            .filter((p: any) => p._relevanceScore > 0)
-            .sort((a: any, b: any) => b._relevanceScore - a._relevanceScore);
-
-          // strip helper field
-          result = (result as any).map((p: any) => {
-            const { _relevanceScore, ...rest } = p as any;
-            return rest as AccessoryProduct;
+          // 2. Keyword matching for partial precision
+          let matchedKeywords = 0;
+          keywords.forEach(kw => {
+            let kwMatched = false;
+            if (nameEn.includes(kw)) { score += 10; kwMatched = true; }
+            if (sku.includes(kw)) { score += 10; kwMatched = true; }
+            if (brand.includes(kw)) { score += 8; kwMatched = true; }
+            if (category.includes(kw)) { score += 5; kwMatched = true; }
+            if (nameBn.includes(kw)) { score += 4; kwMatched = true; }
+            if (descEn.includes(kw)) { score += 2; kwMatched = true; }
+            if (kwMatched) matchedKeywords++;
           });
-        }
+
+          // Priority boost if ALL keywords matched in some way
+          if (matchedKeywords === keywords.length && keywords.length > 1) {
+            score += 20;
+          }
+
+          return { product: p, score };
+        });
+
+        // Filter and sort by relevance score
+        result = scoredProducts
+          .filter(item => item.score > 0)
+          .sort((a, b) => b.score - a.score)
+          .map(item => item.product);
       }
+    }
 
     // Brand filter
     if (selectedBrands.length > 0) {
@@ -3601,12 +3602,30 @@ export const AccessoriesPage: React.FC = () => {
                   }`} 
                 />
                 <motion.button
-                  onClick={applySearch}
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
-                  className="px-6 py-4 bg-gradient-to-r from-amber-500 to-orange-600 text-white font-semibold"
+                  onClick={() => {
+                    if (searchTerm && searchTerm === searchInput.trim()) {
+                      setSearchInput('');
+                      setSearchTerm('');
+                      searchInputRef.current?.focus();
+                    } else {
+                      applySearch();
+                    }
+                  }}
+                  className="px-6 py-4 bg-gradient-to-r from-amber-500 to-orange-600 text-white font-semibold flex items-center gap-2"
                 >
-                  {searchTerm && searchTerm === searchInput.trim() ? 'Clear' : 'Search'}
+                  {searchTerm && searchTerm === searchInput.trim() ? (
+                    <>
+                      <X className="w-5 h-5" />
+                      <span>Clear</span>
+                    </>
+                  ) : (
+                    <>
+                      <Search className="w-5 h-5" />
+                      <span>Search</span>
+                    </>
+                  )}
                 </motion.button>
               </div>
 
