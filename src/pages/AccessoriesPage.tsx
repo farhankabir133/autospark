@@ -2974,8 +2974,10 @@ export const AccessoriesPage: React.FC = () => {
             if (kwMatched) matchedKeywords++;
           });
 
-          // Priority boost if ALL keywords matched in some way
-          if (matchedKeywords === keywords.length && keywords.length > 1) {
+          // Strict AND logic: only keep product if every search keyword is found somewhere in its data
+          if (matchedKeywords < keywords.length && !nameEn.includes(term)) {
+            score = 0;
+          } else if (matchedKeywords === keywords.length && keywords.length > 1) {
             score += 20;
           }
 
