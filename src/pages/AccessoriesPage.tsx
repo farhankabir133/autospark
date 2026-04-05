@@ -105,7 +105,7 @@ const demoProducts: AccessoryProduct[] = [
   { id: '1021', name_en: 'CHR Casing', name_bn: '', price: 2000, category: 'Accessories', stock_quantity: 10, is_available: true, images: [], brand: '', rating: 0, reviews: 0, discount: 0, compatibility: [], isNew: false, isBestseller: false },
   { id: '1022', name_en: 'Coil Cap Rubber RBI', name_bn: '', price: 950, category: 'Accessories', stock_quantity: 10, is_available: true, images: [], brand: '', rating: 0, reviews: 0, discount: 0, compatibility: [], isNew: false, isBestseller: false },
   { id: '1023', name_en: 'Coolant', name_bn: '', price: 650, category: 'Accessories', stock_quantity: 10, is_available: true, images: [], brand: '', rating: 0, reviews: 0, discount: 0, compatibility: [], isNew: false, isBestseller: false },
-  { id: '1024', name_en: 'Cosmic Wax', name_bn: '', price: 750, category: 'Accessories', stock_quantity: 10, is_available: true, images: [{ image_url: '/P2/cosmicwax.webp' }], brand: '', rating: 0, reviews: 0, discount: 0, compatibility: [], isNew: false, isBestseller: false },
+  { id: '1024', name_en: 'Cosmic Wax', name_bn: '', price: 750, category: 'Accessories', stock_quantity: 10, is_available: true, images: [{ image_url: '/P2/wirelesscarplay.webp' }], brand: '', rating: 0, reviews: 0, discount: 0, compatibility: [], isNew: false, isBestseller: false },
   { id: '1025', name_en: 'CVT Fluid NS-3', name_bn: '', price: 6950, category: 'Accessories', stock_quantity: 10, is_available: true, images: [{ image_url: '/P2/3 Background Removed Medium.webp' }], brand: '', rating: 0, reviews: 0, discount: 0, compatibility: [], isNew: false, isBestseller: false },
   { id: '1026', name_en: 'CVT Fluid TC', name_bn: '', price: 7550, category: 'Accessories', stock_quantity: 10, is_available: true, images: [], brand: '', rating: 0, reviews: 0, discount: 0, compatibility: [], isNew: false, isBestseller: false },
   { id: '1027', name_en: 'Cycle Show Piece', name_bn: '', price: 0, category: 'Accessories', stock_quantity: 10, is_available: true, images: [], brand: '', rating: 0, reviews: 0, discount: 0, compatibility: [], isNew: false, isBestseller: false },
@@ -1309,7 +1309,7 @@ const demoProducts: AccessoryProduct[] = [
     price: 750,
     stock_quantity: 100,
     is_available: true,
-    images: [{ image_url: 'https://images.unsplash.com/photo-1607860108855-64acf2078ed9?w=400' }],
+    images: [{ image_url: '/P2/wirelesscarplay.webp' }],
     brand: 'Cosmic',
     rating: 4.5,
     reviews: 89,
@@ -2859,7 +2859,7 @@ export const AccessoriesPage: React.FC = () => {
   const isDark = theme === 'dark';
 
   // State
-  const [products, setProducts] = useState<AccessoryProduct[]>(demoProductsWithP2);
+  const [products, setProducts] = useState<AccessoryProduct[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
   // Controlled input separate from the applied search term. Search runs when user clicks Search or presses Enter.
   const [searchInput, setSearchInput] = useState('');
@@ -2890,28 +2890,46 @@ export const AccessoriesPage: React.FC = () => {
   // Fetch products from Supabase
   useEffect(() => {
     const fetchProducts = async () => {
-      const { data } = await supabase
-        .from('products')
-        .select('*, images:product_images(*)')
-        .eq('is_available', true);
+      try {
+        const { data } = await supabase
+          .from('products')
+          .select('*, images:product_images(*)')
+          .eq('is_available', true);
 
-      if (data && data.length > 0) {
-        // If Supabase returned products but some lack images, merge demoImages by id or name
-        const merged = (data as AccessoryProduct[]).map((p) => {
-          // normalize images field (some backends may return null)
-          const hasImages = Array.isArray((p as any).images) && (p as any).images.length > 0;
-          if (hasImages) return p;
+        if (data && data.length > 0) {
+          // Deduplicate products by id
+          const uniqueMap = new Map<string, AccessoryProduct>();
+          
+          // Add database products, enriching with demo images if needed
+          (data as AccessoryProduct[]).forEach((p) => {
+            const hasImages = Array.isArray((p as any).images) && (p as any).images.length > 0;
+            
+            if (!hasImages) {
+              // Try to find demo product images by id or name
+              const demo = demoProductsWithP2.find(dp => dp.id === p.id || dp.name_en === p.name_en);
+              if (demo && demo.images && demo.images.length > 0) {
+                uniqueMap.set(p.id, { ...p, images: demo.images } as AccessoryProduct);
+                return;
+              }
+            }
+            
+            uniqueMap.set(p.id, p);
+          });
 
-          // Try to find a demo product by id or name and copy its images as a fallback
-          const demo = demoProductsWithP2.find(dp => dp.id === p.id || dp.name_en === p.name_en);
-          if (demo && demo.images && demo.images.length > 0) {
-            return { ...p, images: demo.images } as AccessoryProduct;
-          }
-
-          return p;
-        });
-
-        setProducts(merged);
+          // Convert back to array
+          const uniqueProducts = Array.from(uniqueMap.values());
+          setProducts(uniqueProducts);
+          
+          console.log('✅ Loaded from database:', uniqueProducts.length, 'unique products');
+        } else {
+          // Database is empty, use demo products as fallback
+          setProducts(demoProductsWithP2);
+          console.log('⚠️ Database empty, using demo products:', demoProductsWithP2.length, 'products');
+        }
+      } catch (error) {
+        console.error('❌ Error fetching products:', error);
+        // Fallback to demo products on error
+        setProducts(demoProductsWithP2);
       }
     };
 
@@ -2931,12 +2949,16 @@ export const AccessoriesPage: React.FC = () => {
 
     setSearchTerm(trimmed);
   }, [searchInput]);
+
   const filteredProducts = useMemo(() => {
     let result = [...products];
+
+    console.log('🔍 Starting filter with:', result.length, 'total products');
 
     // Category filter
     if (selectedCategory !== 'all') {
       result = result.filter(p => p.category === selectedCategory);
+      console.log('📁 After category filter:', result.length, 'products');
     }
 
     // Search filter with precision scoring
@@ -2944,6 +2966,8 @@ export const AccessoriesPage: React.FC = () => {
       const term = searchTerm.trim().toLowerCase();
       if (term.length > 0) {
         const keywords = term.split(/\s+/).filter(k => k.length > 0);
+        
+        console.log('🔎 Searching for keywords:', keywords, 'in', result.length, 'products');
         
         const scoredProducts = result.map(p => {
           let score = 0;
@@ -2984,30 +3008,37 @@ export const AccessoriesPage: React.FC = () => {
           return { product: p, score };
         });
 
-        // Filter and sort by relevance score
-        result = scoredProducts
+        // Filter products with score > 0 and sort by relevance
+        const filtered = scoredProducts
           .filter(item => item.score > 0)
           .sort((a, b) => b.score - a.score)
           .map(item => item.product);
+
+        console.log('✅ After search filter:', filtered.length, 'products match');
+        result = filtered;
       }
     }
 
     // Brand filter
     if (selectedBrands.length > 0) {
       result = result.filter(p => p.brand && selectedBrands.includes(p.brand));
+      console.log('🏷️ After brand filter:', result.length, 'products');
     }
 
     // Price filter
     result = result.filter(p => p.price >= priceRange[0] && p.price <= priceRange[1]);
+    console.log('💰 After price filter:', result.length, 'products');
 
     // Rating filter
     if (minRating > 0) {
       result = result.filter(p => (p.rating || 0) >= minRating);
+      console.log('⭐ After rating filter:', result.length, 'products');
     }
 
     // Stock filter
     if (inStockOnly) {
       result = result.filter(p => p.stock_quantity > 0);
+      console.log('📦 After stock filter:', result.length, 'products');
     }
 
     // Sort
@@ -3026,6 +3057,7 @@ export const AccessoriesPage: React.FC = () => {
         break;
     }
 
+    console.log('📊 Final result:', result.length, 'products displayed');
     return result;
   }, [products, selectedCategory, searchTerm, selectedBrands, priceRange, minRating, inStockOnly, sortBy]);
 
