@@ -2977,6 +2977,9 @@ export const AccessoriesPage: React.FC = () => {
           const brand = (p.brand || '').toLowerCase();
           const sku = (p.sku || '').toLowerCase();
           const category = (p.category || '').toLowerCase();
+          
+          // Track which keywords matched
+          let matchedKeywords = new Set<number>();
 
           // 1. Exact phrase match gets highest priority
           if (nameEn === term || sku === term) score += 100;
@@ -2986,23 +2989,30 @@ export const AccessoriesPage: React.FC = () => {
           if (nameBn.includes(term)) score += 20;
 
           // 2. Keyword matching for partial precision
-          let matchedKeywords = 0;
-          keywords.forEach(kw => {
-            let kwMatched = false;
-            if (nameEn.includes(kw)) { score += 10; kwMatched = true; }
-            if (sku.includes(kw)) { score += 10; kwMatched = true; }
-            if (brand.includes(kw)) { score += 8; kwMatched = true; }
-            if (category.includes(kw)) { score += 5; kwMatched = true; }
-            if (nameBn.includes(kw)) { score += 4; kwMatched = true; }
-            if (descEn.includes(kw)) { score += 2; kwMatched = true; }
-            if (kwMatched) matchedKeywords++;
+          keywords.forEach((kw, idx) => {
+            let foundInField = false;
+            
+            if (nameEn.includes(kw)) { score += 25; foundInField = true; }
+            if (sku.includes(kw)) { score += 25; foundInField = true; }
+            if (brand.includes(kw)) { score += 20; foundInField = true; }
+            if (category.includes(kw)) { score += 8; foundInField = true; }
+            if (nameBn.includes(kw)) { score += 5; foundInField = true; }
+            if (descEn.includes(kw)) { score += 3; foundInField = true; }
+            
+            if (foundInField) {
+              matchedKeywords.add(idx);
+            }
           });
 
-          // Strict AND logic: only keep product if every search keyword is found somewhere in its data
-          if (matchedKeywords < keywords.length && !nameEn.includes(term)) {
-            score = 0;
-          } else if (matchedKeywords === keywords.length && keywords.length > 1) {
-            score += 20;
+          // STRICT AND LOGIC: For multi-keyword searches, ALL keywords must be present
+          // If we have multiple keywords, ALL must be found in the product data
+          if (keywords.length > 1) {
+            const allKeywordsFound = matchedKeywords.size === keywords.length;
+            if (!allKeywordsFound) {
+              score = 0;  // Zero out products that don't have all keywords
+            } else {
+              score += 50;  // Bonus for matching all keywords
+            }
           }
 
           return { product: p, score };
@@ -3014,7 +3024,7 @@ export const AccessoriesPage: React.FC = () => {
           .sort((a, b) => b.score - a.score)
           .map(item => item.product);
 
-        console.log('✅ After search filter:', filtered.length, 'products match');
+        console.log('✅ After search filter:', filtered.length, 'products match (strict AND logic applied)');
         result = filtered;
       }
     }
