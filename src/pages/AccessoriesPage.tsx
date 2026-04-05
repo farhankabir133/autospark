@@ -222,7 +222,7 @@ const demoProducts: AccessoryProduct[] = [
   { id: '1138', name_en: 'Tracker', name_bn: '', price: 5500, category: 'Accessories', stock_quantity: 10, is_available: true, images: [], brand: '', rating: 0, reviews: 0, discount: 0, compatibility: [], isNew: false, isBestseller: false },
   { id: '1139', name_en: 'V tech', name_bn: '', price: 250, category: 'Accessories', stock_quantity: 10, is_available: true, images: [], brand: '', rating: 0, reviews: 0, discount: 0, compatibility: [], isNew: false, isBestseller: false },
   { id: '1140', name_en: 'Vanilla Flower Cent', name_bn: '', price: 500, category: 'Accessories', stock_quantity: 10, is_available: true, images: [{ image_url: '/cars/Products/Perfume.jpeg' }], brand: '', rating: 0, reviews: 0, discount: 0, compatibility: [], isNew: false, isBestseller: false },
-  { id: '1141', name_en: 'W40', name_bn: '', price: 480, category: 'Accessories', stock_quantity: 10, is_available: true, images: [], brand: '', rating: 0, reviews: 0, discount: 0, compatibility: [], isNew: false, isBestseller: false },
+  { id: '1141', name_en: 'W40', name_bn: '', price: 550, category: 'Accessories', stock_quantity: 10, is_available: true, images: [{ image_url: '/P2/w40.webp' }], brand: '', rating: 0, reviews: 0, discount: 0, compatibility: [], isNew: false, isBestseller: false },
   { id: '1142', name_en: 'Water Jacket 21010', name_bn: '', price: 550, category: 'Accessories', stock_quantity: 10, is_available: true, images: [], brand: '', rating: 0, reviews: 0, discount: 0, compatibility: [], isNew: false, isBestseller: false },
   { id: '1143', name_en: 'Water Jacket 21020', name_bn: '', price: 750, category: 'Accessories', stock_quantity: 10, is_available: true, images: [], brand: '', rating: 0, reviews: 0, discount: 0, compatibility: [], isNew: false, isBestseller: false },
   { id: '1144', name_en: 'Water Jacket 22030', name_bn: '', price: 650, category: 'Accessories', stock_quantity: 10, is_available: true, images: [], brand: '', rating: 0, reviews: 0, discount: 0, compatibility: [], isNew: false, isBestseller: false },
@@ -1844,6 +1844,21 @@ const demoProductsWithP2 = demoProducts.map((p, i) => {
   };
 });
 
+const dedupeProducts = (items: AccessoryProduct[]): AccessoryProduct[] => {
+  const uniqueById = new Map<string, AccessoryProduct>();
+  items.forEach((p) => uniqueById.set(String(p.id), p));
+
+  const seenByNamePrice = new Set<string>();
+  return Array.from(uniqueById.values()).filter((p) => {
+    const normalizedName = (p.name_en || '').trim().toLowerCase().replace(/\s+/g, ' ');
+    const key = `${normalizedName}::${p.price}`;
+    if (!normalizedName) return true;
+    if (seenByNamePrice.has(key)) return false;
+    seenByNamePrice.add(key);
+    return true;
+  });
+};
+
 // Categories with icons
 const categoryData: { id: string; name: string; icon: LucideIcon; color: string }[] = [
   { id: 'all', name: 'All Products', icon: Grid, color: 'from-gray-500 to-gray-700' },
@@ -2916,20 +2931,21 @@ export const AccessoriesPage: React.FC = () => {
             uniqueMap.set(p.id, p);
           });
 
-          // Convert back to array
-          const uniqueProducts = Array.from(uniqueMap.values());
+          // Convert back to array and apply extra name-based dedupe safety
+          const uniqueProducts = dedupeProducts(Array.from(uniqueMap.values()));
           setProducts(uniqueProducts);
           
           console.log('✅ Loaded from database:', uniqueProducts.length, 'unique products');
         } else {
           // Database is empty, use demo products as fallback
-          setProducts(demoProductsWithP2);
-          console.log('⚠️ Database empty, using demo products:', demoProductsWithP2.length, 'products');
+          const fallbackProducts = dedupeProducts(demoProductsWithP2);
+          setProducts(fallbackProducts);
+          console.log('⚠️ Database empty, using demo products:', fallbackProducts.length, 'products');
         }
       } catch (error) {
         console.error('❌ Error fetching products:', error);
         // Fallback to demo products on error
-        setProducts(demoProductsWithP2);
+        setProducts(dedupeProducts(demoProductsWithP2));
       }
     };
 
@@ -2951,7 +2967,7 @@ export const AccessoriesPage: React.FC = () => {
   }, [searchInput]);
 
   const filteredProducts = useMemo(() => {
-    let result = [...products];
+    let result = dedupeProducts(products);
 
     console.log('🔍 Starting filter with:', result.length, 'total products');
 
@@ -2961,72 +2977,33 @@ export const AccessoriesPage: React.FC = () => {
       console.log('📁 After category filter:', result.length, 'products');
     }
 
-    // Search filter with precision scoring
+    // Search filter (same pattern as Inventory page: case-insensitive includes)
     if (searchTerm) {
-      const term = searchTerm.trim().toLowerCase();
-      if (term.length > 0) {
-        const keywords = term.split(/\s+/).filter(k => k.length > 0);
-        
-        console.log('🔎 Searching for keywords:', keywords, 'in', result.length, 'products');
-        
-        const scoredProducts = result.map(p => {
-          let score = 0;
-          const nameEn = (p.name_en || (p as any).name || '').toLowerCase();
-          const nameBn = (p.name_bn || '').toLowerCase();
-          const descEn = (p.description_en || (p as any).description || '').toLowerCase();
-          const brand = (p.brand || '').toLowerCase();
-          const sku = (p.sku || '').toLowerCase();
-          const category = (p.category || '').toLowerCase();
-          
-          // Track which keywords matched
-          let matchedKeywords = new Set<number>();
+      const searchLower = searchTerm.toLowerCase();
+      result = result.filter((p) => {
+        const nameEn = (p.name_en || '').toLowerCase();
+        const nameBn = (p.name_bn || '').toLowerCase();
+        const category = (p.category || '').toLowerCase();
+        const brand = (p.brand || '').toLowerCase();
+        const description = ((p.description_en || (p as any).description || '') as string).toLowerCase();
+        const sku = (p.sku || '').toLowerCase();
+        const tagsRaw = (p as any).tags;
+        const tags = Array.isArray(tagsRaw)
+          ? tagsRaw.join(' ').toLowerCase()
+          : (typeof tagsRaw === 'string' ? tagsRaw.toLowerCase() : '');
 
-          // 1. Exact phrase match gets highest priority
-          if (nameEn === term || sku === term) score += 100;
-          if (nameEn.includes(term)) score += 50;
-          if (sku.includes(term)) score += 50;
-          if (brand.includes(term)) score += 30;
-          if (nameBn.includes(term)) score += 20;
+        return (
+          nameEn.includes(searchLower) ||
+          nameBn.includes(searchLower) ||
+          category.includes(searchLower) ||
+          brand.includes(searchLower) ||
+          description.includes(searchLower) ||
+          sku.includes(searchLower) ||
+          tags.includes(searchLower)
+        );
+      });
 
-          // 2. Keyword matching for partial precision
-          keywords.forEach((kw, idx) => {
-            let foundInField = false;
-            
-            if (nameEn.includes(kw)) { score += 25; foundInField = true; }
-            if (sku.includes(kw)) { score += 25; foundInField = true; }
-            if (brand.includes(kw)) { score += 20; foundInField = true; }
-            if (category.includes(kw)) { score += 8; foundInField = true; }
-            if (nameBn.includes(kw)) { score += 5; foundInField = true; }
-            if (descEn.includes(kw)) { score += 3; foundInField = true; }
-            
-            if (foundInField) {
-              matchedKeywords.add(idx);
-            }
-          });
-
-          // STRICT AND LOGIC: For multi-keyword searches, ALL keywords must be present
-          // If we have multiple keywords, ALL must be found in the product data
-          if (keywords.length > 1) {
-            const allKeywordsFound = matchedKeywords.size === keywords.length;
-            if (!allKeywordsFound) {
-              score = 0;  // Zero out products that don't have all keywords
-            } else {
-              score += 50;  // Bonus for matching all keywords
-            }
-          }
-
-          return { product: p, score };
-        });
-
-        // Filter products with score > 0 and sort by relevance
-        const filtered = scoredProducts
-          .filter(item => item.score > 0)
-          .sort((a, b) => b.score - a.score)
-          .map(item => item.product);
-
-        console.log('✅ After search filter:', filtered.length, 'products match (strict AND logic applied)');
-        result = filtered;
-      }
+      console.log('✅ After search filter:', result.length, 'products match');
     }
 
     // Brand filter
@@ -3639,7 +3616,11 @@ export const AccessoriesPage: React.FC = () => {
                   type="text"
                   placeholder="Search oils, parts, accessories..."
                   value={searchInput}
-                  onChange={(e) => setSearchInput(e.target.value)}
+                  onChange={(e) => {
+                    const value = e.target.value;
+                    setSearchInput(value);
+                    setSearchTerm(value);
+                  }}
                   onKeyDown={(e) => { if (e.key === 'Enter') { e.preventDefault(); applySearch(); } }}
                   className={`w-full pl-12 pr-4 py-4 text-lg outline-none ${
                     isDark ? 'bg-gray-800 text-white placeholder-gray-400' : 'bg-white text-gray-900 placeholder-gray-500'
