@@ -105,7 +105,7 @@ const demoProducts: AccessoryProduct[] = [
   { id: '1021', name_en: 'CHR Casing', name_bn: '', price: 2000, category: 'Accessories', stock_quantity: 10, is_available: true, images: [], brand: '', rating: 0, reviews: 0, discount: 0, compatibility: [], isNew: false, isBestseller: false },
   { id: '1022', name_en: 'Coil Cap Rubber RBI', name_bn: '', price: 950, category: 'Accessories', stock_quantity: 10, is_available: true, images: [], brand: '', rating: 0, reviews: 0, discount: 0, compatibility: [], isNew: false, isBestseller: false },
   { id: '1023', name_en: 'Coolant', name_bn: '', price: 650, category: 'Accessories', stock_quantity: 10, is_available: true, images: [], brand: '', rating: 0, reviews: 0, discount: 0, compatibility: [], isNew: false, isBestseller: false },
-  { id: '1024', name_en: 'Cosmic Wax', name_bn: '', price: 750, category: 'Accessories', stock_quantity: 10, is_available: true, images: [{ image_url: '/P2/wirelesscarplay.webp' }], brand: '', rating: 0, reviews: 0, discount: 0, compatibility: [], isNew: false, isBestseller: false },
+  { id: '1024', name_en: 'Cosmic Wax', name_bn: '', price: 750, category: 'Accessories', stock_quantity: 10, is_available: true, images: [{ image_url: '/P2/w40.webp' }], brand: '', rating: 0, reviews: 0, discount: 0, compatibility: [], isNew: false, isBestseller: false },
   { id: '1025', name_en: 'CVT Fluid NS-3', name_bn: '', price: 6950, category: 'Accessories', stock_quantity: 10, is_available: true, images: [{ image_url: '/P2/3 Background Removed Medium.webp' }], brand: '', rating: 0, reviews: 0, discount: 0, compatibility: [], isNew: false, isBestseller: false },
   { id: '1026', name_en: 'CVT Fluid TC', name_bn: '', price: 7550, category: 'Accessories', stock_quantity: 10, is_available: true, images: [], brand: '', rating: 0, reviews: 0, discount: 0, compatibility: [], isNew: false, isBestseller: false },
   { id: '1027', name_en: 'Cycle Show Piece', name_bn: '', price: 0, category: 'Accessories', stock_quantity: 10, is_available: true, images: [], brand: '', rating: 0, reviews: 0, discount: 0, compatibility: [], isNew: false, isBestseller: false },
@@ -882,7 +882,7 @@ const demoProducts: AccessoryProduct[] = [
     price: 4200,
     stock_quantity: 55,
     is_available: true,
-    images: [{ image_url: 'https://images.unsplash.com/photo-1635784439498-9bee4f8a8a5b?w=400' }],
+  images: [{ image_url: '/P2/5 Background Removed Medium.webp' }],
     brand: 'Mitasu',
     rating: 4.6,
     reviews: 178,
@@ -1309,7 +1309,7 @@ const demoProducts: AccessoryProduct[] = [
     price: 750,
     stock_quantity: 100,
     is_available: true,
-    images: [{ image_url: '/P2/wirelesscarplay.webp' }],
+  images: [{ image_url: '/P2/w40.webp' }],
     brand: 'Cosmic',
     rating: 4.5,
     reviews: 89,
@@ -1778,6 +1778,7 @@ function findNPForName(productNameLower: string) {
 // Ensure demo products have an image (use P2 images round-robin where missing)
 const demoProductsWithP2 = demoProducts.map((p, i) => {
   const name = (p.name_en || '').toLowerCase();
+  const hasExplicitImage = Array.isArray(p.images) && p.images.length > 0 && !!p.images[0]?.image_url;
   const isSparkplug = name.includes('sparkplug') || name.includes('spark plug') || name.includes('spark-plug');
   const isJda = name.includes('jda');
   const isAndroidPlayer = name.includes('android player') || name.includes('android-player') || name.includes('androidplayer');
@@ -1813,8 +1814,9 @@ const demoProductsWithP2 = demoProducts.map((p, i) => {
   const npMatch = findNPForName(name);
   return {
     ...p,
+    // Keep explicit product image when present; otherwise apply mapped/fallback image rules.
     // Priority: JDA-specific image, then Gulf-specific P2 image, then NP fuzzy matches, then Mitasu, then android player, then air filter, then air purifierr/purifier, then seat cover, then car cover, then bumper, then brake pad, then horn, then sparkplug, otherwise P2 round-robin
-    images: [
+    images: hasExplicitImage ? p.images : [
   { image_url: isJda ? '/P2/7 Background Removed Medium.webp'
     : isGulf ? '/P2/Gulf Formula G 0W-20 Full Synthetic.webp'
   : isGloboil ? '/P2/Globoil0W20.webp'
@@ -1857,6 +1859,19 @@ const dedupeProducts = (items: AccessoryProduct[]): AccessoryProduct[] => {
     seenByNamePrice.add(key);
     return true;
   });
+};
+
+const REFERENCE_PRODUCT_IMAGE = '/P2/5 Background Removed Medium.webp';
+
+const getPrimaryProductImage = (product: AccessoryProduct): string => {
+  return product.images?.[0]?.image_url || REFERENCE_PRODUCT_IMAGE;
+};
+
+const handleProductImageError = (event: React.SyntheticEvent<HTMLImageElement, Event>) => {
+  const target = event.currentTarget;
+  if (!target.src.includes(REFERENCE_PRODUCT_IMAGE)) {
+    target.src = REFERENCE_PRODUCT_IMAGE;
+  }
 };
 
 // Categories with icons
@@ -2143,11 +2158,12 @@ const ProductCard: React.FC<{
   <div className="relative h-56 overflow-hidden">
         {/* Use product image if available (demo products reference local assets under /cars/Products) */}
         <motion.img
-          src={product.images?.[0]?.image_url || 'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=400'}
+          src={getPrimaryProductImage(product)}
           alt={product.name_en}
           className="w-full h-full object-contain bg-[#0b0b0b]"
           animate={{ scale: isHovered ? 1.03 : 1 }}
           transition={{ duration: 0.4 }}
+          onError={handleProductImageError}
           loading="lazy"
           decoding="async"
         />
@@ -2340,9 +2356,10 @@ const QuickViewModal: React.FC<{
               <div className="space-y-4">
                 <div className="relative rounded-2xl overflow-hidden">
                   <img
-                    src={product.images?.[0]?.image_url || 'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=600'}
+                    src={getPrimaryProductImage(product)}
                     alt={product.name_en}
                     className="w-full h-80 object-cover"
+                    onError={handleProductImageError}
                     loading="lazy"
                     width={600}
                     height={320}
@@ -2607,9 +2624,10 @@ const ComparePanel: React.FC<{
                   }`}
                 >
                   <img
-                    src={item.product.images?.[0]?.image_url || 'https://via.placeholder.com/50'}
+                    src={getPrimaryProductImage(item.product)}
                     alt={item.product.name_en}
                     className="w-12 h-12 rounded-lg object-cover"
+                    onError={handleProductImageError}
                     loading="lazy"
                     width={48}
                     height={48}
@@ -2789,9 +2807,10 @@ const SideCartDrawer: React.FC<{
                       className={`flex gap-4 p-4 rounded-xl ${isDark ? 'bg-gray-700' : 'bg-gray-50'}`}
                     >
                       <img
-                        src={item.product.images?.[0]?.image_url || 'https://via.placeholder.com/80'}
+                        src={getPrimaryProductImage(item.product)}
                         alt={item.product.name_en}
                         className="w-20 h-20 rounded-lg object-cover"
+                        onError={handleProductImageError}
                         loading="lazy"
                         width={80}
                         height={80}
@@ -4029,9 +4048,10 @@ export const AccessoriesPage: React.FC = () => {
                   }`}
                 >
                   <img
-                    src={product.images?.[0]?.image_url || 'https://via.placeholder.com/150'}
+                    src={getPrimaryProductImage(product)}
                     alt={product.name_en}
                     className="w-full h-32 object-cover rounded-lg mb-3"
+                    onError={handleProductImageError}
                     loading="lazy"
                     width={192}
                     height={128}
