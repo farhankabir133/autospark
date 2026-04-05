@@ -3694,37 +3694,40 @@ export const AccessoriesPage: React.FC = () => {
             </div>
           </motion.div>
 
-          {/* Stats */}
-          <motion.div
-            initial={{ opacity: 0, y: 50 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.3 }}
-            className="grid grid-cols-2 md:grid-cols-4 gap-4 max-w-3xl mx-auto"
-          >
-            {[
-              { icon: Package, value: '500+', label: 'Products' },
-              { icon: Award, value: '50+', label: 'Brands' },
-              { icon: Truck, value: 'Free', label: 'Shipping' },
-              { icon: Shield, value: '1 Year', label: 'Warranty' },
-            ].map((stat, i) => (
-              <motion.div
-                key={i}
-                initial={{ opacity: 0, scale: 0.8 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ delay: 0.5 + i * 0.1 }}
-                className={`p-4 rounded-2xl ${isDark ? 'bg-white/5 backdrop-blur-sm' : 'bg-white/80 backdrop-blur-sm shadow-lg'}`}
-              >
-                <stat.icon className={`mx-auto mb-2 ${isDark ? 'text-purple-400' : 'text-purple-600'}`} size={28} />
-                <div className={`text-2xl font-bold ${isDark ? 'text-white' : 'text-gray-900'}`}>{stat.value}</div>
-                <div className={`text-sm ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>{stat.label}</div>
-              </motion.div>
-            ))}
-          </motion.div>
+          {/* Stats - Hide during search */}
+      {!searchTerm && (
+        <motion.div
+          initial={{ opacity: 0, y: 50 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8, delay: 0.3 }}
+          className="grid grid-cols-2 md:grid-cols-4 gap-4 max-w-3xl mx-auto"
+        >
+          {[
+            { icon: Package, value: '500+', label: 'Products' },
+            { icon: Award, value: '50+', label: 'Brands' },
+            { icon: Truck, value: 'Free', label: 'Shipping' },
+            { icon: Shield, value: '1 Year', label: 'Warranty' },
+          ].map((stat, i) => (
+            <motion.div
+              key={i}
+              initial={{ opacity: 0, scale: 0.8 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ delay: 0.5 + i * 0.1 }}
+              className={`p-4 rounded-2xl ${isDark ? 'bg-white/5 backdrop-blur-sm' : 'bg-white/80 backdrop-blur-sm shadow-lg'}`}
+            >
+              <stat.icon className={`mx-auto mb-2 ${isDark ? 'text-purple-400' : 'text-purple-600'}`} size={28} />
+              <div className={`text-2xl font-bold ${isDark ? 'text-white' : 'text-gray-900'}`}>{stat.value}</div>
+              <div className={`text-sm ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>{stat.label}</div>
+            </motion.div>
+          ))}
+        </motion.div>
+      )}
         </div>
       </section>
 
-      {/* Flash Sale Banner */}
-      <section className={`py-6 ${isDark ? 'bg-gradient-to-r from-red-900/50 to-orange-900/50' : 'bg-gradient-to-r from-red-500 to-orange-500'}`}>
+      {/* Flash Sale Banner - Hide during search */}
+      {!searchTerm && (
+        <section className={`py-6 ${isDark ? 'bg-gradient-to-r from-red-900/50 to-orange-900/50' : 'bg-gradient-to-r from-red-500 to-orange-500'}`}>
         <div className="container mx-auto px-4">
           <div className="flex flex-col md:flex-row items-center justify-between gap-4">
             <div className="flex items-center gap-4">
@@ -3750,9 +3753,11 @@ export const AccessoriesPage: React.FC = () => {
           </div>
         </div>
       </section>
+      )}
 
-      {/* Category Showcase */}
-      <section className={`py-12 ${isDark ? 'bg-gray-800/50' : 'bg-white'}`}>
+      {/* Category Showcase - Hide during search to focus on results */}
+      {!searchTerm && (
+        <section className={`py-12 ${isDark ? 'bg-gray-800/50' : 'bg-white'}`}>
         <div className="container mx-auto px-4">
           <h2 className={`text-2xl font-bold mb-8 text-center ${isDark ? 'text-white' : 'text-gray-900'}`}>
             Shop by Category
@@ -3785,6 +3790,7 @@ export const AccessoriesPage: React.FC = () => {
           </div>
         </div>
       </section>
+      )}
 
       {/* Main Content */}
       <section className="py-12">
@@ -4024,8 +4030,8 @@ export const AccessoriesPage: React.FC = () => {
         </div>
       </section>
 
-      {/* Recently Viewed */}
-      {recentlyViewed.length > 0 && (
+      {/* Recently Viewed - Hide when search is active */}
+      {recentlyViewed.length > 0 && !searchTerm && (
         <section className={`py-12 ${isDark ? 'bg-gray-800/50' : 'bg-gray-100'}`}>
           <div className="container mx-auto px-4">
             <h2 className={`text-2xl font-bold mb-8 ${isDark ? 'text-white' : 'text-gray-900'}`}>
