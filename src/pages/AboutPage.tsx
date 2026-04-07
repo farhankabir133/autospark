@@ -770,7 +770,7 @@ export const AboutPage = () => {
               <div className="hidden md:block w-5/12"></div>
             </motion.div>
 
-            {/* Expert 3 - Sohan Ahmed (Left) */}
+            {/* Expert 3 - SM Sohan (Left) */}
             <motion.div
               initial={{ opacity: 0, x: -30 }}
               whileInView={{ opacity: 1, x: 0 }}
@@ -783,8 +783,8 @@ export const AboutPage = () => {
                   <div className="flex flex-col md:flex-row-reverse md:items-center gap-4">
                     <div className="relative w-36 h-36 sm:w-44 sm:h-44 md:w-52 md:h-52 mx-auto md:mx-0 flex-shrink-0">
                       <img
-                        src="https://images.pexels.com/photos/36705239/pexels-photo-36705239.png"
-                        alt="Sohan Ahmed"
+                        src="https://images.pexels.com/photos/36965692/pexels-photo-36965692.png"
+                        alt="SM Sohan"
                         className="w-full h-full rounded-full object-cover border-3 border-[#C00000]/30 group-hover:border-[#C00000] transition-colors duration-300"
                         loading="lazy"
                         width={208}
@@ -802,7 +802,7 @@ export const AboutPage = () => {
                     <div className="text-center md:text-right flex-1">
                       <span className="text-[#C00000] font-bold text-xs sm:text-sm">🚗 Sales Expert</span>
                       <h4 className={`text-lg sm:text-xl font-bold ${theme === 'dark' ? 'text-white' : 'text-gray-900'} mt-1`}>
-                        {language === 'en' ? 'Sohan Ahmed' : 'সোহান আহমেদ'}
+                        {language === 'en' ? 'SM Sohan' : 'এস এম সোহান'}
                       </h4>
                       <p className="text-[#C00000] font-semibold text-xs sm:text-sm mb-2">
                         {language === 'en' ? 'Senior Sales Executive' : 'সিনিয়র সেলস এক্সিকিউটিভ'}
@@ -864,7 +864,7 @@ export const AboutPage = () => {
               
               <div className="hidden md:block w-5/12"></div>
             </motion.div>
-            {/* Expert 5 - Shurabhi Jahan (Left) */}
+            {/* Expert 5 - Farzana Shurovi (Left) */}
             <motion.div
               initial={{ opacity: 0, x: -30 }}
               whileInView={{ opacity: 1, x: 0 }}
@@ -876,7 +876,7 @@ export const AboutPage = () => {
                 <Suspense fallback={<div className="p-6">Loading team member…</div>}>
                   <TeamCard
                     person={{
-                      name: language === 'en' ? 'Shurabhi Jahan' : 'শুরাভি জাহান',
+                      name: language === 'en' ? 'Farzana Shurovi' : 'ফারজানা শুরভি',
                       role: language === 'en' ? 'Sales Executive' : 'সেলস এক্সিকিউটিভ',
                       title: language === 'en' ? '💼 Sales Executive' : '💼 সেলস এক্সিকিউটিভ',
                       image: 'https://images.pexels.com/photos/36833099/pexels-photo-36833099.png',
@@ -895,7 +895,7 @@ export const AboutPage = () => {
               <div className="hidden md:block w-5/12"></div>
             </motion.div>
 
-            {/* Expert 6 - Tasmia Jui (Right) */}
+            {/* Expert 6 - Tanzila Jui (Right) */}
             <motion.div
               initial={{ opacity: 0, x: 30 }}
               whileInView={{ opacity: 1, x: 0 }}
@@ -907,7 +907,7 @@ export const AboutPage = () => {
                 <Suspense fallback={<div className="p-6">Loading team member…</div>}>
                   <TeamCard
                     person={{
-                      name: language === 'en' ? 'Tasmia Jui' : 'তাসমিয়া জুই',
+                      name: language === 'en' ? 'Tanzila Jui' : 'তানজিলা জুই',
                       role: language === 'en' ? 'Sales Executive' : 'সেলস এক্সিকিউটিভ',
                       title: language === 'en' ? '💼 Sales Executive' : '💼 সেলস এক্সিকিউটিভ',
                       image: 'https://images.pexels.com/photos/36833100/pexels-photo-36833100.png',
@@ -926,7 +926,7 @@ export const AboutPage = () => {
               <div className="hidden md:block w-5/12"></div>
             </motion.div>
 
-            {/* Expert 7 - Fahim Rahman (Left) */}
+            {/* Expert 7 - Fahim Ruddro (Left) */}
             <motion.div
               initial={{ opacity: 0, x: -30 }}
               whileInView={{ opacity: 1, x: 0 }}
@@ -938,7 +938,7 @@ export const AboutPage = () => {
                 <Suspense fallback={<div className="p-6">Loading team member…</div>}>
                   <TeamCard
                     person={{
-                      name: language === 'en' ? 'Fahim Rahman' : 'ফাহিম রহমান',
+                      name: language === 'en' ? 'Fahim Ruddro' : 'ফাহিম রুদ্র',
                       role: language === 'en' ? 'Sales Executive' : 'সেলস এক্সিকিউটিভ',
                       title: language === 'en' ? '💼 Sales Executive' : '💼 সেলস এক্সিকিউটিভ',
                       image: 'https://images.pexels.com/photos/36833340/pexels-photo-36833340.png',
@@ -957,7 +957,7 @@ export const AboutPage = () => {
               <div className="hidden md:block w-5/12"></div>
             </motion.div>
 
-            {/* Expert 8 - Shuvo Rahman (Right) */}
+            {/* Expert 8 - Mazfuz Ahmed Shuvo (Right) */}
             <motion.div
               initial={{ opacity: 0, x: 30 }}
               whileInView={{ opacity: 1, x: 0 }}
@@ -969,7 +969,7 @@ export const AboutPage = () => {
                 <Suspense fallback={<div className="p-6">Loading team member…</div>}>
                   <TeamCard
                     person={{
-                      name: language === 'en' ? 'Mazfuz Ahmed Shuvo' : 'শুভ রাহমান',
+                      name: language === 'en' ? 'Mazfuz Ahmed Shuvo' : 'মাজফুজ আহমেদ শুভ',
                       role: language === 'en' ? 'Accountant' : 'হিসাবরক্ষক',
                       title: language === 'en' ? '📊 Accountant' : '📊 হিসাবরক্ষক',
                       image: 'https://images.pexels.com/photos/36833339/pexels-photo-36833339.png',
