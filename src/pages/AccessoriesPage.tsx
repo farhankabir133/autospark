@@ -87,7 +87,7 @@ const demoProducts: AccessoryProduct[] = [
   { id: '1003', name_en: 'Belt 1160', name_bn: '', price: 950, category: 'Accessories', stock_quantity: 10, is_available: true, images: [], brand: '', rating: 0, reviews: 0, discount: 0, compatibility: [], isNew: false, isBestseller: false },
   { id: '1004', name_en: 'Belt 1170', name_bn: '', price: 950, category: 'Accessories', stock_quantity: 10, is_available: true, images: [], brand: '', rating: 0, reviews: 0, discount: 0, compatibility: [], isNew: false, isBestseller: false },
   { id: '1005', name_en: 'Boot Cover', name_bn: '', price: 600, category: 'Accessories', stock_quantity: 10, is_available: true, images: [{ image_url: '/cars/Products/CarBackSpace.jpeg' }], brand: '', rating: 0, reviews: 0, discount: 0, compatibility: [], isNew: false, isBestseller: false },
-  { id: '1006', name_en: 'Brake Fluid/Oil', name_bn: '', price: 0, category: 'Accessories', stock_quantity: 10, is_available: true, images: [], brand: '', rating: 0, reviews: 0, discount: 0, compatibility: [], isNew: false, isBestseller: false },
+  { id: '1006', name_en: 'Brake Fluid/Oil', name_bn: '', price: 1050, category: 'Accessories', stock_quantity: 10, is_available: true, images: [{ image_url: '/P2/BrakeFluid.webp' }], brand: '', rating: 0, reviews: 0, discount: 0, compatibility: [], isNew: false, isBestseller: false },
   { id: '1007', name_en: 'Brake pad 690 E1', name_bn: '', price: 4700, category: 'Accessories', stock_quantity: 10, is_available: true, images: [], brand: '', rating: 0, reviews: 0, discount: 0, compatibility: [], isNew: false, isBestseller: false },
   { id: '1008', name_en: 'Brake pad 715/52240', name_bn: '', price: 4350, category: 'Accessories', stock_quantity: 10, is_available: true, images: [], brand: '', rating: 0, reviews: 0, discount: 0, compatibility: [], isNew: false, isBestseller: false },
   { id: '1009', name_en: 'Brake pad 732 E8', name_bn: '', price: 5200, category: 'Accessories', stock_quantity: 10, is_available: true, images: [], brand: '', rating: 0, reviews: 0, discount: 0, compatibility: [], isNew: false, isBestseller: false },
@@ -100,7 +100,15 @@ const demoProducts: AccessoryProduct[] = [
   { id: '1016', name_en: 'Car Wax Polish', name_bn: '', price: 450, category: 'Accessories', stock_quantity: 10, is_available: true, images: [], brand: '', rating: 0, reviews: 0, discount: 0, compatibility: [], isNew: false, isBestseller: false },
   { id: '1017', name_en: 'Carall Wiper Blade', name_bn: '', price: 450, category: 'Accessories', stock_quantity: 10, is_available: true, images: [], brand: '', rating: 0, reviews: 0, discount: 0, compatibility: [], isNew: false, isBestseller: false },
   { id: '1018', name_en: 'Carbulator Cleaner', name_bn: '', price: 550, category: 'Accessories', stock_quantity: 10, is_available: true, images: [], brand: '', rating: 0, reviews: 0, discount: 0, compatibility: [], isNew: false, isBestseller: false },
-  { id: '1019', name_en: 'Champ 10W40', name_bn: '', price: 4350, category: 'Accessories', stock_quantity: 10, is_available: true, images: [{ image_url: '/cars/Products/Champion-0W20.jpeg' }], brand: '', rating: 0, reviews: 0, discount: 0, compatibility: [], isNew: false, isBestseller: false },
+  { id: '1191', name_en: 'Champion 0W20', name_bn: '', price: 4350, category: 'Accessories', stock_quantity: 10, is_available: true, images: [{ image_url: '/NP/Champion0W20.webp' }], brand: 'Champion', rating: 0, reviews: 0, discount: 0, compatibility: [], isNew: false, isBestseller: false },
+  { id: '1192', name_en: 'Champion 10W30', name_bn: '', price: 4350, category: 'Accessories', stock_quantity: 10, is_available: true, images: [{ image_url: '/NP/Champion10W30.webp' }], brand: 'Champion', rating: 0, reviews: 0, discount: 0, compatibility: [], isNew: false, isBestseller: false },
+  { id: '1193', name_en: 'Champion 5W30', name_bn: '', price: 4350, category: 'Accessories', stock_quantity: 10, is_available: true, images: [{ image_url: '/NP/Champion5W30.webp' }], brand: 'Champion', rating: 0, reviews: 0, discount: 0, compatibility: [], isNew: false, isBestseller: false },
+  { id: '1019', name_en: 'Champ 10W40', name_bn: '', price: 4350, category: 'Accessories', stock_quantity: 10, is_available: true, images: [{ image_url: '/P2/Champion10w40.webp' }], brand: '', rating: 0, reviews: 0, discount: 0, compatibility: [], isNew: false, isBestseller: false },
+  { id: '2201', name_en: 'Champ Brake Fluid', name_bn: '', price: 1250, category: 'Accessories', stock_quantity: 10, is_available: true, images: [{ image_url: '/P2/ChampionBrakeFluid.webp' }], brand: 'Champion', rating: 0, reviews: 0, discount: 0, compatibility: [], isNew: false, isBestseller: false },
+  { id: '2202', name_en: 'Champ Coolant (1L)', name_bn: '', price: 750, category: 'Accessories', stock_quantity: 10, is_available: true, images: [{ image_url: '/NP/ChampionCoolant.webp' }], brand: 'Champion', rating: 0, reviews: 0, discount: 0, compatibility: [], isNew: false, isBestseller: false },
+  { id: '2203', name_en: 'Champ Coolant (5L)', name_bn: '', price: 2950, category: 'Accessories', stock_quantity: 10, is_available: true, images: [{ image_url: '/NP/ChampionMobil.webp' }], brand: 'Champion', rating: 0, reviews: 0, discount: 0, compatibility: [], isNew: false, isBestseller: false },
+  { id: '2204', name_en: 'Champ Engine Flush', name_bn: '', price: 750, category: 'Accessories', stock_quantity: 10, is_available: true, images: [{ image_url: '/NP/ChampionEngineFlush.webp' }], brand: 'Champion', rating: 0, reviews: 0, discount: 0, compatibility: [], isNew: false, isBestseller: false },
+  { id: '2205', name_en: 'Champion Eco-Friend 5W-30', name_bn: '', price: 5050, category: 'Accessories', stock_quantity: 10, is_available: true, images: [{ image_url: '/NP/ChampionEco5W30.webp' }], brand: 'Champion', rating: 0, reviews: 0, discount: 0, compatibility: [], isNew: false, isBestseller: false },
   { id: '1020', name_en: 'Charger 6A', name_bn: '', price: 550, category: 'Accessories', stock_quantity: 10, is_available: true, images: [], brand: '', rating: 0, reviews: 0, discount: 0, compatibility: [], isNew: false, isBestseller: false },
   { id: '1021', name_en: 'CHR Casing', name_bn: '', price: 2000, category: 'Accessories', stock_quantity: 10, is_available: true, images: [], brand: '', rating: 0, reviews: 0, discount: 0, compatibility: [], isNew: false, isBestseller: false },
   { id: '1022', name_en: 'Coil Cap Rubber RBI', name_bn: '', price: 950, category: 'Accessories', stock_quantity: 10, is_available: true, images: [], brand: '', rating: 0, reviews: 0, discount: 0, compatibility: [], isNew: false, isBestseller: false },
@@ -174,7 +182,7 @@ const demoProducts: AccessoryProduct[] = [
   { id: '1090', name_en: 'LPG Conversion Full Set [60 KG]', name_bn: '', price: 70000, category: 'Accessories', stock_quantity: 10, is_available: true, images: [], brand: '', rating: 0, reviews: 0, discount: 0, compatibility: [], isNew: false, isBestseller: false },
   { id: '1091', name_en: 'Mitasu 0W-20', name_bn: '', price: 4350, category: 'Accessories', stock_quantity: 10, is_available: true, images: [{ image_url: '/cars/Products/Mitasu-0W20.jpeg' }], brand: '', rating: 0, reviews: 0, discount: 0, compatibility: [], isNew: false, isBestseller: false },
   { id: '1092', name_en: 'Mobil 1-0W20', name_bn: '', price: 6950, category: 'Accessories', stock_quantity: 10, is_available: true, images: [{ image_url: '/NP/Mobil10W20.webp' }], brand: '', rating: 0, reviews: 0, discount: 0, compatibility: [], isNew: false, isBestseller: false },
-  { id: '1093', name_en: 'Mobil 1-0W40', name_bn: '', price: 6850, category: 'Accessories', stock_quantity: 10, is_available: true, images: [{ image_url: '/P2/6 Background Removed Medium.webp' }], brand: '', rating: 0, reviews: 0, discount: 0, compatibility: [], isNew: false, isBestseller: false },
+  { id: '1093', name_en: 'Mobil 1-0W40', name_bn: '', price: 6850, category: 'Accessories', stock_quantity: 10, is_available: true, images: [{ image_url: '/P2/Mobil1-10W40.webp' }], brand: '', rating: 0, reviews: 0, discount: 0, compatibility: [], isNew: false, isBestseller: false },
   { id: '1094', name_en: 'Mobil Filter 31000', name_bn: '', price: 650, category: 'Accessories', stock_quantity: 10, is_available: true, images: [{ image_url: '/P2/4 Background Removed Medium.webp' }], brand: '', rating: 0, reviews: 0, discount: 0, compatibility: [], isNew: false, isBestseller: false },
   { id: '1096', name_en: 'Mobil Filter 65F00', name_bn: '', price: 650, category: 'Accessories', stock_quantity: 10, is_available: true, images: [{ image_url: '/P2/4 Background Removed Medium.webp' }], brand: '', rating: 0, reviews: 0, discount: 0, compatibility: [], isNew: false, isBestseller: false },
   { id: '1097', name_en: 'Monitor Case', name_bn: '', price: 2500, category: 'Accessories', stock_quantity: 10, is_available: true, images: [], brand: '', rating: 0, reviews: 0, discount: 0, compatibility: [], isNew: false, isBestseller: false },
@@ -640,19 +648,19 @@ const demoProducts: AccessoryProduct[] = [
   // MOBIL 1 - Full Synthetic
   {
     id: '14',
-    name_en: 'Mobil 1 Extended Performance 10W-30',
+    name_en: 'Mobil 1-5W30',
     name_bn: 'মোবিল ১ এক্সটেন্ডেড পারফরম্যান্স 10W-30',
     description_en: 'Mobil 1 10W-30 provides up to 20,000 miles of protection between oil changes. Superior wear protection for high-mileage vehicles.',
     description_bn: 'মোবিল ১ 10W-30 তেল পরিবর্তনের মধ্যে ২০,০০০ মাইল পর্যন্ত সুরক্ষা প্রদান করে।',
     category: 'Oils & Lubricants',
-    price: 4200,
+    price: 6850,
     stock_quantity: 85,
     is_available: true,
-    images: [{ image_url: 'https://images.unsplash.com/photo-1635784439498-9bee4f8a8a5b?w=400' }],
+    images: [{ image_url: '/P2/6 Background Removed Medium.webp' }],
     brand: 'Mobil 1',
     rating: 4.8,
     reviews: 342,
-    discount: 5,
+    discount: 0,
     compatibility: ['Universal', 'High Mileage Vehicles'],
     isNew: false,
     isBestseller: true
@@ -1633,6 +1641,7 @@ const demoProductsWithP2 = demoProducts.map((p, i) => {
   const isCarCover = name.includes('car cover') || name.includes('car-cover') || name.includes('carcover') || name.includes(' cover') || name.includes('cover');
   const isSeatCover = name.includes('seatcover') || name.includes('seat cover') || name.includes('seat-cover');
   const isBumper = name.includes('bumper');
+  const hasForcedBumperImage = isBumper;
   const isWiperBlade = name.includes('wiper blade') || name.includes('wiper-blade') || name.includes('wiperblade') || name.includes('wiper');
   const isBrakePad = name.includes('brakepad') || name.includes('brake pad') || name.includes('brake-pad');
   const isHorn = name.includes('horn');
@@ -1642,7 +1651,7 @@ const demoProductsWithP2 = demoProducts.map((p, i) => {
     ...p,
     // Keep explicit product image when present; otherwise apply mapped/fallback image rules.
     // Priority: JDA-specific image, then Gulf-specific P2 image, then NP fuzzy matches, then Mitasu, then android player, then air filter, then air purifierr/purifier, then seat cover, then car cover, then bumper, then brake pad, then horn, then sparkplug, otherwise P2 round-robin
-    images: hasExplicitImage ? p.images : [
+  images: hasForcedBumperImage ? [{ image_url: '/P2/Bumper.webp' }] : hasExplicitImage ? p.images : [
   { image_url: isJda ? '/P2/7 Background Removed Medium.webp'
     : isGulf ? '/P2/Gulf Formula G 0W-20 Full Synthetic.webp'
   : isGloboil ? '/P2/Globoil0W20.webp'
@@ -1662,7 +1671,7 @@ const demoProductsWithP2 = demoProducts.map((p, i) => {
     : isAndroidPlayer ? '/P2/androidplayer Background Removed.png'
     : isAirFilter ? '/P2/4 Background Removed Medium.webp'
     : isAirPurifierr ? '/P2/9 Background Removed Medium.webp'
-    : isBumper ? '/P2/8 Background Removed Medium.webp'
+  : isBumper ? '/P2/Bumper.webp'
     : isWiperBlade ? '/NP/WiperBlade.webp'
     : isBrakePad ? '/P2/BrakePad.png'
     : isHorn ? '/P2/DensoHorn.png'
@@ -1685,6 +1694,40 @@ const dedupeProducts = (items: AccessoryProduct[]): AccessoryProduct[] => {
     seenByNamePrice.add(key);
     return true;
   });
+};
+
+const getForcedProductOverrideByName = (name: string): { imageUrl?: string; price?: number; nameEn?: string; discount?: number } | null => {
+  const normalized = (name || '').toLowerCase();
+
+  if (normalized.includes('mobil 1 extended performance 10w-30') || normalized.includes('mobil 1-5w30') || normalized.includes('mobil 1 5w30')) {
+    return {
+      nameEn: 'Mobil 1-5W30',
+      price: 6850,
+      discount: 0,
+      imageUrl: '/P2/6 Background Removed Medium.webp',
+    };
+  }
+
+  if (normalized.includes('mobil 1-0w40') || normalized.includes('mobil 1 0w40')) {
+    return { imageUrl: '/P2/Mobil1-10W40.webp' };
+  }
+
+  if (normalized.includes('bumper')) {
+    return { imageUrl: '/P2/Bumper.webp' };
+  }
+
+  if (normalized.includes('champ 10w40')) {
+    return { imageUrl: '/P2/Champion10w40.webp' };
+  }
+
+  if (normalized.includes('brake fluid/oil') || normalized.includes('brake fluid')) {
+    return {
+      imageUrl: '/P2/BrakeFluid.webp',
+      price: 1050,
+    };
+  }
+
+  return null;
 };
 
 const REFERENCE_PRODUCT_IMAGE = '/P2/5 Background Removed Medium.webp';
@@ -2762,6 +2805,18 @@ export const AccessoriesPage: React.FC = () => {
           
           // Add database products, enriching with demo images if needed
           (data as AccessoryProduct[]).forEach((p) => {
+            const forcedOverride = getForcedProductOverrideByName(p.name_en || '');
+            if (forcedOverride) {
+              uniqueMap.set(p.id, {
+                ...p,
+                ...(forcedOverride.nameEn ? { name_en: forcedOverride.nameEn } : {}),
+                ...(typeof forcedOverride.price === 'number' ? { price: forcedOverride.price } : {}),
+                ...(typeof forcedOverride.discount === 'number' ? { discount: forcedOverride.discount } : {}),
+                ...(forcedOverride.imageUrl ? { images: [{ image_url: forcedOverride.imageUrl }] } : {}),
+              } as AccessoryProduct);
+              return;
+            }
+
             const hasImages = Array.isArray((p as any).images) && (p as any).images.length > 0;
             
             if (!hasImages) {
