@@ -1373,12 +1373,17 @@ const EMICalculator: React.FC<{ principal: number }> = ({ principal }) => {
                                 {t('vehicle.stock')}: {vehicle.stock_number}
                               </div>
                               <h3 className={`font-bold mb-2 ${isDark ? 'text-white' : 'text-gray-900'} ${viewMode === 'list' ? 'text-lg' : 'text-xl'}`}>
-                                {vehicle.brand_name} {vehicle.model}
+                                {vehicle.brand_name} {vehicle.model} <span className={`text-sm ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>(2021/22)</span>
                               </h3>
                               <div className="flex items-center justify-between mb-4">
-                                <span className="text-2xl font-bold text-blue-500">
-                                  {vehicle.price && vehicle.price > 0 ? formatPrice(vehicle.price, language) : (language === 'en' ? 'Price on request' : 'মূল্য অনুরোধে')}
-                                </span>
+                                <div>
+                                  <span className="text-2xl font-bold text-blue-500">
+                                    {vehicle.price && vehicle.price > 0 ? formatPrice(vehicle.price, language) : (language === 'en' ? 'Price on request' : 'মূল্য অনুরোধে')}
+                                  </span>
+                                  <div className="mt-1 px-2 py-1 bg-amber-100 dark:bg-amber-900/30 border border-amber-300 dark:border-amber-700 rounded text-xs font-semibold text-amber-800 dark:text-amber-300 inline-block">
+                                    {language === 'en' ? 'Only Pre Order Price is Shown!' : 'শুধুমাত্র প্রি-অর্ডার মূল্য দেখানো হচ্ছে!'}
+                                  </div>
+                                </div>
                                 <span className={`text-sm ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>
                                   {vehicle.mileage.toLocaleString()} km
                                 </span>
@@ -1429,7 +1434,7 @@ const EMICalculator: React.FC<{ principal: number }> = ({ principal }) => {
               >
                 <div className="flex items-start justify-between gap-4">
                   <div>
-                    <h3 className="text-lg font-bold">{vehicle.brand_name} {vehicle.model}</h3>
+                    <h3 className="text-lg font-bold">{vehicle.brand_name} {vehicle.model} <span className="text-sm text-gray-500">(2021/22)</span></h3>
                     <div className="text-sm text-gray-400">{vehicle.stock_number}</div>
                   </div>
                   <div className="ml-auto flex items-center gap-2">
@@ -1462,8 +1467,13 @@ const EMICalculator: React.FC<{ principal: number }> = ({ principal }) => {
                         </div>
 
                   <div className="space-y-2">
-                    <div className="text-2xl font-bold text-blue-500">{vehicle.price && vehicle.price > 0 ? formatPrice(vehicle.price, language) : (language === 'en' ? 'Price on request' : 'মূল্য অনুরোধে')}</div>
-                    <div className="text-sm text-gray-400">Year {vehicle.year} • {vehicle.mileage.toLocaleString()} km</div>
+                    <div>
+                      <div className="text-2xl font-bold text-blue-500">{vehicle.price && vehicle.price > 0 ? formatPrice(vehicle.price, language) : (language === 'en' ? 'Price on request' : 'মূল্য অনুরোধে')}</div>
+                      <div className="mt-2 px-3 py-1 bg-amber-100 dark:bg-amber-900/30 border border-amber-300 dark:border-amber-700 rounded text-xs font-semibold text-amber-800 dark:text-amber-300 inline-block">
+                        {language === 'en' ? 'Only Pre Order Price is Shown!' : 'শুধুমাত্র প্রি-অর্ডার মূল্য দেখানো হচ্ছে!'}
+                      </div>
+                    </div>
+                    <div className="text-sm text-gray-400">2021/22 Model • {vehicle.mileage.toLocaleString()} km</div>
                     <div className="text-sm">Fuel: {vehicle.fuel_type} • Transmission: {vehicle.transmission}</div>
                     {vehicle.color_exterior && (
                       <div className="text-sm">Color: {vehicle.color_exterior}</div>

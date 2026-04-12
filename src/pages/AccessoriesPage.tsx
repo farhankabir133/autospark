@@ -114,8 +114,10 @@ const demoProducts: AccessoryProduct[] = [
   { id: '1022', name_en: 'Coil Cap Rubber RBI', name_bn: '', price: 950, category: 'Accessories', stock_quantity: 10, is_available: true, images: [], brand: '', rating: 0, reviews: 0, discount: 0, compatibility: [], isNew: false, isBestseller: false },
   { id: '1023', name_en: 'Coolant', name_bn: '', price: 650, category: 'Accessories', stock_quantity: 10, is_available: true, images: [], brand: '', rating: 0, reviews: 0, discount: 0, compatibility: [], isNew: false, isBestseller: false },
   { id: '1024', name_en: 'Cosmic Wax', name_bn: '', price: 750, category: 'Accessories', stock_quantity: 10, is_available: true, images: [{ image_url: '/P2/w40.webp' }], brand: '', rating: 0, reviews: 0, discount: 0, compatibility: [], isNew: false, isBestseller: false },
-  { id: '1025', name_en: 'CVT Fluid NS-3', name_bn: '', price: 6950, category: 'Accessories', stock_quantity: 10, is_available: true, images: [{ image_url: '/P2/3 Background Removed Medium.webp' }], brand: '', rating: 0, reviews: 0, discount: 0, compatibility: [], isNew: false, isBestseller: false },
-  { id: '1026', name_en: 'CVT Fluid TC', name_bn: '', price: 7550, category: 'Accessories', stock_quantity: 10, is_available: true, images: [], brand: '', rating: 0, reviews: 0, discount: 0, compatibility: [], isNew: false, isBestseller: false },
+  { id: '1025', name_en: 'CVT Fluid NS-3', name_bn: '', price: 6950, category: 'Accessories', stock_quantity: 10, is_available: true, images: [{ image_url: '/P2/CVTFluidNS3.webp' }], brand: '', rating: 0, reviews: 0, discount: 0, compatibility: [], isNew: false, isBestseller: false },
+  { id: '1026', name_en: 'CVT Fluid TC', name_bn: '', price: 7550, category: 'Accessories', stock_quantity: 10, is_available: true, images: [{ image_url: '/P2/CVTFluidTC.webp' }], brand: '', rating: 0, reviews: 0, discount: 0, compatibility: [], isNew: false, isBestseller: false },
+  { id: '2206', name_en: 'CVT Fluid NS-2', name_bn: '', price: 6950, category: 'Accessories', stock_quantity: 10, is_available: true, images: [{ image_url: '/P2/CVTFluidNS2.webp' }], brand: '', rating: 0, reviews: 0, discount: 0, compatibility: [], isNew: false, isBestseller: false },
+  { id: '2207', name_en: 'Gear Oil CVT-FE', name_bn: '', price: 7550, category: 'Accessories', stock_quantity: 10, is_available: true, images: [{ image_url: '/P2/CVTFluidFE.webp' }], brand: '', rating: 0, reviews: 0, discount: 0, compatibility: [], isNew: false, isBestseller: false },
   { id: '1027', name_en: 'Cycle Show Piece', name_bn: '', price: 0, category: 'Accessories', stock_quantity: 10, is_available: true, images: [], brand: '', rating: 0, reviews: 0, discount: 0, compatibility: [], isNew: false, isBestseller: false },
   { id: '1028', name_en: 'D Bush 12320', name_bn: '', price: 350, category: 'Accessories', stock_quantity: 10, is_available: true, images: [], brand: '', rating: 0, reviews: 0, discount: 0, compatibility: [], isNew: false, isBestseller: false },
   { id: '1029', name_en: 'D Bush 20290', name_bn: '', price: 450, category: 'Accessories', stock_quantity: 10, is_available: true, images: [], brand: '', rating: 0, reviews: 0, discount: 0, compatibility: [], isNew: false, isBestseller: false },
@@ -171,8 +173,9 @@ const demoProducts: AccessoryProduct[] = [
   { id: '1079', name_en: 'Hy-Coolent-fan Filter 470070', name_bn: '', price: 800, category: 'Accessories', stock_quantity: 10, is_available: true, images: [], brand: '', rating: 0, reviews: 0, discount: 0, compatibility: [], isNew: false, isBestseller: false },
   { id: '1080', name_en: 'Injector Seal', name_bn: '', price: 550, category: 'Accessories', stock_quantity: 10, is_available: true, images: [], brand: '', rating: 0, reviews: 0, discount: 0, compatibility: [], isNew: false, isBestseller: false },
   { id: '1081', name_en: 'Intigator Bulb', name_bn: '', price: 850, category: 'Accessories', stock_quantity: 10, is_available: true, images: [], brand: '', rating: 0, reviews: 0, discount: 0, compatibility: [], isNew: false, isBestseller: false },
-  { id: '1082', name_en: 'JDA 0W-20', name_bn: '', price: 4550, category: 'Accessories', stock_quantity: 10, is_available: true, images: [{ image_url: '/cars/Products/JDA-0W20.jpeg' }], brand: '', rating: 0, reviews: 0, discount: 0, compatibility: [], isNew: false, isBestseller: false },
-  { id: '1083', name_en: 'JDA 10W-40', name_bn: '', price: 3750, category: 'Accessories', stock_quantity: 10, is_available: true, images: [], brand: '', rating: 0, reviews: 0, discount: 0, compatibility: [], isNew: false, isBestseller: false },
+  { id: '1082', name_en: 'JDA 0W-20', name_bn: '', price: 4550, category: 'Accessories', stock_quantity: 10, is_available: true, images: [{ image_url: '/P2/7 Background Removed Medium.webp' }], brand: '', rating: 0, reviews: 0, discount: 0, compatibility: [], isNew: false, isBestseller: false },
+  { id: '1194', name_en: 'JDA 5W-30', name_bn: '', price: 4550, category: 'Accessories', stock_quantity: 10, is_available: true, images: [{ image_url: '/P2/JDA5W30.webp' }], brand: '', rating: 0, reviews: 0, discount: 0, compatibility: [], isNew: false, isBestseller: false },
+  { id: '1083', name_en: 'JDA 10W-40', name_bn: '', price: 3750, category: 'Accessories', stock_quantity: 10, is_available: true, images: [{ image_url: '/NP/JDA10W40.webp' }], brand: '', rating: 0, reviews: 0, discount: 0, compatibility: [], isNew: false, isBestseller: false },
   { id: '1084', name_en: 'Kaitom Wiper Blade', name_bn: '', price: 400, category: 'Accessories', stock_quantity: 10, is_available: true, images: [], brand: '', rating: 0, reviews: 0, discount: 0, compatibility: [], isNew: false, isBestseller: false },
   { id: '1085', name_en: 'KH-C30', name_bn: '', price: 350, category: 'Accessories', stock_quantity: 10, is_available: true, images: [], brand: '', rating: 0, reviews: 0, discount: 0, compatibility: [], isNew: false, isBestseller: false },
   { id: '1086', name_en: 'Leather Tire Wax', name_bn: '', price: 850, category: 'Accessories', stock_quantity: 10, is_available: true, images: [], brand: '', rating: 0, reviews: 0, discount: 0, compatibility: [], isNew: false, isBestseller: false },
@@ -1698,6 +1701,32 @@ const dedupeProducts = (items: AccessoryProduct[]): AccessoryProduct[] => {
 
 const getForcedProductOverrideByName = (name: string): { imageUrl?: string; price?: number; nameEn?: string; discount?: number } | null => {
   const normalized = (name || '').toLowerCase();
+
+  if (normalized.includes('jda 10w-40') || normalized.includes('jda 10w40')) {
+    return { imageUrl: '/NP/JDA10W40.webp', price: 3750 };
+  }
+
+  if (normalized.includes('cvt fluid ns-2') || normalized.includes('ns-2')) {
+    return { imageUrl: '/P2/CVTFluidNS2.webp', price: 6950 };
+  }
+
+  if (normalized.includes('cvt fluid ns-3') || normalized.includes('ns-3')) {
+    return { imageUrl: '/P2/CVTFluidNS3.webp', price: 6950 };
+  }
+
+  if (normalized.includes('cvt fluid tc')) {
+    return { imageUrl: '/P2/CVTFluidTC.webp', price: 7550 };
+  }
+
+  if (normalized.includes('gear oil cvt-fe') || normalized.includes('cvt-fe')) {
+    return { imageUrl: '/P2/CVTFluidFE.webp', price: 7550 };
+  }
+
+  if (normalized.includes('jda 0w-20') || normalized.includes('jda 0w20')) {
+    return {
+      imageUrl: '/P2/7 Background Removed Medium.webp',
+    };
+  }
 
   if (normalized.includes('mobil 1 extended performance 10w-30') || normalized.includes('mobil 1-5w30') || normalized.includes('mobil 1 5w30')) {
     return {
