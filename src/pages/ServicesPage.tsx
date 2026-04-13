@@ -325,36 +325,47 @@ const servicePackages: ServicePackage[] = [
 const technicians: Technician[] = [
   {
     id: '1',
-    name: 'Mohammed Al-Hassan',
-    role: 'Master Technician',
-    image: 'https://images.unsplash.com/photo-1560250097-0b93528c311a?w=400',
-    certifications: ['ASE Master', 'Toyota Certified', 'Mercedes-Benz Specialist'],
-    experience: 15,
+    name: 'Sanoar Rahman',
+    role: 'Engine Expert',
+    image: '/dist/emp/engine.webp',
+    certifications: ['Engine Diagnostics', 'Performance Tuning', 'ASE Certified'],
+    experience: 12,
     rating: 4.9,
     reviews: 234,
-    specialties: ['Engine', 'Transmission', 'Diagnostics']
+    specialties: ['Engine', 'Diagnostics', 'Performance Tuning']
   },
   {
     id: '2',
-    name: 'Ahmed Khalil',
-    role: 'Detailing Specialist',
-    image: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=400',
-    certifications: ['IDA Certified', 'Ceramic Pro Installer', 'PPF Expert'],
-    experience: 8,
+    name: 'Sakib Hasan',
+    role: 'Dent Expert',
+    image: '/dist/emp/sakib.webp',
+    certifications: ['Paintless Dent Removal', 'Bodywork Specialist', 'IDA Certified'],
+    experience: 10,
     rating: 4.8,
     reviews: 189,
-    specialties: ['Ceramic Coating', 'PPF', 'Paint Correction']
+    specialties: ['Dent Removal', 'Bodywork', 'Paint Correction']
   },
   {
     id: '3',
-    name: 'Omar Rashid',
-    role: 'Electrical Specialist',
-    image: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400',
-    certifications: ['ASE A6', 'Hybrid/EV Certified', 'BMW Specialist'],
-    experience: 12,
+    name: 'Forhad Hosen',
+    role: 'AC Electric Specialist',
+    image: '/dist/emp/forhad.webp',
+    certifications: ['AC Systems', 'Electrical Systems', 'Cabin Climate Expert'],
+    experience: 11,
     rating: 4.7,
     reviews: 156,
-    specialties: ['Electrical', 'AC Systems', 'Hybrid/EV']
+    specialties: ['AC Systems', 'Electrical', 'Climate Control']
+  },
+  {
+    id: '4',
+    name: 'Amir Rahman',
+    role: 'Senior Technician',
+    image: '/dist/emp/amir.webp',
+    certifications: ['ASE Master', 'Quality Control', 'Safety Standards'],
+    experience: 15,
+    rating: 4.9,
+    reviews: 267,
+    specialties: ['Quality Assurance', 'Diagnostics', 'Safety Standards']
   }
 ];
 
