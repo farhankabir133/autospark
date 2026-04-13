@@ -1,0 +1,51 @@
+# Vercel ignore - exclude files from deployment
+
+# Old Next.js projects (already in git ignore but being extra cautious)
+next-sslcommerz/
+next-sslcommerz-example/
+assistant-next/
+
+# Build cache directories
+.next/
+.vercel/
+.vite/
+
+# Documentation files (not needed in production)
+*.md
+!README.md
+
+# Development files
+.env.local
+.env.*.local
+
+# Test files
+tests/
+test-*
+*.test.ts
+*.test.tsx
+
+# Source maps
+*.map
+
+# Local development
+server/
+scripts/
+
+# Node modules will be installed fresh
+# node_modules/ is auto-excluded by Vercel
+
+# IDE and OS files
+.vscode/
+.idea/
+.DS_Store
+*.swp
+*.swo
+*~
+
+# Git files
+.git/
+.gitignore
+.gitattributes
+
+# CI/CD
+.github/
