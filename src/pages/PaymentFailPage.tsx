@@ -1,20 +1,46 @@
 'use client';
 
-import { useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useEffect, useState } from 'react';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { XCircle, Home, AlertTriangle } from 'lucide-react';
+import { updatePaymentStatus, getPaymentById } from '../services/appwriteService';
 
 const PaymentFailPage = () => {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const [payment, setPayment] = useState<any>(null);
 
   useEffect(() => {
+    const handleFailure = async () => {
+      try {
+        const paymentId = searchParams.get('payment_id');
+
+        if (paymentId) {
+          console.log('📝 Processing payment failure for ID:', paymentId);
+          
+          // Update payment status in database to 'failed'
+          await updatePaymentStatus(paymentId, 'failed');
+
+          // Get updated payment record
+          const paymentData = await getPaymentById(paymentId);
+          setPayment(paymentData);
+          
+          console.log('✅ Payment failure processed');
+        }
+      } catch (err) {
+        console.error('❌ Error handling failure:', err);
+      }
+    };
+
+    handleFailure();
+
     // Redirect to cart after 5 seconds if user doesn't click
     const timer = setTimeout(() => {
-      navigate('/cart');
+      navigate('/payment');
     }, 5000);
 
     return () => clearTimeout(timer);
-  }, [navigate]);
+  }, [navigate, searchParams]);
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-red-50 to-white flex items-center justify-center p-4">
@@ -34,6 +60,26 @@ const PaymentFailPage = () => {
         <p className="text-gray-600 mb-4">
           Unfortunately, your payment could not be processed.
         </p>
+
+        {/* Payment Details from Appwrite */}
+        {payment && (
+          <div className="bg-gray-50 rounded-lg p-4 mb-6 text-left space-y-3">
+            <div>
+              <p className="text-xs text-gray-500 uppercase font-semibold">Order ID</p>
+              <p className="font-mono text-sm font-bold text-gray-800 break-all">
+                {payment.$id.substring(0, 12)}...
+              </p>
+            </div>
+            <div>
+              <p className="text-xs text-gray-500 uppercase font-semibold">Amount</p>
+              <p className="text-lg font-bold text-gray-800">৳{payment.total_amount?.toLocaleString()}</p>
+            </div>
+            <div>
+              <p className="text-xs text-gray-500 uppercase font-semibold">Status</p>
+              <p className="text-sm font-bold text-red-600">FAILED</p>
+            </div>
+          </div>
+        )}
 
         {/* Information Box */}
         <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 mb-6 text-left">
@@ -69,7 +115,7 @@ const PaymentFailPage = () => {
             Try Payment Again
           </button>
           <button
-            onClick={() => navigate('/cart')}
+            onClick={() => navigate('/accessories')}
             className="w-full py-3 bg-white border-2 text-gray-800 font-semibold rounded-lg hover:bg-gray-50 transition-colors"
             style={{ borderColor: '#F28C38' }}
           >

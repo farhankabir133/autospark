@@ -4,31 +4,53 @@ import { useEffect, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { CheckCircle, Home } from 'lucide-react';
 import { useCart } from '../contexts/CartContext';
+import { updatePaymentStatus, getPaymentById } from '../services/appwriteService';
 
 const PaymentSuccessPage = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const { clearCart } = useCart();
   const [transactionId, setTransactionId] = useState<string | null>(null);
+  const [payment, setPayment] = useState<any>(null);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    const tranId = searchParams.get('tran_id');
-    setTransactionId(tranId);
+    const handleSuccess = async () => {
+      try {
+        const paymentId = searchParams.get('payment_id');
+        const tranId = searchParams.get('tran_id');
+        
+        setTransactionId(tranId);
 
-    // Clear cart after successful payment
-    clearCart();
+        if (paymentId) {
+          console.log('📝 Processing payment success for ID:', paymentId);
+          
+          // Update payment status in database to 'success'
+          await updatePaymentStatus(paymentId, 'success', tranId || undefined);
 
-    // Here you might want to:
-    // 1. Validate the transaction with your backend
-    // 2. Fetch order details
-    // 3. Send order confirmation email
-    
-    // Redirect to home after 5 seconds if user doesn't click
-    const timer = setTimeout(() => {
-      navigate('/');
-    }, 5000);
+          // Get updated payment record
+          const paymentData = await getPaymentById(paymentId);
+          setPayment(paymentData);
+          
+          console.log('✅ Payment success processed');
+        }
 
-    return () => clearTimeout(timer);
+        // Clear cart after successful payment
+        clearCart();
+
+        // Redirect to home after 5 seconds if user doesn't click
+        const timer = setTimeout(() => {
+          navigate('/');
+        }, 5000);
+
+        return () => clearTimeout(timer);
+      } catch (err) {
+        console.error('❌ Error handling success:', err);
+        setError(err instanceof Error ? err.message : 'Unknown error');
+      }
+    };
+
+    handleSuccess();
   }, [searchParams, navigate, clearCart]);
 
   return (
@@ -49,6 +71,33 @@ const PaymentSuccessPage = () => {
         <p className="text-gray-600 mb-4">
           Thank you for your purchase. Your order has been confirmed.
         </p>
+
+        {/* Error if any */}
+        {error && (
+          <div className="bg-red-50 border border-red-200 rounded-lg p-4 mb-6">
+            <p className="text-sm text-red-700">{error}</p>
+          </div>
+        )}
+
+        {/* Payment Details from Appwrite */}
+        {payment && (
+          <div className="bg-gray-50 rounded-lg p-4 mb-6 text-left space-y-3">
+            <div>
+              <p className="text-xs text-gray-500 uppercase font-semibold">Order ID</p>
+              <p className="font-mono text-sm font-bold text-gray-800 break-all">
+                {payment.$id.substring(0, 12)}...
+              </p>
+            </div>
+            <div>
+              <p className="text-xs text-gray-500 uppercase font-semibold">Amount</p>
+              <p className="text-lg font-bold text-green-600">৳{payment.total_amount?.toLocaleString()}</p>
+            </div>
+            <div>
+              <p className="text-xs text-gray-500 uppercase font-semibold">Customer</p>
+              <p className="text-sm text-gray-700">{payment.customer_name}</p>
+            </div>
+          </div>
+        )}
 
         {/* Transaction ID */}
         {transactionId && (

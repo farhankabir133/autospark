@@ -7,6 +7,7 @@ import * as z from 'zod';
 import { Loader2 } from 'lucide-react';
 import { bdDistricts, bdThanas } from '../data/bd-locations';
 import { useCart } from '../contexts/CartContext';
+import { savePaymentRequest } from '../services/appwriteService';
 
 const phoneRegex = new RegExp(/^01[3-9]\d{8}$/);
 
@@ -69,19 +70,35 @@ const OnePageCheckout = () => {
       return;
     }
 
-    // Format payment data for Vercel API endpoint
-    const paymentData = {
-      cart: cartItems,
-      total_amount: cartTotal,
-      customer_name: data.customer_name,
-      mobile: data.mobile,
-      address: data.address,
-      thana: data.thana,
-      district: data.district,
-    };
-
     try {
-      // Call Vercel API endpoint directly (works in both dev and prod)
+      // Step 1: Save payment request to Appwrite database
+      console.log('📝 Saving payment to Appwrite database...');
+      const paymentRecord = await savePaymentRequest({
+        customer_name: data.customer_name,
+        mobile: data.mobile,
+        address: data.address,
+        thana: data.thana,
+        district: data.district,
+        total_amount: cartTotal,
+        cart_items: cartItems,
+      });
+
+      console.log('✅ Payment record created:', paymentRecord);
+      const paymentRecordId = paymentRecord.$id;
+
+      // Step 2: Send payment initialization request to SSLCommerz API
+      console.log('🔗 Initializing SSLCommerz payment...');
+      const paymentData = {
+        cart: cartItems,
+        total_amount: cartTotal,
+        customer_name: data.customer_name,
+        mobile: data.mobile,
+        address: data.address,
+        thana: data.thana,
+        district: data.district,
+        payment_record_id: paymentRecordId, // Send Appwrite document ID for reference
+      };
+
       const response = await fetch('/api/payment/init', {
         method: 'POST',
         headers: {
@@ -125,7 +142,7 @@ const OnePageCheckout = () => {
       // SSLCommerz returns GatewayPageURL on success
       if (sslczData.status === 'SUCCESS' && sslczData.GatewayPageURL) {
         // Redirect to SSLCommerz payment gateway
-        console.log('Redirecting to SSLCommerz gateway...');
+        console.log('🚀 Redirecting to SSLCommerz gateway...');
         window.location.href = sslczData.GatewayPageURL;
       } else {
         console.error('Payment initialization failed:', sslczData);
