@@ -7,9 +7,6 @@ import * as z from 'zod';
 import { Loader2 } from 'lucide-react';
 import { bdDistricts, bdThanas } from '../data/bd-locations';
 import { useCart } from '../contexts/CartContext';
-import { PAYMENT_API, type PaymentInitResponse } from '../config/payment';
-import { functions } from '../config/appwrite';
-import { ExecutionMethod } from 'appwrite';
 
 const phoneRegex = new RegExp(/^01[3-9]\d{8}$/);
 
@@ -72,69 +69,54 @@ const OnePageCheckout = () => {
       return;
     }
 
-    // Format payment data with proper field names for Appwrite function
+    // Format payment data for Vercel API endpoint
     const paymentData = {
       cart: cartItems,
       total_amount: cartTotal,
-      cus_name: data.customer_name,
-      cus_email: data.customer_name.toLowerCase().replace(/\s+/g, '') + '@customer.autospark.local', // Generate email from name
-      cus_phone: data.mobile,
-      cus_add1: data.address,
-      cus_city: data.district,
-      cus_postcode: '1000',
-      cus_country: 'Bangladesh',
-      product_name: `Accessories Order (${cartItems.length} items)`,
-      product_category: 'accessories',
-      shipping_method: 'Courier',
+      customer_name: data.customer_name,
+      mobile: data.mobile,
+      address: data.address,
+      thana: data.thana,
+      district: data.district,
     };
 
     try {
-      // Use Appwrite Function to initialize payment securely
-      const execution = await functions.createExecution(
-        PAYMENT_API.INIT_FUNCTION_ID,
-        JSON.stringify(paymentData),
-        false, // async = false (we want to wait for the result)
-        '/init', // path correctly routed in main.js
-        ExecutionMethod.POST // method
-      );
+      // Call Vercel API endpoint directly (works in both dev and prod)
+      const response = await fetch('/api/payment/init', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(paymentData),
+      });
 
-      let responseData: PaymentInitResponse = {};
-      try {
-        responseData = JSON.parse(execution.responseBody);
-      } catch (e) {
-        console.error('Failed to parse function response:', execution.responseBody);
-        throw new Error('Invalid response from payment server');
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || `Server error: ${response.status}`);
       }
 
-      if (execution.status === 'failed' || execution.responseStatusCode >= 400 || responseData.error) {
-        throw new Error(responseData.error || responseData.message || 'Payment initialization failed');
-      }
+      const sslczData = await response.json();
 
-      // Prefer a generic redirectUrl from the ProKit-style backend,
-      // but also support legacy SSLCommerz-style field names.
-      const redirectUrl =
-        responseData.redirectUrl ||
-        responseData.GatewayPageURL ||
-        responseData.redirectGatewayURL;
-
-      if (redirectUrl) {
-        window.location.href = redirectUrl;
+      // SSLCommerz returns GatewayPageURL on success
+      if (sslczData.status === 'SUCCESS' && sslczData.GatewayPageURL) {
+        // Redirect to SSLCommerz payment gateway
+        window.location.href = sslczData.GatewayPageURL;
       } else {
-        throw new Error('No payment redirect URL found in response');
+        throw new Error(sslczData.failedreason || 'Payment initialization failed');
       }
     } catch (error) {
       setIsSubmitting(false);
       let errorMessage = error instanceof Error ? error.message : 'Payment initialization failed';
       
-      // Handle specific Appwrite errors
-      if (errorMessage.includes('paused') || errorMessage.includes('Project is paused')) {
+      // Handle specific errors
+      if (errorMessage.includes('temporarily unavailable') || errorMessage.includes('paused')) {
         errorMessage = 'The payment service is temporarily unavailable. Please contact support or try again later.';
       } else if (errorMessage.includes('timeout') || errorMessage.includes('ECONNREFUSED')) {
         errorMessage = 'Connection error. Please check your internet connection and try again.';
       } else if (errorMessage.includes('401') || errorMessage.includes('Unauthorized')) {
         errorMessage = 'Authentication error. Please refresh the page and try again.';
-      } else if (errorMessage.includes('Invalid response')) {
-        errorMessage = 'Invalid response from payment server. Please try again.';
+      } else if (errorMessage.includes('400') || errorMessage.includes('Missing required fields')) {
+        errorMessage = 'Please fill in all required fields correctly.';
       }
       
       setError(errorMessage);

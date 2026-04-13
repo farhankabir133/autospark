@@ -113,8 +113,8 @@ export default async function handler(
     params.append('ship_postcode', '1200');
     params.append('ship_country', 'Bangladesh');
 
-    // Call SSLCommerz API
-    const sslCommerzUrl = 'https://sandbox.sslcommerz.com/gwprocess/v4/api.php';
+    // Call SSLCommerz API - USE LIVE ENDPOINT FOR PRODUCTION
+    const sslCommerzUrl = 'https://securepay.sslcommerz.com/gwprocess/v4/api.php';
     const sslResponse = await fetch(sslCommerzUrl, {
       method: 'POST',
       body: params,

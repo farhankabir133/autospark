@@ -1,0 +1,256 @@
+╔════════════════════════════════════════════════════════════════════════════════╗
+║                                                                                ║
+║        🧪 QUICK REFERENCE: TESTING PAYMENT ON CUSTOM DOMAIN                  ║
+║                                                                                ║
+║                    https://autosparkbd.com/accessories                         ║
+║                                                                                ║
+╚════════════════════════════════════════════════════════════════════════════════╝
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+🔴 BEFORE TESTING - CRITICAL STEP
+
+   You MUST restore your Appwrite project first:
+
+   1. Open: https://sgp.cloud.appwrite.io/console
+   2. Login: Use your credentials
+   3. Select: "Auto Spark" project
+   4. Click: "Restore" button
+   5. Wait: 10-30 seconds
+   6. Verify: sslcommerz-api is ENABLED
+   7. Then: Start testing below ✅
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+🧪 STEP-BY-STEP TESTING FLOW
+
+   STEP 1: Visit Accessories Page
+   ────────────────────────────────────────────────────────────────
+   URL: https://autosparkbd.com/accessories
+   Verify: ✅ Products load with images
+           ✅ Prices displayed
+           ✅ No errors
+
+   STEP 2: Add Product to Cart
+   ────────────────────────────────────────────────────────────────
+   Action: Click "Add to Cart" on any product
+   Verify: ✅ Cart count increases
+           ✅ Item added successfully
+           ✅ No error messages
+
+   STEP 3: View Cart
+   ────────────────────────────────────────────────────────────────
+   Action: Click cart icon
+   Verify: ✅ Cart items visible
+           ✅ Prices correct
+           ✅ Quantity controls work
+           ✅ Total calculated
+
+   STEP 4: Go to Checkout
+   ────────────────────────────────────────────────────────────────
+   Action: Click "Proceed to Checkout"
+   Verify: ✅ PaymentPage loads
+           ✅ Cart shows on right
+           ✅ Form visible
+           ✅ URL is /payment
+
+   STEP 5: Fill Form with Test Data
+   ────────────────────────────────────────────────────────────────
+   Full Name:  Test Customer
+   Mobile:     01701234567
+   District:   Dhaka
+   Thana:      Sher-e-Bangla Nagar
+   Address:    123 Test Street, Dhaka 1212
+   
+   Verify: ✅ All fields accept input
+           ✅ No validation errors
+           ✅ All fields filled
+
+   STEP 6: Place Order
+   ────────────────────────────────────────────────────────────────
+   Action: Click "Place Order" button
+   Verify: ✅ NO error popup appears ⚠️ IF ERROR: Appwrite paused
+           ✅ Loading spinner shows
+           ✅ Browser redirects to SSLCommerz
+           ✅ Gateway page loads
+
+   STEP 7: Complete Payment
+   ────────────────────────────────────────────────────────────────
+   Test Card: 4111111111111111 (Visa)
+              OR 5555555555554444 (Mastercard)
+   Expiry:    12/25 (any future month/year)
+   CVV:       123
+   OTP:       123456 (when asked)
+   
+   Verify: ✅ Payment accepted
+           ✅ Redirects to success page
+           ✅ Order confirmed
+           ✅ Success page shows: /payment-success
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+✅ SUCCESS INDICATORS (All should be CHECKED)
+
+   [ ] Custom domain loads without errors
+   [ ] Accessories page displays products
+   [ ] Add to cart updates count
+   [ ] Cart shows all items
+   [ ] PaymentPage form loads
+   [ ] Form validation works
+   [ ] Form submission triggers function
+   [ ] NO "Project is paused" error
+   [ ] Redirects to SSLCommerz payment page
+   [ ] Payment gateway loads
+   [ ] Test card accepted
+   [ ] Redirects to success page
+   [ ] Order shows confirmation
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+⚠️ COMMON ERRORS & FIXES
+
+   ERROR: "Project is paused due to inactivity"
+   ─────────────────────────────────────────────
+   FIX: Restore Appwrite project
+        1. https://sgp.cloud.appwrite.io/console
+        2. Click "Restore" button
+        3. Wait 30 seconds
+        4. Retry payment
+
+
+   ERROR: "Full name is required" (Form doesn't submit)
+   ─────────────────────────────────────────────────────
+   FIX: Enter valid data
+        - Full Name: at least 2 characters
+        - Mobile: 11 digits starting with 01
+        - Address: at least 5 characters
+        - Select both District and Thana
+
+
+   ERROR: Form won't load or blank page
+   ────────────────────────────────────
+   FIX: Clear browser cache
+        1. Press Ctrl+Shift+Delete (or Cmd+Shift+Delete on Mac)
+        2. Check "Cookies and cached images and files"
+        3. Click "Delete data"
+        4. Refresh page
+
+
+   ERROR: "Cannot connect to payment gateway"
+   ────────────────────────────────────────
+   FIX: Check internet connection
+        1. Verify you can access: https://www.sslcommerz.com
+        2. Try in different browser
+        3. Try in private/incognito window
+        4. Restart browser
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+🔍 BROWSER CONSOLE DEBUGGING (F12 Key)
+
+   1. Open Payment Page
+   2. Press F12 to open DevTools
+   3. Click "Console" tab
+   4. Look for issues:
+      
+      ✅ NO red error messages = GOOD
+      ❌ Red error messages = Problem
+      
+   5. Check Network tab:
+      - Press F12 → Network
+      - Click "Place Order"
+      - Look for POST request to Appwrite
+      - Status should be 200 or 307 (not 500 or 404)
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+📊 EXPECTED TIMINGS
+
+   Accessories Load:        < 3 seconds
+   Add to Cart:             < 1 second
+   PaymentPage Load:        < 2 seconds
+   Form Submission:         2-5 seconds (Appwrite function)
+   Redirect to SSLCommerz:  < 1 second
+   Payment Gateway Load:    < 3 seconds
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+📋 PAYMENT TEST DATA
+
+   Test Credit Cards (SSLCommerz):
+   
+   Visa:
+   Number:  4111111111111111
+   Month:   12
+   Year:    25
+   CVV:     123
+   
+   Mastercard:
+   Number:  5555555555554444
+   Month:   12
+   Year:    25
+   CVV:     123
+   
+   OTP (when asked): 123456
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+🔗 IMPORTANT URLS
+
+   Custom Domain Accessories:
+   https://autosparkbd.com/accessories
+
+   Payment Page:
+   https://autosparkbd.com/payment
+
+   Success Page (after payment):
+   https://autosparkbd.com/payment-success
+
+   Appwrite Console (to restore project):
+   https://sgp.cloud.appwrite.io/console
+
+   SSLCommerz Dashboard:
+   https://www.sslcommerz.com/
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+⏱️  ESTIMATED TESTING TIME: 10-15 minutes
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+🎯 FINAL CHECKLIST
+
+   BEFORE TESTING:
+   [ ] Appwrite project restored
+   [ ] Internet connection stable
+   [ ] Browser up to date
+   [ ] JavaScript enabled
+   [ ] Cookies enabled
+
+   DURING TESTING:
+   [ ] Follow steps 1-7 above
+   [ ] Check each verification point
+   [ ] Take notes of any issues
+   [ ] Keep browser console visible (F12)
+
+   AFTER TESTING:
+   [ ] If all checks passed: Payment is WORKING ✅
+   [ ] If errors occurred: Check troubleshooting above
+   [ ] If still issues: Check TESTING_PAYMENT_CUSTOM_DOMAIN.md
+   [ ] Report any issues with console logs
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+📞 NEED MORE HELP?
+
+   Read Full Guide: TESTING_PAYMENT_CUSTOM_DOMAIN.md
+   Check Appwrite: APPWRITE_PROJECT_RESTORATION_GUIDE.md
+   Review Solution: PAYMENT_ISSUE_SOLUTION.md
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+✨ STATUS: 🟡 AWAITING APPWRITE RESTORATION → 🟢 READY FOR TESTING
+
+      Restore Appwrite → Test Payment → Success! 🚀
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
