@@ -1373,7 +1373,7 @@ const EMICalculator: React.FC<{ principal: number }> = ({ principal }) => {
                                 {t('vehicle.stock')}: {vehicle.stock_number}
                               </div>
                               <h3 className={`font-bold mb-2 ${isDark ? 'text-white' : 'text-gray-900'} ${viewMode === 'list' ? 'text-lg' : 'text-xl'}`}>
-                                {vehicle.brand_name} {vehicle.model} <span className={`text-sm ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>(2021/22)</span>
+                                {vehicle.brand_name} {vehicle.model} <span className={`text-sm ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>({vehicle.year}/{vehicle.year + 1})</span>
                               </h3>
                               <div className="flex items-center justify-between mb-4">
                                 <div>
@@ -1434,7 +1434,7 @@ const EMICalculator: React.FC<{ principal: number }> = ({ principal }) => {
               >
                 <div className="flex items-start justify-between gap-4">
                   <div>
-                    <h3 className="text-lg font-bold">{vehicle.brand_name} {vehicle.model} <span className="text-sm text-gray-500">(2021/22)</span></h3>
+                    <h3 className="text-lg font-bold">{vehicle.brand_name} {vehicle.model} <span className="text-sm text-gray-500">({vehicle.year}/{vehicle.year + 1})</span></h3>
                     <div className="text-sm text-gray-400">{vehicle.stock_number}</div>
                   </div>
                   <div className="ml-auto flex items-center gap-2">
@@ -1473,7 +1473,7 @@ const EMICalculator: React.FC<{ principal: number }> = ({ principal }) => {
                         {language === 'en' ? 'Only Pre Order Price is Shown!' : 'শুধুমাত্র প্রি-অর্ডার মূল্য দেখানো হচ্ছে!'}
                       </div>
                     </div>
-                    <div className="text-sm text-gray-400">2021/22 Model • {vehicle.mileage.toLocaleString()} km</div>
+                    <div className="text-sm text-gray-400">{vehicle.year}/{vehicle.year + 1} Model • {vehicle.mileage.toLocaleString()} km</div>
                     <div className="text-sm">Fuel: {vehicle.fuel_type} • Transmission: {vehicle.transmission}</div>
                     {vehicle.color_exterior && (
                       <div className="text-sm">Color: {vehicle.color_exterior}</div>
