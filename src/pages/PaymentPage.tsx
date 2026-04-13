@@ -124,7 +124,19 @@ const OnePageCheckout = () => {
       }
     } catch (error) {
       setIsSubmitting(false);
-      const errorMessage = error instanceof Error ? error.message : 'Payment initialization failed';
+      let errorMessage = error instanceof Error ? error.message : 'Payment initialization failed';
+      
+      // Handle specific Appwrite errors
+      if (errorMessage.includes('paused') || errorMessage.includes('Project is paused')) {
+        errorMessage = 'The payment service is temporarily unavailable. Please contact support or try again later.';
+      } else if (errorMessage.includes('timeout') || errorMessage.includes('ECONNREFUSED')) {
+        errorMessage = 'Connection error. Please check your internet connection and try again.';
+      } else if (errorMessage.includes('401') || errorMessage.includes('Unauthorized')) {
+        errorMessage = 'Authentication error. Please refresh the page and try again.';
+      } else if (errorMessage.includes('Invalid response')) {
+        errorMessage = 'Invalid response from payment server. Please try again.';
+      }
+      
       setError(errorMessage);
       console.error('Payment error:', error);
     }
@@ -143,13 +155,36 @@ const OnePageCheckout = () => {
         {/* Error Alert */}
         {error && (
           <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg">
-            <p className="text-red-700 font-medium">{error}</p>
-            <button
-              onClick={() => setError(null)}
-              className="mt-2 text-sm text-red-600 hover:text-red-800 underline"
-            >
-              Dismiss
-            </button>
+            <div className="flex items-start justify-between">
+              <div className="flex-1">
+                <p className="text-red-700 font-medium">{error}</p>
+                {error.includes('temporarily unavailable') && (
+                  <p className="mt-2 text-sm text-red-600">
+                    If this persists, please contact our support team at support@autospark.com
+                  </p>
+                )}
+              </div>
+              <button
+                onClick={() => setError(null)}
+                className="ml-4 text-red-600 hover:text-red-800 font-bold text-xl"
+              >
+                ×
+              </button>
+            </div>
+            <div className="mt-3 flex gap-2">
+              <button
+                onClick={() => setError(null)}
+                className="text-sm px-3 py-1 bg-red-100 hover:bg-red-200 text-red-700 rounded transition"
+              >
+                Dismiss
+              </button>
+              <button
+                onClick={() => window.location.reload()}
+                className="text-sm px-3 py-1 bg-red-700 hover:bg-red-800 text-white rounded transition"
+              >
+                Try Again
+              </button>
+            </div>
           </div>
         )}
 
