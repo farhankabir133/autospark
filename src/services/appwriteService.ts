@@ -37,7 +37,6 @@ export const savePaymentRequest = async (paymentData: {
         cart_items: JSON.stringify(paymentData.cart_items),
         session_id: sessionId,
         status: 'pending',
-        created_at: new Date().toISOString(),
       }
     );
 
@@ -63,7 +62,6 @@ export const updatePaymentStatus = async (
       {
         status: status,
         transaction_id: transactionId || null,
-        updated_at: new Date().toISOString(),
       }
     );
 
