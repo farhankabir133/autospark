@@ -65,14 +65,27 @@ const OnePageCheckout = () => {
     setIsSubmitting(true);
     setError(null);
     
+    // Ensure cart has items
+    if (!cartItems || cartItems.length === 0) {
+      setError('Your cart is empty. Please add items before proceeding to payment.');
+      setIsSubmitting(false);
+      return;
+    }
+
+    // Format payment data with proper field names for Appwrite function
     const paymentData = {
       cart: cartItems,
       total_amount: cartTotal,
-      customer_name: data.customer_name,
-      mobile: data.mobile,
-      address: data.address,
-      thana: data.thana,
-      district: data.district,
+      cus_name: data.customer_name,
+      cus_email: data.customer_name.toLowerCase().replace(/\s+/g, '') + '@customer.autospark.local', // Generate email from name
+      cus_phone: data.mobile,
+      cus_add1: data.address,
+      cus_city: data.district,
+      cus_postcode: '1000',
+      cus_country: 'Bangladesh',
+      product_name: `Accessories Order (${cartItems.length} items)`,
+      product_category: 'accessories',
+      shipping_method: 'Courier',
     };
 
     try {
