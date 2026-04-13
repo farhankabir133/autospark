@@ -1,0 +1,12 @@
+{
+  "buildCommand": "npm run build",
+  "outputDirectory": "dist",
+  "framework": null,
+  "env": {
+    "SSLCOMMERZ_STORE_ID": "@sslcommerz_store_id",
+    "SSLCOMMERZ_STORE_PASSWORD": "@sslcommerz_store_password",
+    "STORE_ID": "@store_id",
+    "STORE_PASS": "@store_pass",
+    "SITE_URL": "@site_url"
+  }
+}
