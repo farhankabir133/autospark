@@ -90,26 +90,57 @@ const OnePageCheckout = () => {
         body: JSON.stringify(paymentData),
       });
 
+      // Log response details for debugging
+      console.log('Payment API Response Status:', response.status);
+      console.log('Response Headers:', {
+        contentType: response.headers.get('content-type'),
+      });
+
       if (!response.ok) {
-        const errorData = await response.json();
+        // Try to parse error response
+        let errorData;
+        try {
+          errorData = await response.json();
+        } catch {
+          // If can't parse JSON, get text and show it
+          const errorText = await response.text();
+          console.error('API returned non-JSON error:', errorText.substring(0, 200));
+          throw new Error(`Server error: ${response.status}. Response: ${errorText.substring(0, 100)}`);
+        }
         throw new Error(errorData.error || `Server error: ${response.status}`);
       }
 
-      const sslczData = await response.json();
+      let sslczData;
+      try {
+        sslczData = await response.json();
+      } catch (parseError) {
+        console.error('Failed to parse payment response:', parseError);
+        const responseText = await response.text();
+        console.error('Response text:', responseText.substring(0, 300));
+        throw new Error(`Invalid response from server: ${responseText.substring(0, 100)}`);
+      }
+
+      console.log('Payment response:', sslczData);
 
       // SSLCommerz returns GatewayPageURL on success
       if (sslczData.status === 'SUCCESS' && sslczData.GatewayPageURL) {
         // Redirect to SSLCommerz payment gateway
+        console.log('Redirecting to SSLCommerz gateway...');
         window.location.href = sslczData.GatewayPageURL;
       } else {
-        throw new Error(sslczData.failedreason || 'Payment initialization failed');
+        console.error('Payment initialization failed:', sslczData);
+        throw new Error(sslczData.error || sslczData.failedreason || 'Payment initialization failed');
       }
     } catch (error) {
       setIsSubmitting(false);
       let errorMessage = error instanceof Error ? error.message : 'Payment initialization failed';
       
+      console.error('Payment error:', errorMessage);
+      
       // Handle specific errors
-      if (errorMessage.includes('temporarily unavailable') || errorMessage.includes('paused')) {
+      if (errorMessage.includes('Unexpected token')) {
+        errorMessage = 'Payment server returned invalid response. The payment gateway may be temporarily unavailable. Please try again in a few moments.';
+      } else if (errorMessage.includes('temporarily unavailable') || errorMessage.includes('paused')) {
         errorMessage = 'The payment service is temporarily unavailable. Please contact support or try again later.';
       } else if (errorMessage.includes('timeout') || errorMessage.includes('ECONNREFUSED')) {
         errorMessage = 'Connection error. Please check your internet connection and try again.';

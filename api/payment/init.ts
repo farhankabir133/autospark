@@ -115,28 +115,90 @@ export default async function handler(
 
     // Call SSLCommerz API - USE LIVE ENDPOINT FOR PRODUCTION
     const sslCommerzUrl = 'https://securepay.sslcommerz.com/gwprocess/v4/api.php';
-    const sslResponse = await fetch(sslCommerzUrl, {
-      method: 'POST',
-      body: params,
-      headers: {
-        'Content-Type': 'application/x-www-form-urlencoded',
-      },
-    });
+    
+    console.log('🔄 Initiating SSLCommerz payment...');
+    console.log('Store ID:', STORE_ID);
+    console.log('Transaction ID:', tran_id);
+    console.log('Total Amount:', total_amount);
+    
+    let sslResponse;
+    try {
+      sslResponse = await fetch(sslCommerzUrl, {
+        method: 'POST',
+        body: params,
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+        },
+      });
+    } catch (fetchError) {
+      console.error('❌ Network error calling SSLCommerz:', fetchError);
+      return response
+        .status(503)
+        .setHeader('Access-Control-Allow-Origin', '*')
+        .json({
+          error: 'Failed to connect to payment gateway',
+          details: fetchError instanceof Error ? fetchError.message : 'Unknown network error',
+        });
+    }
 
     if (!sslResponse.ok) {
-      console.error('SSLCommerz API error:', sslResponse.status);
+      console.error('❌ SSLCommerz API error:', sslResponse.status);
+      const responseText = await sslResponse.text();
+      console.error('Response body:', responseText.substring(0, 200));
       return response
         .status(400)
         .setHeader('Access-Control-Allow-Origin', '*')
         .json({
           error: `SSLCommerz API error: ${sslResponse.status}`,
+          statusText: sslResponse.statusText,
         });
     }
 
-    const sslczData = await sslResponse.json();
+    let sslczData;
+    try {
+      const contentType = sslResponse.headers.get('content-type');
+      console.log('Response content-type:', contentType);
+      
+      if (!contentType || !contentType.includes('application/json')) {
+        const responseText = await sslResponse.text();
+        console.error('❌ Invalid response format. Expected JSON, got:', responseText.substring(0, 300));
+        return response
+          .status(400)
+          .setHeader('Access-Control-Allow-Origin', '*')
+          .json({
+            error: 'Invalid response from payment gateway - expected JSON',
+            hint: 'Check SSLCommerz credentials and endpoint',
+          });
+      }
+      
+      sslczData = await sslResponse.json();
+      console.log('✅ SSLCommerz response:', sslczData);
+    } catch (parseError) {
+      console.error('❌ Failed to parse SSLCommerz response:', parseError);
+      const responseText = await sslResponse.text();
+      console.error('Response text:', responseText.substring(0, 500));
+      return response
+        .status(400)
+        .setHeader('Access-Control-Allow-Origin', '*')
+        .json({
+          error: 'Failed to parse payment gateway response',
+          details: parseError instanceof Error ? parseError.message : 'Unknown parse error',
+        });
+    }
+
+    if (!sslczData.status) {
+      console.error('❌ No status in SSLCommerz response:', sslczData);
+      return response
+        .status(400)
+        .setHeader('Access-Control-Allow-Origin', '*')
+        .json({
+          error: 'Invalid response from payment gateway',
+          response: sslczData,
+        });
+    }
 
     if (sslczData.status !== 'SUCCESS') {
-      console.error('Payment initialization failed:', sslczData);
+      console.error('❌ Payment initialization failed:', sslczData);
       return response
         .status(400)
         .setHeader('Access-Control-Allow-Origin', '*')
@@ -145,6 +207,8 @@ export default async function handler(
           details: sslczData,
         });
     }
+
+    console.log('✅ Gateway URL obtained:', sslczData.GatewayPageURL ? 'Yes' : 'No');
 
     // Return success response with gateway URL
     return response
