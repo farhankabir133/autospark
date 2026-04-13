@@ -113,28 +113,16 @@ const OnePageCheckout = () => {
         contentType: response.headers.get('content-type'),
       });
 
-      if (!response.ok) {
-        // Try to parse error response
-        let errorData;
-        try {
-          errorData = await response.json();
-        } catch {
-          // If can't parse JSON, get text and show it
-          const errorText = await response.text();
-          console.error('API returned non-JSON error:', errorText.substring(0, 200));
-          throw new Error(`Server error: ${response.status}. Response: ${errorText.substring(0, 100)}`);
-        }
-        throw new Error(errorData.error || `Server error: ${response.status}`);
-      }
-
       let sslczData;
       try {
         sslczData = await response.json();
       } catch (parseError) {
         console.error('Failed to parse payment response:', parseError);
-        const responseText = await response.text();
-        console.error('Response text:', responseText.substring(0, 300));
-        throw new Error(`Invalid response from server: ${responseText.substring(0, 100)}`);
+        throw new Error(`Invalid response from server`);
+      }
+
+      if (!response.ok) {
+        throw new Error(sslczData.error || sslczData.failedreason || `Server error: ${response.status}`);
       }
 
       console.log('Payment response:', sslczData);
