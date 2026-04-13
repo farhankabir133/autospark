@@ -16,6 +16,10 @@ async function initializeSSLCommerz(paymentData) {
   const SSLCOMMERZ_API_URL = 'https://sandbox.sslcommerz.com/gwprocess/v4/api.php';
   const STORE_ID = process.env.VITE_SSLCOMMERZ_STORE_ID || 'autosparkbd0live';
   const STORE_PASSWORD = process.env.VITE_SSLCOMMERZ_PASSWORD || '69DBB19BAB55E48107';
+  
+  // Auto-detect the frontend port (default to 5173, but fallback to 5174 if 5173 is in use)
+  const FRONTEND_PORT = process.env.FRONTEND_PORT || '5174';
+  const FRONTEND_URL = `http://localhost:${FRONTEND_PORT}`;
 
   const params = new URLSearchParams();
   params.append('store_id', STORE_ID);
@@ -37,35 +41,57 @@ async function initializeSSLCommerz(paymentData) {
   params.append('product_profile', 'general');
   params.append('value_a', paymentData.payment_record_id);
 
-  // Callback URLs - use localhost for development
-  params.append('success_url', 'http://localhost:5173/payment/success');
-  params.append('fail_url', 'http://localhost:5173/payment/fail');
-  params.append('cancel_url', 'http://localhost:5173/payment/cancel');
+  // Callback URLs - use dynamic frontend URL
+  params.append('success_url', `${FRONTEND_URL}/payment/success`);
+  params.append('fail_url', `${FRONTEND_URL}/payment/fail`);
+  params.append('cancel_url', `${FRONTEND_URL}/payment/cancel`);
 
   try {
+    console.log('🔗 Calling SSLCommerz API...');
     const response = await fetch(SSLCOMMERZ_API_URL, {
       method: 'POST',
       body: params,
     });
 
     const text = await response.text();
-    console.log('SSLCommerz Response:', text.substring(0, 200));
+    console.log('📨 SSLCommerz Raw Response (first 500 chars):', text.substring(0, 500));
+    console.log('📨 Full Response:', text);
 
-    // Parse redirect URL from response
-    const redirectMatch = text.match(/GatewayPageURL=(.*)/);
-    if (redirectMatch) {
+    // Check if response contains error
+    if (text.includes('FAILED') || text.includes('INVALID')) {
+      console.error('❌ SSLCommerz returned error:', text);
       return {
-        status: 'SUCCESS',
-        GatewayPageURL: redirectMatch[1].trim(),
+        status: 'FAIL',
+        error: `SSLCommerz Error: ${text}`,
       };
     }
 
+    // Parse redirect URL from response - try multiple patterns
+    let redirectMatch = text.match(/GatewayPageURL=(.+?)(?:\n|&|$)/);
+    if (!redirectMatch) {
+      redirectMatch = text.match(/GatewayPageURL=([^\s&]+)/);
+    }
+    if (!redirectMatch) {
+      redirectMatch = text.split('GatewayPageURL=')[1];
+    }
+
+    if (redirectMatch) {
+      const gatewayUrl = redirectMatch[1] || redirectMatch;
+      console.log('✅ Gateway URL found:', gatewayUrl.trim());
+      return {
+        status: 'SUCCESS',
+        GatewayPageURL: gatewayUrl.toString().trim(),
+      };
+    }
+
+    console.error('❌ Could not parse SSLCommerz response. Expected GatewayPageURL in response.');
     return {
       status: 'FAIL',
-      error: 'Could not parse SSLCommerz response',
+      error: 'Could not parse SSLCommerz response. No GatewayPageURL found.',
+      response: text,
     };
   } catch (error) {
-    console.error('SSLCommerz API Error:', error.message);
+    console.error('❌ SSLCommerz API Error:', error.message);
     return {
       status: 'FAIL',
       error: error.message,
