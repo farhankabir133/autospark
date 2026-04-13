@@ -21,3 +21,12 @@ dist-ssr
 *.sln
 *.sw?
 .env
+
+# Ignore old Next.js example projects that confuse Vercel
+next-sslcommerz/
+next-sslcommerz-example/
+assistant-next/
+
+# Ignore local build outputs
+.next/
+.vercel/
