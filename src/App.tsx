@@ -17,6 +17,9 @@ const SellCarPage = lazy(() => import('./pages/SellCarPage').then(m => ({ defaul
 const ContactPage = lazy(() => import('./pages/ContactPage').then(m => ({ default: m.ContactPage })));
 const VehicleExperiencePage = lazy(() => import('./pages/VehicleExperiencePage').then(m => ({ default: m.VehicleExperiencePage })));
 const TestimonialsPage = lazy(() => import('./pages/TestimonialsPage').then(m => ({ default: m.TestimonialsPage })));
+const PaymentSuccessPage = lazy(() => import('./pages/PaymentSuccessPage').then(m => ({ default: m.PaymentSuccessPage })));
+const PaymentFailPage = lazy(() => import('./pages/PaymentFailPage').then(m => ({ default: m.PaymentFailPage })));
+const PaymentCancelPage = lazy(() => import('./pages/PaymentCancelPage').then(m => ({ default: m.PaymentCancelPage })));
 
 // Minimal loading fallback to prevent CLS
 const PageLoader = () => (
@@ -72,6 +75,9 @@ function App() {
                 <Route path="/experience" element={<VehicleExperiencePage />} />
                 <Route path="/services" element={<ServicesPage />} />
                 <Route path="/accessories" element={<AccessoriesPage />} />
+                <Route path="/payment-success" element={<PaymentSuccessPage />} />
+                <Route path="/payment-fail" element={<PaymentFailPage />} />
+                <Route path="/payment-cancel" element={<PaymentCancelPage />} />
                 <Route path="/about" element={<AboutPage />} />
                 <Route path="/testimonials" element={<TestimonialsPage />} />
                 <Route path="/sell" element={<SellCarPage />} />

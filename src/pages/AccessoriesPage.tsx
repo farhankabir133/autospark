@@ -31,6 +31,20 @@ import {
   type LucideIcon
 } from 'lucide-react';
 import { supabase } from '../lib/supabase';
+import { appwritePaymentApi, type PaymentCartItem } from '../lib/appwritePayment';
+
+type CheckoutFormState = {
+  customer_name: string;
+  mobile: string;
+  email?: string;
+  address: string;
+  thana: string;
+  district: string;
+};
+
+const validateBdMobile = (mobile: string) => /^(?:\+?88)?01[3-9]\d{8}$/.test(mobile.trim());
+
+const formatPrice = (price: number) => `৳${price.toLocaleString()}`;
 
 // Extended Product interface for accessories with additional UI fields
 interface AccessoryProduct {
@@ -1761,7 +1775,6 @@ const popularTags = ['LED Lights', 'Seat Covers', 'Dash Cam', 'Floor Mats', 'Cha
 const flashSaleEnd = new Date(Date.now() + 24 * 60 * 60 * 1000);
 
 // Helper Functions
-const formatPrice = (price: number) => `৳${price.toLocaleString()}`;
 
 // Dynamic Google Image Search redirect for product
 const handleImageSearch = (product: AccessoryProduct) => {
@@ -1777,6 +1790,254 @@ const handleImageSearch = (product: AccessoryProduct) => {
 
 const calculateDiscount = (price: number, discount: number) => {
   return Math.round(price * (1 - discount / 100));
+};
+
+const CheckoutModal: React.FC<{
+  isOpen: boolean;
+  isDark: boolean;
+  totalAmount: number;
+  isSubmitting: boolean;
+  onClose: () => void;
+  onSubmit: (form: CheckoutFormState) => void;
+}> = ({ isOpen, isDark, totalAmount, isSubmitting, onClose, onSubmit }) => {
+  const [form, setForm] = useState<CheckoutFormState>({
+    customer_name: '',
+    mobile: '',
+    email: '',
+    address: '',
+    thana: '',
+    district: '',
+  });
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (!isOpen) return;
+    setError(null);
+  }, [isOpen]);
+
+  const canSubmit =
+    form.customer_name.trim().length >= 2 &&
+    validateBdMobile(form.mobile) &&
+    form.address.trim().length >= 5 &&
+    form.thana.trim().length >= 2 &&
+    form.district.trim().length >= 2;
+
+  const submit = (e: React.FormEvent) => {
+    e.preventDefault();
+    setError(null);
+    if (!canSubmit) {
+      setError('Please fill all required fields correctly (valid mobile required).');
+      return;
+    }
+
+    onSubmit({
+      customer_name: form.customer_name.trim(),
+      mobile: form.mobile.trim(),
+      email: form.email?.trim() ? form.email.trim() : undefined,
+      address: form.address.trim(),
+      thana: form.thana.trim(),
+      district: form.district.trim(),
+    });
+  };
+
+  return (
+    <AnimatePresence>
+      {isOpen && (
+        <>
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            onClick={isSubmitting ? undefined : onClose}
+            className="fixed inset-0 z-[80] bg-black/60 backdrop-blur-sm"
+          />
+          <motion.div
+            initial={{ opacity: 0, scale: 0.98, y: 10 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            exit={{ opacity: 0, scale: 0.98, y: 10 }}
+            transition={{ duration: 0.2 }}
+            className="fixed inset-0 z-[90] flex items-center justify-center p-4"
+            role="dialog"
+            aria-modal="true"
+            aria-label="Checkout"
+          >
+            <div
+              className={`w-full max-w-lg rounded-2xl shadow-2xl overflow-hidden ${
+                isDark ? 'bg-gray-800 border border-gray-700' : 'bg-white border border-gray-200'
+              }`}
+              onClick={(e) => e.stopPropagation()}
+            >
+              <div className={`flex items-center justify-between px-6 py-4 border-b ${isDark ? 'border-gray-700' : 'border-gray-200'}`}>
+                <div>
+                  <h3 className={`text-lg font-bold ${isDark ? 'text-white' : 'text-gray-900'}`}>Checkout</h3>
+                  <p className={`text-sm ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>
+                    Total: <span className={isDark ? 'text-white' : 'text-gray-900'}>{formatPrice(totalAmount)}</span>
+                  </p>
+                </div>
+                <button
+                  onClick={onClose}
+                  disabled={isSubmitting}
+                  className={`p-2 rounded-full ${isDark ? 'hover:bg-gray-700' : 'hover:bg-gray-100'} disabled:opacity-50`}
+                  aria-label="Close checkout"
+                >
+                  <X size={20} className={isDark ? 'text-white' : 'text-gray-900'} />
+                </button>
+              </div>
+
+              <form onSubmit={submit} className="p-6 space-y-4">
+                {error && (
+                  <div className={`text-sm rounded-lg px-4 py-3 ${isDark ? 'bg-red-500/10 text-red-300' : 'bg-red-50 text-red-700'}`}>
+                    {error}
+                  </div>
+                )}
+
+                <div>
+                  <label className={`block text-sm font-medium mb-1 ${isDark ? 'text-gray-200' : 'text-gray-700'}`}>
+                    Customer name <span className="text-red-500">*</span>
+                  </label>
+                  <input
+                    value={form.customer_name}
+                    onChange={(e) => setForm((p) => ({ ...p, customer_name: e.target.value }))}
+                    className={`w-full px-4 py-3 rounded-xl border outline-none ${
+                      isDark
+                        ? 'bg-gray-900/40 border-gray-700 text-white placeholder-gray-500 focus:border-purple-500'
+                        : 'bg-white border-gray-200 text-gray-900 placeholder-gray-400 focus:border-purple-500'
+                    }`}
+                    placeholder="Your full name"
+                    autoComplete="name"
+                    required
+                  />
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div>
+                    <label className={`block text-sm font-medium mb-1 ${isDark ? 'text-gray-200' : 'text-gray-700'}`}>
+                      Mobile <span className="text-red-500">*</span>
+                    </label>
+                    <input
+                      value={form.mobile}
+                      onChange={(e) => setForm((p) => ({ ...p, mobile: e.target.value }))}
+                      className={`w-full px-4 py-3 rounded-xl border outline-none ${
+                        isDark
+                          ? 'bg-gray-900/40 border-gray-700 text-white placeholder-gray-500 focus:border-purple-500'
+                          : 'bg-white border-gray-200 text-gray-900 placeholder-gray-400 focus:border-purple-500'
+                      }`}
+                      placeholder="01XXXXXXXXX"
+                      autoComplete="tel"
+                      inputMode="tel"
+                      required
+                    />
+                    <p className={`mt-1 text-xs ${isDark ? 'text-gray-500' : 'text-gray-400'}`}>
+                      Accepted: 01XXXXXXXXX or +8801XXXXXXXXX
+                    </p>
+                  </div>
+
+                  <div>
+                    <label className={`block text-sm font-medium mb-1 ${isDark ? 'text-gray-200' : 'text-gray-700'}`}>
+                      Email (optional)
+                    </label>
+                    <input
+                      value={form.email || ''}
+                      onChange={(e) => setForm((p) => ({ ...p, email: e.target.value }))}
+                      className={`w-full px-4 py-3 rounded-xl border outline-none ${
+                        isDark
+                          ? 'bg-gray-900/40 border-gray-700 text-white placeholder-gray-500 focus:border-purple-500'
+                          : 'bg-white border-gray-200 text-gray-900 placeholder-gray-400 focus:border-purple-500'
+                      }`}
+                      placeholder="you@example.com"
+                      autoComplete="email"
+                      inputMode="email"
+                    />
+                  </div>
+                </div>
+
+                <div>
+                  <label className={`block text-sm font-medium mb-1 ${isDark ? 'text-gray-200' : 'text-gray-700'}`}>
+                    Address <span className="text-red-500">*</span>
+                  </label>
+                  <textarea
+                    value={form.address}
+                    onChange={(e) => setForm((p) => ({ ...p, address: e.target.value }))}
+                    className={`w-full px-4 py-3 rounded-xl border outline-none min-h-[90px] resize-y ${
+                      isDark
+                        ? 'bg-gray-900/40 border-gray-700 text-white placeholder-gray-500 focus:border-purple-500'
+                        : 'bg-white border-gray-200 text-gray-900 placeholder-gray-400 focus:border-purple-500'
+                    }`}
+                    placeholder="House/Road, Area, etc."
+                    autoComplete="street-address"
+                    required
+                  />
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div>
+                    <label className={`block text-sm font-medium mb-1 ${isDark ? 'text-gray-200' : 'text-gray-700'}`}>
+                      Thana <span className="text-red-500">*</span>
+                    </label>
+                    <input
+                      value={form.thana}
+                      onChange={(e) => setForm((p) => ({ ...p, thana: e.target.value }))}
+                      className={`w-full px-4 py-3 rounded-xl border outline-none ${
+                        isDark
+                          ? 'bg-gray-900/40 border-gray-700 text-white placeholder-gray-500 focus:border-purple-500'
+                          : 'bg-white border-gray-200 text-gray-900 placeholder-gray-400 focus:border-purple-500'
+                      }`}
+                      placeholder="e.g. Gulshan"
+                      required
+                    />
+                  </div>
+
+                  <div>
+                    <label className={`block text-sm font-medium mb-1 ${isDark ? 'text-gray-200' : 'text-gray-700'}`}>
+                      District <span className="text-red-500">*</span>
+                    </label>
+                    <input
+                      value={form.district}
+                      onChange={(e) => setForm((p) => ({ ...p, district: e.target.value }))}
+                      className={`w-full px-4 py-3 rounded-xl border outline-none ${
+                        isDark
+                          ? 'bg-gray-900/40 border-gray-700 text-white placeholder-gray-500 focus:border-purple-500'
+                          : 'bg-white border-gray-200 text-gray-900 placeholder-gray-400 focus:border-purple-500'
+                      }`}
+                      placeholder="e.g. Dhaka"
+                      required
+                    />
+                  </div>
+                </div>
+
+                <div className="pt-2 flex gap-3">
+                  <button
+                    type="button"
+                    onClick={onClose}
+                    disabled={isSubmitting}
+                    className={`flex-1 py-3 rounded-xl font-semibold border ${
+                      isDark
+                        ? 'border-gray-700 text-gray-200 hover:bg-gray-700'
+                        : 'border-gray-200 text-gray-700 hover:bg-gray-50'
+                    } disabled:opacity-50`}
+                  >
+                    Cancel
+                  </button>
+
+                  <button
+                    type="submit"
+                    disabled={!canSubmit || isSubmitting}
+                    className="flex-1 py-3 rounded-xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 text-white disabled:opacity-60"
+                  >
+                    {isSubmitting ? 'Starting Payment…' : 'Proceed to Pay'}
+                  </button>
+                </div>
+
+                <p className={`text-xs ${isDark ? 'text-gray-500' : 'text-gray-400'}`}>
+                  Payment is validated server-side via SSLCommerz IPN. Don’t refresh during redirect.
+                </p>
+              </form>
+            </div>
+          </motion.div>
+        </>
+      )}
+    </AnimatePresence>
+  );
 };
 
 // Components
@@ -2597,7 +2858,9 @@ const SideCartDrawer: React.FC<{
   isDark: boolean;
   onUpdateQuantity: (productId: string, quantity: number) => void;
   onRemoveItem: (productId: string) => void;
-}> = ({ isOpen, onClose, items, isDark, onUpdateQuantity, onRemoveItem }) => {
+  onCheckout: () => void;
+  isCheckingOut: boolean;
+}> = ({ isOpen, onClose, items, isDark, onUpdateQuantity, onRemoveItem, onCheckout, isCheckingOut }) => {
   const totalPrice = items.reduce((sum, item) => {
     const price = item.product.discount
       ? calculateDiscount(item.product.price, item.product.discount)
@@ -2722,9 +2985,11 @@ const SideCartDrawer: React.FC<{
                 <motion.button
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}
+                  onClick={onCheckout}
+                  disabled={isCheckingOut}
                   className="w-full py-4 bg-gradient-to-r from-blue-600 to-purple-600 text-white font-bold rounded-xl"
                 >
-                  Proceed to Checkout
+                  {isCheckingOut ? 'Redirecting to Payment…' : 'Proceed to Checkout'}
                 </motion.button>
               </div>
             )}
@@ -2760,6 +3025,9 @@ export const AccessoriesPage: React.FC = () => {
   const [showComparePanel, setShowComparePanel] = useState(true);
   const [showCartDrawer, setShowCartDrawer] = useState(false);
 
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [showCheckoutModal, setShowCheckoutModal] = useState(false);
+
   // Quick View
   const [quickViewProduct, setQuickViewProduct] = useState<AccessoryProduct | null>(null);
   const [showQuickView, setShowQuickView] = useState(false);
@@ -2770,6 +3038,7 @@ export const AccessoriesPage: React.FC = () => {
   // Fetch products from Supabase
   useEffect(() => {
     const fetchProducts = async () => {
+  if (!supabase) return;
       const { data } = await supabase
         .from('products')
         .select('*, images:product_images(*)')
@@ -2782,6 +3051,64 @@ export const AccessoriesPage: React.FC = () => {
 
     fetchProducts();
   }, []);
+
+  const cart_items: PaymentCartItem[] = useMemo(() => {
+    return cart.map((ci) => {
+      const unitPrice = ci.product.discount
+        ? calculateDiscount(ci.product.price, ci.product.discount)
+        : ci.product.price;
+
+      return {
+        id: ci.product.id,
+        name: ci.product.name_en,
+        unitPrice,
+        quantity: ci.quantity,
+      };
+    });
+  }, [cart]);
+
+  const total_amount = useMemo(() => {
+    return cart_items.reduce((sum, item) => sum + item.unitPrice * item.quantity, 0);
+  }, [cart_items]);
+
+  const handleCheckout = useCallback(async () => {
+    if (cart.length === 0 || isSubmitting) return;
+    setShowCheckoutModal(true);
+  }, [cart.length, isSubmitting]);
+
+  const submitCheckout = useCallback(async (form: CheckoutFormState) => {
+    if (cart.length === 0 || isSubmitting) return;
+
+    try {
+      setIsSubmitting(true);
+
+      // Important: trust model is server-side only.
+      // /init should create the Appwrite payments document FIRST, then call SSLCommerz.
+      const res = await appwritePaymentApi.startPayment({
+        customer_name: form.customer_name,
+        mobile: form.mobile,
+        email: form.email,
+        address: form.address,
+        thana: form.thana,
+        district: form.district,
+        cart_items,
+        total_amount,
+      });
+
+      if (!res.redirectUrl) throw new Error('Missing redirectUrl from payment init response');
+      window.location.assign(res.redirectUrl);
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : 'Failed to start payment.';
+      // eslint-disable-next-line no-alert
+      alert(msg);
+      setIsSubmitting(false);
+    }
+  }, [cart.length, cart_items, isSubmitting, total_amount]);
+
+  const closeCheckoutModal = useCallback(() => {
+    if (isSubmitting) return;
+    setShowCheckoutModal(false);
+  }, [isSubmitting]);
 
   // Filter and sort products
   const filteredProducts = useMemo(() => {
@@ -2796,18 +3123,21 @@ export const AccessoriesPage: React.FC = () => {
     if (searchTerm) {
       const term = searchTerm.toLowerCase();
       // Assign relevance score
-      result = result
-        .map(p => {
+      type RankedProduct = AccessoryProduct & { _relevanceScore: number };
+
+      const ranked = (result as AccessoryProduct[])
+        .map((p): RankedProduct => {
           let score = 0;
           if (p.name_en && p.name_en.toLowerCase().includes(term)) score += 3;
           if (p.name_bn && p.name_bn.toLowerCase().includes(term)) score += 2;
           if (p.description_en && p.description_en.toLowerCase().includes(term)) score += 1;
           return { ...p, _relevanceScore: score };
         })
-        .filter(p => p._relevanceScore > 0)
+        .filter((p) => p._relevanceScore > 0)
         .sort((a, b) => b._relevanceScore - a._relevanceScore);
+
       // Remove _relevanceScore before returning
-      result = result.map(({ _relevanceScore, ...rest }) => rest);
+      result = ranked.map(({ _relevanceScore: _omit, ...rest }) => rest);
     }
 
     // Brand filter
@@ -3831,6 +4161,19 @@ export const AccessoriesPage: React.FC = () => {
         isDark={isDark}
         onUpdateQuantity={updateCartQuantity}
         onRemoveItem={removeFromCart}
+        onCheckout={handleCheckout}
+        isCheckingOut={isSubmitting}
+      />
+
+      <CheckoutModal
+        isOpen={showCheckoutModal}
+        isDark={isDark}
+        totalAmount={total_amount}
+        isSubmitting={isSubmitting}
+        onClose={closeCheckoutModal}
+        onSubmit={(form) => {
+          void submitCheckout(form);
+        }}
       />
 
       {/* Bottom Padding for Cart Bar */}
