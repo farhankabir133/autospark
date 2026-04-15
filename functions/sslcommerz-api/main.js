@@ -116,40 +116,96 @@ export default async ({ req, res, log }) => {
   // POST /payment/init
   if (req.path === '/payment/init' && req.method === 'POST') {
     try {
-      const body = typeof req.body === 'string' ? JSON.parse(req.body) : req.body || {};
-      const mapped = mapPayloadToGatewayFields(body);
+      // 1) Safe parser for Appwrite body (string/object)
+      let payload;
+      if (typeof req.body === 'string') {
+        try {
+          payload = JSON.parse(req.body);
+        } catch {
+          payload = req.body;
+        }
+      } else {
+        payload = req.body;
+      }
 
-      if (!mapped.total_amount || mapped.total_amount <= 0) {
+      // 2) Debug logs to inspect incoming payload in Appwrite logs
+      log('Incoming Payload:', payload);
+      console.log('Incoming Payload:', payload);
+
+      const safePayload = payload && typeof payload === 'object' ? payload : {};
+
+      // 3) Extract and default required transactions fields
+      const {
+        customer_name,
+        mobile,
+        address,
+        thana,
+        district,
+        total_amount,
+        cart_items = '[]',
+        session_id = `sess_${Date.now()}`,
+        status = 'pending',
+      } = safePayload;
+
+      // 4) Validation before database call
+      if (!mobile || !customer_name) {
+        return error(
+          res,
+          {
+            success: false,
+            error: `Validation failed: mobile is ${mobile}, name is ${customer_name}`,
+          },
+          400,
+          corsHeaders
+        );
+      }
+
+      const parsedTotalAmount = Number.parseFloat(String(total_amount ?? 0));
+      if (!Number.isFinite(parsedTotalAmount) || parsedTotalAmount <= 0) {
         return error(res, { success: false, error: 'Invalid total_amount' }, 400, corsHeaders);
       }
 
-      if (!mapped.cus_phone) {
-        return error(res, { success: false, error: 'mobile (customer phone) is required' }, 400, corsHeaders);
-      }
+      const documentData = {
+        customer_name: String(customer_name || ''),
+        mobile: String(mobile || ''),
+        address: String(address || ''),
+        thana: String(thana || ''),
+        district: String(district || ''),
+        total_amount: parsedTotalAmount,
+        cart_items:
+          typeof cart_items === 'string' ? cart_items : JSON.stringify(cart_items || []),
+        session_id: String(session_id || `sess_${Date.now()}`),
+        status: String(status || 'pending'),
+      };
 
-      // Create order first and use its document id as tran_id
-      const created = await databases.createDocument(dbId, collectionId, ID.unique(), {
-        tran_id: '',
-        status: 'pending',
-        amount: mapped.total_amount,
-        currency: 'BDT',
-        customer_name: mapped.cus_name,
-        customer_email: mapped.cus_email,
-        customer_phone: mapped.cus_phone,
-        created_at: new Date().toISOString(),
-        paid_at: null,
-        validation_id: null,
-        payment_method: null,
-        metadata: {
-          district: mapped.cus_city,
-          address: mapped.cus_add1,
-          cart_items: mapped.cart_items,
-        },
-      });
+      log('Final Document Data:', documentData);
+      console.log('Final Document Data:', documentData);
+
+      // Create transaction document first and use its document id as tran_id
+      let created;
+      try {
+        created = await databases.createDocument(dbId, collectionId, ID.unique(), documentData);
+      } catch (dbError) {
+        log('Database Error Detail:', dbError?.message || dbError);
+        return error(
+          res,
+          { success: false, error: dbError?.message || 'Database createDocument failed' },
+          500,
+          corsHeaders
+        );
+      }
 
       const tranId = created.$id;
 
-      await databases.updateDocument(dbId, collectionId, tranId, { tran_id: tranId });
+      const mapped = mapPayloadToGatewayFields({
+        ...safePayload,
+        customer_name: documentData.customer_name,
+        mobile: documentData.mobile,
+        address: documentData.address,
+        district: documentData.district,
+        total_amount: documentData.total_amount,
+        cart_items: documentData.cart_items,
+      });
 
       const urls = callbackUrls(baseUrl, tranId);
       const ipnBase = functionPublicBase || baseUrl;
