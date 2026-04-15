@@ -2826,7 +2826,7 @@ const CheckoutModal: React.FC<{
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 20, scale: 0.98 }}
             transition={{ duration: 0.2 }}
-            className={`fixed left-1/2 top-1/2 z-[61] w-[92vw] max-w-xl -translate-x-1/2 -translate-y-1/2 rounded-2xl shadow-2xl ${
+            className={`fixed inset-x-2 top-2 bottom-2 z-[61] flex h-[calc(100dvh-1rem)] flex-col overflow-hidden rounded-2xl shadow-2xl sm:left-1/2 sm:top-1/2 sm:bottom-auto sm:w-[92vw] sm:max-w-xl sm:h-auto sm:max-h-[92vh] sm:-translate-x-1/2 sm:-translate-y-1/2 ${
               isDark ? 'bg-gray-900 border border-gray-700' : 'bg-white border border-gray-200'
             }`}
           >
@@ -2842,7 +2842,7 @@ const CheckoutModal: React.FC<{
               </button>
             </div>
 
-            <div className="p-6 grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div className="flex-1 overflow-y-auto p-4 sm:p-6 grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div className="sm:col-span-2">
                 <label className={`block text-sm font-medium mb-1 ${isDark ? 'text-gray-200' : 'text-gray-700'}`}>Full Name</label>
                 <input
@@ -2901,18 +2901,18 @@ const CheckoutModal: React.FC<{
               )}
             </div>
 
-            <div className={`flex items-center justify-end gap-3 px-6 py-4 border-t ${isDark ? 'border-gray-700' : 'border-gray-200'}`}>
+            <div className={`sticky bottom-0 flex flex-col-reverse gap-3 px-4 py-4 pb-[max(1rem,env(safe-area-inset-bottom))] sm:flex-row sm:items-center sm:justify-end sm:px-6 border-t ${isDark ? 'border-gray-700 bg-gray-900' : 'border-gray-200 bg-white'}`}>
               <button
                 onClick={onClose}
                 disabled={isSubmitting}
-                className={`px-4 py-2 rounded-lg ${isDark ? 'bg-gray-800 text-gray-200' : 'bg-gray-100 text-gray-700'} disabled:opacity-50`}
+                className={`w-full sm:w-auto px-4 py-2 rounded-lg ${isDark ? 'bg-gray-800 text-gray-200' : 'bg-gray-100 text-gray-700'} disabled:opacity-50`}
               >
                 Cancel
               </button>
               <button
                 onClick={onSubmit}
                 disabled={isSubmitting}
-                className="px-5 py-2 rounded-lg bg-gradient-to-r from-blue-600 to-purple-600 text-white font-semibold disabled:opacity-70 inline-flex items-center gap-2"
+                className="w-full sm:w-auto px-5 py-2 rounded-lg bg-gradient-to-r from-blue-600 to-purple-600 text-white font-semibold disabled:opacity-70 inline-flex items-center justify-center gap-2"
               >
                 {isSubmitting ? <Loader2 size={16} className="animate-spin" /> : null}
                 {isSubmitting ? 'Redirecting...' : 'Confirm & Pay'}
