@@ -1,8 +1,22 @@
-const API_BASE_URL = (import.meta.env.VITE_SSLCOMMERZ_API_BASE_URL || '').replace(/\/$/, '');
+const resolveApiBaseUrl = (): string => {
+  const explicit = (import.meta.env.VITE_SSLCOMMERZ_API_BASE_URL || '').trim();
+  if (explicit) return explicit.replace(/\/$/, '');
+
+  const fromFunctionId = (import.meta.env.VITE_APPWRITE_FUNCTION_ID || '').trim();
+  if (fromFunctionId) {
+    return `https://${fromFunctionId}.appwrite.global`;
+  }
+
+  const fromLegacy = (import.meta.env.VITE_PAYMENT_API_URL || '').trim();
+  if (fromLegacy) return fromLegacy.replace(/\/$/, '');
+
+  return '';
+};
+
+const API_BASE_URL = resolveApiBaseUrl();
 
 if (!API_BASE_URL) {
   // Keep non-throwing for runtime; pages will show friendly error when called.
-  // eslint-disable-next-line no-console
   console.warn('VITE_SSLCOMMERZ_API_BASE_URL is not configured');
 }
 
@@ -47,7 +61,9 @@ export type PaymentStatusResponse = {
 
 const assertConfigured = () => {
   if (!API_BASE_URL) {
-    throw new Error('Payment API is not configured. Missing VITE_SSLCOMMERZ_API_BASE_URL');
+    throw new Error(
+      'Payment API is not configured. Set VITE_SSLCOMMERZ_API_BASE_URL or VITE_APPWRITE_FUNCTION_ID.'
+    );
   }
 };
 
