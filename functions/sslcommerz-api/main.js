@@ -479,6 +479,10 @@ export default async ({ req, res, log }) => {
             redirectUrl: gateway.GatewayPageURL,
             tranId: createdTranId,
             amount: mapped.total_amount,
+            success_url: urls.success_url,
+            fail_url: urls.fail_url,
+            cancel_url: urls.cancel_url,
+            ipn_url: urls.ipn_url,
           },
         },
         corsHeaders
