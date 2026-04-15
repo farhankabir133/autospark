@@ -4,54 +4,83 @@ import { useEffect, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { CheckCircle, Home } from 'lucide-react';
 import { useCart } from '../contexts/CartContext';
-import { updatePaymentStatus, getPaymentById } from '../services/appwriteService';
+import { appwritePaymentApi } from '../services/appwritePaymentApi';
 
 const PaymentSuccessPage = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const { clearCart } = useCart();
   const [transactionId, setTransactionId] = useState<string | null>(null);
-  const [payment, setPayment] = useState<any>(null);
+  const [paymentStatus, setPaymentStatus] = useState<string>('PENDING');
+  const [isValidated, setIsValidated] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    const handleSuccess = async () => {
-      try {
-        const paymentId = searchParams.get('payment_id');
-        const tranId = searchParams.get('tran_id');
-        
-        setTransactionId(tranId);
+    let isMounted = true;
+    let attempts = 0;
+    const maxAttempts = 20; // ~60 seconds at 3s interval
 
-        if (paymentId) {
-          console.log('📝 Processing payment success for ID:', paymentId);
-          
-          // Update payment status in database to 'success'
-          await updatePaymentStatus(paymentId, 'success', tranId || undefined);
+    const tranId = searchParams.get('tran_id');
+    setTransactionId(tranId);
 
-          // Get updated payment record
-          const paymentData = await getPaymentById(paymentId);
-          setPayment(paymentData);
-          
-          console.log('✅ Payment success processed');
+    if (!tranId) {
+      setError('Missing transaction ID. Please contact support with your payment details.');
+      return;
+    }
+
+    const pollStatus = async () => {
+      while (isMounted && attempts < maxAttempts) {
+        attempts += 1;
+        try {
+          const statusResponse = await appwritePaymentApi.getPaymentStatus(tranId);
+          const status = (
+            statusResponse.status ||
+            statusResponse.payment_status ||
+            statusResponse.data?.status ||
+            'PENDING'
+          ).toString().toUpperCase();
+
+          if (!isMounted) return;
+
+          setPaymentStatus(status);
+
+          if (status === 'VALIDATED') {
+            setIsValidated(true);
+            clearCart();
+            return;
+          }
+
+          if (status === 'FAILED' || status === 'CANCELLED') {
+            setError(`Payment status is ${status}. Please retry checkout.`);
+            return;
+          }
+        } catch (err) {
+          if (!isMounted) return;
+          console.error('❌ Error checking payment status:', err);
         }
 
-        // Clear cart after successful payment
-        clearCart();
+        await new Promise((resolve) => setTimeout(resolve, 3000));
+      }
 
-        // Redirect to home after 5 seconds if user doesn't click
-        const timer = setTimeout(() => {
-          navigate('/');
-        }, 5000);
-
-        return () => clearTimeout(timer);
-      } catch (err) {
-        console.error('❌ Error handling success:', err);
-        setError(err instanceof Error ? err.message : 'Unknown error');
+      if (isMounted && !isValidated) {
+        setError('Payment verification is taking longer than expected. Please check again in a moment.');
       }
     };
 
-    handleSuccess();
+    pollStatus();
+
+    return () => {
+      isMounted = false;
+    };
   }, [searchParams, navigate, clearCart]);
+
+  useEffect(() => {
+    if (!isValidated) return;
+    const timer = setTimeout(() => {
+      navigate('/');
+    }, 5000);
+    return () => clearTimeout(timer);
+  }, [isValidated, navigate]);
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-green-50 to-white flex items-center justify-center p-4">
@@ -69,7 +98,7 @@ const PaymentSuccessPage = () => {
         {/* Success Message */}
         <h1 className="text-3xl font-bold text-gray-800 mb-2">Payment Successful!</h1>
         <p className="text-gray-600 mb-4">
-          Thank you for your purchase. Your order has been confirmed.
+          Thank you for your purchase. We are verifying your payment with the gateway.
         </p>
 
         {/* Error if any */}
@@ -79,25 +108,19 @@ const PaymentSuccessPage = () => {
           </div>
         )}
 
-        {/* Payment Details from Appwrite */}
-        {payment && (
-          <div className="bg-gray-50 rounded-lg p-4 mb-6 text-left space-y-3">
-            <div>
-              <p className="text-xs text-gray-500 uppercase font-semibold">Order ID</p>
-              <p className="font-mono text-sm font-bold text-gray-800 break-all">
-                {payment.$id.substring(0, 12)}...
-              </p>
-            </div>
-            <div>
-              <p className="text-xs text-gray-500 uppercase font-semibold">Amount</p>
-              <p className="text-lg font-bold text-green-600">৳{payment.total_amount?.toLocaleString()}</p>
-            </div>
-            <div>
-              <p className="text-xs text-gray-500 uppercase font-semibold">Customer</p>
-              <p className="text-sm text-gray-700">{payment.customer_name}</p>
-            </div>
+        <div className="bg-gray-50 rounded-lg p-4 mb-6 text-left space-y-3">
+          <div>
+            <p className="text-xs text-gray-500 uppercase font-semibold">Verification Status</p>
+            <p className={`text-sm font-bold ${isValidated ? 'text-green-600' : 'text-amber-600'}`}>
+              {isValidated ? 'VALIDATED' : paymentStatus}
+            </p>
           </div>
-        )}
+          {!isValidated && (
+            <p className="text-xs text-gray-600">
+              Waiting for secure server confirmation from SSLCommerz via Appwrite Function...
+            </p>
+          )}
+        </div>
 
         {/* Transaction ID */}
         {transactionId && (
@@ -113,9 +136,9 @@ const PaymentSuccessPage = () => {
         <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6 text-left">
           <h3 className="font-semibold text-blue-900 mb-2">What's Next?</h3>
           <ul className="text-sm text-blue-800 space-y-1">
-            <li>✓ Check your email for order confirmation</li>
-            <li>✓ Track your order status</li>
-            <li>✓ Contact support if you have questions</li>
+            <li>✓ Payment verification is handled server-side only</li>
+            <li>✓ Your order moves forward after VALIDATED status</li>
+            <li>✓ Contact support if status remains pending for long</li>
           </ul>
         </div>
 
@@ -140,7 +163,7 @@ const PaymentSuccessPage = () => {
 
         {/* Auto-redirect notice */}
         <p className="text-xs text-gray-500 mt-4">
-          Redirecting to home in 5 seconds...
+          {isValidated ? 'Redirecting to home in 5 seconds...' : 'Waiting for payment validation...'}
         </p>
       </div>
     </div>

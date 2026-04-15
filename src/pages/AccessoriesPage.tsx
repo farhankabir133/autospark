@@ -1,9 +1,7 @@
 import React, { useState, useEffect, useMemo, useCallback, useRef } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useTheme } from '../contexts/ThemeContext';
 import { useLanguage } from '../contexts/LanguageContext';
-import { useCart } from '../contexts/CartContext';
 import {
   ShoppingCart,
   Search,
@@ -28,11 +26,13 @@ import {
   Award,
   ArrowRight,
   RefreshCw,
+  Loader2,
   Trash2,
   Droplet,
   type LucideIcon
 } from 'lucide-react';
 import { supabase } from '../lib/supabase';
+import { appwritePaymentApi } from '../services/appwritePaymentApi';
 
 // Extended Product interface for accessories with additional UI fields
 interface AccessoryProduct {
@@ -72,6 +72,14 @@ interface WishlistItem {
 
 interface CompareItem {
   product: AccessoryProduct;
+}
+
+interface CheckoutFormData {
+  customer_name: string;
+  mobile: string;
+  address: string;
+  thana: string;
+  district: string;
 }
 
 // Demo Products (fallback if Supabase is empty)
@@ -2642,7 +2650,8 @@ const SideCartDrawer: React.FC<{
   onUpdateQuantity: (productId: string, quantity: number) => void;
   onRemoveItem: (productId: string) => void;
   onCheckout?: () => void;
-}> = ({ isOpen, onClose, items, isDark, onUpdateQuantity, onRemoveItem, onCheckout }) => {
+  isSubmitting?: boolean;
+}> = ({ isOpen, onClose, items, isDark, onUpdateQuantity, onRemoveItem, onCheckout, isSubmitting = false }) => {
   const totalPrice = items.reduce((sum, item) => {
     const price = item.product.discount
       ? calculateDiscount(item.product.price, item.product.discount)
@@ -2769,12 +2778,146 @@ const SideCartDrawer: React.FC<{
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}
                   onClick={onCheckout}
-                  className="w-full py-4 bg-gradient-to-r from-blue-600 to-purple-600 text-white font-bold rounded-xl hover:shadow-lg transition-shadow"
+                  disabled={isSubmitting}
+                  className="w-full py-4 bg-gradient-to-r from-blue-600 to-purple-600 text-white font-bold rounded-xl hover:shadow-lg transition-shadow disabled:opacity-70 disabled:cursor-not-allowed inline-flex items-center justify-center gap-2"
                 >
-                  Proceed to Checkout
+                  {isSubmitting ? (
+                    <>
+                      <Loader2 size={18} className="animate-spin" />
+                      Processing...
+                    </>
+                  ) : (
+                    'Proceed to Checkout'
+                  )}
                 </motion.button>
               </div>
             )}
+          </motion.div>
+        </>
+      )}
+    </AnimatePresence>
+  );
+};
+
+const CheckoutModal: React.FC<{
+  isOpen: boolean;
+  isDark: boolean;
+  formData: CheckoutFormData;
+  error: string | null;
+  isSubmitting: boolean;
+  onClose: () => void;
+  onChange: (field: keyof CheckoutFormData, value: string) => void;
+  onSubmit: () => void;
+}> = ({ isOpen, isDark, formData, error, isSubmitting, onClose, onChange, onSubmit }) => {
+  return (
+    <AnimatePresence>
+      {isOpen && (
+        <>
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-[60] bg-black/60 backdrop-blur-sm"
+            onClick={onClose}
+          />
+
+          <motion.div
+            initial={{ opacity: 0, y: 30, scale: 0.98 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: 20, scale: 0.98 }}
+            transition={{ duration: 0.2 }}
+            className={`fixed left-1/2 top-1/2 z-[61] w-[92vw] max-w-xl -translate-x-1/2 -translate-y-1/2 rounded-2xl shadow-2xl ${
+              isDark ? 'bg-gray-900 border border-gray-700' : 'bg-white border border-gray-200'
+            }`}
+          >
+            <div className={`flex items-center justify-between px-6 py-4 border-b ${isDark ? 'border-gray-700' : 'border-gray-200'}`}>
+              <h3 className={`text-xl font-bold ${isDark ? 'text-white' : 'text-gray-900'}`}>Checkout Details</h3>
+              <button
+                onClick={onClose}
+                disabled={isSubmitting}
+                className={`p-2 rounded-full ${isDark ? 'hover:bg-gray-800' : 'hover:bg-gray-100'} disabled:opacity-50`}
+                aria-label="Close checkout form"
+              >
+                <X size={20} className={isDark ? 'text-gray-300' : 'text-gray-700'} />
+              </button>
+            </div>
+
+            <div className="p-6 grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div className="sm:col-span-2">
+                <label className={`block text-sm font-medium mb-1 ${isDark ? 'text-gray-200' : 'text-gray-700'}`}>Full Name</label>
+                <input
+                  value={formData.customer_name}
+                  onChange={(e) => onChange('customer_name', e.target.value)}
+                  className={`w-full px-3 py-2 rounded-lg border ${isDark ? 'bg-gray-800 border-gray-700 text-white' : 'bg-white border-gray-300 text-gray-900'}`}
+                  placeholder="Your full name"
+                />
+              </div>
+
+              <div>
+                <label className={`block text-sm font-medium mb-1 ${isDark ? 'text-gray-200' : 'text-gray-700'}`}>Mobile</label>
+                <input
+                  value={formData.mobile}
+                  onChange={(e) => onChange('mobile', e.target.value)}
+                  className={`w-full px-3 py-2 rounded-lg border ${isDark ? 'bg-gray-800 border-gray-700 text-white' : 'bg-white border-gray-300 text-gray-900'}`}
+                  placeholder="01XXXXXXXXX"
+                />
+              </div>
+
+              <div>
+                <label className={`block text-sm font-medium mb-1 ${isDark ? 'text-gray-200' : 'text-gray-700'}`}>District</label>
+                <input
+                  value={formData.district}
+                  onChange={(e) => onChange('district', e.target.value)}
+                  className={`w-full px-3 py-2 rounded-lg border ${isDark ? 'bg-gray-800 border-gray-700 text-white' : 'bg-white border-gray-300 text-gray-900'}`}
+                  placeholder="Dhaka"
+                />
+              </div>
+
+              <div className="sm:col-span-2">
+                <label className={`block text-sm font-medium mb-1 ${isDark ? 'text-gray-200' : 'text-gray-700'}`}>Thana</label>
+                <input
+                  value={formData.thana}
+                  onChange={(e) => onChange('thana', e.target.value)}
+                  className={`w-full px-3 py-2 rounded-lg border ${isDark ? 'bg-gray-800 border-gray-700 text-white' : 'bg-white border-gray-300 text-gray-900'}`}
+                  placeholder="Mirpur"
+                />
+              </div>
+
+              <div className="sm:col-span-2">
+                <label className={`block text-sm font-medium mb-1 ${isDark ? 'text-gray-200' : 'text-gray-700'}`}>Address</label>
+                <textarea
+                  rows={3}
+                  value={formData.address}
+                  onChange={(e) => onChange('address', e.target.value)}
+                  className={`w-full px-3 py-2 rounded-lg border ${isDark ? 'bg-gray-800 border-gray-700 text-white' : 'bg-white border-gray-300 text-gray-900'}`}
+                  placeholder="House, road, area"
+                />
+              </div>
+
+              {error && (
+                <div className="sm:col-span-2 rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700">
+                  {error}
+                </div>
+              )}
+            </div>
+
+            <div className={`flex items-center justify-end gap-3 px-6 py-4 border-t ${isDark ? 'border-gray-700' : 'border-gray-200'}`}>
+              <button
+                onClick={onClose}
+                disabled={isSubmitting}
+                className={`px-4 py-2 rounded-lg ${isDark ? 'bg-gray-800 text-gray-200' : 'bg-gray-100 text-gray-700'} disabled:opacity-50`}
+              >
+                Cancel
+              </button>
+              <button
+                onClick={onSubmit}
+                disabled={isSubmitting}
+                className="px-5 py-2 rounded-lg bg-gradient-to-r from-blue-600 to-purple-600 text-white font-semibold disabled:opacity-70 inline-flex items-center gap-2"
+              >
+                {isSubmitting ? <Loader2 size={16} className="animate-spin" /> : null}
+                {isSubmitting ? 'Redirecting...' : 'Confirm & Pay'}
+              </button>
+            </div>
           </motion.div>
         </>
       )}
@@ -2786,8 +2929,6 @@ const SideCartDrawer: React.FC<{
 export const AccessoriesPage: React.FC = () => {
   const { theme } = useTheme();
   const { language: _language } = useLanguage();
-  const navigate = useNavigate();
-  const { addToCart: addToGlobalCart } = useCart();
   const isDark = theme === 'dark';
 
   // State
@@ -2811,6 +2952,16 @@ export const AccessoriesPage: React.FC = () => {
   const [compareItems, setCompareItems] = useState<CompareItem[]>([]);
   const [showComparePanel, setShowComparePanel] = useState(true);
   const [showCartDrawer, setShowCartDrawer] = useState(false);
+  const [showCheckoutModal, setShowCheckoutModal] = useState(false);
+  const [isSubmittingCheckout, setIsSubmittingCheckout] = useState(false);
+  const [checkoutError, setCheckoutError] = useState<string | null>(null);
+  const [checkoutForm, setCheckoutForm] = useState<CheckoutFormData>({
+    customer_name: '',
+    mobile: '',
+    address: '',
+    thana: '',
+    district: '',
+  });
 
   // Quick View
   const [quickViewProduct, setQuickViewProduct] = useState<AccessoryProduct | null>(null);
@@ -3012,29 +3163,71 @@ export const AccessoriesPage: React.FC = () => {
     setCart([]);
   }, []);
 
-  // Checkout handler - transfer cart to global context and navigate to payment
+  // Checkout handler - open modern checkout form modal
   const handleCheckout = useCallback(() => {
     if (cart.length === 0) return;
+    setCheckoutError(null);
+    setShowCheckoutModal(true);
+  }, [cart]);
 
-    // Transfer cart items to global cart context
-    cart.forEach((item) => {
-      const price = item.product.discount
-        ? calculateDiscount(item.product.price, item.product.discount)
-        : item.product.price;
+  const updateCheckoutField = useCallback((field: keyof CheckoutFormData, value: string) => {
+    setCheckoutForm((prev) => ({ ...prev, [field]: value }));
+  }, []);
 
-      addToGlobalCart({
-        id: item.product.id,
-        name: item.product.name_en,
-        price: price,
-        quantity: item.quantity,
-        image: item.product.images?.[0]?.image_url,
+  const confirmAndInitiatePayment = useCallback(async () => {
+    if (isSubmittingCheckout) return;
+
+    const requiredFields: Array<keyof CheckoutFormData> = [
+      'customer_name',
+      'mobile',
+      'address',
+      'thana',
+      'district',
+    ];
+
+    const missing = requiredFields.find((field) => !checkoutForm[field]?.trim());
+    if (missing) {
+      setCheckoutError('Please complete all checkout fields before continuing.');
+      return;
+    }
+
+    try {
+      setIsSubmittingCheckout(true);
+      setCheckoutError(null);
+
+      const normalizedCart = cart.map((item) => {
+        const finalPrice = item.product.discount
+          ? calculateDiscount(item.product.price, item.product.discount)
+          : item.product.price;
+
+        return {
+          id: item.product.id,
+          name: item.product.name_en,
+          price: finalPrice,
+          quantity: item.quantity,
+        };
       });
-    });
 
-    // Close cart drawer and navigate to payment
-    setShowCartDrawer(false);
-    navigate('/payment');
-  }, [cart, navigate, addToGlobalCart]);
+      const totalAmount = normalizedCart.reduce((sum, item) => sum + item.price * item.quantity, 0);
+
+      const { redirectUrl } = await appwritePaymentApi.initiatePayment({
+        customer_name: checkoutForm.customer_name.trim(),
+        mobile: checkoutForm.mobile.trim(),
+        address: checkoutForm.address.trim(),
+        thana: checkoutForm.thana.trim(),
+        district: checkoutForm.district.trim(),
+        total_amount: totalAmount,
+        cart_items: JSON.stringify(normalizedCart),
+        cart: normalizedCart,
+      });
+
+      window.location.href = redirectUrl;
+    } catch (error) {
+      const message = error instanceof Error ? error.message : 'Could not start payment. Please try again.';
+      setCheckoutError(message);
+      setIsSubmittingCheckout(false);
+    }
+  }, [cart, checkoutForm, isSubmittingCheckout]);
 
   // Wishlist functions
   const toggleWishlist = useCallback((product: AccessoryProduct) => {
@@ -4018,6 +4211,20 @@ export const AccessoriesPage: React.FC = () => {
         onUpdateQuantity={updateCartQuantity}
         onRemoveItem={removeFromCart}
         onCheckout={handleCheckout}
+        isSubmitting={isSubmittingCheckout}
+      />
+
+      <CheckoutModal
+        isOpen={showCheckoutModal}
+        isDark={isDark}
+        formData={checkoutForm}
+        error={checkoutError}
+        isSubmitting={isSubmittingCheckout}
+        onClose={() => {
+          if (!isSubmittingCheckout) setShowCheckoutModal(false);
+        }}
+        onChange={updateCheckoutField}
+        onSubmit={confirmAndInitiatePayment}
       />
 
       {/* Bottom Padding for Cart Bar */}

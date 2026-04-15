@@ -93,6 +93,9 @@ function App() {
                 <Route path="/contact" element={<ContactPage />} />
                 <Route path="/color-preview" element={<ColorPreviewPage />} />
                 <Route path="/payment" element={<PaymentPage />} />
+                <Route path="/payment-success" element={<PaymentSuccessPage />} />
+                <Route path="/payment-fail" element={<PaymentFailPage />} />
+                <Route path="/payment-cancel" element={<PaymentCancelPage />} />
                 <Route path="/payment/success" element={<PaymentSuccessPage />} />
                 <Route path="/payment/fail" element={<PaymentFailPage />} />
                 <Route path="/payment/cancel" element={<PaymentCancelPage />} />

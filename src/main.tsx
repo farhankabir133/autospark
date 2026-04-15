@@ -4,6 +4,26 @@ import { HelmetProvider } from 'react-helmet-async';
 import App from './App.tsx';
 import './index.css';
 
+// HashRouter compatibility for direct callback hits on custom domain.
+// SSLCommerz redirects can land on pathname routes like /payment-success,
+// but HashRouter expects /#/payment-success.
+const callbackPaths = new Set([
+  '/payment-success',
+  '/payment-fail',
+  '/payment-cancel',
+  '/payment/success',
+  '/payment/fail',
+  '/payment/cancel',
+]);
+
+if (typeof window !== 'undefined') {
+  const { pathname, search, hash } = window.location;
+  if (!hash && callbackPaths.has(pathname)) {
+    const normalized = `/#${pathname}${search}`;
+    window.history.replaceState(null, '', normalized);
+  }
+}
+
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <HelmetProvider>

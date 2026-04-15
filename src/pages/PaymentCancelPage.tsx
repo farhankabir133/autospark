@@ -3,36 +3,14 @@
 import { useEffect, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { AlertCircle, Home } from 'lucide-react';
-import { updatePaymentStatus, getPaymentById } from '../services/appwriteService';
 
 const PaymentCancelPage = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
-  const [payment, setPayment] = useState<any>(null);
+  const [transactionId, setTransactionId] = useState<string | null>(null);
 
   useEffect(() => {
-    const handleCancel = async () => {
-      try {
-        const paymentId = searchParams.get('payment_id');
-
-        if (paymentId) {
-          console.log('📝 Processing payment cancellation for ID:', paymentId);
-          
-          // Update payment status in database to 'cancelled'
-          await updatePaymentStatus(paymentId, 'cancelled');
-
-          // Get updated payment record
-          const paymentData = await getPaymentById(paymentId);
-          setPayment(paymentData);
-          
-          console.log('✅ Payment cancellation processed');
-        }
-      } catch (err) {
-        console.error('❌ Error handling cancellation:', err);
-      }
-    };
-
-    handleCancel();
+    setTransactionId(searchParams.get('tran_id'));
 
     // Redirect to cart after 5 seconds if user doesn't click
     const timer = setTimeout(() => {
@@ -61,22 +39,12 @@ const PaymentCancelPage = () => {
           You have cancelled the payment. Your cart items are still saved.
         </p>
 
-        {/* Payment Details from Appwrite */}
-        {payment && (
+        {/* Transaction details */}
+        {transactionId && (
           <div className="bg-gray-50 rounded-lg p-4 mb-6 text-left space-y-3">
             <div>
-              <p className="text-xs text-gray-500 uppercase font-semibold">Order ID</p>
-              <p className="font-mono text-sm font-bold text-gray-800 break-all">
-                {payment.$id.substring(0, 12)}...
-              </p>
-            </div>
-            <div>
-              <p className="text-xs text-gray-500 uppercase font-semibold">Amount</p>
-              <p className="text-lg font-bold text-gray-800">৳{payment.total_amount?.toLocaleString()}</p>
-            </div>
-            <div>
-              <p className="text-xs text-gray-500 uppercase font-semibold">Status</p>
-              <p className="text-sm font-bold text-gray-600">CANCELLED</p>
+              <p className="text-xs text-gray-500 uppercase font-semibold">Transaction ID</p>
+              <p className="font-mono text-sm font-bold text-gray-800 break-all">{transactionId}</p>
             </div>
           </div>
         )}

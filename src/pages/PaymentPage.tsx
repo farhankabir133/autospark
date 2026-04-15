@@ -7,7 +7,7 @@ import * as z from 'zod';
 import { Loader2 } from 'lucide-react';
 import { bdDistricts, bdThanas } from '../data/bd-locations';
 import { useCart } from '../contexts/CartContext';
-import { savePaymentRequest } from '../services/appwriteService';
+import { appwritePaymentApi } from '../services/appwritePaymentApi';
 
 const phoneRegex = new RegExp(/^01[3-9]\d{8}$/);
 
@@ -71,71 +71,30 @@ const OnePageCheckout = () => {
     }
 
     try {
-      // Step 1: Save payment request to Appwrite database
-      console.log('📝 Saving payment to Appwrite database...');
-      const paymentRecord = await savePaymentRequest({
-        customer_name: data.customer_name,
-        mobile: data.mobile,
-        address: data.address,
-        thana: data.thana,
-        district: data.district,
-        total_amount: cartTotal,
-        cart_items: cartItems,
-      });
+      // Build normalized cart payload for backend init
+      const normalizedCart = cartItems.map((item) => ({
+        id: item.id,
+        name: item.name,
+        price: item.price,
+        quantity: item.quantity,
+      }));
 
-      console.log('✅ Payment record created:', paymentRecord);
-      const paymentRecordId = paymentRecord.$id;
+      console.log('🔗 Initializing payment via Appwrite Function...');
 
-      // Step 2: Send payment initialization request to SSLCommerz API
-      console.log('🔗 Initializing SSLCommerz payment...');
       const paymentData = {
-        cart: cartItems,
+        cart: normalizedCart,
+        cart_items: JSON.stringify(normalizedCart),
         total_amount: cartTotal,
         customer_name: data.customer_name,
         mobile: data.mobile,
         address: data.address,
         thana: data.thana,
         district: data.district,
-        payment_record_id: paymentRecordId, // Send Appwrite document ID for reference
       };
 
-      const response = await fetch('/api/payment/init', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(paymentData),
-      });
-
-      // Log response details for debugging
-      console.log('Payment API Response Status:', response.status);
-      console.log('Response Headers:', {
-        contentType: response.headers.get('content-type'),
-      });
-
-      let sslczData;
-      try {
-        sslczData = await response.json();
-      } catch (parseError) {
-        console.error('Failed to parse payment response:', parseError);
-        throw new Error(`Invalid response from server`);
-      }
-
-      if (!response.ok) {
-        throw new Error(sslczData.error || sslczData.failedreason || `Server error: ${response.status}`);
-      }
-
-      console.log('Payment response:', sslczData);
-
-      // SSLCommerz returns GatewayPageURL on success
-      if (sslczData.status === 'SUCCESS' && sslczData.GatewayPageURL) {
-        // Redirect to SSLCommerz payment gateway
-        console.log('🚀 Redirecting to SSLCommerz gateway...');
-        window.location.href = sslczData.GatewayPageURL;
-      } else {
-        console.error('Payment initialization failed:', sslczData);
-        throw new Error(sslczData.error || sslczData.failedreason || 'Payment initialization failed');
-      }
+      const { redirectUrl } = await appwritePaymentApi.initiatePayment(paymentData);
+      console.log('🚀 Redirecting to SSLCommerz gateway...');
+      window.location.href = redirectUrl;
     } catch (error) {
       setIsSubmitting(false);
       let errorMessage = error instanceof Error ? error.message : 'Payment initialization failed';
