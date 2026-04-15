@@ -1,0 +1,29 @@
+# Keep Appwrite deployment archive minimal and deterministic.
+# This avoids archive creation failures like: "tar: short read"
+# when local caches/build outputs are present.
+
+# Dependencies are installed by Appwrite during build
+node_modules/
+
+# Local build output / temp artifacts
+dist/
+coverage/
+*.log
+
+# Local env files
+.env
+.env.*
+!.env.example
+
+# Local test helpers (not needed for cloud runtime)
+local-test-server.ts
+local-test-server-simple.js
+local-test-server-simple.cjs
+
+# Editor / OS artifacts
+.DS_Store
+.vscode/
+
+# Source TS files are not required because runtime entrypoint is main.js
+src/
+tsconfig.json

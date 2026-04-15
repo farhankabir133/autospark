@@ -57,6 +57,22 @@ npm run build
 appwrite functions deploy sslcommerz-api
 ```
 
+### 5. If deployment fails with `tar: short read`
+
+Use these checks before retrying:
+
+1. In Appwrite Console, make sure function **Root Directory** is exactly:
+
+```
+functions/sslcommerz-api
+```
+
+2. Keep function archive minimal (this folder includes a `.appwriteignore`).
+3. If using Git deployment in Appwrite, avoid using repo root as function source.
+4. Re-run deployment after activating the latest deployment.
+
+This project has many frontend assets and assistant tooling files at repo root; deploying from root can create a very large archive and trigger build-side tar/archive errors.
+
 ## 📚 API Endpoints
 
 ### 1. Initialize Payment
