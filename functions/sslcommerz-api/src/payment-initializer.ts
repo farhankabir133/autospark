@@ -27,6 +27,7 @@ export class PaymentInitializer {
   private storeId: string;
   private storePasswd: string;
   private baseUrl: string;
+  private functionPublicBaseUrl?: string;
   private isLive: boolean = true;
   private logFn?: (message: string) => void;
   private errorFn?: (message: string) => void;
@@ -47,11 +48,13 @@ export class PaymentInitializer {
       isLive?: boolean;
       logFn?: (message: string) => void;
       errorFn?: (message: string) => void;
+      functionPublicBaseUrl?: string;
     }
   ) {
     this.storeId = storeId;
     this.storePasswd = storePasswd;
     this.baseUrl = baseUrl;
+    this.functionPublicBaseUrl = options?.functionPublicBaseUrl;
     this.isLive = options?.isLive ?? true;
     this.logFn = options?.logFn;
     this.errorFn = options?.errorFn;
@@ -113,6 +116,12 @@ export class PaymentInitializer {
     // Build redirect URLs with transaction ID
     const urls = buildRedirectURLs(this.baseUrl, { tran_id: tranId });
 
+    const functionBase = this.functionPublicBaseUrl?.endsWith('/')
+      ? this.functionPublicBaseUrl.slice(0, -1)
+      : this.functionPublicBaseUrl;
+
+    const ipnBase = functionBase || this.baseUrl;
+
     const data: SSLCommerzInitData = {
       tran_id: tranId,
       total_amount: Number(formatAmount(request.total_amount)),
@@ -120,7 +129,7 @@ export class PaymentInitializer {
       success_url: urls.success_url,
       fail_url: urls.fail_url,
       cancel_url: urls.cancel_url,
-      ipn_url: `${this.baseUrl}/api/payment/ipn`,
+      ipn_url: `${ipnBase}/payment/ipn`,
       cus_name: sanitizeString(request.cus_name),
       cus_email: request.cus_email.toLowerCase(),
       cus_phone: request.cus_phone,

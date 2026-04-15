@@ -18,6 +18,34 @@ import { IPNValidator } from './ipn-validator';
 import { AppwriteOrderManager } from './appwrite-order-manager';
 import { logPaymentEvent, handleError } from './utils';
 
+const normalizePaymentRequest = (raw: Record<string, any>): PaymentInitiationRequest => {
+  const cus_phone = String(raw.cus_phone || raw.mobile || raw.phone || '').trim();
+  const cus_name = String(raw.cus_name || raw.customer_name || raw.customerName || '').trim();
+  const fallbackEmail = cus_phone ? `customer_${cus_phone.replace(/\D/g, '')}@autosparkbd.com` : 'customer@autosparkbd.com';
+
+  const totalAmountRaw = raw.total_amount ?? raw.amount ?? 0;
+  const total_amount = typeof totalAmountRaw === 'number' ? totalAmountRaw : Number(totalAmountRaw);
+
+  return {
+    total_amount,
+    cus_name,
+    cus_email: String(raw.cus_email || raw.customer_email || raw.email || fallbackEmail).trim().toLowerCase(),
+    cus_phone,
+    order_id: raw.order_id || raw.orderId,
+    product_name: raw.product_name || raw.productName || 'Auto Spark Services',
+    product_category: raw.product_category || raw.productCategory || 'vehicle_service',
+    cus_add1: raw.cus_add1 || raw.address || raw.customer_address || 'Dhaka',
+    cus_city: raw.cus_city || raw.district || raw.city || 'Dhaka',
+    cus_postcode: raw.cus_postcode || raw.postcode || '1000',
+    cus_country: raw.cus_country || raw.country || 'Bangladesh',
+    ship_add1: raw.ship_add1 || raw.address || raw.customer_address || 'Dhaka',
+    ship_city: raw.ship_city || raw.district || raw.city || 'Dhaka',
+    ship_postcode: raw.ship_postcode || raw.postcode || '1000',
+    ship_country: raw.ship_country || raw.country || 'Bangladesh',
+    shipping_method: raw.shipping_method || 'Courier',
+  };
+};
+
 /**
  * Main Appwrite Function Handler
  */
@@ -46,6 +74,7 @@ export default async (context: any): Promise<any> => {
   const APPWRITE_ORDERS_DATABASE_ID = process.env.APPWRITE_ORDERS_DATABASE_ID || '';
   const APPWRITE_ORDERS_COLLECTION_ID = process.env.APPWRITE_ORDERS_COLLECTION_ID || '';
   const BASE_URL = process.env.BASE_URL || 'https://autosparkbd.com';
+  const FUNCTION_PUBLIC_BASE_URL = process.env.FUNCTION_PUBLIC_BASE_URL || '';
 
   // Validate required environment variables
   const missingEnvVars = [];
@@ -86,7 +115,12 @@ export default async (context: any): Promise<any> => {
     SSLCZ_STORE_ID,
     SSLCZ_STORE_PASSWD,
     BASE_URL,
-    { isLive: true, logFn: log, errorFn: error }
+    {
+      isLive: true,
+      logFn: log,
+      errorFn: error,
+      functionPublicBaseUrl: FUNCTION_PUBLIC_BASE_URL,
+    }
   );
 
   const ipnValidator = new IPNValidator(
@@ -115,9 +149,11 @@ export default async (context: any): Promise<any> => {
           );
         }
 
+        const normalizedRequest = normalizePaymentRequest(body as Record<string, any>);
+
         // Initialize payment
         const initResult = await paymentInitializer.initializePayment(
-          body as PaymentInitiationRequest,
+          normalizedRequest,
           SSLCommerzPayment
         );
 
@@ -131,7 +167,7 @@ export default async (context: any): Promise<any> => {
 
         // Create order document in Appwrite
         const orderData = paymentInitializer.createOrderData(
-          body as PaymentInitiationRequest,
+          normalizedRequest,
           initResult.tranId!
         );
 
@@ -154,7 +190,7 @@ export default async (context: any): Promise<any> => {
             data: {
               redirectUrl: initResult.redirectUrl,
               tranId: initResult.tranId,
-              amount: body.total_amount
+              amount: normalizedRequest.total_amount
             }
           } as APIResponse,
           200,
@@ -280,7 +316,7 @@ export default async (context: any): Promise<any> => {
         {
           success: true,
           data: {
-            tranId: getResult.data?.$id,
+            tranId: getResult.data?.tran_id || getResult.data?.$id,
             status: getResult.data?.status,
             amount: getResult.data?.amount,
             currency: getResult.data?.currency,
