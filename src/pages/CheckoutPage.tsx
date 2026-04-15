@@ -279,16 +279,16 @@ const CheckoutPage: React.FC = () => {
         </div>
       </div>
 
-      <div className="max-w-7xl mx-auto px-4 py-8">
+      <div className="max-w-7xl mx-auto px-3 sm:px-4 py-6 sm:py-8">
         {/* Progress Bar */}
-        <div className="mb-12">
+        <div className="mb-8 sm:mb-12">
           <div className="flex items-center justify-between mb-4">
             {[1, 2, 3, 4].map((step) => (
               <React.Fragment key={step}>
                 <motion.button
                   whileHover={{ scale: 1.1 }}
                   onClick={() => step < currentStep && setCurrentStep(step as 1 | 2 | 3 | 4)}
-                  className={`w-10 h-10 rounded-full font-bold transition-all ${
+                  className={`w-9 h-9 sm:w-10 sm:h-10 rounded-full text-sm sm:text-base font-bold transition-all ${
                     step < currentStep
                       ? 'bg-green-500 text-white'
                       : step === currentStep
@@ -300,7 +300,7 @@ const CheckoutPage: React.FC = () => {
                 </motion.button>
                 {step < 4 && (
                   <div
-                    className={`flex-1 h-1 mx-2 ${
+                    className={`flex-1 h-1 mx-1 sm:mx-2 ${
                       step < currentStep
                         ? 'bg-green-500'
                         : isDark ? 'bg-gray-700' : 'bg-gray-200'
@@ -310,15 +310,18 @@ const CheckoutPage: React.FC = () => {
               </React.Fragment>
             ))}
           </div>
-          <div className="flex justify-between text-sm">
-            <span className={isDark ? 'text-gray-400' : 'text-gray-600'}>{t('customerInfo')}</span>
-            <span className={isDark ? 'text-gray-400' : 'text-gray-600'}>{t('deliveryAddress')}</span>
-            <span className={isDark ? 'text-gray-400' : 'text-gray-600'}>{t('shippingMethod')}</span>
-            <span className={isDark ? 'text-gray-400' : 'text-gray-600'}>{t('orderReview')}</span>
+          <p className={`md:hidden text-center text-xs ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>
+            {t('step')} {currentStep} {t('of')} 4
+          </p>
+          <div className="hidden md:flex justify-between text-sm gap-3">
+            <span className={`text-center ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>{t('customerInfo')}</span>
+            <span className={`text-center ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>{t('deliveryAddress')}</span>
+            <span className={`text-center ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>{t('shippingMethod')}</span>
+            <span className={`text-center ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>{t('orderReview')}</span>
           </div>
         </div>
 
-        <div className="grid lg:grid-cols-3 gap-8">
+        <div className="grid lg:grid-cols-3 gap-6 lg:gap-8">
           {/* Form Section */}
           <div className="lg:col-span-2">
             <AnimatePresence mode="wait">
@@ -329,7 +332,7 @@ const CheckoutPage: React.FC = () => {
                   initial={{ opacity: 0, x: 20 }}
                   animate={{ opacity: 1, x: 0 }}
                   exit={{ opacity: 0, x: -20 }}
-                  className={`rounded-2xl p-8 ${isDark ? 'bg-gray-800' : 'bg-white shadow-lg'}`}
+                  className={`rounded-2xl p-5 sm:p-8 ${isDark ? 'bg-gray-800' : 'bg-white shadow-lg'}`}
                 >
                   <h3 className={`text-xl font-bold mb-6 flex items-center gap-2 ${isDark ? 'text-white' : 'text-gray-900'}`}>
                     <User size={24} /> {t('customerInfo')}
@@ -428,7 +431,7 @@ const CheckoutPage: React.FC = () => {
                   initial={{ opacity: 0, x: 20 }}
                   animate={{ opacity: 1, x: 0 }}
                   exit={{ opacity: 0, x: -20 }}
-                  className={`rounded-2xl p-8 ${isDark ? 'bg-gray-800' : 'bg-white shadow-lg'}`}
+                  className={`rounded-2xl p-5 sm:p-8 ${isDark ? 'bg-gray-800' : 'bg-white shadow-lg'}`}
                 >
                   <h3 className={`text-xl font-bold mb-6 flex items-center gap-2 ${isDark ? 'text-white' : 'text-gray-900'}`}>
                     <MapPin size={24} /> {t('deliveryAddress')}
@@ -534,7 +537,7 @@ const CheckoutPage: React.FC = () => {
                   initial={{ opacity: 0, x: 20 }}
                   animate={{ opacity: 1, x: 0 }}
                   exit={{ opacity: 0, x: -20 }}
-                  className={`rounded-2xl p-8 ${isDark ? 'bg-gray-800' : 'bg-white shadow-lg'}`}
+                  className={`rounded-2xl p-5 sm:p-8 ${isDark ? 'bg-gray-800' : 'bg-white shadow-lg'}`}
                 >
                   <h3 className={`text-xl font-bold mb-6 flex items-center gap-2 ${isDark ? 'text-white' : 'text-gray-900'}`}>
                     <Truck size={24} /> {t('shippingMethod')}
@@ -617,7 +620,7 @@ const CheckoutPage: React.FC = () => {
                   initial={{ opacity: 0, x: 20 }}
                   animate={{ opacity: 1, x: 0 }}
                   exit={{ opacity: 0, x: -20 }}
-                  className={`rounded-2xl p-8 space-y-6 ${isDark ? 'bg-gray-800' : 'bg-white shadow-lg'}`}
+                  className={`rounded-2xl p-5 sm:p-8 space-y-6 ${isDark ? 'bg-gray-800' : 'bg-white shadow-lg'}`}
                 >
                   <div>
                     <h3 className={`text-lg font-bold mb-4 ${isDark ? 'text-white' : 'text-gray-900'}`}>
@@ -678,7 +681,7 @@ const CheckoutPage: React.FC = () => {
             </AnimatePresence>
 
             {/* Navigation Buttons */}
-            <div className="flex gap-4 mt-8">
+            <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 mt-8">
               {currentStep > 1 && (
                 <motion.button
                   whileHover={{ scale: 1.02 }}
@@ -727,11 +730,11 @@ const CheckoutPage: React.FC = () => {
           </div>
 
           {/* Order Summary Sidebar */}
-          <div>
+          <div className="order-first lg:order-none">
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              className={`rounded-2xl p-6 sticky top-24 ${isDark ? 'bg-gray-800' : 'bg-white shadow-lg'}`}
+              className={`rounded-2xl p-5 sm:p-6 lg:sticky lg:top-24 ${isDark ? 'bg-gray-800' : 'bg-white shadow-lg'}`}
             >
               <h3 className={`text-lg font-bold mb-6 ${isDark ? 'text-white' : 'text-gray-900'}`}>
                 {t('orderReview')}

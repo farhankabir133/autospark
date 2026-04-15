@@ -96,8 +96,8 @@ export default async ({ req, res, log }) => {
   }
 
   const databases = createDatabasesClient();
-  const dbId = process.env.APPWRITE_ORDERS_DATABASE_ID;
-  const collectionId = process.env.APPWRITE_ORDERS_COLLECTION_ID;
+  const dbId = process.env.APPWRITE_ORDERS_DATABASE_ID || '69dd576a00019558df4d';
+  const collectionId = process.env.APPWRITE_ORDERS_COLLECTION_ID || 'transactions';
   const baseUrl = normalizeBaseUrl(process.env.BASE_URL || 'https://autosparkbd.com');
   const functionPublicBase = normalizeBaseUrl(process.env.FUNCTION_PUBLIC_BASE_URL || '');
 
@@ -244,7 +244,11 @@ export default async ({ req, res, log }) => {
       if (!gateway?.GatewayPageURL) {
         return error(
           res,
-          { success: false, error: gateway?.failedreason || 'Failed to initialize payment gateway' },
+          {
+            success: false,
+            error: gateway?.failedreason || 'Failed to initialize payment gateway',
+            details: gateway || null,
+          },
           502,
           corsHeaders
         );
@@ -254,6 +258,7 @@ export default async ({ req, res, log }) => {
         res,
         {
           success: true,
+          redirectUrl: gateway.GatewayPageURL,
           data: {
             redirectUrl: gateway.GatewayPageURL,
             tranId,
@@ -264,7 +269,16 @@ export default async ({ req, res, log }) => {
       );
     } catch (e) {
       log(`payment/init error: ${e?.message || e}`);
-      return error(res, { success: false, error: e?.message || 'Internal error' }, 500, corsHeaders);
+      return error(
+        res,
+        {
+          success: false,
+          error: e?.message || 'Internal error',
+          details: e?.stack || null,
+        },
+        500,
+        corsHeaders
+      );
     }
   }
 
