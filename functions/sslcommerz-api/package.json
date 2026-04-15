@@ -1,26 +1,17 @@
 {
   "name": "sslcommerz-api",
   "version": "1.0.0",
-  "description": "Production-ready SSLCommerz payment gateway integration for Auto Spark using TypeScript and Appwrite",
-  "main": "dist/main.js",
+  "description": "Appwrite Function backend for Auto Spark SSLCommerz payments",
+  "main": "main.js",
   "type": "module",
   "scripts": {
-    "build": "tsc",
-    "dev": "tsc --watch",
-    "start": "node dist/main.js",
-    "test:local": "ts-node local-test-server.ts"
+    "build": "echo 'No build step required for main.js entrypoint'",
+    "start": "node main.js",
+    "test:local": "node local-test-server-simple.js"
   },
   "dependencies": {
-    "appwrite": "^12.0.0",
-    "sslcommerz-lts": "^1.1.0",
-    "express": "^4.18.2",
-    "cors": "^2.8.5"
-  },
-  "devDependencies": {
-    "@types/node": "^20.0.0",
-    "@types/express": "^4.17.17",
-    "@types/cors": "^2.8.13",
-    "typescript": "^5.3.0",
-    "ts-node": "^10.9.1"
+    "dotenv": "^16.4.5",
+    "node-appwrite": "^23.1.0",
+    "sslcommerz-lts": "^1.1.0"
   }
 }

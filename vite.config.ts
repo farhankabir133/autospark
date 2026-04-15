@@ -23,6 +23,9 @@ export default defineConfig({
     }),
   ],
     server: {
+      watch: {
+        ignored: ['**/functions/**'],
+      },
       // during local development forward /api/* to the proxy server
       proxy: {
         '/api/agent': {
