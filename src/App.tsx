@@ -28,6 +28,7 @@ const InventoryManagementPage = lazy(() => import('./pages/InventoryManagementPa
 const PaymentSuccessPage = lazy(() => import('./pages/PaymentSuccessPage'));
 const PaymentFailPage = lazy(() => import('./pages/PaymentFailPage'));
 const PaymentCancelPage = lazy(() => import('./pages/PaymentCancelPage'));
+const ThankYouPage = lazy(() => import('./pages/ThankYouPage'));
 
 // Minimal loading fallback to prevent CLS
 const PageLoader = () => (
@@ -96,6 +97,7 @@ function App() {
                 <Route path="/payment-success" element={<PaymentSuccessPage />} />
                 <Route path="/payment-fail" element={<PaymentFailPage />} />
                 <Route path="/payment-cancel" element={<PaymentCancelPage />} />
+                <Route path="/thank-you" element={<ThankYouPage />} />
                 <Route path="/payment/success" element={<PaymentSuccessPage />} />
                 <Route path="/payment/fail" element={<PaymentFailPage />} />
                 <Route path="/payment/cancel" element={<PaymentCancelPage />} />

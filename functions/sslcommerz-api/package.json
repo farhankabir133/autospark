@@ -7,7 +7,7 @@
   "scripts": {
     "build": "echo 'No build step required for main.js entrypoint'",
     "start": "node main.js",
-    "test:local": "node local-test-server-simple.js"
+    "test:local": "node local-test-server-simple.cjs"
   },
   "dependencies": {
     "dotenv": "^16.4.5",

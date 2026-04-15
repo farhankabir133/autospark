@@ -7,7 +7,7 @@ import * as z from 'zod';
 import { Loader2 } from 'lucide-react';
 import { bdDistricts, bdThanas } from '../data/bd-locations';
 import { useCart } from '../contexts/CartContext';
-import { appwritePaymentApi } from '../services/appwritePaymentApi';
+import { initiatePayment } from '../services/handlePayment';
 
 const phoneRegex = new RegExp(/^01[3-9]\d{8}$/);
 
@@ -81,20 +81,15 @@ const OnePageCheckout = () => {
 
       console.log('🔗 Initializing payment via Appwrite Function...');
 
-      const paymentData = {
-        cart: normalizedCart,
-        cart_items: JSON.stringify(normalizedCart),
-        total_amount: cartTotal,
-        customer_name: data.customer_name,
-        mobile: data.mobile,
+      await initiatePayment({
+        name: data.customer_name,
+        phone: data.mobile,
         address: data.address,
         thana: data.thana,
         district: data.district,
-      };
-
-      const { redirectUrl } = await appwritePaymentApi.initiatePayment(paymentData);
-      console.log('🚀 Redirecting to SSLCommerz gateway...');
-      window.location.href = redirectUrl;
+        total: cartTotal,
+        items: normalizedCart,
+      });
     } catch (error) {
       setIsSubmitting(false);
       let errorMessage = error instanceof Error ? error.message : 'Payment initialization failed';

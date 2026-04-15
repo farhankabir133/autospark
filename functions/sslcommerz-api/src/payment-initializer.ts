@@ -14,11 +14,13 @@ import {
   sanitizeString,
   validateRequiredFields,
   formatAmount,
-  buildRedirectURLs,
   isValidSSLCommerzResponse,
   logPaymentEvent,
   handleError
 } from './utils';
+
+const DEFAULT_EXECUTION_ENDPOINT =
+  'https://sgp.cloud.appwrite.io/v1/functions/sslcommerz-api/executions';
 
 /**
  * PaymentInitializer class handles transaction creation and SSLCommerz initialization
@@ -113,14 +115,16 @@ export class PaymentInitializer {
     request: PaymentInitiationRequest,
     tranId: string
   ): SSLCommerzInitData {
-    // Build redirect URLs with transaction ID
-    const urls = buildRedirectURLs(this.baseUrl, { tran_id: tranId });
+    const customDomainBase = this.baseUrl?.replace(/\/$/, '') || 'https://autosparkbd.com';
+    const executionBase =
+      this.functionPublicBaseUrl?.replace(/\/$/, '') || DEFAULT_EXECUTION_ENDPOINT;
 
-    const functionBase = this.functionPublicBaseUrl?.endsWith('/')
-      ? this.functionPublicBaseUrl.slice(0, -1)
-      : this.functionPublicBaseUrl;
-
-    const ipnBase = functionBase || this.baseUrl;
+    const urls = {
+      success_url: `${customDomainBase}/payment-success`,
+      fail_url: `${customDomainBase}/payment-fail`,
+      cancel_url: `${customDomainBase}/checkout`,
+      ipn_url: `${executionBase}/payment/ipn`,
+    };
 
     const data: SSLCommerzInitData = {
       tran_id: tranId,
@@ -129,7 +133,7 @@ export class PaymentInitializer {
       success_url: urls.success_url,
       fail_url: urls.fail_url,
       cancel_url: urls.cancel_url,
-      ipn_url: `${ipnBase}/payment/ipn`,
+  ipn_url: urls.ipn_url,
       cus_name: sanitizeString(request.cus_name),
       cus_email: request.cus_email.toLowerCase(),
       cus_phone: request.cus_phone,

@@ -6,6 +6,9 @@ import { CheckCircle, Home } from 'lucide-react';
 import { useCart } from '../contexts/CartContext';
 import { appwritePaymentApi } from '../services/appwritePaymentApi';
 
+const SITE_URL = (import.meta.env.VITE_SITE_URL || 'https://autosparkbd.com').replace(/\/$/, '');
+const SUCCESS_STATES = new Set(['VALIDATED', 'COMPLETE', 'COMPLETED', 'PAID', 'SUCCESS']);
+
 const PaymentSuccessPage = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
@@ -44,7 +47,7 @@ const PaymentSuccessPage = () => {
 
           setPaymentStatus(status);
 
-          if (status === 'VALIDATED') {
+          if (SUCCESS_STATES.has(status)) {
             setIsValidated(true);
             clearCart();
             return;
@@ -77,10 +80,11 @@ const PaymentSuccessPage = () => {
   useEffect(() => {
     if (!isValidated) return;
     const timer = setTimeout(() => {
-      navigate('/');
+      const tranIdQuery = transactionId ? `?tran_id=${encodeURIComponent(transactionId)}` : '';
+      window.location.href = `${SITE_URL}/#/thank-you${tranIdQuery}`;
     }, 5000);
     return () => clearTimeout(timer);
-  }, [isValidated, navigate]);
+  }, [isValidated, transactionId]);
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-green-50 to-white flex items-center justify-center p-4">
@@ -163,7 +167,7 @@ const PaymentSuccessPage = () => {
 
         {/* Auto-redirect notice */}
         <p className="text-xs text-gray-500 mt-4">
-          {isValidated ? 'Redirecting to home in 5 seconds...' : 'Waiting for payment validation...'}
+          {isValidated ? 'Redirecting to Thank You page in 5 seconds...' : 'Waiting for payment validation...'}
         </p>
       </div>
     </div>

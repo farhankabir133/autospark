@@ -4,6 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { useTheme } from '../contexts/ThemeContext';
 import { useLanguage } from '../contexts/LanguageContext';
 import { useCart } from '../contexts/CartContext';
+import { initiatePayment } from '../services/handlePayment';
 import {
   ChevronRight,
   Check,
@@ -213,19 +214,25 @@ const CheckoutPage: React.FC = () => {
     setIsSubmitting(true);
     
     try {
-      // Navigate to payment page with checkout data
-      // The PaymentPage will use CartContext to get items and totals
-      // Store checkout details in session storage for PaymentPage to access
-      sessionStorage.setItem('checkoutData', JSON.stringify({
-        customer: orderData.customer,
-        address: orderData.address,
-        shipping: orderData.shipping,
-        paymentMethod: orderData.payment,
-        timestamp: new Date().toISOString(),
+      const normalizedCart = cartItems.map((item) => ({
+        id: item.id,
+        name: item.name,
+        price: item.price,
+        quantity: item.quantity,
       }));
-      
-      // Navigate to payment page
-      navigate('/payment');
+
+      const shippingCost = orderData.shipping === 'dhaka' ? 100 : 200;
+      const finalTotal = cartTotal + shippingCost;
+
+      await initiatePayment({
+        name: `${orderData.customer.firstName} ${orderData.customer.lastName}`.trim(),
+        phone: orderData.customer.phone,
+        address: orderData.address.street,
+        thana: orderData.address.city,
+        district: orderData.address.division,
+        total: finalTotal,
+        items: normalizedCart,
+      });
     } catch (error) {
       console.error('Error proceeding to payment:', error);
       setErrors({ general: 'Failed to proceed to payment. Please try again.' });
