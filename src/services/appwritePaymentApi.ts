@@ -80,19 +80,41 @@ export const appwritePaymentApi = {
   async initiatePayment(payload: PaymentInitRequest): Promise<{ redirectUrl: string; tranId?: string }> {
     assertConfigured();
 
-    const response = await fetch(`${API_BASE_URL}/init`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(payload),
-    });
+    const initEndpoints = [`${API_BASE_URL}/payment/init`, `${API_BASE_URL}/init`];
 
-    let data: PaymentInitResponse;
-    try {
-      data = await response.json();
-    } catch {
-      throw new Error('Invalid response from payment server');
+    let response: Response | null = null;
+    let data: PaymentInitResponse | null = null;
+
+    for (const endpoint of initEndpoints) {
+      const currentResponse = await fetch(endpoint, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(payload),
+      });
+
+      let currentData: PaymentInitResponse;
+      try {
+        currentData = await currentResponse.json();
+      } catch {
+        currentData = {
+          error: `Invalid response from payment server (${endpoint})`,
+        };
+      }
+
+      // Treat 404 as route mismatch and try fallback endpoint.
+      if (currentResponse.status === 404) {
+        continue;
+      }
+
+      response = currentResponse;
+      data = currentData;
+      break;
+    }
+
+    if (!response || !data) {
+      throw new Error('Payment API route not found. Check Appwrite Function public domain mapping.');
     }
 
     if (!response.ok) {
@@ -113,18 +135,43 @@ export const appwritePaymentApi = {
   async getPaymentStatus(tranId: string): Promise<PaymentStatusResponse> {
     assertConfigured();
 
-    const response = await fetch(`${API_BASE_URL}/payment?tran_id=${encodeURIComponent(tranId)}`, {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    });
+    const statusEndpoints = [
+      `${API_BASE_URL}/payment/status/${encodeURIComponent(tranId)}`,
+      `${API_BASE_URL}/payment?tran_id=${encodeURIComponent(tranId)}`,
+    ];
 
-    let data: PaymentStatusResponse;
-    try {
-      data = await response.json();
-    } catch {
-      throw new Error('Invalid status response from payment server');
+    let response: Response | null = null;
+    let data: PaymentStatusResponse | null = null;
+
+    for (const endpoint of statusEndpoints) {
+      const currentResponse = await fetch(endpoint, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+
+      let currentData: PaymentStatusResponse;
+      try {
+        currentData = await currentResponse.json();
+      } catch {
+        currentData = {
+          error: `Invalid status response from payment server (${endpoint})`,
+        };
+      }
+
+      // 404 likely means wrong route shape; try fallback.
+      if (currentResponse.status === 404) {
+        continue;
+      }
+
+      response = currentResponse;
+      data = currentData;
+      break;
+    }
+
+    if (!response || !data) {
+      throw new Error('Payment status API route not found. Check Appwrite Function public domain mapping.');
     }
 
     if (!response.ok) {
