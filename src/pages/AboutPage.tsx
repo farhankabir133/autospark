@@ -1081,6 +1081,130 @@ export const AboutPage = () => {
               <div className="hidden md:block w-5/12"></div>
             </motion.div>
 
+            {/* Expert 12 - Shahin (Right) */}
+            <motion.div
+              initial={{ opacity: 0, x: 30 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.5, delay: 1.2 }}
+              className="relative flex items-center mb-6 sm:mb-8 md:flex-row-reverse"
+            >
+              <div className="w-full md:w-5/12 md:pl-12 pl-8 sm:pl-12 md:text-left">
+                <Suspense fallback={<div className="p-6">Loading team member…</div>}>
+                  <TeamCard
+                    person={{
+                      name: language === 'en' ? 'Shahin' : 'শাহিন',
+                      role: language === 'en' ? 'Dent Expert' : 'ডেন্ট এক্সপার্ট',
+                      title: language === 'en' ? '🛠️ Dent Expert' : '🛠️ ডেন্ট এক্সপার্ট',
+                      image: '/emp/Shain.webp',
+                      bio: language === 'en' ? 'Specialist in dent repair and smooth body restoration.' : 'ডেন্ট রিপেয়ার এবং বডি রিস্টোরেশনে বিশেষজ্ঞ।',
+                    }}
+                    language={language}
+                    theme={theme}
+                    showroom={showroom}
+                  />
+                </Suspense>
+              </div>
+
+              {/* Timeline Dot */}
+              <div className="absolute left-1 sm:left-2 md:left-1/2 w-3 h-3 sm:w-4 sm:h-4 bg-[#C00000] rounded-full transform md:-translate-x-1/2 border-2 sm:border-4 border-white dark:border-gray-950 shadow-lg"></div>
+
+              <div className="hidden md:block w-5/12"></div>
+            </motion.div>
+
+            {/* Expert 13 - Sumon (Left) */}
+            <motion.div
+              initial={{ opacity: 0, x: -30 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.5, delay: 1.3 }}
+              className="relative flex items-center mb-6 sm:mb-8 md:flex-row"
+            >
+              <div className="w-full md:w-5/12 md:pr-12 md:text-right pl-8 sm:pl-12 md:pl-0">
+                <Suspense fallback={<div className="p-6">Loading team member…</div>}>
+                  <TeamCard
+                    person={{
+                      name: language === 'en' ? 'Sumon' : 'সুমন',
+                      role: language === 'en' ? 'Dent Expert' : 'ডেন্ট এক্সপার্ট',
+                      title: language === 'en' ? '🛠️ Dent Expert' : '🛠️ ডেন্ট এক্সপার্ট',
+                      image: '/emp/Sumon.webp',
+                      bio: language === 'en' ? 'Focused on precision dent correction and finish quality.' : 'নিখুঁত ডেন্ট কারেকশন এবং ফিনিশ কোয়ালিটিতে দক্ষ।',
+                    }}
+                    language={language}
+                    theme={theme}
+                    showroom={showroom}
+                  />
+                </Suspense>
+              </div>
+
+              {/* Timeline Dot */}
+              <div className="absolute left-1 sm:left-2 md:left-1/2 w-3 h-3 sm:w-4 sm:h-4 bg-[#C00000] rounded-full transform md:-translate-x-1/2 border-2 sm:border-4 border-white dark:border-gray-950 shadow-lg"></div>
+
+              <div className="hidden md:block w-5/12"></div>
+            </motion.div>
+
+            {/* Expert 14 - Sakib (Right) */}
+            <motion.div
+              initial={{ opacity: 0, x: 30 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.5, delay: 1.4 }}
+              className="relative flex items-center mb-6 sm:mb-8 md:flex-row-reverse"
+            >
+              <div className="w-full md:w-5/12 md:pl-12 pl-8 sm:pl-12 md:text-left">
+                <Suspense fallback={<div className="p-6">Loading team member…</div>}>
+                  <TeamCard
+                    person={{
+                      name: language === 'en' ? 'Sakib' : 'সাকিব',
+                      role: language === 'en' ? 'Engine Expert' : 'ইঞ্জিন এক্সপার্ট',
+                      title: language === 'en' ? '🔧 Engine Expert' : '🔧 ইঞ্জিন এক্সপার্ট',
+                      image: '/emp/Sakib.webp',
+                      bio: language === 'en' ? 'Experienced in engine diagnostics, tuning, and performance checks.' : 'ইঞ্জিন ডায়াগনস্টিক, টিউনিং এবং পারফরম্যান্স চেকে অভিজ্ঞ।',
+                    }}
+                    language={language}
+                    theme={theme}
+                    showroom={showroom}
+                  />
+                </Suspense>
+              </div>
+
+              {/* Timeline Dot */}
+              <div className="absolute left-1 sm:left-2 md:left-1/2 w-3 h-3 sm:w-4 sm:h-4 bg-[#C00000] rounded-full transform md:-translate-x-1/2 border-2 sm:border-4 border-white dark:border-gray-950 shadow-lg"></div>
+
+              <div className="hidden md:block w-5/12"></div>
+            </motion.div>
+
+            {/* Expert 15 - Koushik (Left) */}
+            <motion.div
+              initial={{ opacity: 0, x: -30 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.5, delay: 1.5 }}
+              className="relative flex items-center mb-6 sm:mb-8 md:flex-row"
+            >
+              <div className="w-full md:w-5/12 md:pr-12 md:text-right pl-8 sm:pl-12 md:pl-0">
+                <Suspense fallback={<div className="p-6">Loading team member…</div>}>
+                  <TeamCard
+                    person={{
+                      name: language === 'en' ? 'Koushik' : 'কৌশিক',
+                      role: language === 'en' ? 'Electric Expert' : 'ইলেকট্রিক এক্সপার্ট',
+                      title: language === 'en' ? '⚡ Electric Expert' : '⚡ ইলেকট্রিক এক্সপার্ট',
+                      image: '/emp/Koushik.webp',
+                      bio: language === 'en' ? 'Handles electrical diagnostics, wiring, and system reliability.' : 'ইলেকট্রিক্যাল ডায়াগনস্টিক, ওয়্যারিং এবং সিস্টেম নির্ভরযোগ্যতায় দক্ষ।',
+                    }}
+                    language={language}
+                    theme={theme}
+                    showroom={showroom}
+                  />
+                </Suspense>
+              </div>
+
+              {/* Timeline Dot */}
+              <div className="absolute left-1 sm:left-2 md:left-1/2 w-3 h-3 sm:w-4 sm:h-4 bg-[#C00000] rounded-full transform md:-translate-x-1/2 border-2 sm:border-4 border-white dark:border-gray-950 shadow-lg"></div>
+
+              <div className="hidden md:block w-5/12"></div>
+            </motion.div>
+
           </div>
         </motion.div>
 

@@ -115,9 +115,9 @@ const OnePageCheckout = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 text-gray-800 p-4 sm:p-6 lg:p-8">
+    <div className="min-h-screen bg-gray-50 text-gray-800 p-3 sm:p-4 lg:p-6">
       <div className="max-w-6xl mx-auto">
-        <header className="text-center mb-8">
+        <header className="text-center mb-6">
           <h1 className="text-3xl font-bold" style={{ color: '#F28C38' }}>
             One-Page Checkout
           </h1>
@@ -126,7 +126,7 @@ const OnePageCheckout = () => {
 
         {/* Error Alert */}
         {error && (
-          <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg">
+          <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg">
             <div className="flex items-start justify-between">
               <div className="flex-1">
                 <p className="text-red-700 font-medium">{error}</p>
@@ -143,7 +143,7 @@ const OnePageCheckout = () => {
                 ×
               </button>
             </div>
-            <div className="mt-3 flex gap-2">
+            <div className="mt-2 flex gap-2">
               <button
                 onClick={() => setError(null)}
                 className="text-sm px-3 py-1 bg-red-100 hover:bg-red-200 text-red-700 rounded transition"
@@ -160,30 +160,30 @@ const OnePageCheckout = () => {
           </div>
         )}
 
-        <form onSubmit={handleSubmit(onSubmit)} className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        <form onSubmit={handleSubmit(onSubmit)} className="grid grid-cols-1 lg:grid-cols-2 gap-5">
           {/* Left Column: Billing Details */}
-          <div className="bg-white p-6 rounded-xl shadow-md">
-            <h2 className="text-2xl font-semibold mb-6 border-b pb-4" style={{ color: '#F28C38' }}>
+          <div className="bg-white p-4 rounded-xl shadow-md">
+            <h2 className="text-xl font-semibold mb-4 border-b pb-2" style={{ color: '#F28C38' }}>
               Billing Details
             </h2>
-            <div className="space-y-4">
+            <div className="space-y-2">
               <div>
-                <label htmlFor="customer_name" className="block text-sm font-medium text-gray-700">
+                <label htmlFor="customer_name" className="block text-xs font-medium text-gray-700">
                   Full Name
                 </label>
                 <input
                   id="customer_name"
                   type="text"
                   {...register('customer_name')}
-                  className={`mt-1 block w-full px-3 py-2 border ${
+                  className={`mt-0.5 block w-full px-2.5 py-1.5 border ${
                     errors.customer_name ? 'border-red-500' : 'border-gray-300'
-                  } rounded-md shadow-sm focus:outline-none focus:ring-orange-500 focus:border-orange-500 sm:text-sm`}
+                  } rounded-md shadow-sm focus:outline-none focus:ring-orange-500 focus:border-orange-500 text-sm`}
                 />
                 {errors.customer_name && <p className="mt-1 text-xs text-red-500">{errors.customer_name.message}</p>}
               </div>
 
               <div>
-                <label htmlFor="mobile" className="block text-sm font-medium text-gray-700">
+                <label htmlFor="mobile" className="block text-xs font-medium text-gray-700">
                   Mobile Number
                 </label>
                 <input
@@ -191,16 +191,16 @@ const OnePageCheckout = () => {
                   type="tel"
                   {...register('mobile')}
                   placeholder="01XXXXXXXXX"
-                  className={`mt-1 block w-full px-3 py-2 border ${
+                  className={`mt-0.5 block w-full px-2.5 py-1.5 border ${
                     errors.mobile ? 'border-red-500' : 'border-gray-300'
-                  } rounded-md shadow-sm focus:outline-none focus:ring-orange-500 focus:border-orange-500 sm:text-sm`}
+                  } rounded-md shadow-sm focus:outline-none focus:ring-orange-500 focus:border-orange-500 text-sm`}
                 />
                 {errors.mobile && <p className="mt-1 text-xs text-red-500">{errors.mobile.message}</p>}
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-2.5">
                 <div>
-                  <label htmlFor="district" className="block text-sm font-medium text-gray-700">
+                  <label htmlFor="district" className="block text-xs font-medium text-gray-700">
                     District
                   </label>
                   <Controller
@@ -210,9 +210,9 @@ const OnePageCheckout = () => {
                       <select
                         id="district"
                         {...field}
-                        className={`mt-1 block w-full px-3 py-2 border ${
+                        className={`mt-0.5 block w-full px-2.5 py-1.5 border ${
                           errors.district ? 'border-red-500' : 'border-gray-300'
-                        } rounded-md shadow-sm focus:outline-none focus:ring-orange-500 focus:border-orange-500 sm:text-sm`}
+                        } rounded-md shadow-sm focus:outline-none focus:ring-orange-500 focus:border-orange-500 text-sm`}
                       >
                         <option value="">Select District</option>
                         {bdDistricts.map((d) => (
@@ -227,7 +227,7 @@ const OnePageCheckout = () => {
                 </div>
 
                 <div>
-                  <label htmlFor="thana" className="block text-sm font-medium text-gray-700">
+                  <label htmlFor="thana" className="block text-xs font-medium text-gray-700">
                     Thana
                   </label>
                   <Controller
@@ -238,9 +238,9 @@ const OnePageCheckout = () => {
                         id="thana"
                         {...field}
                         disabled={!selectedDistrict}
-                        className={`mt-1 block w-full px-3 py-2 border ${
+                        className={`mt-0.5 block w-full px-2.5 py-1.5 border ${
                           errors.thana ? 'border-red-500' : 'border-gray-300'
-                        } rounded-md shadow-sm focus:outline-none focus:ring-orange-500 focus:border-orange-500 sm:text-sm disabled:bg-gray-100`}
+                        } rounded-md shadow-sm focus:outline-none focus:ring-orange-500 focus:border-orange-500 text-sm disabled:bg-gray-100`}
                       >
                         <option value="">Select Thana</option>
                         {thanas.map((t) => (
@@ -256,16 +256,16 @@ const OnePageCheckout = () => {
               </div>
 
               <div>
-                <label htmlFor="address" className="block text-sm font-medium text-gray-700">
+                <label htmlFor="address" className="block text-xs font-medium text-gray-700">
                   Full Address
                 </label>
                 <textarea
                   id="address"
-                  rows={3}
+                  rows={2}
                   {...register('address')}
-                  className={`mt-1 block w-full px-3 py-2 border ${
+                  className={`mt-0.5 block w-full px-2.5 py-1.5 border ${
                     errors.address ? 'border-red-500' : 'border-gray-300'
-                  } rounded-md shadow-sm focus:outline-none focus:ring-orange-500 focus:border-orange-500 sm:text-sm`}
+                  } rounded-md shadow-sm focus:outline-none focus:ring-orange-500 focus:border-orange-500 text-sm`}
                 />
                 {errors.address && <p className="mt-1 text-xs text-red-500">{errors.address.message}</p>}
               </div>
@@ -273,38 +273,38 @@ const OnePageCheckout = () => {
           </div>
 
           {/* Right Column: Order Summary */}
-          <div className="lg:sticky lg:top-8 h-fit">
-            <div className="bg-white p-6 rounded-xl shadow-md">
-              <h2 className="text-2xl font-semibold mb-6 border-b pb-4" style={{ color: '#F28C38' }}>
+          <div className="lg:sticky lg:top-6 h-fit">
+            <div className="bg-white p-4 rounded-xl shadow-md">
+              <h2 className="text-xl font-semibold mb-4 border-b pb-2" style={{ color: '#F28C38' }}>
                 Order Summary
               </h2>
-              <div className="space-y-4">
+              <div className="space-y-2">
                 {cartItems.length > 0 ? (
                   cartItems.map((item) => (
-                    <div key={item.id} className="flex items-center space-x-4">
+                    <div key={item.id} className="flex items-center space-x-3">
                       <img
                         src={item.image || "https://i.ibb.co/GkL0xS4/tree-bookshelf.webp"}
                         alt={item.name}
-                        className="w-16 h-16 object-cover rounded-lg"
+                        className="w-14 h-14 object-cover rounded-lg"
                       />
                       <div className="flex-grow">
-                        <h3 className="font-semibold text-md">{item.name}</h3>
-                        <p className="text-gray-500 text-sm">
+                        <h3 className="font-semibold text-sm">{item.name}</h3>
+                        <p className="text-gray-500 text-xs">
                           {item.quantity} x {item.price.toLocaleString()} BDT
                         </p>
                       </div>
-                      <p className="font-semibold">
+                      <p className="font-semibold text-sm">
                         {(item.quantity * item.price).toLocaleString()} BDT
                       </p>
                     </div>
                   ))
                 ) : (
-                  <p className="text-center text-gray-500">Your cart is empty.</p>
+                  <p className="text-center text-gray-500 text-sm">Your cart is empty.</p>
                 )}
 
-                <div className="border-t pt-4 flex justify-between items-center">
-                  <p className="text-lg font-semibold">Total</p>
-                  <p className="text-xl font-bold" style={{ color: '#F28C38' }}>
+                <div className="border-t pt-2.5 flex justify-between items-center">
+                  <p className="text-base font-semibold">Total</p>
+                  <p className="text-lg font-bold" style={{ color: '#F28C38' }}>
                     {cartTotal.toLocaleString()} BDT
                   </p>
                 </div>
@@ -313,7 +313,7 @@ const OnePageCheckout = () => {
               <button
                 type="submit"
                 disabled={isSubmitting || cartItems.length === 0}
-                className="w-full mt-6 py-3 text-white font-semibold rounded-lg shadow-md transition-transform transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
+                className="w-full mt-4 py-2.5 text-sm text-white font-semibold rounded-lg shadow-md transition-transform transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
                 style={{ backgroundColor: '#F28C38' }}
               >
                 {isSubmitting ? (
