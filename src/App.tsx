@@ -13,7 +13,7 @@ const HomePage = lazy(() => import('./pages/HomePage').then(m => ({ default: m.H
 const InventoryPage = lazy(() => import('./pages/InventoryPage').then(m => ({ default: m.InventoryPage })));
 const VehicleDetailsPage = lazy(() => import('./pages/VehicleDetailsPage').then(m => ({ default: m.VehicleDetailsPage })));
 const ServicesPage = lazy(() => import('./pages/ServicesPage').then(m => ({ default: m.ServicesPage })));
-const AccessoriesPage = lazy(() => import('./pages/AccessoriesPage').then(m => ({ default: m.AccessoriesPage })));
+const AccessoriesPage = lazy(() => import('./pages/AccessoriesPage').then(m => ({ default: m.default })));
 const ProductDetailPage = lazy(() => import('./pages/ProductDetailPage').then(m => ({ default: m.default })));
 const AboutPage = lazy(() => import('./pages/AboutPage').then(m => ({ default: m.AboutPage })));
 const SellCarPage = lazy(() => import('./pages/SellCarPage').then(m => ({ default: m.SellCarPage })));

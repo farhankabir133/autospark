@@ -126,20 +126,19 @@ const demoProducts: AccessoryProduct[] = [
   { id: '2204', name_en: 'Champ Engine Flush', name_bn: '', price: 750, category: 'Accessories', stock_quantity: 10, is_available: true, images: [{ image_url: '/NP/ChampionEngineFlush.webp' }], brand: 'Champion', rating: 0, reviews: 0, discount: 0, compatibility: [], isNew: false, isBestseller: false },
   { id: '2205', name_en: 'Champion Eco-Friend 5W-30', name_bn: '', price: 5050, category: 'Accessories', stock_quantity: 10, is_available: true, images: [{ image_url: '/NP/ChampionEco5W30.webp' }], brand: 'Champion', rating: 0, reviews: 0, discount: 0, compatibility: [], isNew: false, isBestseller: false },
   { id: '1020', name_en: 'Charger 6A', name_bn: '', price: 550, category: 'Accessories', stock_quantity: 10, is_available: true, images: [{ image_url: '/NP/Charger6A.webp' }], brand: '', rating: 0, reviews: 0, discount: 0, compatibility: [], isNew: false, isBestseller: false },
-  { id: '1021', name_en: 'CHR Casing', name_bn: '', price: 2000, category: 'Accessories', stock_quantity: 10, is_available: true, images: [], brand: '', rating: 0, reviews: 0, discount: 0, compatibility: [], isNew: false, isBestseller: false },
+  { id: '1021', name_en: 'CHR Casing', name_bn: '', price: 2000, category: 'Accessories', stock_quantity: 10, is_available: true, images: [{ image_url: '/NP/DVD-Catching.webp' }], brand: '', rating: 0, reviews: 0, discount: 0, compatibility: [], isNew: false, isBestseller: false },
   { id: '1022', name_en: 'Coil Cap Rubber RBI', name_bn: '', price: 950, category: 'Accessories', stock_quantity: 10, is_available: true, images: [], brand: '', rating: 0, reviews: 0, discount: 0, compatibility: [], isNew: false, isBestseller: false },
   { id: '1024', name_en: 'Cosmic Wax', name_bn: '', price: 750, category: 'Accessories', stock_quantity: 10, is_available: true, images: [{ image_url: '/NP/CosmicLeatherWax.webp' }], brand: '', rating: 0, reviews: 0, discount: 0, compatibility: [], isNew: false, isBestseller: false },
   { id: '1025', name_en: 'CVT Fluid NS-3', name_bn: '', price: 6950, category: 'Accessories', stock_quantity: 10, is_available: true, images: [{ image_url: '/P2/CVTFluidNS3.webp' }], brand: '', rating: 0, reviews: 0, discount: 0, compatibility: [], isNew: false, isBestseller: false },
   { id: '1026', name_en: 'CVT Fluid TC', name_bn: '', price: 7550, category: 'Accessories', stock_quantity: 10, is_available: true, images: [{ image_url: '/P2/CVTFluidTC.webp' }], brand: '', rating: 0, reviews: 0, discount: 0, compatibility: [], isNew: false, isBestseller: false },
   { id: '2206', name_en: 'CVT Fluid NS-2', name_bn: '', price: 6950, category: 'Accessories', stock_quantity: 10, is_available: true, images: [{ image_url: '/P2/CVTFluidNS2.webp' }], brand: '', rating: 0, reviews: 0, discount: 0, compatibility: [], isNew: false, isBestseller: false },
   { id: '2207', name_en: 'Gear Oil CVT-FE', name_bn: '', price: 7550, category: 'Accessories', stock_quantity: 10, is_available: true, images: [{ image_url: '/P2/CVTFluidFE.webp' }], brand: '', rating: 0, reviews: 0, discount: 0, compatibility: [], isNew: false, isBestseller: false },
-  { id: '1027', name_en: 'Cycle Show Piece', name_bn: '', price: 0, category: 'Accessories', stock_quantity: 10, is_available: true, images: [], brand: '', rating: 0, reviews: 0, discount: 0, compatibility: [], isNew: false, isBestseller: false },
+  // ...product removed: Cycle Show Piece (price 0)
   { id: '1028', name_en: 'D Bush 12320', name_bn: '', price: 350, category: 'Accessories', stock_quantity: 10, is_available: true, images: [{ image_url: '/NP/DBush12320.webp' }], brand: '', rating: 0, reviews: 0, discount: 0, compatibility: [], isNew: false, isBestseller: false },
   { id: '1029', name_en: 'D Bush 20290', name_bn: '', price: 450, category: 'Accessories', stock_quantity: 10, is_available: true, images: [{ image_url: '/NP/DBush.webp' }], brand: '', rating: 0, reviews: 0, discount: 0, compatibility: [], isNew: false, isBestseller: false },
   { id: '1030', name_en: 'D Bush 28170', name_bn: '', price: 450, category: 'Accessories', stock_quantity: 10, is_available: true, images: [{ image_url: '/NP/DBush28170.webp' }], brand: '', rating: 0, reviews: 0, discount: 0, compatibility: [], isNew: false, isBestseller: false },
   { id: '1031', name_en: 'D Bush 52080', name_bn: '', price: 650, category: 'Accessories', stock_quantity: 10, is_available: true, images: [{ image_url: '/NP/DBush52080.webp' }], brand: '', rating: 0, reviews: 0, discount: 0, compatibility: [], isNew: false, isBestseller: false },
-  { id: '1032', name_en: 'Daiten', name_bn: '', price: 450, category: 'Accessories', stock_quantity: 10, is_available: true, images: [], brand: '', rating: 0, reviews: 0, discount: 0, compatibility: [], isNew: false, isBestseller: false },
-  { id: '1033', name_en: 'DBD Glass Protector', name_bn: '', price: 550, category: 'Accessories', stock_quantity: 10, is_available: true, images: [], brand: '', rating: 0, reviews: 0, discount: 0, compatibility: [], isNew: false, isBestseller: false },
+  { id: '1033', name_en: 'DBD Glass Protector', name_bn: '', price: 550, category: 'Accessories', stock_quantity: 10, is_available: true, images: [{ image_url: '/NP/DVDScreenProtector.webp' }], brand: '', rating: 0, reviews: 0, discount: 0, compatibility: [], isNew: false, isBestseller: false },
   { id: '1034', name_en: 'Denso Small Horn', name_bn: '', price: 1550, category: 'Accessories', stock_quantity: 10, is_available: true, images: [], brand: '', rating: 0, reviews: 0, discount: 0, compatibility: [], isNew: false, isBestseller: false },
   { id: '1035', name_en: 'Diamond 2K Camera', name_bn: '', price: 2250, category: 'Accessories', stock_quantity: 10, is_available: true, images: [], brand: '', rating: 0, reviews: 0, discount: 0, compatibility: [], isNew: false, isBestseller: false },
   { id: '1036', name_en: 'Disco Light', name_bn: '', price: 1200, category: 'Accessories', stock_quantity: 10, is_available: true, images: [], brand: '', rating: 0, reviews: 0, discount: 0, compatibility: [], isNew: false, isBestseller: false },
@@ -149,24 +148,24 @@ const demoProducts: AccessoryProduct[] = [
   { id: '1040', name_en: 'Door Guard', name_bn: '', price: 450, category: 'Accessories', stock_quantity: 10, is_available: true, images: [{ image_url: '/NP/DoorGuard.webp' }], brand: '', rating: 0, reviews: 0, discount: 0, compatibility: [], isNew: false, isBestseller: false },
   { id: '1041', name_en: 'Door Guard Rubber', name_bn: '', price: 850, category: 'Accessories', stock_quantity: 10, is_available: true, images: [], brand: '', rating: 0, reviews: 0, discount: 0, compatibility: [], isNew: false, isBestseller: false },
   { id: '1042', name_en: 'Door Sil Axio', name_bn: '', price: 4500, category: 'Accessories', stock_quantity: 10, is_available: true, images: [], brand: '', rating: 0, reviews: 0, discount: 0, compatibility: [], isNew: false, isBestseller: false },
-  { id: '1043', name_en: 'Door Sill C-HR', name_bn: '', price: 2500, category: 'Accessories', stock_quantity: 10, is_available: true, images: [], brand: '', rating: 0, reviews: 0, discount: 0, compatibility: [], isNew: false, isBestseller: false },
-  { id: '1044', name_en: 'Door Sill Prius', name_bn: '', price: 2500, category: 'Accessories', stock_quantity: 10, is_available: true, images: [], brand: '', rating: 0, reviews: 0, discount: 0, compatibility: [], isNew: false, isBestseller: false },
+  { id: '1043', name_en: 'Door Sill C-HR', name_bn: '', price: 2500, category: 'Accessories', stock_quantity: 10, is_available: true, images: [{ image_url: '/NP/DoorSillC-HR.webp' }], brand: '', rating: 0, reviews: 0, discount: 0, compatibility: [], isNew: false, isBestseller: false },
+  { id: '1044', name_en: 'Door Sill Prius', name_bn: '', price: 2500, category: 'Accessories', stock_quantity: 10, is_available: true, images: [{ image_url: '/NP/DoorGuardPrius.webp' }], brand: '', rating: 0, reviews: 0, discount: 0, compatibility: [], isNew: false, isBestseller: false },
   { id: '1045', name_en: 'Drive Shape Seal', name_bn: '', price: 650, category: 'Accessories', stock_quantity: 10, is_available: true, images: [{ image_url: '/NP/DoorTapedSeal.webp' }], brand: '', rating: 0, reviews: 0, discount: 0, compatibility: [], isNew: false, isBestseller: false },
   { id: '1046', name_en: 'DTR Polish', name_bn: '', price: 350, category: 'Accessories', stock_quantity: 10, is_available: true, images: [], brand: '', rating: 0, reviews: 0, discount: 0, compatibility: [], isNew: false, isBestseller: false },
   { id: '1047', name_en: 'Duster', name_bn: '', price: 1050, category: 'Accessories', stock_quantity: 10, is_available: true, images: [{ image_url: '/NP/Duster.webp' }], brand: '', rating: 0, reviews: 0, discount: 0, compatibility: [], isNew: false, isBestseller: false },
   { id: '1048', name_en: 'Duster B', name_bn: '', price: 750, category: 'Accessories', stock_quantity: 10, is_available: true, images: [{ image_url: '/NP/DusterB.webp' }], brand: '', rating: 0, reviews: 0, discount: 0, compatibility: [], isNew: false, isBestseller: false },
   { id: '1049', name_en: 'ED Bulb 2 pin', name_bn: '', price: 100, category: 'Accessories', stock_quantity: 10, is_available: true, images: [{ image_url: '/NP/EDBulb2Pin.webp' }], brand: '', rating: 0, reviews: 0, discount: 0, compatibility: [], isNew: false, isBestseller: false },
-  { id: '1050', name_en: 'Fine Glass', name_bn: '', price: 450, category: 'Accessories', stock_quantity: 10, is_available: true, images: [], brand: '', rating: 0, reviews: 0, discount: 0, compatibility: [], isNew: false, isBestseller: false },
+  { id: '1050', name_en: 'Fine Glass', name_bn: '', price: 450, category: 'Accessories', stock_quantity: 10, is_available: true, images: [{ image_url: '/NP/FineGlass.webp' }], brand: '', rating: 0, reviews: 0, discount: 0, compatibility: [], isNew: false, isBestseller: false },
   { id: '1051', name_en: 'Fire Extinguisher', name_bn: '', price: 1400, category: 'Accessories', stock_quantity: 10, is_available: true, images: [], brand: '', rating: 0, reviews: 0, discount: 0, compatibility: [], isNew: false, isBestseller: false },
   { id: '1052', name_en: 'Fog Light Full Set', name_bn: '', price: 7500, category: 'Accessories', stock_quantity: 10, is_available: true, images: [{ image_url: '/NP/LEDFogLight.webp' }], brand: '', rating: 0, reviews: 0, discount: 0, compatibility: [], isNew: false, isBestseller: false },
-  { id: '1053', name_en: 'Fresh Jell', name_bn: '', price: 1050, category: 'Accessories', stock_quantity: 10, is_available: true, images: [], brand: '', rating: 0, reviews: 0, discount: 0, compatibility: [], isNew: false, isBestseller: false },
+  { id: '1053', name_en: 'Fresh Jell', name_bn: '', price: 1050, category: 'Accessories', stock_quantity: 10, is_available: true, images: [{ image_url: '/NP/FreshJell.webp' }], brand: '', rating: 0, reviews: 0, discount: 0, compatibility: [], isNew: false, isBestseller: false },
   { id: '1054', name_en: 'Fuel Injector Cleaner', name_bn: '', price: 400, category: 'Accessories', stock_quantity: 10, is_available: true, images: [{ image_url: '/NP/FuelInjectorCleaner.webp' }], brand: '', rating: 0, reviews: 0, discount: 0, compatibility: [], isNew: false, isBestseller: false },
   { id: '1055', name_en: 'Fuel Pump 0C050', name_bn: '', price: 1950, category: 'Accessories', stock_quantity: 10, is_available: true, images: [{ image_url: '/NP/FuelPump0C050.png' }], brand: '', rating: 0, reviews: 0, discount: 0, compatibility: [], isNew: false, isBestseller: false },
   { id: '1056', name_en: 'Fuel Pump 200', name_bn: '', price: 3250, category: 'Accessories', stock_quantity: 10, is_available: true, images: [{ image_url: '/NP/FuelPump200.webp' }], brand: '', rating: 0, reviews: 0, discount: 0, compatibility: [], isNew: false, isBestseller: false },
   { id: '1057', name_en: 'Fuel Pump 211', name_bn: '', price: 3450, category: 'Accessories', stock_quantity: 10, is_available: true, images: [{ image_url: '/NP/FuelPump211.webp' }], brand: '', rating: 0, reviews: 0, discount: 0, compatibility: [], isNew: false, isBestseller: false },
   { id: '1058', name_en: 'Gear Oil Type 4', name_bn: '', price: 7550, category: 'Accessories', stock_quantity: 10, is_available: true, images: [{ image_url: '/NP/CVT-Fluid-Type4.webp' }], brand: '', rating: 0, reviews: 0, discount: 0, compatibility: [], isNew: false, isBestseller: false },
   { id: '1059', name_en: 'Gear Oil WS', name_bn: '', price: 7800, category: 'Accessories', stock_quantity: 10, is_available: true, images: [{ image_url: '/NP/Gear-OilWS.webp' }], brand: '', rating: 0, reviews: 0, discount: 0, compatibility: [], isNew: false, isBestseller: false },
-  { id: '1060', name_en: 'Glass Cleaner', name_bn: '', price: 450, category: 'Accessories', stock_quantity: 10, is_available: true, images: [], brand: '', rating: 0, reviews: 0, discount: 0, compatibility: [], isNew: false, isBestseller: false },
+  { id: '1060', name_en: 'Glass Cleaner', name_bn: '', price: 450, category: 'Accessories', stock_quantity: 10, is_available: true, images: [{ image_url: '/NP/GlassCleaner.webp' }], brand: '', rating: 0, reviews: 0, discount: 0, compatibility: [], isNew: false, isBestseller: false },
   { id: '1061', name_en: 'Glass Cleaner Tablet', name_bn: '', price: 200, category: 'Accessories', stock_quantity: 10, is_available: true, images: [], brand: '', rating: 0, reviews: 0, discount: 0, compatibility: [], isNew: false, isBestseller: false },
   { id: '1062', name_en: 'Globoil 0W-20', name_bn: '', price: 4250, category: 'Accessories', stock_quantity: 10, is_available: true, images: [{ image_url: '/P2/Globoil0W20.webp' }], brand: '', rating: 0, reviews: 0, discount: 0, compatibility: [], isNew: false, isBestseller: false },
   { id: '1063', name_en: 'Globoil 10W-40', name_bn: '', price: 4050, category: 'Accessories', stock_quantity: 10, is_available: true, images: [{ image_url: '/P2/Globoil10w40.webp' }], brand: '', rating: 0, reviews: 0, discount: 0, compatibility: [], isNew: false, isBestseller: false },
@@ -174,16 +173,16 @@ const demoProducts: AccessoryProduct[] = [
   { id: '1065', name_en: 'GPS Tracking OBD', name_bn: '', price: 7500, category: 'Accessories', stock_quantity: 10, is_available: true, images: [{ image_url: '/NP/GPSTrackingOBD.png' }], brand: '', rating: 0, reviews: 0, discount: 0, compatibility: [], isNew: false, isBestseller: false },
   { id: '1066', name_en: 'Grease Toyo', name_bn: '', price: 450, category: 'Accessories', stock_quantity: 10, is_available: true, images: [], brand: '', rating: 0, reviews: 0, discount: 0, compatibility: [], isNew: false, isBestseller: false },
   { id: '1067', name_en: 'Gulf 5W30', name_bn: '', price: 4750, category: 'Accessories', stock_quantity: 10, is_available: true, images: [{ image_url: '/NP/Gulf5W30.webp' }], brand: '', rating: 0, reviews: 0, discount: 0, compatibility: [], isNew: false, isBestseller: false },
-  { id: '1068', name_en: 'H-11', name_bn: '', price: 350, category: 'Accessories', stock_quantity: 10, is_available: true, images: [], brand: '', rating: 0, reviews: 0, discount: 0, compatibility: [], isNew: false, isBestseller: false },
+  { id: '1068', name_en: 'H-11', name_bn: '', price: 350, category: 'Accessories', stock_quantity: 10, is_available: true, images: [{ image_url: '/NP/H-11Bulb.webp' }], brand: '', rating: 0, reviews: 0, discount: 0, compatibility: [], isNew: false, isBestseller: false },
   { id: '1069', name_en: 'Hand Glovoves', name_bn: '', price: 200, category: 'Accessories', stock_quantity: 10, is_available: true, images: [], brand: '', rating: 0, reviews: 0, discount: 0, compatibility: [], isNew: false, isBestseller: false },
   { id: '1070', name_en: 'Higlo Wax( Coating)', name_bn: '', price: 850, category: 'Accessories', stock_quantity: 10, is_available: true, images: [], brand: '', rating: 0, reviews: 0, discount: 0, compatibility: [], isNew: false, isBestseller: false },
-  { id: '1071', name_en: 'Honda Air Filter 5AA', name_bn: '', price: 950, category: 'Accessories', stock_quantity: 10, is_available: true, images: [], brand: '', rating: 0, reviews: 0, discount: 0, compatibility: [], isNew: false, isBestseller: false },
-  { id: '1072', name_en: 'Honda Air Filter 5R0', name_bn: '', price: 650, category: 'Accessories', stock_quantity: 10, is_available: true, images: [], brand: '', rating: 0, reviews: 0, discount: 0, compatibility: [], isNew: false, isBestseller: false },
-  { id: '1073', name_en: 'Honda Air Filter R6A', name_bn: '', price: 950, category: 'Accessories', stock_quantity: 10, is_available: true, images: [], brand: '', rating: 0, reviews: 0, discount: 0, compatibility: [], isNew: false, isBestseller: false },
-  { id: '1074', name_en: 'Honda ATF DW-1', name_bn: '', price: 1950, category: 'Accessories', stock_quantity: 10, is_available: true, images: [], brand: '', rating: 0, reviews: 0, discount: 0, compatibility: [], isNew: false, isBestseller: false },
-  { id: '1075', name_en: 'Honda Oil Filter RAF', name_bn: '', price: 650, category: 'Accessories', stock_quantity: 10, is_available: true, images: [{ image_url: '/P2/4 Background Removed Medium.webp' }], brand: '', rating: 0, reviews: 0, discount: 0, compatibility: [], isNew: false, isBestseller: false },
-  { id: '1076', name_en: 'Hunger Bush 0D060', name_bn: '', price: 750, category: 'Accessories', stock_quantity: 10, is_available: true, images: [], brand: '', rating: 0, reviews: 0, discount: 0, compatibility: [], isNew: false, isBestseller: false },
-  { id: '1077', name_en: 'Hunger Bush 12120', name_bn: '', price: 650, category: 'Accessories', stock_quantity: 10, is_available: true, images: [], brand: '', rating: 0, reviews: 0, discount: 0, compatibility: [], isNew: false, isBestseller: false },
+  { id: '1071', name_en: 'Honda Air Filter 5AA', name_bn: '', price: 950, category: 'Accessories', stock_quantity: 10, is_available: true, images: [{ image_url: '/P2/HondaAirFilter5AA.webp' }], brand: '', rating: 0, reviews: 0, discount: 0, compatibility: [], isNew: false, isBestseller: false },
+  { id: '1072', name_en: 'Honda Air Filter 5R0', name_bn: '', price: 650, category: 'Accessories', stock_quantity: 10, is_available: true, images: [{ image_url: '/NP/Honda_Vezel_Jaz-Non_Brand.png' }], brand: '', rating: 0, reviews: 0, discount: 0, compatibility: [], isNew: false, isBestseller: false },
+  { id: '1073', name_en: 'Honda Air Filter R6A', name_bn: '', price: 950, category: 'Accessories', stock_quantity: 10, is_available: true, images: [{ image_url: '/NP/HondaAirFilterR6A.webp' }], brand: '', rating: 0, reviews: 0, discount: 0, compatibility: [], isNew: false, isBestseller: false },
+  { id: '1074', name_en: 'Honda ATF DW-1', name_bn: '', price: 1950, category: 'Accessories', stock_quantity: 10, is_available: true, images: [{ image_url: '/NP/HondaATFDW1.png' }], brand: '', rating: 0, reviews: 0, discount: 0, compatibility: [], isNew: false, isBestseller: false },
+  { id: '1075', name_en: 'Honda Oil Filter RAF', name_bn: '', price: 650, category: 'Accessories', stock_quantity: 10, is_available: true, images: [{ image_url: '/NP/HondaRAF.webp' }], brand: '', rating: 0, reviews: 0, discount: 0, compatibility: [], isNew: false, isBestseller: false },
+  { id: '1076', name_en: 'Hunger Bush 0D060', name_bn: '', price: 750, category: 'Accessories', stock_quantity: 10, is_available: true, images: [{ image_url: '/NP/HungerBush0D060.webp' }], brand: '', rating: 0, reviews: 0, discount: 0, compatibility: [], isNew: false, isBestseller: false },
+  { id: '1077', name_en: 'Hunger Bush 12120', name_bn: '', price: 650, category: 'Accessories', stock_quantity: 10, is_available: true, images: [{ image_url: '/NP/HungerBush12120.webp' }], brand: '', rating: 0, reviews: 0, discount: 0, compatibility: [], isNew: false, isBestseller: false },
   { id: '1078', name_en: 'Hunger Bush 12170 Big', name_bn: '', price: 750, category: 'Accessories', stock_quantity: 10, is_available: true, images: [], brand: '', rating: 0, reviews: 0, discount: 0, compatibility: [], isNew: false, isBestseller: false },
   { id: '1079', name_en: 'Hy-Coolent-fan Filter 470070', name_bn: '', price: 800, category: 'Accessories', stock_quantity: 10, is_available: true, images: [{ image_url: '/NP/Hy-coolantFilter470070.webp' }], brand: '', rating: 0, reviews: 0, discount: 0, compatibility: [], isNew: false, isBestseller: false },
   { id: '1080', name_en: 'Injector Seal', name_bn: '', price: 550, category: 'Accessories', stock_quantity: 10, is_available: true, images: [], brand: '', rating: 0, reviews: 0, discount: 0, compatibility: [], isNew: false, isBestseller: false },
@@ -203,32 +202,30 @@ const demoProducts: AccessoryProduct[] = [
   { id: '1093', name_en: 'Mobil 1-0W40', name_bn: '', price: 6850, category: 'Accessories', stock_quantity: 10, is_available: true, images: [{ image_url: '/P2/Mobil1-10W40.webp' }], brand: '', rating: 0, reviews: 0, discount: 0, compatibility: [], isNew: false, isBestseller: false },
   { id: '1094', name_en: 'Mobil Filter 31000', name_bn: '', price: 650, category: 'Accessories', stock_quantity: 10, is_available: true, images: [{ image_url: '/P2/4 Background Removed Medium.webp' }], brand: '', rating: 0, reviews: 0, discount: 0, compatibility: [], isNew: false, isBestseller: false },
   { id: '1096', name_en: 'Mobil Filter 65F00', name_bn: '', price: 650, category: 'Accessories', stock_quantity: 10, is_available: true, images: [{ image_url: '/P2/4 Background Removed Medium.webp' }], brand: '', rating: 0, reviews: 0, discount: 0, compatibility: [], isNew: false, isBestseller: false },
-  { id: '1097', name_en: 'Monitor Case', name_bn: '', price: 2500, category: 'Accessories', stock_quantity: 10, is_available: true, images: [], brand: '', rating: 0, reviews: 0, discount: 0, compatibility: [], isNew: false, isBestseller: false },
+  { id: '1097', name_en: 'Monitor Case', name_bn: '', price: 2500, category: 'Accessories', stock_quantity: 10, is_available: true, images: [{ image_url: '/NP/MonitorCase.webp' }], brand: '', rating: 0, reviews: 0, discount: 0, compatibility: [], isNew: false, isBestseller: false },
   { id: '1098', name_en: 'Motor Flash', name_bn: '', price: 450, category: 'Accessories', stock_quantity: 10, is_available: true, images: [{ image_url: '/NP/MotorFlush.webp' }], brand: '', rating: 0, reviews: 0, discount: 0, compatibility: [], isNew: false, isBestseller: false },
-  { id: '1099', name_en: 'Mud-Gud', name_bn: '', price: 750, category: 'Accessories', stock_quantity: 10, is_available: true, images: [], brand: '', rating: 0, reviews: 0, discount: 0, compatibility: [], isNew: false, isBestseller: false },
-  { id: '1100', name_en: 'My Romance', name_bn: '', price: 1250, category: 'Accessories', stock_quantity: 10, is_available: true, images: [], brand: '', rating: 0, reviews: 0, discount: 0, compatibility: [], isNew: false, isBestseller: false },
+  { id: '1100', name_en: 'My Romance', name_bn: '', price: 1250, category: 'Accessories', stock_quantity: 10, is_available: true, images: [{ image_url: '/NP/MyRomance.png' }], brand: '', rating: 0, reviews: 0, discount: 0, compatibility: [], isNew: false, isBestseller: false },
   { id: '1101', name_en: 'Nakamichi DVD Jack to Jack', name_bn: '', price: 1000, category: 'Accessories', stock_quantity: 10, is_available: true, images: [], brand: '', rating: 0, reviews: 0, discount: 0, compatibility: [], isNew: false, isBestseller: false },
   { id: '2208', name_en: 'Nakamichi Android Player 5850', name_bn: '', price: 22500, category: 'Accessories', stock_quantity: 10, is_available: true, images: [{ image_url: '/NP/Nakamichi.webp' }], brand: 'Nakamichi', rating: 0, reviews: 0, discount: 0, compatibility: [], isNew: true, isBestseller: false },
   { id: '1102', name_en: 'Nissan Air Filter 4BAIB', name_bn: '', price: 850, category: 'Accessories', stock_quantity: 10, is_available: true, images: [{ image_url: '/P2/4 Background Removed Medium.webp' }], brand: '', rating: 0, reviews: 0, discount: 0, compatibility: [], isNew: false, isBestseller: false },
   { id: '1103', name_en: 'Nito tape', name_bn: '', price: 350, category: 'Accessories', stock_quantity: 10, is_available: true, images: [], brand: '', rating: 0, reviews: 0, discount: 0, compatibility: [], isNew: false, isBestseller: false },
   { id: '1104', name_en: 'Noah/Esquire Bati High Fiting', name_bn: '', price: 5000, category: 'Accessories', stock_quantity: 10, is_available: true, images: [], brand: '', rating: 0, reviews: 0, discount: 0, compatibility: [], isNew: false, isBestseller: false },
-  { id: '1105', name_en: 'Non Slip Mat', name_bn: '', price: 0, category: 'Accessories', stock_quantity: 10, is_available: true, images: [{ image_url: '/cars/Products/FloorMat.jpeg' }], brand: '', rating: 0, reviews: 0, discount: 0, compatibility: [], isNew: false, isBestseller: false },
-  { id: '1106', name_en: 'Number Holder', name_bn: '', price: 0, category: 'Accessories', stock_quantity: 10, is_available: true, images: [], brand: '', rating: 0, reviews: 0, discount: 0, compatibility: [], isNew: false, isBestseller: false },
-  { id: '1107', name_en: 'Onam Light 9005', name_bn: '', price: 550, category: 'Accessories', stock_quantity: 10, is_available: true, images: [], brand: '', rating: 0, reviews: 0, discount: 0, compatibility: [], isNew: false, isBestseller: false },
-  { id: '1108', name_en: 'Paint Spray', name_bn: '', price: 500, category: 'Accessories', stock_quantity: 10, is_available: true, images: [], brand: '', rating: 0, reviews: 0, discount: 0, compatibility: [], isNew: false, isBestseller: false },
+  { id: '1105', name_en: 'Floor Mat', name_bn: '', price: 2500, category: 'Accessories', stock_quantity: 10, is_available: true, images: [{ image_url: '/P2/FloorMat.webp' }], brand: '', rating: 0, reviews: 0, discount: 0, compatibility: [], isNew: false, isBestseller: false },
+  { id: '1107', name_en: 'Onam Light 9005', name_bn: '', price: 550, category: 'Accessories', stock_quantity: 10, is_available: true, images: [{ image_url: '/P2/OnamLight.webp' }], brand: '', rating: 0, reviews: 0, discount: 0, compatibility: [], isNew: false, isBestseller: false },
+  { id: '1108', name_en: 'Paint Spray', name_bn: '', price: 500, category: 'Accessories', stock_quantity: 10, is_available: true, images: [{ image_url: '/NP/PaintSpray.webp' }], brand: '', rating: 0, reviews: 0, discount: 0, compatibility: [], isNew: false, isBestseller: false },
   { id: '1109', name_en: 'Phone Holder', name_bn: '', price: 750, category: 'Accessories', stock_quantity: 10, is_available: true, images: [], brand: '', rating: 0, reviews: 0, discount: 0, compatibility: [], isNew: false, isBestseller: false },
-  { id: '1110', name_en: 'Polie Light Big', name_bn: '', price: 2500, category: 'Accessories', stock_quantity: 10, is_available: true, images: [], brand: '', rating: 0, reviews: 0, discount: 0, compatibility: [], isNew: false, isBestseller: false },
+  { id: '1110', name_en: 'Polie Light Big', name_bn: '', price: 2500, category: 'Accessories', stock_quantity: 10, is_available: true, images: [{ image_url: '/NP/Police-Light.webp' }], brand: '', rating: 0, reviews: 0, discount: 0, compatibility: [], isNew: false, isBestseller: false },
   { id: '1111', name_en: 'Prado Air Filter', name_bn: '', price: 700, category: 'Accessories', stock_quantity: 10, is_available: true, images: [{ image_url: '/P2/4 Background Removed Medium.webp' }], brand: '', rating: 0, reviews: 0, discount: 0, compatibility: [], isNew: false, isBestseller: false },
-  { id: '1112', name_en: 'Premio Fog Light Casing', name_bn: '', price: 2550, category: 'Accessories', stock_quantity: 10, is_available: true, images: [], brand: '', rating: 0, reviews: 0, discount: 0, compatibility: [], isNew: false, isBestseller: false },
+  { id: '1112', name_en: 'Premio Fog Light Casing', name_bn: '', price: 2550, category: 'Accessories', stock_quantity: 10, is_available: true, images: [{ image_url: '/NP/DVD-Catching.webp' }], brand: '', rating: 0, reviews: 0, discount: 0, compatibility: [], isNew: false, isBestseller: false },
   { id: '1113', name_en: 'Prius Bati/ High Fiting', name_bn: '', price: 5000, category: 'Accessories', stock_quantity: 10, is_available: true, images: [], brand: '', rating: 0, reviews: 0, discount: 0, compatibility: [], isNew: false, isBestseller: false },
   { id: '1114', name_en: 'Prius Wiper Blade Jenuine Japan', name_bn: '', price: 750, category: 'Accessories', stock_quantity: 10, is_available: true, images: [], brand: '', rating: 0, reviews: 0, discount: 0, compatibility: [], isNew: false, isBestseller: false },
-  { id: '1115', name_en: 'Rain Proof Film', name_bn: '', price: 250, category: 'Accessories', stock_quantity: 10, is_available: true, images: [], brand: '', rating: 0, reviews: 0, discount: 0, compatibility: [], isNew: false, isBestseller: false },
+  { id: '1115', name_en: 'Rain Proof Film', name_bn: '', price: 250, category: 'Accessories', stock_quantity: 10, is_available: true, images: [{ image_url: '/NP/RainFilm.png' }], brand: '', rating: 0, reviews: 0, discount: 0, compatibility: [], isNew: false, isBestseller: false },
   { id: '1116', name_en: 'Round Cylinder', name_bn: '', price: 30000, category: 'Accessories', stock_quantity: 10, is_available: true, images: [], brand: '', rating: 0, reviews: 0, discount: 0, compatibility: [], isNew: false, isBestseller: false },
-  { id: '1117', name_en: 'Scent Decent', name_bn: '', price: 1050, category: 'Accessories', stock_quantity: 10, is_available: true, images: [{ image_url: '/cars/Products/Flamingo-small.jpeg' }], brand: '', rating: 0, reviews: 0, discount: 0, compatibility: [], isNew: false, isBestseller: false },
-  { id: '1118', name_en: 'Scent Helicopter', name_bn: '', price: 1050, category: 'Accessories', stock_quantity: 10, is_available: true, images: [{ image_url: '/cars/Products/Flamingo.jpeg' }], brand: '', rating: 0, reviews: 0, discount: 0, compatibility: [], isNew: false, isBestseller: false },
-  { id: '1119', name_en: 'Seat Belt Hock', name_bn: '', price: 0, category: 'Accessories', stock_quantity: 10, is_available: true, images: [], brand: '', rating: 0, reviews: 0, discount: 0, compatibility: [], isNew: false, isBestseller: false },
-  { id: '1120', name_en: 'Seat Cleaner', name_bn: '', price: 0, category: 'Accessories', stock_quantity: 10, is_available: true, images: [], brand: '', rating: 0, reviews: 0, discount: 0, compatibility: [], isNew: false, isBestseller: false },
-  { id: '1121', name_en: 'Shampo', name_bn: '', price: 500, category: 'Accessories', stock_quantity: 10, is_available: true, images: [], brand: '', rating: 0, reviews: 0, discount: 0, compatibility: [], isNew: false, isBestseller: false },
+  { id: '1117', name_en: 'Scent Decent', name_bn: '', price: 1050, category: 'Accessories', stock_quantity: 10, is_available: true, images: [{ image_url: '/NP/ScentDesent.png' }], brand: '', rating: 0, reviews: 0, discount: 0, compatibility: [], isNew: false, isBestseller: false },
+  { id: '1118', name_en: 'Scent Helicopter', name_bn: '', price: 1050, category: 'Accessories', stock_quantity: 10, is_available: true, images: [{ image_url: '/NP/ScentHelicopter.webp' }], brand: '', rating: 0, reviews: 0, discount: 0, compatibility: [], isNew: false, isBestseller: false },
+  // ...product removed: Seat Belt Hock (price 0)
+  // ...product removed: Seat Cleaner (price 0)
+  { id: '1121', name_en: 'Shampo', name_bn: '', price: 500, category: 'Accessories', stock_quantity: 10, is_available: true, images: [{ image_url: '/NP/Shampo.webp' }], brand: '', rating: 0, reviews: 0, discount: 0, compatibility: [], isNew: false, isBestseller: false },
   { id: '1122', name_en: 'Spark Plug 10 C', name_bn: '', price: 675, category: 'Accessories', stock_quantity: 10, is_available: true, images: [], brand: '', rating: 0, reviews: 0, discount: 0, compatibility: [], isNew: false, isBestseller: false },
   { id: '1123', name_en: 'Spark Plug 10 G', name_bn: '', price: 1575, category: 'Accessories', stock_quantity: 10, is_available: true, images: [], brand: '', rating: 0, reviews: 0, discount: 0, compatibility: [], isNew: false, isBestseller: false },
   { id: '1124', name_en: 'Spark Plug 43 C', name_bn: '', price: 2700, category: 'Accessories', stock_quantity: 10, is_available: true, images: [], brand: '', rating: 0, reviews: 0, discount: 0, compatibility: [], isNew: false, isBestseller: false },
@@ -237,17 +234,17 @@ const demoProducts: AccessoryProduct[] = [
   { id: '1127', name_en: 'Spark Plug 53 C', name_bn: '', price: 675, category: 'Accessories', stock_quantity: 10, is_available: true, images: [], brand: '', rating: 0, reviews: 0, discount: 0, compatibility: [], isNew: false, isBestseller: false },
   { id: '1128', name_en: 'Spark Plug 53 G', name_bn: '', price: 1800, category: 'Accessories', stock_quantity: 10, is_available: true, images: [], brand: '', rating: 0, reviews: 0, discount: 0, compatibility: [], isNew: false, isBestseller: false },
   { id: '1129', name_en: 'Spark Plug 84', name_bn: '', price: 2950, category: 'Accessories', stock_quantity: 10, is_available: true, images: [], brand: '', rating: 0, reviews: 0, discount: 0, compatibility: [], isNew: false, isBestseller: false },
-  { id: '1130', name_en: 'Sport Guage', name_bn: '', price: 0, category: 'Accessories', stock_quantity: 10, is_available: true, images: [], brand: '', rating: 0, reviews: 0, discount: 0, compatibility: [], isNew: false, isBestseller: false },
+  // ...product removed: Sport Guage (price 0)
   { id: '1131', name_en: 'Tappet Cover Seal 21011', name_bn: '', price: 950, category: 'Accessories', stock_quantity: 10, is_available: true, images: [], brand: '', rating: 0, reviews: 0, discount: 0, compatibility: [], isNew: false, isBestseller: false },
   { id: '1132', name_en: 'Tire Gel', name_bn: '', price: 350, category: 'Accessories', stock_quantity: 10, is_available: true, images: [], brand: '', rating: 0, reviews: 0, discount: 0, compatibility: [], isNew: false, isBestseller: false },
   { id: '1133', name_en: 'Towel', name_bn: '', price: 350, category: 'Accessories', stock_quantity: 10, is_available: true, images: [], brand: '', rating: 0, reviews: 0, discount: 0, compatibility: [], isNew: false, isBestseller: false },
   { id: '1134', name_en: 'Towel (Pr39-2)', name_bn: '', price: 300, category: 'Accessories', stock_quantity: 10, is_available: true, images: [], brand: '', rating: 0, reviews: 0, discount: 0, compatibility: [], isNew: false, isBestseller: false },
   { id: '1135', name_en: 'Towel 40/60', name_bn: '', price: 350, category: 'Accessories', stock_quantity: 10, is_available: true, images: [], brand: '', rating: 0, reviews: 0, discount: 0, compatibility: [], isNew: false, isBestseller: false },
   { id: '1136', name_en: 'Toyota Long Life Radiator Coolant', name_bn: '', price: 1450, category: 'Accessories', stock_quantity: 10, is_available: true, images: [{ image_url: '/NP/ToyotaLongLifeCoolant.webp' }], brand: '', rating: 0, reviews: 0, discount: 0, compatibility: [], isNew: false, isBestseller: false },
-  { id: '1137', name_en: 'Toyota Mobil Filter/Oil Filter', name_bn: '', price: 350, category: 'Accessories', stock_quantity: 10, is_available: true, images: [{ image_url: '/P2/4 Background Removed Medium.webp' }], brand: '', rating: 0, reviews: 0, discount: 0, compatibility: [], isNew: false, isBestseller: false },
+  { id: '1137', name_en: 'Toyota Mobil Filter/Oil Filter', name_bn: '', price: 250, category: 'Accessories', stock_quantity: 10, is_available: true, images: [{ image_url: '/NP/ToyotaMobilFilter.webp' }], brand: '', rating: 0, reviews: 0, discount: 0, compatibility: [], isNew: false, isBestseller: false },
   { id: '1138', name_en: 'Tracker', name_bn: '', price: 5500, category: 'Accessories', stock_quantity: 10, is_available: true, images: [{ image_url: '/NP/Tracker.webp' }], brand: '', rating: 0, reviews: 0, discount: 0, compatibility: [], isNew: false, isBestseller: false },
   { id: '1139', name_en: 'V tech', name_bn: '', price: 250, category: 'Accessories', stock_quantity: 10, is_available: true, images: [], brand: '', rating: 0, reviews: 0, discount: 0, compatibility: [], isNew: false, isBestseller: false },
-  { id: '1140', name_en: 'Vanilla Flower Cent', name_bn: '', price: 500, category: 'Accessories', stock_quantity: 10, is_available: true, images: [{ image_url: '/cars/Products/Perfume.jpeg' }], brand: '', rating: 0, reviews: 0, discount: 0, compatibility: [], isNew: false, isBestseller: false },
+  { id: '1140', name_en: 'Vanilla Flower Cent', name_bn: '', price: 500, category: 'Accessories', stock_quantity: 10, is_available: true, images: [{ image_url: '/NP/VanillaPerfume.webp' }], brand: '', rating: 0, reviews: 0, discount: 0, compatibility: [], isNew: false, isBestseller: false },
   { id: '1141', name_en: 'W40', name_bn: '', price: 550, category: 'Accessories', stock_quantity: 10, is_available: true, images: [{ image_url: '/P2/w40.webp' }], brand: '', rating: 0, reviews: 0, discount: 0, compatibility: [], isNew: false, isBestseller: false },
   { id: '1142', name_en: 'Water Jacket 21010', name_bn: '', price: 550, category: 'Accessories', stock_quantity: 10, is_available: true, images: [], brand: '', rating: 0, reviews: 0, discount: 0, compatibility: [], isNew: false, isBestseller: false },
   { id: '1143', name_en: 'Water Jacket 21020', name_bn: '', price: 750, category: 'Accessories', stock_quantity: 10, is_available: true, images: [], brand: '', rating: 0, reviews: 0, discount: 0, compatibility: [], isNew: false, isBestseller: false },
@@ -255,186 +252,14 @@ const demoProducts: AccessoryProduct[] = [
   { id: '1145', name_en: 'WD40', name_bn: '', price: 550, category: 'Accessories', stock_quantity: 10, is_available: true, images: [], brand: '', rating: 0, reviews: 0, discount: 0, compatibility: [], isNew: false, isBestseller: false },
   { id: '1146', name_en: 'Wiper Blade', name_bn: '', price: 450, category: 'Accessories', stock_quantity: 10, is_available: true, images: [], brand: '', rating: 0, reviews: 0, discount: 0, compatibility: [], isNew: false, isBestseller: false },
   { id: '1147', name_en: 'Yoshio Wiper Blade', name_bn: '', price: 450, category: 'Accessories', stock_quantity: 10, is_available: true, images: [], brand: '', rating: 0, reviews: 0, discount: 0, compatibility: [], isNew: false, isBestseller: false },
-  {
-    id: '6',
-    name_en: 'Air Filter 37021',
-    name_bn: '',
-    description_en: '',
-    description_bn: '',
-    category: 'Air Filter',
-    price: 0,
-    stock_quantity: 66,
-    sku: 'PR102785',
-    is_available: true,
-  images: [{ image_url: '/P2/4 Background Removed Medium.webp' }],
-    brand: '',
-    rating: 0,
-    reviews: 0,
-    discount: 0,
-    compatibility: [],
-    isNew: false,
-    isBestseller: false
-  },
-  {
-    id: '7',
-    name_en: 'AC Filter 37021',
-    name_bn: '',
-    description_en: '',
-    description_bn: '',
-    category: 'AC Filter',
-    price: 0,
-    stock_quantity: 55,
-    sku: 'PR134729',
-    is_available: true,
-  images: [{ image_url: '/P2/4 Background Removed Medium.webp' }],
-    brand: '',
-    rating: 0,
-    reviews: 0,
-    discount: 0,
-    compatibility: [],
-    isNew: false,
-    isBestseller: false
-  },
-  {
-    id: '8',
-    name_en: 'WD40',
-    name_bn: '',
-    description_en: '',
-    description_bn: '',
-    category: '',
-    price: 0,
-    stock_quantity: 41,
-    sku: 'PR729840',
-    is_available: true,
-  images: [{ image_url: '/P2/4 Background Removed Medium.webp' }],
-    brand: '',
-    rating: 0,
-    reviews: 0,
-    discount: 0,
-    compatibility: [],
-    isNew: false,
-    isBestseller: false
-  },
-  {
-    id: '9',
-    name_en: 'Towel',
-    name_bn: '',
-    description_en: '',
-    description_bn: '',
-    category: 'Accessories',
-    price: 0,
-    stock_quantity: 34,
-    sku: '8088000090933',
-    is_available: true,
-  images: [{ image_url: '/P2/4 Background Removed Medium.webp' }],
-    brand: '',
-    rating: 0,
-    reviews: 0,
-    discount: 0,
-    compatibility: [],
-    isNew: false,
-    isBestseller: false
-  },
-  {
-    id: '10',
-    name_en: 'AC Filter 30040',
-    name_bn: '',
-    description_en: '',
-    description_bn: '',
-    category: 'AC Filter',
-    price: 0,
-    stock_quantity: 29,
-    sku: 'PR864502',
-    is_available: true,
-  images: [{ image_url: '/P2/4 Background Removed Medium.webp' }],
-    brand: '',
-    rating: 0,
-    reviews: 0,
-    discount: 0,
-    compatibility: [],
-    isNew: false,
-    isBestseller: false
-  },
-  {
-    id: '11',
-    name_en: 'Toyota Mobil Filter/Oil Filter',
-    name_bn: '',
-    description_en: '',
-    description_bn: '',
-    category: 'Filter',
-    price: 0,
-    stock_quantity: 28,
-    sku: '8088000090667',
-    is_available: true,
-  images: [{ image_url: '/P2/4 Background Removed Medium.webp' }],
-    brand: '',
-    rating: 0,
-    reviews: 0,
-    discount: 0,
-    compatibility: [],
-    isNew: false,
-    isBestseller: false
-  },
-  {
-    id: '12',
-    name_en: 'Mud-Gud',
-    name_bn: '',
-    description_en: '',
-    description_bn: '',
-    category: '',
-    price: 0,
-    stock_quantity: 25,
-    sku: 'PR634297',
-    is_available: true,
-    images: [],
-    brand: '',
-    rating: 0,
-    reviews: 0,
-    discount: 0,
-    compatibility: [],
-    isNew: false,
-    isBestseller: false
-  },
-  {
-    id: '13',
-    name_en: 'Air Filter 21050',
-    name_bn: '',
-    description_en: '',
-    description_bn: '',
-    category: 'Air Filter',
-    price: 0,
-    stock_quantity: 23,
-    sku: 'PR061432',
-    is_available: true,
-    images: [],
-    brand: '',
-    rating: 0,
-    reviews: 0,
-    discount: 0,
-    compatibility: [],
-    isNew: false,
-    isBestseller: false
-  },
-  {
-    id: '14',
-    name_en: 'AC/Cabin Filter-40',
-    name_bn: '',
-    description_en: '',
-    description_bn: '',
-    category: 'Filter',
-    price: 0,
-    stock_quantity: 22,
-    sku: '8088000090681',
-    is_available: true,
-    images: [],
-    brand: '',
-    rating: 0,
-    reviews: 0,
-    discount: 0,
-    compatibility: [],
-    isNew: false,
-    isBestseller: false
-  },
+  // ...product removed: Air Filter 37021 (price 0)
+  // ...product removed: AC Filter 37021 (price 0)
+  // ...product removed: WD40 (price 0)
+  // ...product removed: Towel (price 0)
+  // ...product removed: AC Filter 30040 (price 0)
+  // ...product removed: Toyota Mobil Filter/Oil Filter (price 0)
+  // ...product removed: Air Filter 21050 (price 0)
+  // ...product removed: AC/Cabin Filter-40 (price 0)
   {
     id: '1',
     name_en: 'Premium Leather Seat Covers',
@@ -474,25 +299,6 @@ const demoProducts: AccessoryProduct[] = [
     isBestseller: true
   },
   {
-    id: '3',
-    name_en: 'Carbon Fiber Steering Wheel Cover',
-    name_bn: 'কার্বন ফাইবার স্টিয়ারিং হুইল কভার',
-    description_en: 'Premium carbon fiber textured cover with anti-slip grip.',
-    description_bn: 'অ্যান্টি-স্লিপ গ্রিপ সহ প্রিমিয়াম কার্বন ফাইবার টেক্সচার্ড কভার।',
-    category: 'Interior',
-    price: 2500,
-    stock_quantity: 100,
-    is_available: true,
-    images: [{ image_url: 'https://images.unsplash.com/photo-1549399542-7e3f8b79c341?w=400' }],
-    brand: 'CarbonPro',
-    rating: 4.4,
-    reviews: 234,
-    discount: 10,
-    compatibility: ['Universal'],
-    isNew: false,
-    isBestseller: false
-  },
-  {
     id: '4',
     name_en: 'Charger 6A',
     name_bn: 'চার্জার 6A',
@@ -509,26 +315,6 @@ const demoProducts: AccessoryProduct[] = [
     discount: 0,
     compatibility: ['Universal'],
     isNew: true,
-    isBestseller: false
-  },
-  {
-    id: '5',
-    name_en: 'All-Weather Floor Mats Set',
-    name_bn: 'অল-ওয়েদার ফ্লোর ম্যাট সেট',
-    description_en: 'Heavy-duty rubber floor mats with deep channels for water and debris.',
-    description_bn: 'জল এবং ধ্বংসাবশেষের জন্য গভীর চ্যানেল সহ হেভি-ডিউটি রাবার ফ্লোর ম্যাট।',
-    category: 'Interior',
-    price: 4500,
-    stock_quantity: 60,
-    is_available: true,
-    images: [{ image_url: 'https://images.unsplash.com/photo-1605559424843-9e4c228bf1c2?w=400' }],
-    brand: 'WeatherGuard',
-    rating: 4.5,
-    reviews: 178,
-    discount: 0,
-    compatibility: ['Toyota Corolla', 'Honda Civic'],
-    isNew: false,
-    isBestseller: true
   },
   {
     id: '6',
@@ -541,7 +327,7 @@ const demoProducts: AccessoryProduct[] = [
     stock_quantity: 30,
     // ...existing code...
     is_available: true,
-    images: [{ image_url: 'https://images.unsplash.com/photo-1635784439498-9bee4f8a8a5b?w=400' }],
+  images: [{ image_url: '/NP/4G-Dashcam.webp' }],
     brand: 'Valvoline',
     rating: 4.6,
     reviews: 256,
@@ -550,141 +336,9 @@ const demoProducts: AccessoryProduct[] = [
     isNew: false,
     isBestseller: false
   },
-  {
-    id: '37',
-    name_en: 'Valvoline Daily Protection 10W-40',
-    name_bn: 'ভ্যালভোলিন ডেইলি প্রোটেকশন 10W-40',
-    description_en: 'Valvoline Daily Protection 10W-40 conventional motor oil for reliable everyday engine protection.',
-    description_bn: 'নির্ভরযোগ্য দৈনন্দিন ইঞ্জিন সুরক্ষার জন্য ভ্যালভোলিন ডেইলি প্রোটেকশন 10W-40 প্রচলিত মোটর অয়েল।',
-    category: 'Oils & Lubricants',
-    price: 2600,
-    stock_quantity: 140,
-    is_available: true,
-    images: [{ image_url: 'https://images.unsplash.com/photo-1635784439498-9bee4f8a8a5b?w=400' }],
-    brand: 'Valvoline',
-    rating: 4.3,
-    reviews: 189,
-    discount: 0,
-    compatibility: ['Budget Maintenance', 'All Vehicles'],
-    isNew: false,
-    isBestseller: false
-  },
-  {
-    id: '39',
-    name_en: 'Pennzoil High Mileage 10W-30',
-    name_bn: 'পেনজয়েল হাই মাইলেজ 10W-30',
-    description_en: 'Pennzoil High Mileage 10W-30 with Active Cleansing Agents for vehicles over 75,000 miles.',
-    description_bn: '৭৫,০০০ মাইলের বেশি যানবাহনের জন্য অ্যাক্টিভ ক্লিনজিং এজেন্ট সহ পেনজয়েল হাই মাইলেজ 10W-30।',
-    category: 'Oils & Lubricants',
-    price: 3600,
-    stock_quantity: 75,
-    is_available: true,
-    images: [{ image_url: 'https://images.unsplash.com/photo-1635784439498-9bee4f8a8a5b?w=400' }],
-    brand: 'Pennzoil',
-    rating: 4.5,
-    reviews: 198,
-    discount: 0,
-    compatibility: ['High Mileage Vehicles'],
-    isNew: false,
-    isBestseller: false
-  },
+  // ...product removed: Valvoline Daily Protection 10W-40
   // LIQUI MOLY (German Brand)
-  {
-    id: '40',
-    name_en: 'Liqui Moly Special Tec AA 0W-20',
-    name_bn: 'লিকুই মোলি স্পেশাল টেক এএ 0W-20',
-    description_en: 'Liqui Moly 0W-20 specially developed for Asian and American vehicles. Outstanding fuel economy.',
-    description_bn: 'এশিয়ান এবং আমেরিকান যানবাহনের জন্য বিশেষভাবে তৈরি লিকুই মোলি 0W-20।',
-    category: 'Oils & Lubricants',
-    price: 5800,
-    stock_quantity: 40,
-    is_available: true,
-    images: [{ image_url: 'https://images.unsplash.com/photo-1635784439498-9bee4f8a8a5b?w=400' }],
-    brand: 'Liqui Moly',
-    rating: 4.9,
-    reviews: 423,
-    discount: 5,
-    compatibility: ['Toyota', 'Honda', 'Hyundai', 'GM', 'Ford'],
-    isNew: false,
-    isBestseller: true
-  },
-  {
-    id: '41',
-    name_en: 'Liqui Moly Leichtlauf 10W-40',
-    name_bn: 'লিকুই মোলি লাইখটলাউফ 10W-40',
-    description_en: 'Liqui Moly 10W-40 low-friction motor oil ensures optimum lubrication and extends engine life.',
-    description_bn: 'লিকুই মোলি 10W-40 লো-ফ্রিকশন মোটর অয়েল সর্বোত্তম লুব্রিকেশন নিশ্চিত করে।',
-    category: 'Oils & Lubricants',
-    price: 4500,
-    stock_quantity: 60,
-    is_available: true,
-    images: [{ image_url: 'https://images.unsplash.com/photo-1635784439498-9bee4f8a8a5b?w=400' }],
-    brand: 'Liqui Moly',
-    rating: 4.7,
-    reviews: 312,
-    discount: 8,
-    compatibility: ['European Cars', 'German Vehicles', 'Universal'],
-    isNew: false,
-    isBestseller: false
-  },
   // TOYOTA GENUINE
-  {
-    id: '42',
-    name_en: 'Toyota Genuine Motor Oil 0W-20',
-    name_bn: 'টয়োটা জেনুইন মোটর অয়েল 0W-20',
-    description_en: 'Toyota genuine 0W-20 motor oil specifically formulated for Toyota engines. OEM quality.',
-    description_bn: 'টয়োটা ইঞ্জিনের জন্য বিশেষভাবে তৈরি টয়োটা জেনুইন 0W-20 মোটর অয়েল।',
-    category: 'Oils & Lubricants',
-    price: 4200,
-    stock_quantity: 100,
-    is_available: true,
-    images: [{ image_url: 'https://images.unsplash.com/photo-1635784439498-9bee4f8a8a5b?w=400' }],
-    brand: 'Toyota',
-    rating: 4.8,
-    reviews: 567,
-    discount: 0,
-    compatibility: ['Toyota Corolla', 'Toyota Camry', 'Toyota RAV4', 'All Toyota'],
-    isNew: false,
-    isBestseller: true
-  },
-  {
-    id: '43',
-    name_en: 'Toyota Genuine Motor Oil 10W-30',
-    name_bn: 'টয়োটা জেনুইন মোটর অয়েল 10W-30',
-    description_en: 'Toyota genuine 10W-30 suitable for older Toyota models and general maintenance.',
-    description_bn: 'পুরোনো টয়োটা মডেল এবং সাধারণ রক্ষণাবেক্ষণের জন্য উপযুক্ত টয়োটা জেনুইন 10W-30।',
-    category: 'Oils & Lubricants',
-    price: 3500,
-    stock_quantity: 85,
-    is_available: true,
-    images: [{ image_url: 'https://images.unsplash.com/photo-1635784439498-9bee4f8a8a5b?w=400' }],
-    brand: 'Toyota',
-    rating: 4.6,
-    reviews: 345,
-    discount: 5,
-    compatibility: ['Toyota', 'Older Toyota Models'],
-    isNew: false,
-    isBestseller: false
-  },
-  {
-    id: '45',
-    name_en: 'Eneos X Prime 10W-30 Synthetic',
-    name_bn: 'এনিওস এক্স প্রাইম 10W-30 সিনথেটিক',
-    description_en: 'Eneos X Prime 10W-30 delivers exceptional engine cleanliness and fuel efficiency.',
-    description_bn: 'এনিওস এক্স প্রাইম 10W-30 অসাধারণ ইঞ্জিন পরিচ্ছন্নতা এবং জ্বালানি দক্ষতা প্রদান করে।',
-    category: 'Oils & Lubricants',
-    price: 4000,
-    stock_quantity: 55,
-    is_available: true,
-    images: [{ image_url: 'https://images.unsplash.com/photo-1635784439498-9bee4f8a8a5b?w=400' }],
-    brand: 'Eneos',
-    rating: 4.6,
-    reviews: 134,
-    discount: 0,
-    compatibility: ['All Japanese Vehicles', 'Universal'],
-    isNew: false,
-    isBestseller: false
-  },
   // ======================= PARTS & ACCESSORIES =======================
   {
     id: '46',
@@ -725,25 +379,6 @@ const demoProducts: AccessoryProduct[] = [
     isBestseller: false
   },
   {
-    id: '48',
-    name_en: 'Fog Light Wiring',
-    name_bn: 'ফগ লাইট ওয়্যারিং',
-    description_en: 'Complete fog light wiring harness kit with relay and switch. Universal fit for most vehicles.',
-    description_bn: 'রিলে এবং সুইচ সহ সম্পূর্ণ ফগ লাইট ওয়্যারিং হার্নেস কিট।',
-    category: 'Lighting',
-    price: 1500,
-    stock_quantity: 50,
-    is_available: true,
-    images: [{ image_url: 'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=400' }],
-    brand: 'Universal',
-    rating: 4.3,
-    reviews: 67,
-    discount: 0,
-    compatibility: ['Universal'],
-    isNew: false,
-    isBestseller: false
-  },
-  {
     id: '49',
     name_en: 'AVS Brake Booster',
     name_bn: 'এভিএস ব্রেক বুস্টার',
@@ -763,44 +398,6 @@ const demoProducts: AccessoryProduct[] = [
     isBestseller: true
   },
   {
-    id: '50',
-    name_en: 'Toyota CVT Fluid TC',
-    name_bn: 'টয়োটা সিভিটি ফ্লুইড টিসি',
-    description_en: 'Genuine Toyota CVT transmission fluid. Essential for smooth CVT operation and longevity.',
-    description_bn: 'আসল টয়োটা CVT ট্রান্সমিশন ফ্লুইড। মসৃণ CVT অপারেশনের জন্য অপরিহার্য।',
-    category: 'Oils & Lubricants',
-    price: 6450,
-    stock_quantity: 40,
-    is_available: true,
-    images: [{ image_url: 'https://images.unsplash.com/photo-1635784439498-9bee4f8a8a5b?w=400' }],
-    brand: 'Toyota',
-    rating: 4.9,
-    reviews: 156,
-    discount: 0,
-    compatibility: ['Toyota CVT Vehicles'],
-    isNew: false,
-    isBestseller: true
-  },
-  {
-    id: '51',
-    name_en: 'Nissan CVT Fluid NS-3',
-    name_bn: 'নিসান সিভিটি ফ্লুইড NS-3',
-    description_en: 'Genuine Nissan NS-3 CVT fluid for optimal transmission performance and protection.',
-    description_bn: 'সর্বোত্তম ট্রান্সমিশন পারফরম্যান্সের জন্য আসল নিসান NS-3 CVT ফ্লুইড।',
-    category: 'Oils & Lubricants',
-    price: 5950,
-    stock_quantity: 35,
-    is_available: true,
-    images: [{ image_url: 'https://images.unsplash.com/photo-1635784439498-9bee4f8a8a5b?w=400' }],
-    brand: 'Nissan',
-    rating: 4.8,
-    reviews: 112,
-    discount: 0,
-    compatibility: ['Nissan CVT Vehicles'],
-    isNew: false,
-    isBestseller: true
-  },
-  {
     id: '52',
     name_en: 'Kaitom Wiper Blade',
     name_bn: 'কাইটম ওয়াইপার ব্লেড',
@@ -810,7 +407,7 @@ const demoProducts: AccessoryProduct[] = [
     price: 400,
     stock_quantity: 200,
     is_available: true,
-    images: [{ image_url: 'https://images.unsplash.com/photo-1489824904134-891ab64532f1?w=400' }],
+  images: [{ image_url: '/NP/RoadstarWiperBlade.webp' }],
     brand: 'Kaitom',
     rating: 4.2,
     reviews: 234,
@@ -829,7 +426,7 @@ const demoProducts: AccessoryProduct[] = [
     price: 450,
     stock_quantity: 180,
     is_available: true,
-    images: [{ image_url: 'https://images.unsplash.com/photo-1489824904134-891ab64532f1?w=400' }],
+  images: [{ image_url: '/NP/RoadstarWiperBlade.webp' }],
     brand: 'Road Star',
     rating: 4.3,
     reviews: 189,
@@ -896,75 +493,18 @@ const demoProducts: AccessoryProduct[] = [
     isBestseller: false
   },
   {
-    id: '58',
-    name_en: 'Nissan X-Trail Rear Brake Pad',
-    name_bn: 'নিসান এক্স-ট্রেইল রিয়ার ব্রেক প্যাড',
-    description_en: 'OEM quality rear brake pads for Nissan X-Trail. Excellent stopping power and low dust.',
-    description_bn: 'নিসান এক্স-ট্রেইলের জন্য OEM মানের রিয়ার ব্রেক প্যাড।',
-    category: 'Performance',
-    price: 8500,
-    stock_quantity: 25,
-    is_available: true,
-    images: [{ image_url: 'https://images.unsplash.com/photo-1486262715619-67b85e0b08d3?w=400' }],
-    brand: 'Nissan',
-    rating: 4.8,
-    reviews: 67,
-    discount: 0,
-    compatibility: ['Nissan X-Trail'],
-    isNew: false,
-    isBestseller: false
-  },
-  {
-    id: '59',
-    name_en: 'Spark Plug (Japan Original)',
-    name_bn: 'স্পার্ক প্লাগ (জাপান অরিজিনাল)',
-    description_en: 'Genuine Japanese spark plug for optimal ignition and fuel efficiency. Long-lasting performance.',
-    description_bn: 'সর্বোত্তম ইগনিশন এবং জ্বালানি দক্ষতার জন্য আসল জাপানি স্পার্ক প্লাগ।',
-    category: 'Performance',
-    price: 2200,
-    stock_quantity: 80,
-    is_available: true,
-    images: [{ image_url: 'https://images.unsplash.com/photo-1486262715619-67b85e0b08d3?w=400' }],
-    brand: 'NGK',
-    rating: 4.9,
-    reviews: 423,
-    discount: 0,
-    compatibility: ['Universal'],
-    isNew: false,
-    isBestseller: true
-  },
-  {
-    id: '64',
-    name_en: 'Silencer Pipe',
-    name_bn: 'সাইলেন্সার পাইপ',
-    description_en: 'High-quality stainless steel exhaust silencer pipe. Durable and corrosion-resistant.',
-    description_bn: 'উচ্চ মানের স্টেইনলেস স্টিল এক্সজস্ট সাইলেন্সার পাইপ।',
-    category: 'Performance',
-    price: 2650,
-    stock_quantity: 30,
-    is_available: true,
-    images: [{ image_url: 'https://images.unsplash.com/photo-1486262715619-67b85e0b08d3?w=400' }],
-    brand: 'Universal',
-    rating: 4.4,
-    reviews: 89,
-    discount: 0,
-    compatibility: ['Universal'],
-    isNew: false,
-    isBestseller: false
-  },
-  {
     id: '65',
-    name_en: 'Carral Horn',
-    name_bn: 'ক্যারল হর্ন',
-    description_en: 'Loud and clear dual-tone horn for enhanced road safety. Easy installation.',
-    description_bn: 'উন্নত রোড সেফটির জন্য লাউড এবং ক্লিয়ার ডুয়াল-টোন হর্ন।',
-    category: 'Electronics',
-    price: 950,
-    stock_quantity: 75,
-    is_available: true,
-    images: [{ image_url: 'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=400' }],
-    brand: 'Carral',
-    rating: 4.3,
+  name_en: 'Roadstar Horn',
+  name_bn: '',
+  description_en: 'Loud and clear dual-tone horn for enhanced road safety. Easy installation.',
+  description_bn: '',
+  category: 'Electronics',
+  price: 2500,
+  stock_quantity: 75,
+  is_available: true,
+  images: [{ image_url: '/NP/RoadStarHorn.webp' }],
+  brand: 'Roadstar',
+  rating: 4.3,
     reviews: 156,
     discount: 0,
     compatibility: ['Universal'],
@@ -972,42 +512,23 @@ const demoProducts: AccessoryProduct[] = [
     isBestseller: false
   },
   {
-    id: '67',
-    name_en: 'Car Aluminum Alloy Rim',
-    name_bn: 'কার অ্যালুমিনিয়াম অ্যালয় রিম',
-    description_en: 'Premium aluminum alloy wheel rim with modern design. Lightweight and durable.',
-    description_bn: 'আধুনিক ডিজাইনের প্রিমিয়াম অ্যালুমিনিয়াম অ্যালয় হুইল রিম।',
-    category: 'Exterior',
-    price: 25500,
-    stock_quantity: 12,
-    is_available: true,
-    images: [{ image_url: 'https://images.unsplash.com/photo-1611821064430-0d40291d0f0b?w=400' }],
-    brand: 'SpeedRim',
-    rating: 4.7,
-    reviews: 78,
-    discount: 10,
-    compatibility: ['5-Lug Universal'],
-    isNew: true,
-    isBestseller: false
-  },
-  {
     id: '68',
-    name_en: 'Denso Horn',
-    name_bn: 'ডেনসো হর্ন',
-    description_en: 'Premium Japanese Denso horn with powerful sound output. OEM quality.',
-    description_bn: 'শক্তিশালী সাউন্ড আউটপুট সহ প্রিমিয়াম জাপানি ডেনসো হর্ন।',
-    category: 'Electronics',
-    price: 2550,
-    stock_quantity: 40,
-    is_available: true,
-    images: [{ image_url: 'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=400' }],
-    brand: 'Denso',
-    rating: 4.8,
-    reviews: 267,
-    discount: 0,
-    compatibility: ['Universal'],
-    isNew: false,
-    isBestseller: true
+  name_en: 'Denso Snail Horn',
+  name_bn: 'ডেনসো হর্ন',
+  description_en: 'Premium Japanese Denso snail horn with powerful sound output. OEM quality.',
+  description_bn: 'শক্তিশালী সাউন্ড আউটপুট সহ প্রিমিয়াম জাপানি ডেনসো স্নেইল হর্ন।',
+  category: 'Electronics',
+  price: 2500,
+  stock_quantity: 40,
+  is_available: true,
+  images: [{ image_url: '/NP/DensoSnailHorn.webp' }],
+  brand: 'Denso',
+  rating: 4.8,
+  reviews: 267,
+  discount: 0,
+  compatibility: ['Universal'],
+  isNew: false,
+  isBestseller: true
   }
 ];
 
@@ -2354,7 +1875,8 @@ const CheckoutModal: React.FC<{
 };
 
 // Main AccessoriesPage Component
-export const AccessoriesPage: React.FC = () => {
+function AccessoriesPage() {
+  // ...state declarations...
   const { theme } = useTheme();
   const { language: _language } = useLanguage();
   const isDark = theme === 'dark';
@@ -2391,6 +1913,66 @@ export const AccessoriesPage: React.FC = () => {
     district: '',
   });
 
+  // Filtered products (restored from previous UI)
+  const filteredProducts = useMemo(() => {
+    let result = products;
+    // Category filter
+    if (selectedCategory !== 'all') {
+      result = result.filter(p => p.category === selectedCategory);
+    }
+    // Search filter
+    if (searchTerm.trim() !== '') {
+      const searchLower = searchTerm.trim().toLowerCase();
+      result = result.filter(p => {
+        const name = p.name_en?.toLowerCase() || '';
+        const desc = p.description_en?.toLowerCase() || '';
+        const sku = p.sku?.toLowerCase() || '';
+        const tags = (p.compatibility || []).join(' ').toLowerCase();
+        return (
+          name.includes(searchLower) ||
+          desc.includes(searchLower) ||
+          sku.includes(searchLower) ||
+          tags.includes(searchLower)
+        );
+      });
+    }
+    // Brand filter
+    if (selectedBrands.length > 0) {
+      result = result.filter(p => p.brand && selectedBrands.includes(p.brand));
+    }
+    // Price filter
+    result = result.filter(p => p.price >= priceRange[0] && p.price <= priceRange[1]);
+    // Rating filter
+    if (minRating > 0) {
+      result = result.filter(p => (p.rating || 0) >= minRating);
+    }
+    // Stock filter
+    if (inStockOnly) {
+      result = result.filter(p => p.stock_quantity > 0);
+    }
+    // Sort
+    switch (sortBy) {
+      case 'price-low':
+        result = [...result].sort((a, b) => a.price - b.price);
+        break;
+      case 'price-high':
+        result = [...result].sort((a, b) => b.price - a.price);
+        break;
+      case 'rating':
+        result = [...result].sort((a, b) => (b.rating || 0) - (a.rating || 0));
+        break;
+      case 'newest':
+        result = [...result].sort((a, b) => (b.isNew ? 1 : 0) - (a.isNew ? 1 : 0));
+        break;
+    }
+    return result;
+  }, [products, selectedCategory, searchTerm, selectedBrands, priceRange, minRating, inStockOnly, sortBy]);
+
+  // Search handler (restored from previous UI)
+  const applySearch = useCallback(() => {
+    setSearchTerm(searchInput.trim());
+  }, [searchInput]);
+
   // Quick View
   const [quickViewProduct, setQuickViewProduct] = useState<AccessoryProduct | null>(null);
   const [showQuickView, setShowQuickView] = useState(false);
@@ -2400,6 +1982,7 @@ export const AccessoriesPage: React.FC = () => {
 
   // Fetch products from Supabase
   useEffect(() => {
+
     const fetchProducts = async () => {
       try {
         const { data } = await supabase
@@ -2410,7 +1993,6 @@ export const AccessoriesPage: React.FC = () => {
         if (data && data.length > 0) {
           // Deduplicate products by id
           const uniqueMap = new Map<string, AccessoryProduct>();
-          
           // Add database products, enriching with demo images if needed
           (data as AccessoryProduct[]).forEach((p) => {
             const forcedOverride = getForcedProductOverrideByName(p.name_en || '');
@@ -2424,9 +2006,7 @@ export const AccessoriesPage: React.FC = () => {
               } as AccessoryProduct);
               return;
             }
-
             const hasImages = Array.isArray((p as any).images) && (p as any).images.length > 0;
-            
             if (!hasImages) {
               // Try to find demo product images by id or name
               const demo = demoProductsWithP2.find(dp => dp.id === p.id || dp.name_en === p.name_en);
@@ -2435,14 +2015,11 @@ export const AccessoriesPage: React.FC = () => {
                 return;
               }
             }
-            
             uniqueMap.set(p.id, p);
           });
-
           // Convert back to array and apply extra name-based dedupe safety
           const uniqueProducts = dedupeProducts(Array.from(uniqueMap.values()));
           setProducts(uniqueProducts);
-          
           console.log('✅ Loaded from database:', uniqueProducts.length, 'unique products');
         } else {
           // Database is empty, use demo products as fallback
@@ -2456,105 +2033,9 @@ export const AccessoriesPage: React.FC = () => {
         setProducts(dedupeProducts(demoProductsWithP2));
       }
     };
-
     fetchProducts();
+    // No return value here
   }, []);
-
-  // Filter and sort products
-  const applySearch = useCallback(() => {
-    const trimmed = searchInput.trim();
-    // If input is empty, clear any applied search and focus input
-    if (trimmed.length === 0) {
-      setSearchInput('');
-      setSearchTerm('');
-      searchInputRef.current?.focus();
-      return;
-    }
-
-    setSearchTerm(trimmed);
-  }, [searchInput]);
-
-  const filteredProducts = useMemo(() => {
-    let result = dedupeProducts(products);
-
-    console.log('🔍 Starting filter with:', result.length, 'total products');
-
-    // Category filter
-    if (selectedCategory !== 'all') {
-      result = result.filter(p => p.category === selectedCategory);
-      console.log('📁 After category filter:', result.length, 'products');
-    }
-
-    // Search filter (same pattern as Inventory page: case-insensitive includes)
-    if (searchTerm) {
-      const searchLower = searchTerm.toLowerCase();
-      result = result.filter((p) => {
-        const nameEn = (p.name_en || '').toLowerCase();
-        const nameBn = (p.name_bn || '').toLowerCase();
-        const category = (p.category || '').toLowerCase();
-        const brand = (p.brand || '').toLowerCase();
-        const description = ((p.description_en || (p as any).description || '') as string).toLowerCase();
-        const sku = (p.sku || '').toLowerCase();
-        const tagsRaw = (p as any).tags;
-        const tags = Array.isArray(tagsRaw)
-          ? tagsRaw.join(' ').toLowerCase()
-          : (typeof tagsRaw === 'string' ? tagsRaw.toLowerCase() : '');
-
-        return (
-          nameEn.includes(searchLower) ||
-          nameBn.includes(searchLower) ||
-          category.includes(searchLower) ||
-          brand.includes(searchLower) ||
-          description.includes(searchLower) ||
-          sku.includes(searchLower) ||
-          tags.includes(searchLower)
-        );
-      });
-
-      console.log('✅ After search filter:', result.length, 'products match');
-    }
-
-    // Brand filter
-    if (selectedBrands.length > 0) {
-      result = result.filter(p => p.brand && selectedBrands.includes(p.brand));
-      console.log('🏷️ After brand filter:', result.length, 'products');
-    }
-
-    // Price filter
-    result = result.filter(p => p.price >= priceRange[0] && p.price <= priceRange[1]);
-    console.log('💰 After price filter:', result.length, 'products');
-
-    // Rating filter
-    if (minRating > 0) {
-      result = result.filter(p => (p.rating || 0) >= minRating);
-      console.log('⭐ After rating filter:', result.length, 'products');
-    }
-
-    // Stock filter
-    if (inStockOnly) {
-      result = result.filter(p => p.stock_quantity > 0);
-      console.log('📦 After stock filter:', result.length, 'products');
-    }
-
-    // Sort
-    switch (sortBy) {
-      case 'price-low':
-        result.sort((a, b) => a.price - b.price);
-        break;
-      case 'price-high':
-        result.sort((a, b) => b.price - a.price);
-        break;
-      case 'rating':
-        result.sort((a, b) => (b.rating || 0) - (a.rating || 0));
-        break;
-      case 'newest':
-        result.sort((a, b) => (b.isNew ? 1 : 0) - (a.isNew ? 1 : 0));
-        break;
-    }
-
-    console.log('📊 Final result:', result.length, 'products displayed');
-    return result;
-  }, [products, selectedCategory, searchTerm, selectedBrands, priceRange, minRating, inStockOnly, sortBy]);
 
   // Cart functions
   const addToCart = useCallback((product: AccessoryProduct, quantity: number = 1) => {
@@ -3656,9 +3137,9 @@ export const AccessoriesPage: React.FC = () => {
       />
 
       {/* Bottom Padding for Cart Bar */}
+
       {cart.length > 0 && <div className="h-24" />}
     </div>
   );
-};
-
+}
 export default AccessoriesPage;
