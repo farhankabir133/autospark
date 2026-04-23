@@ -1,40 +1,256 @@
 // Comprehensive vehicle data with all 14 vehicles
 import type { Vehicle } from '../types';
 
-export const ALL_VEHICLES: Vehicle[] = [
-  // TOYOTA - Harrier Advance Premium
-  {
-    id: '7',
-    stock_number: 'HARRIER-001',
-  brand_name: 'Toyota Lexus',
-  model: 'NX',
-    year: 2021,
-    price: 11500000, // Updated price
-    mileage: 0,
-    fuel_type: 'Hybrid',
-    transmission: 'Automatic',
-    engine_capacity: '2.5L Hybrid',
-    color_exterior: 'Pearl White',
-    color_interior: 'Black Leather',
-    body_type: 'Premium SUV',
-    condition: 'New',
-    description_en: 'Luxury premium SUV with advanced hybrid technology and premium interior',
-    description_bn: 'অত্যাধুনিক হাইব্রিড প্রযুক্তি এবং প্রিমিয়াম অভ্যন্তরীণ সজ্জা সহ বিলাসবহুল এসইউভি',
-    is_available: true,
-    is_featured: true,
-    video_url: '',
-    view_count: 0,
+// Helper for modular vehicle creation
+function parsePriceBDT(price: string | number): number {
+  if (typeof price === 'number') return price;
+  // e.g. '23.50 Lakh BDT', '1.50 Crore BDT'
+  if (price.includes('Crore')) {
+    return parseFloat(price) * 10000000;
+  }
+  if (price.includes('Lakh')) {
+    return parseFloat(price) * 100000;
+  }
+  return parseFloat(price);
+}
+
+function createVehicle({
+  id,
+  stock_number,
+  brand_name,
+  model,
+  year,
+  packageName,
+  condition_grade,
+  availability_status,
+  price,
+  mileage = 0,
+  fuel_type = 'Hybrid',
+  transmission = 'Automatic',
+  engine_capacity = '',
+  color_exterior = 'Pearl White',
+  color_interior = 'Black Leather',
+  body_type = 'Sedan',
+  condition = 'New',
+  description_en = '',
+  description_bn = '',
+  is_available = true,
+  is_featured = false,
+  video_url = '',
+  view_count = 0,
+  images = []
+}: any): Vehicle {
+  return {
+    id,
+    stock_number,
+    brand_name,
+    model,
+    year,
+    package: packageName,
+    condition_grade,
+    availability_status,
+    price: parsePriceBDT(price),
+    mileage,
+    fuel_type,
+    transmission,
+    engine_capacity,
+    color_exterior,
+    color_interior,
+    body_type,
+    condition,
+    description_en,
+    description_bn,
+    is_available,
+    is_featured,
+    video_url,
+    view_count,
     created_at: new Date().toISOString(),
     updated_at: new Date().toISOString(),
+    images
+  };
+}
+
+export const ALL_VEHICLES: Vehicle[] = [
+  // TOYOTA - Axio EX
+  createVehicle({
+    id: 'axio-2021-ex',
+    stock_number: 'AXIO-2021-EX',
+    brand_name: 'Toyota',
+    model: 'Axio',
+    year: 2021,
+    packageName: 'EX',
+    condition_grade: 4.5,
+    availability_status: 'Preorder',
+    price: '23.50 Lakh BDT',
+    body_type: 'Sedan',
+    color_exterior: 'Silver',
     images: [
-      { id: '7-1', vehicle_id: '7', image_url: '/cars/Toyota Harrier/222.webp', display_order: 1, is_primary: true, created_at: new Date().toISOString() },
-      { id: '7-2', vehicle_id: '7', image_url: '/cars/Toyota Harrier/223.webp', display_order: 2, is_primary: false, created_at: new Date().toISOString() },
-      { id: '7-3', vehicle_id: '7', image_url: '/cars/Toyota Harrier/224.webp', display_order: 3, is_primary: false, created_at: new Date().toISOString() },
-      { id: '7-4', vehicle_id: '7', image_url: '/cars/Toyota Harrier/225.webp', display_order: 4, is_primary: false, created_at: new Date().toISOString() },
-      { id: '7-5', vehicle_id: '7', image_url: '/cars/Toyota Harrier/226.webp', display_order: 5, is_primary: false, created_at: new Date().toISOString() },
-      { id: '7-6', vehicle_id: '7', image_url: '/cars/Toyota Harrier/227.webp', display_order: 6, is_primary: false, created_at: new Date().toISOString() }
-    ]
-  },
+      { id: 'axio-2021-ex-1', vehicle_id: 'axio-2021-ex', image_url: '/cars/axio/axio01.webp', display_order: 1, is_primary: true, created_at: new Date().toISOString() },
+      { id: 'axio-2021-ex-2', vehicle_id: 'axio-2021-ex', image_url: '/cars/axio/axio02.webp', display_order: 2, is_primary: false, created_at: new Date().toISOString() },
+      { id: 'axio-2021-ex-3', vehicle_id: 'axio-2021-ex', image_url: '/cars/axio/axio03.webp', display_order: 3, is_primary: false, created_at: new Date().toISOString() },
+      { id: 'axio-2021-ex-4', vehicle_id: 'axio-2021-ex', image_url: '/cars/axio/axio04.webp', display_order: 4, is_primary: false, created_at: new Date().toISOString() },
+      { id: 'axio-2021-ex-5', vehicle_id: 'axio-2021-ex', image_url: '/cars/axio/axio05.webp', display_order: 5, is_primary: false, created_at: new Date().toISOString() }
+    ],
+  }),
+  // TOYOTA - Fielder FEX
+  createVehicle({
+    id: 'fielder-2021-fex',
+    stock_number: 'FIELDER-2021-FEX',
+    brand_name: 'Toyota',
+    model: 'Fielder',
+    year: 2021,
+    packageName: 'FEX',
+    condition_grade: 4.5,
+    availability_status: 'Preorder',
+    price: '23.50 Lakh BDT',
+    body_type: 'Wagon',
+    images: [
+      { id: 'fielder-2021-fex-1', vehicle_id: 'fielder-2021-fex', image_url: '/cars/fielder/01.webp', display_order: 1, is_primary: true, created_at: new Date().toISOString() },
+      { id: 'fielder-2021-fex-2', vehicle_id: 'fielder-2021-fex', image_url: '/cars/fielder/02.webp', display_order: 2, is_primary: false, created_at: new Date().toISOString() },
+      { id: 'fielder-2021-fex-3', vehicle_id: 'fielder-2021-fex', image_url: '/cars/fielder/03.webp', display_order: 3, is_primary: false, created_at: new Date().toISOString() },
+      { id: 'fielder-2021-fex-4', vehicle_id: 'fielder-2021-fex', image_url: '/cars/fielder/04.webp', display_order: 4, is_primary: false, created_at: new Date().toISOString() },
+      { id: 'fielder-2021-fex-5', vehicle_id: 'fielder-2021-fex', image_url: '/cars/fielder/05.webp', display_order: 5, is_primary: false, created_at: new Date().toISOString() },
+      { id: 'fielder-2021-fex-6', vehicle_id: 'fielder-2021-fex', image_url: '/cars/fielder/06.webp', display_order: 6, is_primary: false, created_at: new Date().toISOString() },
+      { id: 'fielder-2021-fex-7', vehicle_id: 'fielder-2021-fex', image_url: '/cars/fielder/07.webp', display_order: 7, is_primary: false, created_at: new Date().toISOString() },
+      { id: 'fielder-2021-fex-8', vehicle_id: 'fielder-2021-fex', image_url: '/cars/fielder/08.webp', display_order: 8, is_primary: false, created_at: new Date().toISOString() }
+    ],
+  }),
+  // TOYOTA - Premio FEX
+  createVehicle({
+    id: 'premio-2021-fex',
+    stock_number: 'PREMIO-2021-FEX',
+    brand_name: 'Toyota',
+    model: 'Premio',
+    year: 2021,
+    packageName: 'FEX',
+    condition_grade: 4.5,
+    availability_status: 'Preorder',
+    price: '44.50 Lakh BDT',
+    body_type: 'Sedan',
+    color_exterior: 'Red Wine',
+    images: [
+      { id: 'premio-2021-fex-1', vehicle_id: 'premio-2021-fex', image_url: '/cars/premio/01.webp', display_order: 1, is_primary: true, created_at: new Date().toISOString() },
+      { id: 'premio-2021-fex-2', vehicle_id: 'premio-2021-fex', image_url: '/cars/premio/02.webp', display_order: 2, is_primary: false, created_at: new Date().toISOString() },
+      { id: 'premio-2021-fex-3', vehicle_id: 'premio-2021-fex', image_url: '/cars/premio/03.webp', display_order: 3, is_primary: false, created_at: new Date().toISOString() },
+      { id: 'premio-2021-fex-4', vehicle_id: 'premio-2021-fex', image_url: '/cars/premio/04.webp', display_order: 4, is_primary: false, created_at: new Date().toISOString() },
+      { id: 'premio-2021-fex-5', vehicle_id: 'premio-2021-fex', image_url: '/cars/premio/05.webp', display_order: 5, is_primary: false, created_at: new Date().toISOString() },
+      { id: 'premio-2021-fex-6', vehicle_id: 'premio-2021-fex', image_url: '/cars/premio/06.webp', display_order: 6, is_primary: false, created_at: new Date().toISOString() }
+    ],
+  }),
+  // TOYOTA - Allion G+
+  createVehicle({
+    id: 'allion-2021-gplus',
+    stock_number: 'ALLION-2021-GPLUS',
+    brand_name: 'Toyota',
+    model: 'Allion',
+    year: 2021,
+    packageName: 'G+',
+    condition_grade: 4.5,
+    availability_status: 'Preorder',
+    price: '43.50 Lakh BDT',
+    body_type: 'Sedan',
+    color_exterior: 'Glossy Black',
+    images: [
+      { id: 'allion-2021-gplus-1', vehicle_id: 'allion-2021-gplus', image_url: '/cars/allion/01.webp', display_order: 1, is_primary: true, created_at: new Date().toISOString() },
+      { id: 'allion-2021-gplus-2', vehicle_id: 'allion-2021-gplus', image_url: '/cars/allion/02.webp', display_order: 2, is_primary: false, created_at: new Date().toISOString() },
+      { id: 'allion-2021-gplus-3', vehicle_id: 'allion-2021-gplus', image_url: '/cars/allion/03.webp', display_order: 3, is_primary: false, created_at: new Date().toISOString() },
+      { id: 'allion-2021-gplus-4', vehicle_id: 'allion-2021-gplus', image_url: '/cars/allion/04.webp', display_order: 4, is_primary: false, created_at: new Date().toISOString() },
+      { id: 'allion-2021-gplus-5', vehicle_id: 'allion-2021-gplus', image_url: '/cars/allion/05.webp', display_order: 5, is_primary: false, created_at: new Date().toISOString() }
+    ],
+  }),
+  // TOYOTA - Aqua X
+  createVehicle({
+    id: 'aqua-2021-x',
+    stock_number: 'AQUA-2021-X',
+    brand_name: 'Toyota',
+    model: 'Aqua',
+    year: 2021,
+    packageName: 'X',
+    condition_grade: 4.5,
+    availability_status: 'Preorder',
+    price: '20.50 Lakh BDT',
+    body_type: 'Hatchback',
+    color_exterior: 'Black',
+    images: [
+      { id: 'aqua-2021-x-1', vehicle_id: 'aqua-2021-x', image_url: '/cars/aqua/01.webp', display_order: 1, is_primary: true, created_at: new Date().toISOString() },
+      { id: 'aqua-2021-x-2', vehicle_id: 'aqua-2021-x', image_url: '/cars/aqua/02.webp', display_order: 2, is_primary: false, created_at: new Date().toISOString() },
+      { id: 'aqua-2021-x-3', vehicle_id: 'aqua-2021-x', image_url: '/cars/aqua/03.webp', display_order: 3, is_primary: false, created_at: new Date().toISOString() },
+      { id: 'aqua-2021-x-4', vehicle_id: 'aqua-2021-x', image_url: '/cars/aqua/04.webp', display_order: 4, is_primary: false, created_at: new Date().toISOString() },
+      { id: 'aqua-2021-x-5', vehicle_id: 'aqua-2021-x', image_url: '/cars/aqua/05.webp', display_order: 5, is_primary: false, created_at: new Date().toISOString() },
+      { id: 'aqua-2021-x-6', vehicle_id: 'aqua-2021-x', image_url: '/cars/aqua/06.webp', display_order: 6, is_primary: false, created_at: new Date().toISOString() },
+      { id: 'aqua-2021-x-7', vehicle_id: 'aqua-2021-x', image_url: '/cars/aqua/07.webp', display_order: 7, is_primary: false, created_at: new Date().toISOString() }
+    ],
+  }),
+  // TOYOTA - Corolla Cross Z Leather
+  createVehicle({
+    id: 'corolla-cross-2021-zleather',
+    stock_number: 'COROLLACROSS-2021-ZLEATHER',
+    brand_name: 'Toyota',
+    model: 'Corolla Cross',
+    year: 2021,
+    packageName: 'Z Leather',
+    condition_grade: 4.5,
+    availability_status: 'Preorder',
+    price: '40.50 Lakh BDT',
+    body_type: 'Crossover',
+    images: [
+      { id: 'corolla-cross-2021-zleather-1', vehicle_id: 'corolla-cross-2021-zleather', image_url: '/cars/corolla-cross/corolla-cross01.webp', display_order: 1, is_primary: true, created_at: new Date().toISOString() },
+      { id: 'corolla-cross-2021-zleather-2', vehicle_id: 'corolla-cross-2021-zleather', image_url: '/cars/corolla-cross/corolla-cross02.webp', display_order: 2, is_primary: false, created_at: new Date().toISOString() },
+      { id: 'corolla-cross-2021-zleather-3', vehicle_id: 'corolla-cross-2021-zleather', image_url: '/cars/corolla-cross/corolla-cross03.webp', display_order: 3, is_primary: false, created_at: new Date().toISOString() },
+      { id: 'corolla-cross-2021-zleather-4', vehicle_id: 'corolla-cross-2021-zleather', image_url: '/cars/corolla-cross/corolla-cross04.webp', display_order: 4, is_primary: false, created_at: new Date().toISOString() },
+      { id: 'corolla-cross-2021-zleather-5', vehicle_id: 'corolla-cross-2021-zleather', image_url: '/cars/corolla-cross/corolla-cross05.webp', display_order: 5, is_primary: false, created_at: new Date().toISOString() },
+      { id: 'corolla-cross-2021-zleather-6', vehicle_id: 'corolla-cross-2021-zleather', image_url: '/cars/corolla-cross/corolla-cross06.webp', display_order: 6, is_primary: false, created_at: new Date().toISOString() },
+      { id: 'corolla-cross-2021-zleather-7', vehicle_id: 'corolla-cross-2021-zleather', image_url: '/cars/corolla-cross/corolla-cross07.webp', display_order: 7, is_primary: false, created_at: new Date().toISOString() }
+    ],
+  }),
+  // TOYOTA - Harrier Z Leather Advance Premium
+  createVehicle({
+    id: 'harrier-2021-zleather',
+    stock_number: 'HARRIER-2021-ZLEATHER',
+    brand_name: 'Toyota',
+    model: 'Harrier',
+    year: 2021,
+    packageName: 'Z Leather Advance Premium',
+    condition_grade: 4.5,
+    availability_status: 'Preorder',
+    price: '62.50 Lakh BDT',
+    body_type: 'Premium SUV',
+    images: [
+      { id: 'harrier-2021-zleather-1', vehicle_id: 'harrier-2021-zleather', image_url: '/cars/harrier-z-leather/harrier01.webp', display_order: 1, is_primary: true, created_at: new Date().toISOString() },
+      { id: 'harrier-2021-zleather-2', vehicle_id: 'harrier-2021-zleather', image_url: '/cars/harrier-z-leather/harrier02.webp', display_order: 2, is_primary: false, created_at: new Date().toISOString() },
+      { id: 'harrier-2021-zleather-3', vehicle_id: 'harrier-2021-zleather', image_url: '/cars/harrier-z-leather/harrier03.webp', display_order: 3, is_primary: false, created_at: new Date().toISOString() },
+      { id: 'harrier-2021-zleather-4', vehicle_id: 'harrier-2021-zleather', image_url: '/cars/harrier-z-leather/harrier04.webp', display_order: 4, is_primary: false, created_at: new Date().toISOString() },
+      { id: 'harrier-2021-zleather-5', vehicle_id: 'harrier-2021-zleather', image_url: '/cars/harrier-z-leather/harrier05..webp', display_order: 5, is_primary: false, created_at: new Date().toISOString() },
+      { id: 'harrier-2021-zleather-6', vehicle_id: 'harrier-2021-zleather', image_url: '/cars/harrier-z-leather/harrier06..webp', display_order: 6, is_primary: false, created_at: new Date().toISOString() },
+      { id: 'harrier-2021-zleather-7', vehicle_id: 'harrier-2021-zleather', image_url: '/cars/harrier-z-leather/harrier07..webp', display_order: 7, is_primary: false, created_at: new Date().toISOString() },
+      { id: 'harrier-2021-zleather-8', vehicle_id: 'harrier-2021-zleather', image_url: '/cars/harrier-z-leather/harrier08..webp', display_order: 8, is_primary: false, created_at: new Date().toISOString() }
+    ],
+  }),
+  // TOYOTA - Land Cruiser Prado TXL
+  createVehicle({
+    id: 'prado-2021-txl',
+    stock_number: 'PRADO-2021-TXL',
+    brand_name: 'Toyota',
+    model: 'Land Cruiser Prado',
+    year: 2021,
+    packageName: 'TXL',
+    condition_grade: 4.5,
+    availability_status: 'Preorder',
+    price: '1.50 Crore BDT',
+    body_type: 'SUV',
+    images: [
+      { id: 'prado-2021-txl-1', vehicle_id: 'prado-2021-txl', image_url: '/cars/land-prado/prado01.webp', display_order: 1, is_primary: true, created_at: new Date().toISOString() },
+      { id: 'prado-2021-txl-2', vehicle_id: 'prado-2021-txl', image_url: '/cars/land-prado/prado02.webp', display_order: 2, is_primary: false, created_at: new Date().toISOString() },
+      { id: 'prado-2021-txl-3', vehicle_id: 'prado-2021-txl', image_url: '/cars/land-prado/prado03.webp', display_order: 3, is_primary: false, created_at: new Date().toISOString() },
+      { id: 'prado-2021-txl-4', vehicle_id: 'prado-2021-txl', image_url: '/cars/land-prado/prado04.webp', display_order: 4, is_primary: false, created_at: new Date().toISOString() },
+      { id: 'prado-2021-txl-5', vehicle_id: 'prado-2021-txl', image_url: '/cars/land-prado/prado05.webp', display_order: 5, is_primary: false, created_at: new Date().toISOString() },
+      { id: 'prado-2021-txl-6', vehicle_id: 'prado-2021-txl', image_url: '/cars/land-prado/prado06.webp', display_order: 6, is_primary: false, created_at: new Date().toISOString() },
+      { id: 'prado-2021-txl-7', vehicle_id: 'prado-2021-txl', image_url: '/cars/land-prado/prado07.webp', display_order: 7, is_primary: false, created_at: new Date().toISOString() },
+      { id: 'prado-2021-txl-8', vehicle_id: 'prado-2021-txl', image_url: '/cars/land-prado/prado08.webp', display_order: 8, is_primary: false, created_at: new Date().toISOString() },
+      { id: 'prado-2021-txl-9', vehicle_id: 'prado-2021-txl', image_url: '/cars/land-prado/prado_04.webp', display_order: 9, is_primary: false, created_at: new Date().toISOString() }
+    ],
+  }),
+  // ...existing code...
   // TOYOTA - Crown (Inventory add for Personalize)
   {
     id: 'crown-001',
@@ -258,7 +474,11 @@ export const ALL_VEHICLES: Vehicle[] = [
     created_at: new Date().toISOString(),
     updated_at: new Date().toISOString(),
     images: [
-      { id: '10-1', vehicle_id: '10', image_url: 'https://images.pexels.com/photos/35516334/pexels-photo-35516334.png?auto=compress&cs=tinysrgb&w=600', display_order: 1, is_primary: true, created_at: new Date().toISOString() }
+      { id: '10-1', vehicle_id: '10', image_url: '/cars/premio/07.webp', display_order: 1, is_primary: true, created_at: new Date().toISOString() },
+      { id: '10-3', vehicle_id: '10', image_url: '/cars/premio/03.webp', display_order: 2, is_primary: false, created_at: new Date().toISOString() },
+      { id: '10-4', vehicle_id: '10', image_url: '/cars/premio/04.webp', display_order: 3, is_primary: false, created_at: new Date().toISOString() },
+      { id: '10-5', vehicle_id: '10', image_url: '/cars/premio/05.webp', display_order: 4, is_primary: false, created_at: new Date().toISOString() },
+      { id: '10-6', vehicle_id: '10', image_url: '/cars/premio/06.webp', display_order: 5, is_primary: false, created_at: new Date().toISOString() }
     ]
   },
 

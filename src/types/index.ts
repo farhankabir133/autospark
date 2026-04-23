@@ -24,6 +24,9 @@ export interface Vehicle {
   updated_at: string;
   images?: VehicleImage[];
   features?: VehicleFeature[];
+  package?: string;
+  condition_grade?: number;
+  availability_status?: string;
 }
 
 export interface VehicleImage {

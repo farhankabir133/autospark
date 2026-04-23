@@ -224,7 +224,7 @@ export const VehicleDetailsPage = () => {
 
             {images.length > 1 && (
               <div className="grid grid-cols-4 gap-2">
-                {images.slice(0, 4).map((img, index) => (
+                {images.map((img, index) => (
                   <button
                     key={img.id}
                     onClick={() => setCurrentImageIndex(index)}
