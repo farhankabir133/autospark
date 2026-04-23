@@ -129,12 +129,14 @@ export const ALL_VEHICLES: Vehicle[] = [
     body_type: 'Sedan',
     color_exterior: 'Red Wine',
     images: [
-      { id: 'premio-2021-fex-1', vehicle_id: 'premio-2021-fex', image_url: '/cars/premio/01.webp', display_order: 1, is_primary: true, created_at: new Date().toISOString() },
-      { id: 'premio-2021-fex-2', vehicle_id: 'premio-2021-fex', image_url: '/cars/premio/02.webp', display_order: 2, is_primary: false, created_at: new Date().toISOString() },
-      { id: 'premio-2021-fex-3', vehicle_id: 'premio-2021-fex', image_url: '/cars/premio/03.webp', display_order: 3, is_primary: false, created_at: new Date().toISOString() },
-      { id: 'premio-2021-fex-4', vehicle_id: 'premio-2021-fex', image_url: '/cars/premio/04.webp', display_order: 4, is_primary: false, created_at: new Date().toISOString() },
-      { id: 'premio-2021-fex-5', vehicle_id: 'premio-2021-fex', image_url: '/cars/premio/05.webp', display_order: 5, is_primary: false, created_at: new Date().toISOString() },
-      { id: 'premio-2021-fex-6', vehicle_id: 'premio-2021-fex', image_url: '/cars/premio/06.webp', display_order: 6, is_primary: false, created_at: new Date().toISOString() }
+  { id: 'premio-2021-fex-1', vehicle_id: 'premio-2021-fex', image_url: '/cars/premio/01.webp', display_order: 1, is_primary: true, created_at: new Date().toISOString() },
+  { id: 'premio-2021-fex-2', vehicle_id: 'premio-2021-fex', image_url: '/cars/premio/02.webp', display_order: 2, is_primary: false, created_at: new Date().toISOString() },
+  { id: 'premio-2021-fex-3', vehicle_id: 'premio-2021-fex', image_url: '/cars/premio/03.webp', display_order: 3, is_primary: false, created_at: new Date().toISOString() },
+  { id: 'premio-2021-fex-4', vehicle_id: 'premio-2021-fex', image_url: '/cars/premio/04.webp', display_order: 4, is_primary: false, created_at: new Date().toISOString() },
+  { id: 'premio-2021-fex-5', vehicle_id: 'premio-2021-fex', image_url: '/cars/premio/05.webp', display_order: 5, is_primary: false, created_at: new Date().toISOString() },
+  { id: 'premio-2021-fex-6', vehicle_id: 'premio-2021-fex', image_url: '/cars/premio/06.webp', display_order: 6, is_primary: false, created_at: new Date().toISOString() },
+  { id: 'premio-2021-fex-8', vehicle_id: 'premio-2021-fex', image_url: '/cars/premio/08.webp', display_order: 8, is_primary: false, created_at: new Date().toISOString() },
+  { id: 'premio-2021-fex-9', vehicle_id: 'premio-2021-fex', image_url: '/cars/premio/09.webp', display_order: 9, is_primary: false, created_at: new Date().toISOString() }
     ],
   }),
   // TOYOTA - Allion G+
@@ -151,11 +153,12 @@ export const ALL_VEHICLES: Vehicle[] = [
     body_type: 'Sedan',
     color_exterior: 'Glossy Black',
     images: [
-      { id: 'allion-2021-gplus-1', vehicle_id: 'allion-2021-gplus', image_url: '/cars/allion/01.webp', display_order: 1, is_primary: true, created_at: new Date().toISOString() },
-      { id: 'allion-2021-gplus-2', vehicle_id: 'allion-2021-gplus', image_url: '/cars/allion/02.webp', display_order: 2, is_primary: false, created_at: new Date().toISOString() },
-      { id: 'allion-2021-gplus-3', vehicle_id: 'allion-2021-gplus', image_url: '/cars/allion/03.webp', display_order: 3, is_primary: false, created_at: new Date().toISOString() },
-      { id: 'allion-2021-gplus-4', vehicle_id: 'allion-2021-gplus', image_url: '/cars/allion/04.webp', display_order: 4, is_primary: false, created_at: new Date().toISOString() },
-      { id: 'allion-2021-gplus-5', vehicle_id: 'allion-2021-gplus', image_url: '/cars/allion/05.webp', display_order: 5, is_primary: false, created_at: new Date().toISOString() }
+  { id: 'allion-2021-gplus-1', vehicle_id: 'allion-2021-gplus', image_url: '/cars/allion/01.webp', display_order: 1, is_primary: true, created_at: new Date().toISOString() },
+  { id: 'allion-2021-gplus-2', vehicle_id: 'allion-2021-gplus', image_url: '/cars/allion/02.webp', display_order: 2, is_primary: false, created_at: new Date().toISOString() },
+  { id: 'allion-2021-gplus-3', vehicle_id: 'allion-2021-gplus', image_url: '/cars/allion/03.webp', display_order: 3, is_primary: false, created_at: new Date().toISOString() },
+  { id: 'allion-2021-gplus-4', vehicle_id: 'allion-2021-gplus', image_url: '/cars/allion/04.webp', display_order: 4, is_primary: false, created_at: new Date().toISOString() },
+  { id: 'allion-2021-gplus-5', vehicle_id: 'allion-2021-gplus', image_url: '/cars/allion/05.webp', display_order: 5, is_primary: false, created_at: new Date().toISOString() },
+  { id: 'allion-2021-gplus-6', vehicle_id: 'allion-2021-gplus', image_url: '/cars/allion/06.webp', display_order: 6, is_primary: false, created_at: new Date().toISOString() }
     ],
   }),
   // TOYOTA - Aqua X
