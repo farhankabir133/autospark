@@ -84,7 +84,9 @@ interface CheckoutFormData {
 
 // Demo Products (fallback if Supabase is empty)
 const demoProducts: AccessoryProduct[] = [
+  { id: '1200', name_en: 'Globoil 5W-30', name_bn: '', price: 4550, category: 'Accessories', stock_quantity: 10, is_available: true, images: [{ image_url: '/P2/Globoil-5W30.webp' }], brand: '', rating: 0, reviews: 0, discount: 0, compatibility: [], isNew: true, isBestseller: false },
   { id: '1073', name_en: 'Globoil 5W-30', name_bn: '', price: 4550, category: 'Accessories', stock_quantity: 10, is_available: true, images: [{ image_url: '/NP/GlassCleaner.webp' }], brand: '', rating: 0, reviews: 0, discount: 0, compatibility: [], isNew: false, isBestseller: false },
+  { id: '1074', name_en: 'Globoil 5W-30', name_bn: '', price: 4550, category: 'Accessories', stock_quantity: 10, is_available: true, images: [{ image_url: '/P2/Globoil-5W30.webp' }], brand: '', rating: 0, reviews: 0, discount: 0, compatibility: [], isNew: true, isBestseller: false },
   // User-requested accessories (added in order)
   {
     id: '1100', name_en: 'Wireless Car Play', name_bn: '', price: 8500, category: 'Accessories', stock_quantity: 10, is_available: true, images: [{ image_url: '/P2/wirelesscarplay.webp' }], brand: '', rating: 5, reviews: 1, discount: 0, compatibility: [], isNew: true, isBestseller: true
