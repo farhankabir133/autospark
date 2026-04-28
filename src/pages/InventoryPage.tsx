@@ -29,6 +29,15 @@ import { useSeedChrImages } from '../hooks/useSeedChrImages';
 import { ALL_VEHICLES } from '../hooks/vehicleDataAll';
 import type { Vehicle } from '../types';
 import { formatPrice } from '../utils/format';
+import { appwritePaymentApi } from '../services/appwritePaymentApi';
+// --- Booking Modal Types ---
+interface BookingFormData {
+  customer_name: string;
+  mobile: string;
+  address: string;
+  thana: string;
+  district: string;
+}
 
 // ============================================
 // TYPES
@@ -647,6 +656,93 @@ const ActiveFilterPills: React.FC<{
 // ============================================
 
 export const InventoryPage = () => {
+  // --- Booking Modal State ---
+  const [showBookingModal, setShowBookingModal] = useState(false);
+  const [isSubmittingBooking, setIsSubmittingBooking] = useState(false);
+  const [bookingError, setBookingError] = useState<string | null>(null);
+  const [bookingForm, setBookingForm] = useState<BookingFormData>({
+    customer_name: '',
+    mobile: '',
+    address: '',
+    thana: '',
+    district: '',
+  });
+  const [selectedVehicle, setSelectedVehicle] = useState<Vehicle | null>(null);
+  // --- Booking Modal Handlers ---
+  const openBookingModal = (vehicle: Vehicle) => {
+    setSelectedVehicle(vehicle);
+    setBookingError(null);
+    setShowBookingModal(true);
+  };
+
+  const closeBookingModal = () => {
+    setShowBookingModal(false);
+    setIsSubmittingBooking(false);
+    setBookingError(null);
+    setBookingForm({
+      customer_name: '',
+      mobile: '',
+      address: '',
+      thana: '',
+      district: '',
+    });
+    setSelectedVehicle(null);
+  };
+
+  const updateBookingField = (field: keyof BookingFormData, value: string) => {
+    setBookingForm((prev) => ({ ...prev, [field]: value }));
+  };
+
+  const confirmAndInitiateBooking = async () => {
+    if (!selectedVehicle || isSubmittingBooking) return;
+    const requiredFields: Array<keyof BookingFormData> = [
+      'customer_name',
+      'mobile',
+      'address',
+      'thana',
+      'district',
+    ];
+    const missing = requiredFields.find((field) => !bookingForm[field]?.trim());
+    if (missing) {
+      setBookingError('Please complete all booking fields before continuing.');
+      return;
+    }
+    try {
+      setIsSubmittingBooking(true);
+      setBookingError(null);
+      // For booking, use a fixed pre-order amount (e.g., 50000 BDT) or a vehicle-specific amount
+  const bookingAmount = 50000;
+      const { redirectUrl } = await appwritePaymentApi.initiatePayment({
+        customer_name: bookingForm.customer_name.trim(),
+        mobile: bookingForm.mobile.trim(),
+        address: bookingForm.address.trim(),
+        thana: bookingForm.thana.trim(),
+        district: bookingForm.district.trim(),
+        total_amount: bookingAmount,
+        cart_items: JSON.stringify([
+          {
+            id: selectedVehicle.id,
+            name: selectedVehicle.model,
+            price: bookingAmount,
+            quantity: 1,
+          },
+        ]),
+        cart: [
+          {
+            id: selectedVehicle.id,
+            name: selectedVehicle.model,
+            price: bookingAmount,
+            quantity: 1,
+          },
+        ],
+      });
+      window.location.href = redirectUrl;
+    } catch (error) {
+      const message = error instanceof Error ? error.message : 'Could not start payment. Please try again.';
+      setBookingError(message);
+      setIsSubmittingBooking(false);
+    }
+  };
   const { t, language } = useLanguage();
   const { theme } = useTheme();
   const headerRef = useRef<HTMLDivElement>(null);
@@ -976,6 +1072,108 @@ const EMICalculator: React.FC<{ principal: number }> = ({ principal }) => {
 
   return (
     <div className={`min-h-screen ${isDark ? 'bg-transparent' : 'bg-gray-50'} pt-20`}>
+      {/* Booking Modal */}
+      <AnimatePresence>
+        {showBookingModal && selectedVehicle && (
+          <>
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="fixed inset-0 z-[60] bg-black/60 backdrop-blur-sm"
+              onClick={closeBookingModal}
+            />
+            <motion.div
+              initial={{ opacity: 0, y: 30, scale: 0.98 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              exit={{ opacity: 0, y: 20, scale: 0.98 }}
+              transition={{ duration: 0.2 }}
+              className={`fixed inset-0 z-[61] m-auto flex w-[calc(100vw-1rem)] max-w-xl max-h-[calc(100dvh-1rem)] flex-col overflow-hidden rounded-2xl shadow-2xl sm:w-[92vw] sm:max-h-[92vh] ${isDark ? 'bg-gray-900 border border-gray-700' : 'bg-white border border-gray-200'}`}
+            >
+              <div className={`flex items-center justify-between px-6 py-4 border-b ${isDark ? 'border-gray-700' : 'border-gray-200'}`}>
+                <h3 className={`text-xl font-bold ${isDark ? 'text-white' : 'text-gray-900'}`}>Pre-Order / Booking</h3>
+                <button
+                  onClick={closeBookingModal}
+                  disabled={isSubmittingBooking}
+                  className={`p-2 rounded-full ${isDark ? 'hover:bg-gray-800' : 'hover:bg-gray-100'} disabled:opacity-50`}
+                  aria-label="Close booking form"
+                >
+                  <span className={isDark ? 'text-gray-300' : 'text-gray-700'}>×</span>
+                </button>
+              </div>
+              <div className="flex-1 overflow-y-auto p-3 sm:p-3.5 grid grid-cols-1 sm:grid-cols-2 gap-x-2.5 gap-y-1 sm:gap-y-1.5">
+                <div className="sm:col-span-2 space-y-0">
+                  <label className={`block text-xs font-semibold leading-tight ${isDark ? 'text-gray-200' : 'text-gray-700'}`}>Full Name</label>
+                  <input
+                    value={bookingForm.customer_name}
+                    onChange={e => updateBookingField('customer_name', e.target.value)}
+                    className={`w-full px-3 py-1 rounded-lg border text-sm leading-tight ${isDark ? 'bg-gray-800 border-gray-700 text-white' : 'bg-white border-gray-300 text-gray-900'}`}
+                    placeholder="Your full name"
+                  />
+                </div>
+                <div className="space-y-0">
+                  <label className={`block text-xs font-semibold leading-tight ${isDark ? 'text-gray-200' : 'text-gray-700'}`}>Mobile</label>
+                  <input
+                    value={bookingForm.mobile}
+                    onChange={e => updateBookingField('mobile', e.target.value)}
+                    className={`w-full px-3 py-1 rounded-lg border text-sm leading-tight ${isDark ? 'bg-gray-800 border-gray-700 text-white' : 'bg-white border-gray-300 text-gray-900'}`}
+                    placeholder="01XXXXXXXXX"
+                  />
+                </div>
+                <div className="space-y-0">
+                  <label className={`block text-xs font-semibold leading-tight ${isDark ? 'text-gray-200' : 'text-gray-700'}`}>District</label>
+                  <input
+                    value={bookingForm.district}
+                    onChange={e => updateBookingField('district', e.target.value)}
+                    className={`w-full px-3 py-1 rounded-lg border text-sm leading-tight ${isDark ? 'bg-gray-800 border-gray-700 text-white' : 'bg-white border-gray-300 text-gray-900'}`}
+                    placeholder="Dhaka"
+                  />
+                </div>
+                <div className="sm:col-span-2 space-y-0">
+                  <label className={`block text-xs font-semibold leading-tight ${isDark ? 'text-gray-200' : 'text-gray-700'}`}>Thana</label>
+                  <input
+                    value={bookingForm.thana}
+                    onChange={e => updateBookingField('thana', e.target.value)}
+                    className={`w-full px-3 py-1 rounded-lg border text-sm leading-tight ${isDark ? 'bg-gray-800 border-gray-700 text-white' : 'bg-white border-gray-300 text-gray-900'}`}
+                    placeholder="Mirpur"
+                  />
+                </div>
+                <div className="sm:col-span-2 space-y-0">
+                  <label className={`block text-xs font-semibold leading-tight ${isDark ? 'text-gray-200' : 'text-gray-700'}`}>Address</label>
+                  <textarea
+                    rows={2}
+                    value={bookingForm.address}
+                    onChange={e => updateBookingField('address', e.target.value)}
+                    className={`w-full px-3 py-1 rounded-lg border text-sm leading-tight ${isDark ? 'bg-gray-800 border-gray-700 text-white' : 'bg-white border-gray-300 text-gray-900'}`}
+                    placeholder="House, road, area"
+                  />
+                </div>
+                {bookingError && (
+                  <div className="sm:col-span-2 rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700">
+                    {bookingError}
+                  </div>
+                )}
+              </div>
+              <div className={`sticky bottom-0 flex flex-col-reverse gap-3 px-4 py-4 pb-[max(1rem,env(safe-area-inset-bottom))] sm:flex-row sm:items-center sm:justify-end sm:px-6 border-t ${isDark ? 'border-gray-700 bg-gray-900' : 'border-gray-200 bg-white'}`}>
+                <button
+                  onClick={closeBookingModal}
+                  disabled={isSubmittingBooking}
+                  className={`w-full sm:w-auto px-4 py-2 rounded-lg ${isDark ? 'bg-gray-800 text-gray-200' : 'bg-gray-100 text-gray-700'} disabled:opacity-50`}
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={confirmAndInitiateBooking}
+                  disabled={isSubmittingBooking}
+                  className="w-full sm:w-auto px-5 py-2 rounded-lg bg-gradient-to-r from-blue-600 to-purple-600 text-white font-semibold disabled:opacity-70 inline-flex items-center justify-center gap-2"
+                >
+                  {isSubmittingBooking ? 'Redirecting...' : 'Confirm & Pay Booking Money'}
+                </button>
+              </div>
+            </motion.div>
+          </>
+        )}
+      </AnimatePresence>
       {/* ========================================== */}
       {/* ENHANCED HEADER SECTION */}
       {/* ========================================== */}
@@ -1402,6 +1600,9 @@ const EMICalculator: React.FC<{ principal: number }> = ({ principal }) => {
                                   </div>
                                 )}
                               </div>
+                              <Button className="w-full mb-2" onClick={() => openBookingModal(vehicle)}>
+                                {`Book Now (৳${formatPrice(50000, language)})`}
+                              </Button>
                               <Button className="w-full">
                                 {t('vehicle.view_details')}
                               </Button>
@@ -1481,7 +1682,7 @@ const EMICalculator: React.FC<{ principal: number }> = ({ principal }) => {
                   </div>
 
                   <div className="pt-2 grid grid-cols-1 sm:grid-cols-3 gap-2">
-                    <Button onClick={() => navigate(`/sell?reserve=${encodeURIComponent(vehicle.id)}`)} className="w-full">Reserve Now</Button>
+                    <Button onClick={() => openBookingModal(vehicle)} className="w-full">Book / Pre-Order (৳50,000)</Button>
                     <Button onClick={() => navigate('/contact')} className="w-full">Contact Us</Button>
                     <a
                       href={`https://wa.me/8801760401605?text=${encodeURIComponent(`I'm interested in ${vehicle.brand_name} ${vehicle.model} (Stock #: ${vehicle.stock_number})`)}`}

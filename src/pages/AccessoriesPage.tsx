@@ -84,6 +84,7 @@ interface CheckoutFormData {
 
 // Demo Products (fallback if Supabase is empty)
 const demoProducts: AccessoryProduct[] = [
+  { id: '1073', name_en: 'Globoil 5W-30', name_bn: '', price: 4550, category: 'Accessories', stock_quantity: 10, is_available: true, images: [{ image_url: '/NP/GlassCleaner.webp' }], brand: '', rating: 0, reviews: 0, discount: 0, compatibility: [], isNew: false, isBestseller: false },
   // User-requested accessories (added in order)
   {
     id: '1100', name_en: 'Wireless Car Play', name_bn: '', price: 8500, category: 'Accessories', stock_quantity: 10, is_available: true, images: [{ image_url: '/P2/wirelesscarplay.webp' }], brand: '', rating: 5, reviews: 1, discount: 0, compatibility: [], isNew: true, isBestseller: true
@@ -167,12 +168,13 @@ const demoProducts: AccessoryProduct[] = [
   { id: '1059', name_en: 'Gear Oil WS', name_bn: '', price: 7800, category: 'Accessories', stock_quantity: 10, is_available: true, images: [{ image_url: '/NP/Gear-OilWS.webp' }], brand: '', rating: 0, reviews: 0, discount: 0, compatibility: [], isNew: false, isBestseller: false },
   { id: '1060', name_en: 'Glass Cleaner', name_bn: '', price: 450, category: 'Accessories', stock_quantity: 10, is_available: true, images: [{ image_url: '/NP/GlassCleaner.webp' }], brand: '', rating: 0, reviews: 0, discount: 0, compatibility: [], isNew: false, isBestseller: false },
   { id: '1061', name_en: 'Glass Cleaner Tablet', name_bn: '', price: 200, category: 'Accessories', stock_quantity: 10, is_available: true, images: [], brand: '', rating: 0, reviews: 0, discount: 0, compatibility: [], isNew: false, isBestseller: false },
-  { id: '1062', name_en: 'Globoil 0W-20', name_bn: '', price: 4250, category: 'Accessories', stock_quantity: 10, is_available: true, images: [{ image_url: '/P2/Globoil0W20.webp' }], brand: '', rating: 0, reviews: 0, discount: 0, compatibility: [], isNew: false, isBestseller: false },
-  { id: '1063', name_en: 'Globoil 10W-40', name_bn: '', price: 4050, category: 'Accessories', stock_quantity: 10, is_available: true, images: [{ image_url: '/P2/Globoil10w40.webp' }], brand: '', rating: 0, reviews: 0, discount: 0, compatibility: [], isNew: false, isBestseller: false },
-  { id: '1064', name_en: 'Globoil PAO 0W-20', name_bn: '', price: 5750, category: 'Accessories', stock_quantity: 10, is_available: true, images: [{ image_url: '/P2/18 Background Removed Medium.webp' }], brand: '', rating: 0, reviews: 0, discount: 0, compatibility: [], isNew: false, isBestseller: false },
+  { id: '1062', name_en: 'Globoil 0W-20', name_bn: '', price: 4550, category: 'Accessories', stock_quantity: 10, is_available: true, images: [{ image_url: '/P2/Globoil0W20.webp' }], brand: '', rating: 0, reviews: 0, discount: 0, compatibility: [], isNew: false, isBestseller: false },
+  { id: '1063', name_en: 'Globoil 10W-40', name_bn: '', price: 4350, category: 'Accessories', stock_quantity: 10, is_available: true, images: [{ image_url: '/P2/Globoil10w40.webp' }], brand: '', rating: 0, reviews: 0, discount: 0, compatibility: [], isNew: false, isBestseller: false },
+  { id: '1064', name_en: 'Globoil PAO 0W-20', name_bn: '', price: 6050, category: 'Accessories', stock_quantity: 10, is_available: true, images: [{ image_url: '/P2/18 Background Removed Medium.webp' }], brand: '', rating: 0, reviews: 0, discount: 0, compatibility: [], isNew: false, isBestseller: false },
   { id: '1065', name_en: 'GPS Tracking OBD', name_bn: '', price: 7500, category: 'Accessories', stock_quantity: 10, is_available: true, images: [{ image_url: '/NP/GPSTrackingOBD.png' }], brand: '', rating: 0, reviews: 0, discount: 0, compatibility: [], isNew: false, isBestseller: false },
   { id: '1066', name_en: 'Grease Toyo', name_bn: '', price: 450, category: 'Accessories', stock_quantity: 10, is_available: true, images: [], brand: '', rating: 0, reviews: 0, discount: 0, compatibility: [], isNew: false, isBestseller: false },
   { id: '1067', name_en: 'Gulf 5W30', name_bn: '', price: 4750, category: 'Accessories', stock_quantity: 10, is_available: true, images: [{ image_url: '/NP/Gulf5W30.webp' }], brand: '', rating: 0, reviews: 0, discount: 0, compatibility: [], isNew: false, isBestseller: false },
+  { id: '1073', name_en: 'Globoil 5W-30', name_bn: '', price: 4550, category: 'Accessories', stock_quantity: 10, is_available: true, images: [{ image_url: '/NP/GlassCleaner.webp' }], brand: '', rating: 0, reviews: 0, discount: 0, compatibility: [], isNew: false, isBestseller: false },
   { id: '1068', name_en: 'H-11', name_bn: '', price: 350, category: 'Accessories', stock_quantity: 10, is_available: true, images: [{ image_url: '/NP/H-11Bulb.webp' }], brand: '', rating: 0, reviews: 0, discount: 0, compatibility: [], isNew: false, isBestseller: false },
   { id: '1069', name_en: 'Hand Glovoves', name_bn: '', price: 200, category: 'Accessories', stock_quantity: 10, is_available: true, images: [], brand: '', rating: 0, reviews: 0, discount: 0, compatibility: [], isNew: false, isBestseller: false },
   { id: '1070', name_en: 'Higlo Wax( Coating)', name_bn: '', price: 850, category: 'Accessories', stock_quantity: 10, is_available: true, images: [], brand: '', rating: 0, reviews: 0, discount: 0, compatibility: [], isNew: false, isBestseller: false },
@@ -577,7 +579,7 @@ const demoProductsWithP2 = demoProducts.map((p, i) => {
   const isJda = name.includes('jda');
   const isAndroidPlayer = name.includes('android player') || name.includes('android-player') || name.includes('androidplayer');
   const isGulf = name.includes('gulf formula g 0w-20 full synthetic') || name.includes('gulf formula g 0w-20');
-  const isGloboil = name.includes('globoil premium 0w-20 synthetic') || name.includes('globoil 0w-20') || name.includes('globoil0w20') || name.includes('globoil 0w20');
+  const isGloboil = name.includes('globoil premium 0w-20 synthetic') || name.includes('globoil 0w-20') || name.includes('globoil0w20') || name.includes('globoil 0w20') || name.includes('globoil 5w-30') || name.includes('globoil5w30') || name.includes('globoil 5w30');
   const isAluminumRim = name.includes('car aluminum alloy rim') || name.includes('aluminum rim') || name.includes('alloy rim') || name.includes('aluminium rim');
   const isWirelessCharger = name.includes('wireless car charger') || name.includes('wireless charger') || name.includes('charger mount') || name.includes('car charger mount');
   // Specific brake-pad mapping for product 'Brake pad 715/52240' (and common variants)
@@ -614,7 +616,7 @@ const demoProductsWithP2 = demoProducts.map((p, i) => {
   images: hasForcedBumperImage ? [{ image_url: '/P2/Bumper.webp' }] : hasExplicitImage ? p.images : [
   { image_url: isJda ? '/P2/7 Background Removed Medium.webp'
     : isGulf ? '/P2/Gulf Formula G 0W-20 Full Synthetic.webp'
-  : isGloboil ? '/P2/Globoil0W20.webp'
+  : isGloboil && name.includes('5w-30') ? '/NP/GlassCleaner.webp' : isGloboil ? '/P2/Globoil0W20.webp'
   // explicit product matches (user-specified)
   : isCarallWiper ? '/NP/WiperBlade.webp'
   : isVanillaFlowerCent ? '/NP/CarPerfume.webp'
