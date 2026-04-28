@@ -1129,6 +1129,46 @@ const EMICalculator: React.FC<{ principal: number }> = ({ principal }) => {
                     placeholder="Dhaka"
                   />
                 </div>
+                <div className="space-y-0">
+                  <label className={`block text-xs font-semibold leading-tight ${isDark ? 'text-gray-200' : 'text-gray-700'}`}>Car Model</label>
+                  <input
+                    value={selectedVehicle?.model || ''}
+                    disabled
+                    className={`w-full px-3 py-1 rounded-lg border text-sm leading-tight bg-gray-100 text-gray-500`}
+                  />
+                </div>
+                <div className="space-y-0">
+                  <label className={`block text-xs font-semibold leading-tight ${isDark ? 'text-gray-200' : 'text-gray-700'}`}>Package</label>
+                  <input
+                    value={selectedVehicle?.package || 'Standard'}
+                    disabled
+                    className={`w-full px-3 py-1 rounded-lg border text-sm leading-tight bg-gray-100 text-gray-500`}
+                  />
+                </div>
+                <div className="space-y-0">
+                  <label className={`block text-xs font-semibold leading-tight ${isDark ? 'text-gray-200' : 'text-gray-700'}`}>Full Car Price</label>
+                  <input
+                    value={selectedVehicle?.price ? formatPrice(selectedVehicle.price, language) : ''}
+                    disabled
+                    className={`w-full px-3 py-1 rounded-lg border text-sm leading-tight bg-gray-100 text-gray-500`}
+                  />
+                </div>
+                <div className="space-y-0">
+                  <label className={`block text-xs font-semibold leading-tight ${isDark ? 'text-gray-200' : 'text-gray-700'}`}>Booking Money</label>
+                  <input
+                    value={formatPrice(50000, language)}
+                    disabled
+                    className={`w-full px-3 py-1 rounded-lg border text-sm leading-tight bg-gray-100 text-gray-500`}
+                  />
+                </div>
+                <div className="space-y-0">
+                  <label className={`block text-xs font-semibold leading-tight ${isDark ? 'text-gray-200' : 'text-gray-700'}`}>Due Money</label>
+                  <input
+                    value={selectedVehicle?.price ? formatPrice(selectedVehicle.price - 50000, language) : ''}
+                    disabled
+                    className={`w-full px-3 py-1 rounded-lg border text-sm leading-tight bg-gray-100 text-gray-500`}
+                  />
+                </div>
                 <div className="sm:col-span-2 space-y-0">
                   <label className={`block text-xs font-semibold leading-tight ${isDark ? 'text-gray-200' : 'text-gray-700'}`}>Thana</label>
                   <input
@@ -1601,10 +1641,10 @@ const EMICalculator: React.FC<{ principal: number }> = ({ principal }) => {
                                 )}
                               </div>
                               <Button className="w-full mb-2" onClick={() => openBookingModal(vehicle)}>
-                                {`Book Now (৳${formatPrice(50000, language)})`}
+                                {`Reserve Now (৳${formatPrice(50000, language)})`}
                               </Button>
-                              <Button className="w-full">
-                                {t('vehicle.view_details')}
+                              <Button className="w-full" asChild>
+                                <Link to={`/vehicle/${vehicle.id}`}>{t('vehicle.view_details')}</Link>
                               </Button>
                             </div>
                           </Link>
@@ -1682,7 +1722,7 @@ const EMICalculator: React.FC<{ principal: number }> = ({ principal }) => {
                   </div>
 
                   <div className="pt-2 grid grid-cols-1 sm:grid-cols-3 gap-2">
-                    <Button onClick={() => openBookingModal(vehicle)} className="w-full">Book / Pre-Order (৳50,000)</Button>
+                    <Button onClick={() => openBookingModal(vehicle)} className="w-full">Reserve Now (৳50,000)</Button>
                     <Button onClick={() => navigate('/contact')} className="w-full">Contact Us</Button>
                     <a
                       href={`https://wa.me/8801760401605?text=${encodeURIComponent(`I'm interested in ${vehicle.brand_name} ${vehicle.model} (Stock #: ${vehicle.stock_number})`)}`}
