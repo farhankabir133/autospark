@@ -521,7 +521,7 @@ export const AboutPage = () => {
                   </div>
                   {/* Left image name caption */}
                   <div className="absolute -bottom-12 left-4 bg-white/90 text-gray-900 px-3 py-1 rounded-md shadow-sm">
-                    <span className="font-semibold">{language === 'en' ? 'Raju Ahmed' : 'রাজু আহমেদ'}</span>
+                    <span className="font-semibold">{language === 'en' ? 'A. B. M. Raihanul Amin' : 'এ. বি. এম. রায়হানুল আমিন'}</span>
                   </div>
                 </div>
               </div>
@@ -530,7 +530,7 @@ export const AboutPage = () => {
               <div className="md:col-span-1 space-y-6 flex flex-col items-center text-center justify-center">
                 <div>
                   <h3 className={`text-3xl font-bold ${theme === 'dark' ? 'text-white' : 'text-gray-900'} mb-2`}>
-                    {language === 'en' ? 'Raju Ahmed' : 'রাজু আহমেদ'}
+                    {language === 'en' ? 'A. B. M. Raihanul Amin' : 'এ. বি. এম. রায়হানুল আমিন'}
                   </h3>
                   <p className="text-[#C00000] font-semibold text-lg">
                     {language === 'en' ? 'Founder, Managing Director & CEO' : 'প্রতিষ্ঠাতা, ব্যবস্থাপনা পরিচালক ও সিইও'}
@@ -585,7 +585,7 @@ export const AboutPage = () => {
                 <div className="relative">
                   <div className="absolute inset-0 bg-gradient-to-br from-[#C00000] to-[#8B0000] rounded-2xl transform -rotate-3"></div>
                   <img
-                    src="https://images.pexels.com/photos/36843228/pexels-photo-36843228.png"
+                    src="/maam/tony.webp"
                     alt="Co-Founder - Auto Spark BD"
                     className="relative rounded-2xl w-full h-80 object-cover object-top shadow-2xl transform rotate-0 hover:rotate-0 transition-transform duration-500"
                     loading="lazy"
@@ -598,7 +598,7 @@ export const AboutPage = () => {
                   </div>
                   {/* Right image name caption */}
                   <div className="absolute -bottom-12 right-4 bg-white/90 text-gray-900 px-3 py-1 rounded-md shadow-sm">
-                    <span className="font-semibold">{language === 'en' ? 'Tony' : 'টনি'}</span>
+                    <span className="font-semibold">{language === 'en' ? 'Suraiya Parvin Tony' : 'সুরাইয়া পারভীন টনি'}</span>
                   </div>
                 </div>
               </div>

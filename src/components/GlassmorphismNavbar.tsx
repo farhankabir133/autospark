@@ -56,7 +56,7 @@ export const GlassmorphismNavbar = () => {
     { to: '/accessories', label: t('nav.accessories') },
     { to: '/about', label: t('nav.about') },
     { to: '/testimonials', label: t('nav.testimonials') },
-    { to: '/contact', label: t('nav.contact') },
+    { to: 'tel:+8801760401605', label: t('nav.contact'), isExternal: true },
   ];
 
   const toggleLanguage = () => {
@@ -203,46 +203,63 @@ export const GlassmorphismNavbar = () => {
 
             {/* Desktop Navigation */}
             <div className="hidden lg:flex items-center space-x-0.5">
-              {navLinks.map((link, index) => (
-                <m.div
-                  key={link.to}
-                  custom={index}
-                  variants={navLinkVariants}
-                  initial="hidden"
-                  animate="visible"
-                  whileHover="hover"
-                  className="relative"
-                >
-                    <Link
-                      to={link.to}
-                      onClick={() => handleNavClick(link.to)}
-                      className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-all duration-300 relative outline-none focus:ring-2 focus:ring-blue-500 ${
-                        activeLink === link.to
-                          ? theme === 'dark'
-                            ? 'text-[#FF1A1A]'
-                            : 'text-[#C00000]'
-                          : theme === 'dark'
-                          ? 'text-gray-300 hover:text-white'
-                          : 'text-gray-700 hover:text-gray-900'
-                      }`}
-                      aria-current={activeLink === link.to ? 'page' : undefined}
-                    >
-                      {link.label}
-                      {/* Active indicator with glassmorphism */}
-                      {activeLink === link.to && (
-                        <m.div
-                          layoutId="activeIndicator"
-                          className={`absolute inset-0 rounded-lg -z-10 ${
-                            theme === 'dark'
-                              ? 'bg-[#C00000]/20 backdrop-blur-md border border-[#C00000]/30'
-                              : 'bg-[#C00000]/10 backdrop-blur-md border border-[#C00000]/30'
-                          }`}
-                          transition={{ duration: 0.3 }}
-                        />
-                      )}
-                    </Link>
+              {navLinks.map((link, index) => {
+                const isExternal = link.to.startsWith('tel:');
+                const commonClasses = `px-3 py-1.5 rounded-lg text-sm font-medium transition-all duration-300 relative outline-none focus:ring-2 focus:ring-blue-500 ${
+                  activeLink === link.to
+                    ? theme === 'dark'
+                      ? 'text-[#FF1A1A]'
+                      : 'text-[#C00000]'
+                    : theme === 'dark'
+                    ? 'text-gray-300 hover:text-white'
+                    : 'text-gray-700 hover:text-gray-900'
+                }`;
+
+                return (
+                  <m.div
+                    key={link.to}
+                    custom={index}
+                    variants={navLinkVariants}
+                    initial="hidden"
+                    animate="visible"
+                    whileHover="hover"
+                    className="relative"
+                  >
+                    {isExternal ? (
+                      <a
+                        href={link.to}
+                        onClick={() => handleNavClick(link.to)}
+                        className={commonClasses}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
+                        {link.label}
+                      </a>
+                    ) : (
+                      <Link
+                        to={link.to}
+                        onClick={() => handleNavClick(link.to)}
+                        className={commonClasses}
+                        aria-current={activeLink === link.to ? 'page' : undefined}
+                      >
+                        {link.label}
+                        {/* Active indicator with glassmorphism */}
+                        {activeLink === link.to && (
+                          <m.div
+                            layoutId="activeIndicator"
+                            className={`absolute inset-0 rounded-lg -z-10 ${
+                              theme === 'dark'
+                                ? 'bg-[#C00000]/20 backdrop-blur-md border border-[#C00000]/30'
+                                : 'bg-[#C00000]/10 backdrop-blur-md border border-[#C00000]/30'
+                            }`}
+                            transition={{ duration: 0.3 }}
+                          />
+                        )}
+                      </Link>
+                    )}
                   </m.div>
-              ))}
+                );
+              })}
             </div>
 
             {/* Right Controls */}
@@ -312,6 +329,7 @@ export const GlassmorphismNavbar = () => {
               </m.button>
 
               {/* CTA Button - Desktop */}
+              <a href="tel:+8801760401605">
               <m.button
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
@@ -324,6 +342,7 @@ export const GlassmorphismNavbar = () => {
               >
                 {t('nav.contact')}
               </m.button>
+              </a>
 
               {/* Mobile Menu Button */}
               <m.button
@@ -380,33 +399,51 @@ export const GlassmorphismNavbar = () => {
                     : 'bg-white/50 backdrop-blur-md border border-white/30'
                 }`}>
                   {/* Mobile Navigation Links */}
-                  {navLinks.map((link, index) => (
-                    <m.div
-                      key={link.to}
-                      initial={{ opacity: 0, x: -20 }}
-                      animate={{ opacity: 1, x: 0 }}
-                      transition={{ delay: index * 0.05 }}
-                    >
-                      <Link
-                        to={link.to}
-                        onClick={() => handleNavClick(link.to)}
-                        className={`block px-4 py-4 rounded-lg transition-all outline-none focus:ring-2 focus:ring-blue-500 ${
-                          activeLink === link.to
-                            ? theme === 'dark'
-                              ? 'bg-[#C00000]/30 border border-[#C00000]/50 text-[#FF1A1A]'
-                              : 'bg-[#C00000]/20 border border-[#C00000]/50 text-[#C00000]'
-                            : theme === 'dark'
-                            ? 'text-gray-300 hover:bg-gray-700/30 hover:text-white'
-                            : 'text-gray-700 hover:bg-gray-100/30 hover:text-gray-900'
-                        }`}
-                        aria-current={activeLink === link.to ? 'page' : undefined}
+                  {navLinks.map((link, index) => {
+                    const isExternal = link.to.startsWith('tel:');
+                    const commonClasses = `block px-4 py-4 rounded-lg transition-all outline-none focus:ring-2 focus:ring-blue-500 ${
+                      activeLink === link.to
+                        ? theme === 'dark'
+                          ? 'bg-[#C00000]/30 border border-[#C00000]/50 text-[#FF1A1A]'
+                          : 'bg-[#C00000]/20 border border-[#C00000]/50 text-[#C00000]'
+                        : theme === 'dark'
+                        ? 'text-gray-300 hover:bg-gray-700/30 hover:text-white'
+                        : 'text-gray-700 hover:bg-gray-100/30 hover:text-gray-900'
+                    }`;
+
+                    return (
+                      <m.div
+                        key={link.to}
+                        initial={{ opacity: 0, x: -20 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        transition={{ delay: index * 0.05 }}
                       >
-                        {link.label}
-                      </Link>
-                    </m.div>
-                  ))}
+                        {isExternal ? (
+                          <a
+                            href={link.to}
+                            onClick={() => handleNavClick(link.to)}
+                            className={commonClasses}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                          >
+                            {link.label}
+                          </a>
+                        ) : (
+                          <Link
+                            to={link.to}
+                            onClick={() => handleNavClick(link.to)}
+                            className={commonClasses}
+                            aria-current={activeLink === link.to ? 'page' : undefined}
+                          >
+                            {link.label}
+                          </Link>
+                        )}
+                      </m.div>
+                    );
+                  })}
 
                   {/* Mobile CTA Button */}
+                  <a href="tel:+8801760401605">
                   <m.button
                     initial={{ opacity: 0, y: 10 }}
                     animate={{ opacity: 1, y: 0 }}
@@ -421,8 +458,9 @@ export const GlassmorphismNavbar = () => {
                         : 'bg-gradient-to-r from-[#C00000] to-[#8B0000] hover:from-[#8B0000] hover:to-[#600000] text-white'
                     }`}
                   >
-                    {language === 'en' ? 'Book Test Drive' : 'টেস্ট ড্রাইভ বুক করুন'}
+                    {t('nav.contact')}
                   </m.button>
+                  </a>
                 </div>
               </m.div>
             )}

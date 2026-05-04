@@ -675,6 +675,22 @@ export const InventoryPage = () => {
     setShowBookingModal(true);
   };
 
+    // Debug: Log when booking modal opens
+    useEffect(() => {
+      if (showBookingModal) {
+        // eslint-disable-next-line no-console
+        console.log('[DEBUG] Booking Modal Opened', { showBookingModal, selectedVehicle });
+      }
+    }, [showBookingModal, selectedVehicle]);
+
+    // Debug: Log when booking modal opens
+    useEffect(() => {
+      if (showBookingModal) {
+        // eslint-disable-next-line no-console
+        console.log('[DEBUG] Booking Modal Opened', { showBookingModal, selectedVehicle });
+      }
+    }, [showBookingModal, selectedVehicle]);
+
   const closeBookingModal = () => {
     setShowBookingModal(false);
     setIsSubmittingBooking(false);
@@ -794,6 +810,7 @@ export const InventoryPage = () => {
   const [openVehicleId, setOpenVehicleId] = useState<string | null>(null);
   const [showDrawer, setShowDrawer] = useState(false);
 
+
   // Fetch vehicles
   useEffect(() => {
     setLoading(true);
@@ -803,6 +820,14 @@ export const InventoryPage = () => {
       setLoading(false);
     }, 500);
   }, []);
+
+  // Debug: Log when booking modal opens
+  useEffect(() => {
+    if (showBookingModal) {
+      // eslint-disable-next-line no-console
+      console.log('[DEBUG] Booking Modal Opened', { showBookingModal, selectedVehicle });
+    }
+  }, [showBookingModal, selectedVehicle]);
 
   // If the URL contains ?open=<id>, open the drawer and scroll the item into view
   useEffect(() => {
@@ -1074,7 +1099,7 @@ const EMICalculator: React.FC<{ principal: number }> = ({ principal }) => {
     <div className={`min-h-screen ${isDark ? 'bg-transparent' : 'bg-gray-50'} pt-20`}>
       {/* Booking Modal */}
       <AnimatePresence>
-        {showBookingModal && selectedVehicle && (
+        {showBookingModal && (
           <>
             <motion.div
               initial={{ opacity: 0 }}
@@ -1090,6 +1115,7 @@ const EMICalculator: React.FC<{ principal: number }> = ({ principal }) => {
               transition={{ duration: 0.2 }}
               className={`fixed inset-0 z-[61] m-auto flex w-[calc(100vw-1rem)] max-w-xl max-h-[calc(100dvh-1rem)] flex-col overflow-hidden rounded-2xl shadow-2xl sm:w-[92vw] sm:max-h-[92vh] ${isDark ? 'bg-gray-900 border border-gray-700' : 'bg-white border border-gray-200'}`}
             >
+
               <div className={`flex items-center justify-between px-6 py-4 border-b ${isDark ? 'border-gray-700' : 'border-gray-200'}`}>
                 <h3 className={`text-xl font-bold ${isDark ? 'text-white' : 'text-gray-900'}`}>Pre-Order / Booking</h3>
                 <button
@@ -1136,6 +1162,9 @@ const EMICalculator: React.FC<{ principal: number }> = ({ principal }) => {
                     disabled
                     className={`w-full px-3 py-1 rounded-lg border text-sm leading-tight bg-gray-100 text-gray-500`}
                   />
+                  {selectedVehicle == null && (
+                    <div className="text-xs text-red-500">[DEBUG] No vehicle selected. Please try again.</div>
+                  )}
                 </div>
                 <div className="space-y-0">
                   <label className={`block text-xs font-semibold leading-tight ${isDark ? 'text-gray-200' : 'text-gray-700'}`}>Package</label>
@@ -1203,7 +1232,10 @@ const EMICalculator: React.FC<{ principal: number }> = ({ principal }) => {
                   Cancel
                 </button>
                 <button
-                  onClick={confirmAndInitiateBooking}
+                  onClick={() => {
+                    console.log('[DEBUG] Confirm & Pay clicked', { bookingForm, selectedVehicle });
+                    confirmAndInitiateBooking();
+                  }}
                   disabled={isSubmittingBooking}
                   className="w-full sm:w-auto px-5 py-2 rounded-lg bg-gradient-to-r from-blue-600 to-purple-600 text-white font-semibold disabled:opacity-70 inline-flex items-center justify-center gap-2"
                 >
@@ -1643,9 +1675,9 @@ const EMICalculator: React.FC<{ principal: number }> = ({ principal }) => {
                               <Button className="w-full mb-2" onClick={() => openBookingModal(vehicle)}>
                                 {`Reserve Now (৳${formatPrice(50000, language)})`}
                               </Button>
-                              <Button className="w-full" asChild>
-                                <Link to={`/vehicle/${vehicle.id}`}>{t('vehicle.view_details')}</Link>
-                              </Button>
+                              <Link to={`/vehicle/${vehicle.id}`} className="w-full block">
+                                <Button className="w-full">{t('vehicle.view_details')}</Button>
+                              </Link>
                             </div>
                           </Link>
                         </Card>
