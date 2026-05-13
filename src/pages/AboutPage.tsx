@@ -598,7 +598,7 @@ export const AboutPage = () => {
                   </div>
                   {/* Right image name caption */}
                   <div className="absolute -bottom-12 right-4 bg-white/90 text-gray-900 px-3 py-1 rounded-md shadow-sm">
-                    <span className="font-semibold">{language === 'en' ? 'Suraiya Parvin Tony' : 'সুরাইয়া পারভীন টনি'}</span>
+                    <span className="font-semibold">{language === 'en' ? 'Suriya Parvin Tony' : 'সুরাইয়া পারভীন টনি'}</span>
                   </div>
                 </div>
               </div>
