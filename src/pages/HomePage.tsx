@@ -2,10 +2,10 @@ import { ResponsiveCarImage } from '../components/ResponsiveCarImage';
 import { useEffect, useState, useRef, lazy, Suspense } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Link } from 'react-router-dom';
+import { motion, useScroll, useTransform } from 'framer-motion';
 import { ArrowRight, Car, Wrench, Shield, Users, Award, ChevronDown, Zap, Fuel } from 'lucide-react';
 import { useLanguage } from '../contexts/LanguageContext';
 import { useTheme } from '../contexts/ThemeContext';
-// (useCounter and useAnimationOnScroll were used by removed helpers; not required here)
 import { useDeviceCapability } from '../hooks/useDeviceCapability';
 import { Button } from '../components/ui/Button';
 import PageHead from '../components/PageHead';
@@ -13,11 +13,11 @@ import { Card } from '../components/ui/Card';
 import { ImageCarousel } from '../components/ImageCarousel';
 import type { Vehicle, Testimonial } from '../types';
 import { formatPrice } from '../utils/format';
-
 import { carSlides } from '../data/carSlides';
 import type { CarFocusCarouselHandle } from '../components/CarFocusCarouselLite';
 import type { VehicleColor } from '../components/InteractiveColorCustomizer';
 import { FilterAnimations } from '../components/FilterAnimations';
+import { ScrollReveal, StaggerContainer, staggerItemVariants, CountUp, MagneticButton, GlowPulse } from '../components/motion';
 
 // CarFocusCarousel should mount immediately for autoplay and visibility — import directly
 // CarFocusCarousel is heavy-ish and not required for first paint — dynamically import after initial paint
@@ -31,7 +31,6 @@ const AnimatedComparisonSlider = lazy(() => import('../components/AnimatedCompar
 const EnhancedFlipCard = lazy(() => import('../components/EnhancedFlipCard').then(m => ({ default: m.EnhancedFlipCard })));
 const InteractiveColorCustomizer = lazy(() => import('../components/InteractiveColorCustomizer').then(m => ({ default: m.InteractiveColorCustomizer })));
 const ComparisonSidebar = lazy(() => import('../components/ComparisonSidebar').then(m => ({ default: m.ComparisonSidebar })));
-const ScrollTriggerCounter = lazy(() => import('../components/ScrollTriggerCounter').then(m => ({ default: m.ScrollTriggerCounter })));
 import { LazySection } from '../components/LazySection';
 import { PerformanceGauge } from '../components/PerformanceGauge';
 const MotionVehicleFlipCard = lazy(() => import('../components/VehicleFlipCardMotion').then(m => ({ default: m.default })));
@@ -39,17 +38,76 @@ const MotionVehicleFlipCard = lazy(() => import('../components/VehicleFlipCardMo
 // ─── Only CarShowcase3D stays lazy (pulls in three.js ≈ 1 MB) ─────
 const CarShowcase3D = lazy(() => import('../components/3d/CarShowcase3D'));
 
-// 3D Showcase loading fallback
-const CarShowcase3DFallback = () => (
-  <div className="w-full h-dvh hero-fallback flex items-center justify-center">
-    <div className="flex flex-col items-center gap-4">
-      <div className="spinner-red" />
-      <p className="text-white/60 text-sm tracking-widest uppercase">Loading 3D Experience</p>
-    </div>
-  </div>
-);
+// ─── Video Hero (primary) ─────────────────────────────────────────
+const VideoHero = ({ children }: { children: React.ReactNode }) => {
+  const videoRef = useRef<HTMLVideoElement>(null);
 
-// ─── Lightweight Hero Fallback for low-end devices ────────────────
+  // Ensure video is always playing — covers tab switch, back/forward,
+  // mobile background/foreground, orientation change, and SPA navigation.
+  useEffect(() => {
+    const v = videoRef.current;
+    if (!v) return;
+
+    const resume = () => {
+      if (v.paused && !document.hidden) {
+        v.play().catch(() => {});
+      }
+    };
+
+    // Immediately try to play on mount
+    resume();
+
+    const onVisibility = () => { if (!document.hidden) resume(); };
+    const onFocus = () => resume();
+    const onPageShow = () => resume();          // bfcache restore
+    const onPopState = () => setTimeout(resume, 50); // SPA back/forward
+
+    document.addEventListener('visibilitychange', onVisibility);
+    window.addEventListener('focus', onFocus);
+    window.addEventListener('pageshow', onPageShow);
+    window.addEventListener('popstate', onPopState);
+
+    // Belt-and-suspenders: keep-alive check every 3 s
+    const keepAlive = window.setInterval(resume, 3000);
+
+    return () => {
+      document.removeEventListener('visibilitychange', onVisibility);
+      window.removeEventListener('focus', onFocus);
+      window.removeEventListener('pageshow', onPageShow);
+      window.removeEventListener('popstate', onPopState);
+      window.clearInterval(keepAlive);
+    };
+  }, []);
+
+  return (
+    <div className="relative w-full h-full overflow-hidden">
+      {/* Subtle Ken Burns drift — very slow zoom + pan for a living feel */}
+      <div className="absolute inset-[-2%] animate-hero-drift will-change-transform">
+        <video
+          ref={videoRef}
+          autoPlay
+          muted
+          loop
+          playsInline
+          preload="auto"
+          disablePictureInPicture
+          disableRemotePlayback
+          className="absolute inset-0 w-full h-full object-cover"
+          poster="https://images.pexels.com/photos/36318402/pexels-photo-36318402.png?auto=compress&cs=tinysrgb&w=800&fm=webp"
+        >
+          <source src="/hero/Toyota_vehicles_promotional_vide…_1080p_20260915160332.webm" type="video/webm" />
+          <source src="/hero/Toyota_vehicles_promotional_vide…_1080p_20260915160332.mp4" type="video/mp4" />
+        </video>
+      </div>
+      <div className="absolute inset-0 bg-gradient-to-b from-black/50 via-black/10 to-black/60" aria-hidden="true" />
+      <div className="relative z-10 flex items-center justify-center w-full h-full">
+        {children}
+      </div>
+    </div>
+  );
+};
+
+// ─── Lightweight Hero Fallback for very low-end devices ───────────
 const LightweightHero = ({
   language,
   t,
@@ -58,9 +116,7 @@ const LightweightHero = ({
   t: (key: string) => string;
 }) => (
   <div className="relative h-dvh flex items-center justify-center overflow-hidden hero-lite-bg">
-    {/* Static gradient overlay */}
     <div className="absolute inset-0 hero-lite-overlay" aria-hidden="true" />
-    {/* Static car image */}
     <img
       src="https://images.pexels.com/photos/36318402/pexels-photo-36318402.png?auto=compress&cs=tinysrgb&w=800&fm=webp"
       alt="Premium car showcase"
@@ -241,39 +297,7 @@ const CAROUSEL_IMAGES: Record<string, { url: string; alt: string }[]> = {
   noah: [{ url: 'https://images.pexels.com/photos/35516440/pexels-photo-35516440.png?auto=compress&cs=tinysrgb&w=400&fm=webp', alt: 'Noah Front' }],
 };
 
-// ─── Fade-in wrapper — zero-dependency implementation using IntersectionObserver
-// Replaces dynamic framer-motion import to avoid runtime errors and keep initial bundle small.
-const FadeIn = ({ children, delay = 0, animate, className = '' }: { children: React.ReactNode; delay?: number; animate: boolean; className?: string }) => {
-  const ref = useRef<HTMLDivElement | null>(null);
-  const [inView, setInView] = useState<boolean>(!animate);
-
-  useEffect(() => {
-    if (!animate) { setInView(true); return; }
-    const el = ref.current;
-    if (!el) return;
-    const obs = new IntersectionObserver((entries) => {
-      entries.forEach(entry => {
-        if (entry.isIntersecting) {
-          // small delay support (seconds)
-          const timeout = setTimeout(() => setInView(true), Math.max(0, Math.floor(delay * 1000)));
-          obs.disconnect();
-          return () => clearTimeout(timeout);
-        }
-      });
-    }, { threshold: 0.12 });
-    obs.observe(el);
-    return () => obs.disconnect();
-  }, [animate, delay]);
-
-  return (
-    <div
-      ref={ref}
-      className={`${className} transform transition-all duration-500 ease-out ${inView ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6'}`}
-    >
-      {children}
-    </div>
-  );
-};
+// ─── ScrollReveal replaces old FadeIn — uses Framer Motion whileInView ──
 
 // ══════════════════════════════════════════════════════════════════
 // MAIN COMPONENT
@@ -300,6 +324,12 @@ export const HomePage = () => {
   const showcaseVehicles = SHOWCASE_VEHICLES(language);
   const navigate = useNavigate();
   const [CarFocusCarouselComp, setCarFocusCarouselComp] = useState<React.ComponentType<any> | null>(null);
+
+  // ── Scroll-linked hero effects ──
+  const { scrollY } = useScroll();
+  const heroOpacity = useTransform(scrollY, [0, 400], [1, 0]);
+  const heroScale = useTransform(scrollY, [0, 400], [1, 1.1]);
+  const heroBlur = useTransform(scrollY, [0, 400], [0, 8]);
 
   const pageTitle = language === 'en' ? 'Autospark — Premium Cars in Rajshahi' : 'রাজশাহী প্রিমিয়াম গাড়ি — অটোস্পার্ক';
   const pageDescription = language === 'en'
@@ -500,40 +530,63 @@ export const HomePage = () => {
 
         {/* ══ HERO ══════════════════════════════════════════════════ */}
         <section className="relative h-dvh overflow-hidden">
-          {device.supports3D ? (
-            <Suspense fallback={<CarShowcase3DFallback />}>
-              <CarShowcase3D
-                ctaButtons={
+          {/* Scroll-linked parallax background */}
+          <motion.div
+            className="absolute inset-0"
+            style={{ opacity: heroOpacity, scale: heroScale, filter: `blur(${heroBlur.get()}px)` }}
+          >
+            {device.supports3D ? (
+              <VideoHero>
+                <div className="flex flex-col items-center gap-6 text-center px-4">
                   <div className="flex flex-row flex-wrap gap-2 sm:gap-3 justify-center">
-                    <Link to="/inventory">
-                      <Button size="sm" className="text-xs sm:text-sm md:text-base md:px-6 md:py-3">
+                    <MagneticButton className="inline-flex items-center gap-2 px-5 py-2.5 bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 text-white font-semibold rounded-xl text-xs sm:text-sm md:text-base shadow-glow-red transition-all">
+                      <Link to="/inventory" className="flex items-center gap-2">
                         {t('hero.browse')}<ArrowRight className="ml-1.5 h-3.5 w-3.5 md:h-5 md:w-5" />
-                      </Button>
-                    </Link>
-                    <Link to="/services">
-                      <Button size="sm" variant="outline" className="text-xs sm:text-sm md:text-base md:px-6 md:py-3 bg-white/10 backdrop-blur-sm border-white text-white hover:bg-white">
+                      </Link>
+                    </MagneticButton>
+                    <MagneticButton className="inline-flex items-center px-5 py-2.5 bg-white/10 backdrop-blur-sm border border-white/20 text-white hover:bg-white/20 font-semibold rounded-xl text-xs sm:text-sm md:text-base transition-all">
+                      <Link to="/services" className="flex items-center">
                         {t('hero.book_service')}
-                      </Button>
-                    </Link>
-                    <Link to="/sell">
-                      <Button size="sm" variant="secondary" className="text-xs sm:text-sm md:text-base md:px-6 md:py-3">
+                      </Link>
+                    </MagneticButton>
+                    <MagneticButton className="inline-flex items-center px-5 py-2.5 bg-white/5 border border-white/10 text-white hover:bg-white/10 font-semibold rounded-xl text-xs sm:text-sm md:text-base transition-all">
+                      <Link to="/sell" className="flex items-center">
                         {t('hero.sell')}
-                      </Button>
-                    </Link>
+                      </Link>
+                    </MagneticButton>
                   </div>
-                }
-              />
-            </Suspense>
-          ) : (
-            <LightweightHero language={language} t={t} />
+                </div>
+              </VideoHero>
+            ) : (
+              <LightweightHero language={language} t={t} />
+            )}
+          </motion.div>
+
+          {/* Ambient glow orbs */}
+          {device.supportsRichAnimations && (
+            <>
+              <GlowPulse className="top-1/4 left-1/4" color="rgba(192, 0, 0, 0.15)" size={300} speed={4} />
+              <GlowPulse className="bottom-1/4 right-1/4" color="rgba(192, 0, 0, 0.1)" size={250} speed={5} />
+            </>
           )}
-          <button
+
+          {/* Noise overlay */}
+          <div className="absolute inset-0 noise-overlay pointer-events-none z-[5]" />
+
+          {/* Vignette */}
+          <div className="absolute inset-0 vignette pointer-events-none z-[6]" />
+
+          {/* Scroll indicator */}
+          <motion.button
             onClick={scrollToContent}
             aria-label="Scroll to content"
-            className="absolute bottom-2 left-1/2 -translate-x-1/2 text-white/40 z-10 hidden md:block"
+            className="absolute bottom-6 left-1/2 -translate-x-1/2 text-white/40 z-10 hidden md:flex flex-col items-center gap-1"
+            animate={{ y: [0, 8, 0] }}
+            transition={{ duration: 2, repeat: Infinity, ease: 'easeInOut' }}
           >
-            <ChevronDown className="h-6 w-6" />
-          </button>
+            <span className="text-[10px] tracking-[0.2em] uppercase">Scroll</span>
+            <ChevronDown className="h-5 w-5" />
+          </motion.button>
         </section>
 
         {/* ══ PREMIUM CAR FOCUS CAROUSEL (always-mounted for immediate autoplay) ════════════════════════════ */}
@@ -557,8 +610,8 @@ export const HomePage = () => {
         {/* ══ PREMIUM COLLECTION GRID ═══════════════════════════════ */}
         <section className={`section-padding ${theme === 'dark' ? 'bg-gray-900/80' : 'bg-gray-50'}`}>
           <div className="container-fluid">
-            <FadeIn animate={animate} className="text-center mb-6">
-              <span className={`text-sm font-semibold uppercase tracking-wider ${theme === 'dark' ? 'text-blue-400' : 'text-blue-600'}`}>
+            <ScrollReveal className="text-center mb-6">
+              <span className={`text-sm font-semibold uppercase tracking-wider ${theme === 'dark' ? 'text-red-400' : 'text-red-600'}`}>
                 {language === 'en' ? 'Browse Our Collection' : 'আমাদের সংগ্রহ দেখুন'}
               </span>
               <h2 className={`heading-responsive font-bold mt-2 mb-4 ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
@@ -567,24 +620,24 @@ export const HomePage = () => {
               <p className={`text-lg max-w-2xl mx-auto ${theme === 'dark' ? 'text-gray-400' : 'text-gray-600'}`}>
                 {language === 'en' ? 'Click any vehicle to view in the showcase carousel above' : 'উপরের শোকেস ক্যারোসেলে দেখতে যেকোনো গাড়িতে ক্লিক করুন'}
               </p>
-            </FadeIn>
+            </ScrollReveal>
 
-            <div className="grid-auto-cards">
-              {carSlides.map((car, index) => (
-                <FadeIn key={car.id} animate={animate} delay={index * 0.04}>
+            <StaggerContainer className="grid-auto-cards" stagger={0.04}>
+              {carSlides.map((car) => (
+                <motion.div key={car.id} variants={staggerItemVariants}>
                   <div
                     onClick={() => handleCarSelect(car.id)}
                     role="button"
                     tabIndex={0}
                     onKeyDown={e => e.key === 'Enter' && handleCarSelect(car.id)}
-                    className={`car-card group cursor-pointer relative overflow-hidden rounded-2xl transition-all duration-300 shadow-lg hover:shadow-xl ${
+                    className={`car-card group cursor-pointer relative overflow-hidden rounded-2xl transition-all duration-300 shadow-lg hover:shadow-xl hover:-translate-y-1 ${
                       theme === 'dark'
-                        ? 'bg-gray-800 border border-gray-700 hover:border-blue-500/50'
-                        : 'bg-white border border-gray-200 hover:border-blue-400'
-                    } ${selectedCarId === car.id ? 'ring-2 ring-blue-500 ring-offset-2 ring-offset-transparent' : ''}`}
+                        ? 'bg-gray-800 border border-gray-700 hover:border-red-500/50'
+                        : 'bg-white border border-gray-200 hover:border-red-400'
+                    } ${selectedCarId === car.id ? 'ring-2 ring-red-500 ring-offset-2 ring-offset-transparent glow-red-sm' : ''}`}
                   >
                     {selectedCarId === car.id && (
-                      <div className="absolute top-2 right-2 z-10 w-3 h-3 bg-blue-500 rounded-full animate-pulse" />
+                      <div className="absolute top-2 right-2 z-10 w-3 h-3 bg-red-500 rounded-full animate-pulse" />
                     )}
                     <div className="relative car-card-img overflow-hidden bg-[#0b0b0b]">
                       <ResponsiveCarImage
@@ -598,16 +651,16 @@ export const HomePage = () => {
                       <p className={`text-xs font-bold ${theme === 'dark' ? 'text-green-400' : 'text-green-600'}`}>{car.price}</p>
                     </div>
                     <div className={`overlay-hover absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 ${
-                      theme === 'dark' ? 'bg-blue-500/20' : 'bg-blue-500/10'
+                      theme === 'dark' ? 'bg-red-500/20' : 'bg-red-500/10'
                     }`}>
                       <span className={`px-4 py-2 rounded-full text-sm font-semibold ${theme === 'dark' ? 'bg-white text-gray-900' : 'bg-gray-900 text-white'}`}>
                         {language === 'en' ? 'View in Inventory' : 'ইনভেন্টরিতে দেখুন'}
                       </span>
                     </div>
                   </div>
-                </FadeIn>
+                </motion.div>
               ))}
-            </div>
+            </StaggerContainer>
           </div>
         </section>
 
@@ -617,14 +670,14 @@ export const HomePage = () => {
             {/* Background animations removed from homepage (dark-mode friendly) */}
 
             <div className="container-fluid relative z-10">
-              <FadeIn animate={animate} className="text-center mb-6">
-                <span className="text-sm font-semibold uppercase tracking-wider text-blue-400">
+              <ScrollReveal className="text-center mb-6">
+                <span className="text-sm font-semibold uppercase tracking-wider text-red-400">
                   {language === 'en' ? 'Interactive Showcase' : 'ইন্টারঅ্যাক্টিভ প্রদর্শনী'}
                 </span>
                 <h2 className="heading-responsive font-bold mt-2 mb-4 text-white drop-shadow-lg">
                   {language === 'en' ? 'Featured Vehicles' : 'বৈশিষ্ট্যযুক্ত গাড়ি'}
                 </h2>
-              </FadeIn>
+              </ScrollReveal>
 
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 justify-items-center">
                 {carSlides.slice(0, 3).map(car => (
@@ -661,7 +714,7 @@ export const HomePage = () => {
                             ))}
                           </div>
                           <button
-                            className="w-full mt-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg font-semibold transition-colors touch-target"
+                            className="w-full mt-4 py-2 bg-red-500 hover:bg-red-600 text-white rounded-lg font-semibold transition-colors touch-target"
                             onClick={() => handleAddToComparison(car as unknown as Vehicle)}
                           >
                             {language === 'en' ? 'Add to Comparison' : 'তুলনায় যুক্ত করুন'}
@@ -685,26 +738,27 @@ export const HomePage = () => {
         {featuredVehicles.length > 0 && (
           <section className={`section-padding ${theme === 'dark' ? 'bg-gray-900/80' : 'bg-gray-50'}`}>
             <div className="container-fluid">
-              <FadeIn animate={animate} className="text-center mb-8">
+              <ScrollReveal className="text-center mb-8">
                 <h2 className={`heading-responsive font-bold mb-4 ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
                   {language === 'en' ? 'Featured Vehicles' : 'বৈশিষ্ট্যযুক্ত গাড়ি'}
                 </h2>
-              </FadeIn>
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                {featuredVehicles.map((vehicle, index) => (
-                  <FadeIn key={vehicle.id} animate={animate} delay={index * 0.1}>
+              </ScrollReveal>
+              <StaggerContainer className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8" stagger={0.1}>
+                {featuredVehicles.map((vehicle) => (
+                  <motion.div key={vehicle.id} variants={staggerItemVariants}>
                     <Link to={`/vehicle/${vehicle.id}`}>
-                      <Card className={`overflow-hidden cursor-pointer transition-all ${theme === 'dark' ? 'hover:shadow-lg' : 'hover:shadow-xl'}`}>
+                      <Card className={`group overflow-hidden cursor-pointer transition-all duration-300 hover:-translate-y-1 hover:shadow-lift ${theme === 'dark' ? 'glass' : 'hover:shadow-xl'}`}>
                         <div className="relative h-64 overflow-hidden">
                           <img
                             src={encodeURI(vehicle.images?.[0]?.image_url || 'https://images.pexels.com/photos/3964962/pexels-photo-3964962.jpeg?auto=compress&cs=tinysrgb&w=400&fm=webp')}
                             alt={vehicle.model}
-                            className="w-full h-full object-contain car-img-hover transition-transform duration-300 hover:scale-110"
+                            className="w-full h-full object-contain car-img-hover transition-transform duration-500 group-hover:scale-110"
                             loading="lazy"
                             decoding="async"
                             width={400}
                             height={256}
                           />
+                          <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                         </div>
                         <div className="p-6">
                           <h3 className={`text-xl font-bold mb-2 ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
@@ -712,14 +766,14 @@ export const HomePage = () => {
                           </h3>
                           <div className={`flex items-center justify-between mb-4 ${theme === 'dark' ? 'text-gray-300' : 'text-gray-600'}`}>
                             <span>{vehicle.year}</span>
-                            <span>{formatPrice(vehicle.price)}</span>
+                            <span className="text-green-500 font-bold">{formatPrice(vehicle.price)}</span>
                           </div>
                         </div>
                       </Card>
                     </Link>
-                  </FadeIn>
+                  </motion.div>
                 ))}
-              </div>
+              </StaggerContainer>
             </div>
           </section>
         )}
@@ -729,11 +783,11 @@ export const HomePage = () => {
           theme === 'dark' ? 'bg-gradient-to-br from-gray-900 to-gray-800' : 'bg-gradient-to-br from-white to-gray-50'
         }`}>
           <div className="container-fluid">
-            <FadeIn animate={animate} className="text-center mb-6">
+            <ScrollReveal className="text-center mb-6">
               <h2 className={`text-2xl sm:text-3xl font-bold mb-3 ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
                 {language === 'en' ? 'Find Your Perfect Vehicle' : 'আপনার নিখুঁত গাড়ি খুঁজুন'}
               </h2>
-            </FadeIn>
+            </ScrollReveal>
             <FilterAnimations
               filters={[
                 {
@@ -782,21 +836,21 @@ export const HomePage = () => {
             {/* Background animations removed from homepage (particles/parallax disabled) */}
 
             <div className="container-fluid relative z-10">
-              <FadeIn animate={animate} className="text-center mb-8">
+              <ScrollReveal className="text-center mb-8">
                 <h2 className={`heading-responsive font-bold mb-4 ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
                   {language === 'en' ? 'Explore Our Premium Collection' : 'আমাদের প্রিমিয়াম সংগ্রহ অন্বেষণ করুন'}
                 </h2>
-              </FadeIn>
+              </ScrollReveal>
 
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
                 {/* Left: carousel */}
-                <FadeIn animate={animate}>
+                <ScrollReveal>
                   <div className="relative w-full max-w-md mx-auto">
                     <div className={`absolute inset-0 bg-gradient-to-br ${
-                      theme === 'dark' ? 'from-blue-900/20 to-purple-900/20' : 'from-blue-200/30 to-purple-200/30'
+                      theme === 'dark' ? 'from-red-900/20 to-purple-900/20' : 'from-red-200/30 to-purple-200/30'
                     } rounded-3xl blur-2xl`} />
                     <div className={`relative rounded-3xl overflow-hidden shadow-2xl border-4 ${
-                      theme === 'dark' ? 'border-blue-500/30' : 'border-blue-300/50'
+                      theme === 'dark' ? 'border-red-500/30' : 'border-red-300/50'
                     }`}>
                       <ImageCarousel
                         images={CAROUSEL_IMAGES[showcaseVehicle] || CAROUSEL_IMAGES.prado}
@@ -816,7 +870,7 @@ export const HomePage = () => {
                           onClick={() => handleVehicleSelect(id)}
                           className={`px-3 py-1.5 rounded-full font-semibold transition-all text-xs sm:text-sm ${
                             showcaseVehicle === id
-                              ? 'bg-blue-600 text-white shadow-lg'
+                              ? 'bg-red-600 text-white shadow-lg'
                               : theme === 'dark' ? 'bg-gray-700 text-gray-300 hover:bg-gray-600' : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
                           }`}
                         >
@@ -825,7 +879,7 @@ export const HomePage = () => {
                       ))}
                     </div>
                   </div>
-                </FadeIn>
+                </ScrollReveal>
 
                 {/* Right: flip cards */}
                 <div className="space-y-3">
@@ -860,14 +914,14 @@ export const HomePage = () => {
                 </div>
               </div>
 
-              <FadeIn animate={animate} className="text-center mt-12">
+              <ScrollReveal className="text-center mt-12">
                 <Link to="/inventory">
-                  <Button size="lg" className="bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800">
+                  <Button size="lg" className="bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 shadow-glow-red">
                     {language === 'en' ? 'View All Vehicles' : 'সমস্ত গাড়ি দেখুন'}
                     <ArrowRight className="ml-2 h-5 w-5" />
                   </Button>
                 </Link>
-              </FadeIn>
+              </ScrollReveal>
             </div>
           </section>
         </LazySection>
@@ -876,11 +930,11 @@ export const HomePage = () => {
         <LazySection minHeight="400px" rootMargin="200px">
           <section className={`section-padding ${theme === 'dark' ? 'bg-gradient-to-br from-gray-900 to-gray-800' : 'bg-gradient-to-br from-white to-gray-50'}`}>
             <div className="container-fluid">
-              <FadeIn animate={animate} className="text-center mb-8">
+              <ScrollReveal className="text-center mb-8">
                 <h2 className={`heading-responsive font-bold mb-4 ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
                   {language === 'en' ? 'Personalize Your Vehicle' : 'আপনার গাড়ি ব্যক্তিগতকৃত করুন'}
                 </h2>
-              </FadeIn>
+              </ScrollReveal>
 
               <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
                 {(['prado','harrier','crown'] as const).map((model, i) => {
@@ -890,7 +944,7 @@ export const HomePage = () => {
                     crown: `${import.meta.env.BASE_URL}customize-cars/crown/pearl.webp`,
                   };
                   return (
-                    <FadeIn key={model} animate={animate} delay={i * 0.1}>
+                    <ScrollReveal key={model} delay={i * 0.1}>
                       <InteractiveColorCustomizer
                         vehicleImage={imgs[model]}
                         vehicleModel={model}
@@ -903,7 +957,7 @@ export const HomePage = () => {
                           import('../utils/AudioManager').then(m => m.AudioManager.playClick());
                         }}
                       />
-                    </FadeIn>
+                    </ScrollReveal>
                   );
                 })}
               </div>
@@ -926,11 +980,11 @@ export const HomePage = () => {
           <LazySection minHeight="400px" rootMargin="200px">
             <section className={`section-padding ${theme === 'dark' ? 'bg-gradient-to-br from-gray-800 to-gray-900' : 'bg-gradient-to-br from-gray-50 to-white'}`}>
               <div className="container-fluid">
-                <FadeIn animate={animate} className="text-center mb-8">
+                <ScrollReveal className="text-center mb-8">
                   <h2 className={`heading-responsive font-bold mb-4 ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
                     {language === 'en' ? 'Morphing Showcase' : 'আকৃতি-পরিবর্তনকারী শোকেস'}
                   </h2>
-                </FadeIn>
+                </ScrollReveal>
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
                   <MorphingShapeTransition
                     images={[
@@ -963,16 +1017,31 @@ export const HomePage = () => {
         {/* ══ COUNTERS ══════════════════════════════════════════════ */}
         <section className={`section-padding ${theme === 'dark' ? 'bg-gradient-to-br from-gray-900 to-gray-800' : 'bg-gradient-to-br from-white to-gray-50'}`}>
           <div className="container-fluid">
-            <FadeIn animate={animate} className="text-center mb-8">
+            <ScrollReveal className="text-center mb-8">
               <h2 className={`heading-responsive font-bold mb-4 ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
                 {language === 'en' ? 'Why Choose Us' : 'কেন আমাদের বেছে নিন'}
               </h2>
-            </FadeIn>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-              <ScrollTriggerCounter targetValue={450} label={language === 'en' ? 'Premium Vehicles in Stock' : 'স্টকে প্রিমিয়াম গাড়ি'} suffix="+" icon={Car} theme={theme} duration={animate ? 2.5 : 0} />
-              <ScrollTriggerCounter targetValue={8500} label={language === 'en' ? 'Happy Customers Served' : 'খুশি গ্রাহক সেবা'} suffix="+" icon={Users} theme={theme} duration={animate ? 2.5 : 0} />
-              <ScrollTriggerCounter targetValue={25} label={language === 'en' ? 'Years of Excellence' : 'উৎকর্ষতার বছর'} suffix="+" icon={Award} theme={theme} duration={animate ? 2.5 : 0} />
-            </div>
+            </ScrollReveal>
+            <StaggerContainer className="grid grid-cols-1 md:grid-cols-3 gap-8" stagger={0.15}>
+              {[
+                { value: 450, label: language === 'en' ? 'Premium Vehicles in Stock' : 'স্টকে প্রিমিয়াম গাড়ি', suffix: '+', icon: Car },
+                { value: 8500, label: language === 'en' ? 'Happy Customers Served' : 'খুশি গ্রাহক সেবা', suffix: '+', icon: Users },
+                { value: 25, label: language === 'en' ? 'Years of Excellence' : 'উৎকর্ষতার বছর', suffix: '+', icon: Award },
+              ].map((stat, i) => (
+                <motion.div key={i} variants={staggerItemVariants}>
+                  <div className={`relative p-8 rounded-2xl text-center glass gradient-border overflow-hidden ${
+                    theme === 'dark' ? '' : 'bg-white/80'
+                  }`}>
+                    <GlowPulse className="top-0 left-1/2 -translate-x-1/2" color="rgba(192,0,0,0.08)" size={150} speed={4} />
+                    <stat.icon className={`h-12 w-12 mx-auto mb-4 relative z-10 ${theme === 'dark' ? 'text-red-400' : 'text-red-600'}`} />
+                    <div className={`text-4xl md:text-5xl font-black relative z-10 ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
+                      <CountUp target={stat.value} suffix={stat.suffix} duration={2.5} />
+                    </div>
+                    <p className={`mt-2 text-sm relative z-10 ${theme === 'dark' ? 'text-gray-400' : 'text-gray-600'}`}>{stat.label}</p>
+                  </div>
+                </motion.div>
+              ))}
+            </StaggerContainer>
           </div>
         </section>
 
@@ -980,11 +1049,11 @@ export const HomePage = () => {
         {device.supportsRichAnimations && (
           <section className={`section-padding ${theme === 'dark' ? 'bg-gradient-to-br from-gray-800 to-gray-900' : 'bg-gradient-to-br from-gray-50 to-white'}`}>
             <div className="container-fluid">
-              <FadeIn animate={animate} className="text-center mb-8">
+              <ScrollReveal className="text-center mb-8">
                 <h2 className={`heading-responsive font-bold mb-4 ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
                   {language === 'en' ? 'Standard vs Premium' : 'স্ট্যান্ডার্ড বনাম প্রিমিয়াম'}
                 </h2>
-              </FadeIn>
+              </ScrollReveal>
               <AnimatedComparisonSlider
                 standardImage="https://images.pexels.com/photos/35515996/pexels-photo-35515996.png?auto=compress&cs=tinysrgb&w=400&fm=webp"
                 premiumImage={`${import.meta.env.BASE_URL}customize-cars/harrier/pearl.webp`}
@@ -1007,11 +1076,11 @@ export const HomePage = () => {
         {/* ══ PERFORMANCE METRICS ═══════════════════════════════════ */}
         <section className={`section-padding ${theme === 'dark' ? 'bg-gradient-to-br from-gray-800 via-gray-900 to-black' : 'bg-gradient-to-br from-gray-50 via-white to-gray-50'}`}>
           <div className="container-fluid">
-            <FadeIn animate={animate} className="text-center mb-8">
+            <ScrollReveal className="text-center mb-8">
               <h2 className={`heading-responsive font-bold mb-4 ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
                 {language === 'en' ? 'Performance Overview' : 'পারফরম্যান্স ওভারভিউ'}
               </h2>
-            </FadeIn>
+            </ScrollReveal>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
               {[
                 { label: language === 'en' ? 'Horsepower' : 'হর্সপাওয়ার', values: { prado:282,harrier:246,crown:248,yaris:120,chr:144,premio:110,noah:144 }, icon: <Zap className="w-6 h-6" />, color: 'text-orange-500' },
@@ -1019,7 +1088,7 @@ export const HomePage = () => {
                 { label: language === 'en' ? 'Safety Rating' : 'সেফটি রেটিং', values: { prado:5,harrier:5,crown:5,yaris:4,chr:4,premio:4,noah:4 }, icon: <Shield className="w-6 h-6" />, color: 'text-blue-500', unit: '/5' },
                 { label: language === 'en' ? 'Value Rating' : 'মূল্য রেটিং', values: { prado:95,harrier:92,crown:90,yaris:88,chr:85,premio:90,noah:87 }, icon: <Award className="w-6 h-6" />, color: 'text-purple-500' },
               ].map((metric, index) => (
-                <FadeIn key={index} animate={animate} delay={index * 0.1}>
+                <ScrollReveal key={index} delay={index * 0.1}>
                   <PerformanceGauge
                     label={metric.label}
                     value={(metric.values as Record<string, number>)[showcaseVehicle] ?? 100}
@@ -1027,7 +1096,7 @@ export const HomePage = () => {
                     color={metric.color}
                     unit={metric.unit ?? ''}
                   />
-                </FadeIn>
+                </ScrollReveal>
               ))}
             </div>
           </div>
@@ -1036,26 +1105,29 @@ export const HomePage = () => {
         {/* ══ WHY CHOOSE US ═════════════════════════════════════════ */}
         <section className={`section-padding ${theme === 'dark' ? 'bg-gray-900/90' : 'bg-white'}`}>
           <div className="container-fluid">
-            <FadeIn animate={animate} className="text-center mb-8">
+            <ScrollReveal className="text-center mb-8">
               <h2 className={`heading-responsive font-bold mb-4 ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
                 {language === 'en' ? 'Why Choose Auto Spark BD?' : 'কেন অটো স্পার্ক বিডি?'}
               </h2>
-            </FadeIn>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            </ScrollReveal>
+            <StaggerContainer className="grid grid-cols-1 md:grid-cols-3 gap-8" stagger={0.12}>
               {[
                 { icon: Car, title: language === 'en' ? 'Premium Selection' : 'প্রিমিয়াম নির্বাচন', desc: language === 'en' ? 'Carefully curated luxury and premium vehicles' : 'সাবধানে নির্বাচিত বিলাসবহুল গাড়ির সংগ্রহ' },
                 { icon: Shield, title: language === 'en' ? 'Quality Assurance' : 'মান নিশ্চিতকরণ', desc: language === 'en' ? 'Thorough inspection and certification for every vehicle' : 'প্রতিটি গাড়ির জন্য পুঙ্খানুপুঙ্খ পরিদর্শন' },
                 { icon: Wrench, title: language === 'en' ? 'Expert Service' : 'বিশেষজ্ঞ সেবা', desc: language === 'en' ? 'State-of-the-art service center with experienced technicians' : 'অভিজ্ঞ প্রযুক্তিবিদদের সাথে অত্যাধুনিক সার্ভিস সেন্টার' },
               ].map((f, i) => (
-                <FadeIn key={i} animate={animate} delay={i * 0.1}>
-                  <Card className={`p-8 text-center ${theme === 'dark' ? 'hover:shadow-lg' : 'hover:shadow-xl'} transition-shadow`}>
-                    <f.icon className={`h-16 w-16 mx-auto mb-4 ${theme === 'dark' ? 'text-blue-400' : 'text-blue-600'}`} />
-                    <h3 className={`text-xl font-bold mb-3 ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>{f.title}</h3>
-                    <p className={theme === 'dark' ? 'text-gray-300' : 'text-gray-600'}>{f.desc}</p>
-                  </Card>
-                </FadeIn>
+                <motion.div key={i} variants={staggerItemVariants}>
+                  <div className={`group relative p-8 text-center rounded-2xl glass gradient-border overflow-hidden transition-all duration-300 hover:-translate-y-2 hover:shadow-lift ${
+                    theme === 'dark' ? '' : 'bg-white/80'
+                  }`}>
+                    <GlowPulse className="top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-opacity duration-500" color="rgba(192,0,0,0.1)" size={200} />
+                    <f.icon className={`h-16 w-16 mx-auto mb-4 relative z-10 transition-colors duration-300 ${theme === 'dark' ? 'text-red-400 group-hover:text-red-300' : 'text-red-600 group-hover:text-red-500'}`} />
+                    <h3 className={`text-xl font-bold mb-3 relative z-10 ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>{f.title}</h3>
+                    <p className={`relative z-10 ${theme === 'dark' ? 'text-gray-300' : 'text-gray-600'}`}>{f.desc}</p>
+                  </div>
+                </motion.div>
               ))}
-            </div>
+            </StaggerContainer>
           </div>
         </section>
 
@@ -1063,15 +1135,17 @@ export const HomePage = () => {
         {testimonials.length > 0 && (
           <section className={`section-padding ${theme === 'dark' ? 'bg-gray-900/80' : 'bg-gray-50'}`}>
             <div className="container-fluid">
-              <FadeIn animate={animate} className="text-center mb-6">
+              <ScrollReveal className="text-center mb-6">
                 <h2 className={`heading-responsive font-bold mb-4 ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
                   {language === 'en' ? 'What Our Customers Say' : 'আমাদের গ্রাহকরা কি বলেন'}
                 </h2>
-              </FadeIn>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-                {testimonials.map((testimonial: any, index: number) => (
-                  <FadeIn key={testimonial.id} animate={animate} delay={index * 0.1}>
-                    <Card className="p-6">
+              </ScrollReveal>
+              <StaggerContainer className="grid grid-cols-1 md:grid-cols-3 gap-8" stagger={0.12}>
+                {testimonials.map((testimonial: any) => (
+                  <motion.div key={testimonial.id} variants={staggerItemVariants}>
+                    <div className={`group relative p-6 rounded-2xl glass gradient-border transition-all duration-300 hover:-translate-y-1 ${
+                      theme === 'dark' ? '' : 'bg-white/80'
+                    }`}>
                       <div className="flex items-center mb-4">
                         {[...Array(testimonial.rating)].map((_: unknown, i: number) => (
                           <svg key={i} className="h-5 w-5 text-yellow-400 fill-current" viewBox="0 0 20 20" aria-hidden="true">
@@ -1083,7 +1157,7 @@ export const HomePage = () => {
                         {language === 'en' ? testimonial.review_en : testimonial.review_bn || testimonial.review_en}
                       </p>
                       <div className="flex items-center">
-                        <div className={`h-12 w-12 rounded-full flex items-center justify-center font-semibold ${theme === 'dark' ? 'bg-gray-700 text-gray-200' : 'bg-gray-200 text-gray-600'}`}>
+                        <div className={`h-12 w-12 rounded-full flex items-center justify-center font-semibold bg-gradient-to-br from-red-500 to-red-700 text-white`}>
                           {testimonial.customer_name.charAt(0)}
                         </div>
                         <div className="ml-3">
@@ -1095,10 +1169,10 @@ export const HomePage = () => {
                           )}
                         </div>
                       </div>
-                    </Card>
-                  </FadeIn>
+                    </div>
+                  </motion.div>
                 ))}
-              </div>
+              </StaggerContainer>
             </div>
           </section>
         )}
@@ -1106,11 +1180,11 @@ export const HomePage = () => {
         {/* ══ MAPS ══════════════════════════════════════════════════ */}
         <section className="section-padding bg-gradient-to-b from-gray-50 to-white dark:from-gray-900 dark:to-gray-800">
           <div className="container-fluid">
-            <FadeIn animate={animate} className="text-center mb-8">
-              <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold mb-6 bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
+            <ScrollReveal className="text-center mb-8">
+              <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold mb-6 bg-gradient-to-r from-red-600 to-red-700 bg-clip-text text-transparent">
                 {language === 'en' ? 'Visit Our Showroom' : 'আমাদের শোরুম পরিদর্শন করুন'}
               </h2>
-            </FadeIn>
+            </ScrollReveal>
 
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-8 mb-8">
               {/* Address + hours */}
@@ -1146,7 +1220,7 @@ export const HomePage = () => {
                   href="https://www.google.com/maps/place/Auto+Spark/@24.3744264,88.6135805,17z"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="block w-full bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-bold py-4 rounded-xl text-center hover:opacity-90 transition-opacity"
+                  className="block w-full bg-gradient-to-r from-red-600 to-red-700 text-white font-bold py-4 rounded-xl text-center hover:opacity-90 transition-opacity"
                 >
                   📍 {language === 'en' ? 'Get Directions on Google Maps' : 'গুগল ম্যাপে দিকনির্দেশনা পান'}
                 </a>
@@ -1194,28 +1268,27 @@ export const HomePage = () => {
         </section>
 
         {/* ══ CTA ═══════════════════════════════════════════════════ */}
-        <section className="section-padding bg-gradient-to-r from-blue-600 to-blue-800">
-          <div className="container-fluid text-center">
-            <FadeIn animate={animate}>
+        <section className="section-padding relative overflow-hidden bg-gradient-to-r from-red-600 via-red-700 to-red-800">
+          <div className="absolute inset-0 noise-overlay opacity-5" />
+          <div className="absolute inset-0 diagonal-lines" />
+          <GlowPulse className="top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2" color="rgba(255,255,255,0.1)" size={400} speed={4} />
+          <div className="container-fluid text-center relative z-10">
+            <ScrollReveal>
               <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-white mb-6">
                 {language === 'en' ? 'Ready to Find Your Dream Car?' : 'আপনার স্বপ্নের গাড়ি খুঁজে পেতে প্রস্তুত?'}
               </h2>
-              <p className="text-xl text-blue-100 mb-8 max-w-2xl mx-auto">
+              <p className="text-xl text-red-100 mb-8 max-w-2xl mx-auto">
                 {language === 'en' ? 'Browse our inventory or visit our showroom in Rajshahi.' : 'আমাদের ইনভেন্টরি ব্রাউজ করুন বা রাজশাহীতে আমাদের শোরুম পরিদর্শন করুন।'}
               </p>
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                <Link to="/inventory">
-                  <Button size="lg" className="w-full sm:w-auto bg-white text-blue-600 hover:bg-gray-100">
-                    {language === 'en' ? 'Browse Inventory' : 'ইনভেন্টরি ব্রাউজ করুন'}
-                  </Button>
-                </Link>
-                <Link to="/contact">
-                  <Button size="lg" variant="outline" className="w-full sm:w-auto border-white text-white hover:bg-white/10">
-                    {language === 'en' ? 'Contact Us' : 'যোগাযোগ করুন'}
-                  </Button>
-                </Link>
+                <MagneticButton as="a" href="#/inventory" className="inline-flex items-center justify-center px-8 py-3.5 bg-white text-red-600 hover:bg-gray-100 font-bold rounded-xl shadow-lg transition-all">
+                  {language === 'en' ? 'Browse Inventory' : 'ইনভেন্টরি ব্রাউজ করুন'}
+                </MagneticButton>
+                <MagneticButton as="a" href="#/contact" className="inline-flex items-center justify-center px-8 py-3.5 border-2 border-white text-white hover:bg-white/10 font-bold rounded-xl transition-all">
+                  {language === 'en' ? 'Contact Us' : 'যোগাযোগ করুন'}
+                </MagneticButton>
               </div>
-            </FadeIn>
+            </ScrollReveal>
           </div>
         </section>
 
