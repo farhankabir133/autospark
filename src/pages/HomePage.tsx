@@ -41,6 +41,7 @@ const CarShowcase3D = lazy(() => import('../components/3d/CarShowcase3D'));
 // ─── Video Hero (primary) ─────────────────────────────────────────
 const VideoHero = ({ children }: { children: React.ReactNode }) => {
   const videoRef = useRef<HTMLVideoElement>(null);
+  const [videoReady, setVideoReady] = useState(false);
 
   // Ensure video is always playing — covers tab switch, back/forward,
   // mobile background/foreground, orientation change, and SPA navigation.
@@ -80,7 +81,7 @@ const VideoHero = ({ children }: { children: React.ReactNode }) => {
   }, []);
 
   return (
-    <div className="relative w-full h-full overflow-hidden">
+    <div className="relative w-full h-full overflow-hidden bg-black">
       {/* Subtle Ken Burns drift — very slow zoom + pan for a living feel */}
       <div className="absolute inset-[-2%] animate-hero-drift will-change-transform">
         <video
@@ -92,8 +93,9 @@ const VideoHero = ({ children }: { children: React.ReactNode }) => {
           preload="auto"
           disablePictureInPicture
           disableRemotePlayback
+          onPlaying={() => setVideoReady(true)}
           className="absolute inset-0 w-full h-full object-cover"
-          poster="https://images.pexels.com/photos/36318402/pexels-photo-36318402.png?auto=compress&cs=tinysrgb&w=800&fm=webp"
+          style={{ opacity: videoReady ? 1 : 0, transition: 'opacity 0.3s ease-in' }}
         >
           <source src="/hero/Toyota_vehicles_promotional_vide…_1080p_20260915160332.webm" type="video/webm" />
           <source src="/hero/Toyota_vehicles_promotional_vide…_1080p_20260915160332.mp4" type="video/mp4" />
