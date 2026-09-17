@@ -56,7 +56,7 @@ export const GlassmorphismNavbar = () => {
     { to: '/accessories', label: t('nav.accessories') },
     { to: '/about', label: t('nav.about') },
     { to: '/testimonials', label: t('nav.testimonials') },
-    { to: 'tel:+8801760401605', label: t('nav.contact'), isExternal: true },
+    { to: '/contact', label: t('nav.contact') },
   ];
 
   const toggleLanguage = () => {
@@ -329,11 +329,11 @@ export const GlassmorphismNavbar = () => {
               </m.button>
 
               {/* CTA Button - Desktop */}
-              <a href="tel:+8801760401605">
+              <Link to="/contact">
               <m.button
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
-                onClick={() => playButtonClick()}
+                onClick={() => { playButtonClick(); handleNavClick('/contact'); }}
                 className={`hidden sm:flex px-3 py-1.5 rounded-lg font-semibold text-xs transition-all ${
                   theme === 'dark'
                     ? 'bg-gradient-to-r from-[#C00000] to-[#FF1A1A] hover:from-[#8B0000] hover:to-[#C00000] text-white shadow-lg shadow-[#C00000]/30'
@@ -342,7 +342,7 @@ export const GlassmorphismNavbar = () => {
               >
                 {t('nav.contact')}
               </m.button>
-              </a>
+              </Link>
 
               {/* Mobile Menu Button */}
               <m.button
@@ -443,14 +443,14 @@ export const GlassmorphismNavbar = () => {
                   })}
 
                   {/* Mobile CTA Button */}
-                  <a href="tel:+8801760401605">
+                  <Link to="/contact">
                   <m.button
                     initial={{ opacity: 0, y: 10 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: navLinks.length * 0.05 }}
                     onClick={() => {
                       playButtonClick();
-                      setIsMobileMenuOpen(false);
+                      handleNavClick('/contact');
                     }}
                     className={`w-full px-4 py-3 rounded-lg font-semibold text-sm transition-all mt-4 ${
                       theme === 'dark'
@@ -460,7 +460,7 @@ export const GlassmorphismNavbar = () => {
                   >
                     {t('nav.contact')}
                   </m.button>
-                  </a>
+                  </Link>
                 </div>
               </m.div>
             )}
