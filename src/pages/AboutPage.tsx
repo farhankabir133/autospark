@@ -723,6 +723,9 @@ export const AboutPage = () => {
                       title: language === 'en' ? '💻 Lead Engineer' : '💻 লিড ইঞ্জিনিয়ার',
                       image: 'https://images.pexels.com/photos/34067041/pexels-photo-34067041.png?auto=compress&cs=tinysrgb&w=600&fm=webp',
                       bio: language === 'en' ? 'Driving digital innovation and creating seamless experiences for our customers.' : 'ডিজিটাল উদ্ভাবন চালনা এবং গ্রাহকদের জন্য নিরবচ্ছিন্ন অভিজ্ঞতা তৈরি করছেন।',
+                      linkedin: 'https://www.linkedin.com/in/farhankabir133/',
+                      facebook: 'https://www.facebook.com/baba111b',
+                      phone: '+8801783165726',
                     }}
                     language={language}
                     theme={theme}

@@ -8,6 +8,10 @@ type Person = {
   title?: string;
   image?: string;
   bio?: string;
+  linkedin?: string;
+  facebook?: string;
+  phone?: string;
+  website?: string;
 };
 
 const TeamCard: React.FC<{ person: Person; language: string; theme: string; showroom: any }> = ({ person, language: _language, theme, showroom }) => {
@@ -61,13 +65,13 @@ const TeamCard: React.FC<{ person: Person; language: string; theme: string; show
           <p className="text-[#C00000] font-semibold text-xs sm:text-sm mb-2">{person.role}</p>
           <p className={`${theme === 'dark' ? 'text-gray-400' : 'text-gray-600'} text-xs sm:text-sm`}>{person.bio}</p>
           <div className="flex justify-center md:justify-start gap-2 mt-3">
-            <a href={`https://${showroom.website}`} target="_blank" rel="noopener noreferrer" className="w-8 h-8 rounded-full bg-[#C00000]/10 flex items-center justify-center hover:bg-[#C00000] hover:text-white transition-colors" aria-label="Website">
+            <a href={person.linkedin || `https://${showroom.website}`} target="_blank" rel="noopener noreferrer" className="w-8 h-8 rounded-full bg-[#C00000]/10 flex items-center justify-center hover:bg-[#C00000] hover:text-white transition-colors" aria-label="LinkedIn">
               <Linkedin className="w-4 h-4" />
             </a>
-            <a href={showroom.youtube} target="_blank" rel="noopener noreferrer" className="w-8 h-8 rounded-full bg-[#C00000]/10 flex items-center justify-center hover:bg-[#C00000] hover:text-white transition-colors" aria-label="YouTube">
+            <a href={person.facebook || showroom.youtube} target="_blank" rel="noopener noreferrer" className="w-8 h-8 rounded-full bg-[#C00000]/10 flex items-center justify-center hover:bg-[#C00000] hover:text-white transition-colors" aria-label="Facebook">
               <Facebook className="w-4 h-4" />
             </a>
-            <a href={`tel:${showroom.phone}`} className="w-8 h-8 rounded-full bg-[#C00000]/10 flex items-center justify-center hover:bg-[#C00000] hover:text-white transition-colors" aria-label="Phone">
+            <a href={`tel:${person.phone || showroom.phone}`} className="w-8 h-8 rounded-full bg-[#C00000]/10 flex items-center justify-center hover:bg-[#C00000] hover:text-white transition-colors" aria-label="Phone">
               <Phone className="w-4 h-4" />
             </a>
           </div>
