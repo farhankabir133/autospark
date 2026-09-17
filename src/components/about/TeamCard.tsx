@@ -19,19 +19,26 @@ const TeamCard: React.FC<{ person: Person; language: string; theme: string; show
           {person.image ? (
             (() => {
               const isRemote = person.image.startsWith('http');
-              const src = isRemote ? `${person.image}?auto=compress&cs=tinysrgb&w=600&fm=webp` : person.image;
-              const srcSet = isRemote
-                ? `${person.image}?auto=compress&cs=tinysrgb&w=300&fm=webp 300w, ${person.image}?auto=compress&cs=tinysrgb&w=600&fm=webp 600w`
+              // Fix: don't double-append query string if URL already has params (Farhan/Abu Hasan URLs already contain ?auto=...)
+              const buildUrl = (base: string, w: number) => {
+                if (base.includes('?')) return base; // already has query — use as-is
+                return `${base}?auto=compress&cs=tinysrgb&w=${w}&fm=webp`;
+              };
+              const src = isRemote ? buildUrl(person.image, 600) : person.image;
+              const srcSet = isRemote && !person.image.includes('?')
+                ? `${buildUrl(person.image, 300)} 300w, ${buildUrl(person.image, 600)} 600w`
                 : undefined;
+              const fallbackSrc = `https://ui-avatars.com/api/?name=${encodeURIComponent(person.name)}&background=0D8ABC&color=fff&size=208`;
               return (
                 <img
                   src={src}
                   alt={person.name}
-                  className="w-full h-full rounded-full object-cover border-3 border-[#C00000]/30 group-hover:border-[#C00000] transition-colors duration-300"
+                  className="w-full h-full rounded-full object-cover border-3 border-[#C00000]/30 group-hover:border-[#C00000] transition-colors duration-300 bg-gray-800"
                   loading="lazy"
                   width={208}
                   height={208}
                   decoding="async"
+                  onError={(e) => { const t = e.currentTarget as HTMLImageElement; if (t.src !== fallbackSrc) t.src = fallbackSrc; }}
                   {...(srcSet ? { srcSet, sizes: '(max-width: 640px) 160px, 208px' } : {})}
                 />
               );
