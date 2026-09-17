@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { Facebook, Instagram, Phone, Mail, MapPin } from 'lucide-react';
+import { Facebook, Instagram, Phone, Mail, MapPin, Youtube, Music2 } from 'lucide-react';
 import { useLanguage } from '../contexts/LanguageContext';
 import { useTheme } from '../contexts/ThemeContext';
 
@@ -29,7 +29,7 @@ export const Footer = () => {
     city: 'Rajshahi, Rajshahi Division, Bangladesh',
     website: 'autosparkbd.com',
     youtube: 'https://www.youtube.com/@autosparkbd1131',
-    tiktok: 'www.tiktok.com/@auto_spark0',
+    tiktok: 'https://www.tiktok.com/@auto_spark0',
     phone: '+880 1760-401605',
     email: 'autosparkbd@gmail.com',
     name: 'AutoSpark',
@@ -120,19 +120,19 @@ export const Footer = () => {
               <a href="https://www.instagram.com/autosparkbd" target="_blank" rel="noopener noreferrer" className="hover:text-[#FF1A1A]">
                 <Instagram className="w-6 h-6" />
               </a>
-              <a href="https://www.youtube.com/@autosparkbd1131" target="_blank" rel="noopener noreferrer" className="hover:text-[#FF1A1A]">
-                <Mail className="w-6 h-6" />
+              <a href="https://www.youtube.com/@autosparkbd1131" target="_blank" rel="noopener noreferrer" aria-label="YouTube" className="hover:text-[#FF1A1A]">
+                <Youtube className="w-6 h-6" />
               </a>
-              <a href="https://www.tiktok.com/@auto_spark0" target="_blank" rel="noopener noreferrer" className="hover:text-[#FF1A1A]">
-                <MapPin className="w-6 h-6" />
+              <a href="https://www.tiktok.com/@auto_spark0" target="_blank" rel="noopener noreferrer" aria-label="TikTok" className="hover:text-[#FF1A1A]">
+                <Music2 className="w-6 h-6" />
               </a>
               <a href={`tel:${showroom.phone}`} aria-label={`Call showroom ${showroom.phone}`} className="inline-flex items-center px-2 py-2 rounded-lg hover:text-[#FF1A1A] touch-target-large">
                 <Phone className="w-6 h-6" />
               </a>
-              <a href={`mailto:${showroom.email}`} className="hover:text-[#FF1A1A]">
+              <a href={`mailto:${showroom.email}`} aria-label="Email" rel="noopener noreferrer" className="hover:text-[#FF1A1A]">
                 <Mail className="w-6 h-6" />
               </a>
-              <a href={`https://${showroom.website}`} className="hover:text-[#FF1A1A]">
+              <a href={`https://${showroom.website}`} target="_blank" rel="noopener noreferrer" aria-label="Website" className="hover:text-[#FF1A1A]">
                 <MapPin className="w-6 h-6" />
               </a>
             </div>
@@ -156,9 +156,10 @@ export const Footer = () => {
             {/* Accessibility Features */}
             <div className="flex gap-2 items-center mb-4">
               <button
-                className="px-2 py-1 rounded bg-gray-700 text-xs text-white hover:bg-gray-900"
+                className="px-2 py-1 rounded bg-gray-700 text-xs text-white hover:bg-gray-900 min-h-[44px] min-w-[44px]"
                 onClick={handleContrastToggle}
                 aria-label="Toggle high contrast"
+                aria-pressed={highContrast}
               >
                 High Contrast
               </button>

@@ -1,4 +1,4 @@
-import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import { createContext, useContext, useState, useEffect, ReactNode, useMemo, useCallback } from 'react';
 
 type Theme = 'light' | 'dark';
 
@@ -23,22 +23,15 @@ interface ThemeProviderProps {
 
 export const ThemeProvider = ({ children }: ThemeProviderProps) => {
   const [theme, setTheme] = useState<Theme>(() => {
-    // If running in a browser, check hostname and localStorage
+    // M-03 fix: respect user preference + stored value, no hostname override
     if (typeof window !== 'undefined') {
-      const host = window.location.hostname || '';
-      // Force dark mode when served on the custom domain (autosparkbd.com)
-      if (host.endsWith('autosparkbd.com')) {
-        try { localStorage.setItem('theme', 'dark'); } catch {}
-        return 'dark';
-      }
-
       const stored = localStorage.getItem('theme');
       if (stored === 'dark' || stored === 'light') {
         return stored as Theme;
       }
+      // Respect OS preference for first visit
+      if (window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches) return 'light';
     }
-
-    // Default to dark mode for all other first-time visitors
     return 'dark';
   });
 
@@ -52,24 +45,16 @@ export const ThemeProvider = ({ children }: ThemeProviderProps) => {
     }
   }, [theme]);
 
-  // Ensure that if the site is visited on the custom domain in the future,
-  // the theme will be set to dark overriding any previous setting.
-  useEffect(() => {
-    if (typeof window === 'undefined') return;
-    const host = window.location.hostname || '';
-    if (host.endsWith('autosparkbd.com') && theme !== 'dark') {
-      setTheme('dark');
-      try { localStorage.setItem('theme', 'dark'); } catch {}
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+  // M-03: hostname override removed — user preference persists
+
+  const toggleTheme = useCallback(() => {
+    setTheme((prev) => (prev === 'light' ? 'dark' : 'light'));
   }, []);
 
-  const toggleTheme = () => {
-    setTheme((prev) => (prev === 'light' ? 'dark' : 'light'));
-  };
+  const value = useMemo(() => ({ theme, toggleTheme }), [theme, toggleTheme]);
 
   return (
-    <ThemeContext.Provider value={{ theme, toggleTheme }}>
+    <ThemeContext.Provider value={value}>
       {children}
     </ThemeContext.Provider>
   );

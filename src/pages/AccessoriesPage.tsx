@@ -33,6 +33,7 @@ import {
 } from 'lucide-react';
 import { supabase } from '../lib/supabase';
 import { appwritePaymentApi } from '../services/appwritePaymentApi';
+import { useCart as useGlobalCart } from '../contexts/CartContext';
 
 // Extended Product interface for accessories with additional UI fields
 interface AccessoryProduct {
@@ -126,16 +127,16 @@ const demoProducts: AccessoryProduct[] = [
   { id: '2206', name_en: 'LED Waterproof 9005', name_bn: '', price: 5500, category: 'Accessories', stock_quantity: 10, is_available: true, images: [{ image_url: '/NP/LED9005.webp' }], brand: '', rating: 0, reviews: 0, discount: 0, compatibility: ['Universal'], isNew: true, isBestseller: false },
 
   { id: '2207', name_en: 'LED X-10 9006', name_bn: '', price: 7500, category: 'Accessories', stock_quantity: 10, is_available: true, images: [{ image_url: '/NP/LED9006.webp' }], brand: '', rating: 0, reviews: 0, discount: 0, compatibility: ['Universal'], isNew: true, isBestseller: false },
-  { id: '2204', name_en: 'Champ Engine Flush', name_bn: '', price: 750, category: 'Accessories', stock_quantity: 10, is_available: true, images: [{ image_url: '/NP/ChampionEngineFlush.webp' }], brand: 'Champion', rating: 0, reviews: 0, discount: 0, compatibility: [], isNew: false, isBestseller: false },
-  { id: '2205', name_en: 'Champion Eco-Friend 5W-30', name_bn: '', price: 5050, category: 'Accessories', stock_quantity: 10, is_available: true, images: [{ image_url: '/NP/ChampionEco5W30.webp' }], brand: 'Champion', rating: 0, reviews: 0, discount: 0, compatibility: [], isNew: false, isBestseller: false },
+  { id: '2209', name_en: 'Champ Engine Flush', name_bn: '', price: 750, category: 'Accessories', stock_quantity: 10, is_available: true, images: [{ image_url: '/NP/ChampionEngineFlush.webp' }], brand: 'Champion', rating: 0, reviews: 0, discount: 0, compatibility: [], isNew: false, isBestseller: false },
+  { id: '2210', name_en: 'Champion Eco-Friend 5W-30', name_bn: '', price: 5050, category: 'Accessories', stock_quantity: 10, is_available: true, images: [{ image_url: '/NP/ChampionEco5W30.webp' }], brand: 'Champion', rating: 0, reviews: 0, discount: 0, compatibility: [], isNew: false, isBestseller: false },
   { id: '1020', name_en: 'Charger 6A', name_bn: '', price: 550, category: 'Accessories', stock_quantity: 10, is_available: true, images: [{ image_url: '/NP/Charger6A.webp' }], brand: '', rating: 0, reviews: 0, discount: 0, compatibility: [], isNew: false, isBestseller: false },
   { id: '1021', name_en: 'CHR Casing', name_bn: '', price: 2000, category: 'Accessories', stock_quantity: 10, is_available: true, images: [{ image_url: '/NP/DVD-Catching.webp' }], brand: '', rating: 0, reviews: 0, discount: 0, compatibility: [], isNew: false, isBestseller: false },
   { id: '1022', name_en: 'Coil Cap Rubber RBI', name_bn: '', price: 950, category: 'Accessories', stock_quantity: 10, is_available: true, images: [], brand: '', rating: 0, reviews: 0, discount: 0, compatibility: [], isNew: false, isBestseller: false },
   { id: '1024', name_en: 'Cosmic Wax', name_bn: '', price: 750, category: 'Accessories', stock_quantity: 10, is_available: true, images: [{ image_url: '/NP/CosmicLeatherWax.webp' }], brand: '', rating: 0, reviews: 0, discount: 0, compatibility: [], isNew: false, isBestseller: false },
   { id: '1025', name_en: 'CVT Fluid NS-3', name_bn: '', price: 6950, category: 'Accessories', stock_quantity: 10, is_available: true, images: [{ image_url: '/P2/CVTFluidNS3.webp' }], brand: '', rating: 0, reviews: 0, discount: 0, compatibility: [], isNew: false, isBestseller: false },
   { id: '1026', name_en: 'CVT Fluid TC', name_bn: '', price: 7550, category: 'Accessories', stock_quantity: 10, is_available: true, images: [{ image_url: '/P2/CVTFluidTC.webp' }], brand: '', rating: 0, reviews: 0, discount: 0, compatibility: [], isNew: false, isBestseller: false },
-  { id: '2206', name_en: 'CVT Fluid NS-2', name_bn: '', price: 6950, category: 'Accessories', stock_quantity: 10, is_available: true, images: [{ image_url: '/P2/CVTFluidNS2.webp' }], brand: '', rating: 0, reviews: 0, discount: 0, compatibility: [], isNew: false, isBestseller: false },
-  { id: '2207', name_en: 'Gear Oil CVT-FE', name_bn: '', price: 7550, category: 'Accessories', stock_quantity: 10, is_available: true, images: [{ image_url: '/P2/CVTFluidFE.webp' }], brand: '', rating: 0, reviews: 0, discount: 0, compatibility: [], isNew: false, isBestseller: false },
+  { id: '2211', name_en: 'CVT Fluid NS-2', name_bn: '', price: 6950, category: 'Accessories', stock_quantity: 10, is_available: true, images: [{ image_url: '/P2/CVTFluidNS2.webp' }], brand: '', rating: 0, reviews: 0, discount: 0, compatibility: [], isNew: false, isBestseller: false },
+  { id: '2212', name_en: 'Gear Oil CVT-FE', name_bn: '', price: 7550, category: 'Accessories', stock_quantity: 10, is_available: true, images: [{ image_url: '/P2/CVTFluidFE.webp' }], brand: '', rating: 0, reviews: 0, discount: 0, compatibility: [], isNew: false, isBestseller: false },
   // ...product removed: Cycle Show Piece (price 0)
   { id: '1028', name_en: 'D Bush 12320', name_bn: '', price: 350, category: 'Accessories', stock_quantity: 10, is_available: true, images: [{ image_url: '/NP/DBush12320.webp' }], brand: '', rating: 0, reviews: 0, discount: 0, compatibility: [], isNew: false, isBestseller: false },
   { id: '1029', name_en: 'D Bush 20290', name_bn: '', price: 450, category: 'Accessories', stock_quantity: 10, is_available: true, images: [{ image_url: '/NP/DBush.webp' }], brand: '', rating: 0, reviews: 0, discount: 0, compatibility: [], isNew: false, isBestseller: false },
@@ -176,14 +177,14 @@ const demoProducts: AccessoryProduct[] = [
   { id: '1065', name_en: 'GPS Tracking OBD', name_bn: '', price: 7500, category: 'Accessories', stock_quantity: 10, is_available: true, images: [{ image_url: '/NP/GPSTrackingOBD.png' }], brand: '', rating: 0, reviews: 0, discount: 0, compatibility: [], isNew: false, isBestseller: false },
   { id: '1066', name_en: 'Grease Toyo', name_bn: '', price: 450, category: 'Accessories', stock_quantity: 10, is_available: true, images: [], brand: '', rating: 0, reviews: 0, discount: 0, compatibility: [], isNew: false, isBestseller: false },
   { id: '1067', name_en: 'Gulf 5W30', name_bn: '', price: 4750, category: 'Accessories', stock_quantity: 10, is_available: true, images: [{ image_url: '/NP/Gulf5W30.webp' }], brand: '', rating: 0, reviews: 0, discount: 0, compatibility: [], isNew: false, isBestseller: false },
-  { id: '1073', name_en: 'Globoil 5W-30', name_bn: '', price: 4550, category: 'Accessories', stock_quantity: 10, is_available: true, images: [{ image_url: '/NP/GlassCleaner.webp' }], brand: '', rating: 0, reviews: 0, discount: 0, compatibility: [], isNew: false, isBestseller: false },
+  { id: '1095', name_en: 'Globoil 5W-30', name_bn: '', price: 4550, category: 'Accessories', stock_quantity: 10, is_available: true, images: [{ image_url: '/NP/GlassCleaner.webp' }], brand: '', rating: 0, reviews: 0, discount: 0, compatibility: [], isNew: false, isBestseller: false },
   { id: '1068', name_en: 'H-11', name_bn: '', price: 350, category: 'Accessories', stock_quantity: 10, is_available: true, images: [{ image_url: '/NP/H-11Bulb.webp' }], brand: '', rating: 0, reviews: 0, discount: 0, compatibility: [], isNew: false, isBestseller: false },
   { id: '1069', name_en: 'Hand Glovoves', name_bn: '', price: 200, category: 'Accessories', stock_quantity: 10, is_available: true, images: [], brand: '', rating: 0, reviews: 0, discount: 0, compatibility: [], isNew: false, isBestseller: false },
   { id: '1070', name_en: 'Higlo Wax( Coating)', name_bn: '', price: 850, category: 'Accessories', stock_quantity: 10, is_available: true, images: [], brand: '', rating: 0, reviews: 0, discount: 0, compatibility: [], isNew: false, isBestseller: false },
   { id: '1071', name_en: 'Honda Air Filter 5AA', name_bn: '', price: 950, category: 'Accessories', stock_quantity: 10, is_available: true, images: [{ image_url: '/P2/HondaAirFilter5AA.webp' }], brand: '', rating: 0, reviews: 0, discount: 0, compatibility: [], isNew: false, isBestseller: false },
   { id: '1072', name_en: 'Honda Air Filter 5R0', name_bn: '', price: 650, category: 'Accessories', stock_quantity: 10, is_available: true, images: [{ image_url: '/NP/Honda_Vezel_Jaz-Non_Brand.png' }], brand: '', rating: 0, reviews: 0, discount: 0, compatibility: [], isNew: false, isBestseller: false },
-  { id: '1073', name_en: 'Honda Air Filter R6A', name_bn: '', price: 950, category: 'Accessories', stock_quantity: 10, is_available: true, images: [{ image_url: '/NP/HondaAirFilterR6A.webp' }], brand: '', rating: 0, reviews: 0, discount: 0, compatibility: [], isNew: false, isBestseller: false },
-  { id: '1074', name_en: 'Honda ATF DW-1', name_bn: '', price: 1950, category: 'Accessories', stock_quantity: 10, is_available: true, images: [{ image_url: '/NP/HondaATFDW1.png' }], brand: '', rating: 0, reviews: 0, discount: 0, compatibility: [], isNew: false, isBestseller: false },
+  { id: '1099', name_en: 'Honda Air Filter R6A', name_bn: '', price: 950, category: 'Accessories', stock_quantity: 10, is_available: true, images: [{ image_url: '/NP/HondaAirFilterR6A.webp' }], brand: '', rating: 0, reviews: 0, discount: 0, compatibility: [], isNew: false, isBestseller: false },
+  { id: '1190', name_en: 'Honda ATF DW-1', name_bn: '', price: 1950, category: 'Accessories', stock_quantity: 10, is_available: true, images: [{ image_url: '/NP/HondaATFDW1.png' }], brand: '', rating: 0, reviews: 0, discount: 0, compatibility: [], isNew: false, isBestseller: false },
   { id: '1075', name_en: 'Honda Oil Filter RAF', name_bn: '', price: 650, category: 'Accessories', stock_quantity: 10, is_available: true, images: [{ image_url: '/NP/HondaRAF.webp' }], brand: '', rating: 0, reviews: 0, discount: 0, compatibility: [], isNew: false, isBestseller: false },
   { id: '1076', name_en: 'Hunger Bush 0D060', name_bn: '', price: 750, category: 'Accessories', stock_quantity: 10, is_available: true, images: [{ image_url: '/NP/HungerBush0D060.webp' }], brand: '', rating: 0, reviews: 0, discount: 0, compatibility: [], isNew: false, isBestseller: false },
   { id: '1077', name_en: 'Hunger Bush 12120', name_bn: '', price: 650, category: 'Accessories', stock_quantity: 10, is_available: true, images: [{ image_url: '/NP/HungerBush12120.webp' }], brand: '', rating: 0, reviews: 0, discount: 0, compatibility: [], isNew: false, isBestseller: false },
@@ -208,7 +209,7 @@ const demoProducts: AccessoryProduct[] = [
   { id: '1096', name_en: 'Mobil Filter 65F00', name_bn: '', price: 650, category: 'Accessories', stock_quantity: 10, is_available: true, images: [{ image_url: '/P2/4 Background Removed Medium.webp' }], brand: '', rating: 0, reviews: 0, discount: 0, compatibility: [], isNew: false, isBestseller: false },
   { id: '1097', name_en: 'Monitor Case', name_bn: '', price: 2500, category: 'Accessories', stock_quantity: 10, is_available: true, images: [{ image_url: '/NP/MonitorCase.webp' }], brand: '', rating: 0, reviews: 0, discount: 0, compatibility: [], isNew: false, isBestseller: false },
   { id: '1098', name_en: 'Motor Flash', name_bn: '', price: 450, category: 'Accessories', stock_quantity: 10, is_available: true, images: [{ image_url: '/NP/MotorFlush.webp' }], brand: '', rating: 0, reviews: 0, discount: 0, compatibility: [], isNew: false, isBestseller: false },
-  { id: '1100', name_en: 'My Romance', name_bn: '', price: 1250, category: 'Accessories', stock_quantity: 10, is_available: true, images: [{ image_url: '/NP/MyRomance.png' }], brand: '', rating: 0, reviews: 0, discount: 0, compatibility: [], isNew: false, isBestseller: false },
+  { id: '1120', name_en: 'My Romance', name_bn: '', price: 1250, category: 'Accessories', stock_quantity: 10, is_available: true, images: [{ image_url: '/NP/MyRomance.png' }], brand: '', rating: 0, reviews: 0, discount: 0, compatibility: [], isNew: false, isBestseller: false },
   { id: '1101', name_en: 'Nakamichi DVD Jack to Jack', name_bn: '', price: 1000, category: 'Accessories', stock_quantity: 10, is_available: true, images: [], brand: '', rating: 0, reviews: 0, discount: 0, compatibility: [], isNew: false, isBestseller: false },
   { id: '2208', name_en: 'Nakamichi Android Player 5850', name_bn: '', price: 22500, category: 'Accessories', stock_quantity: 10, is_available: true, images: [{ image_url: '/NP/Nakamichi.webp' }], brand: 'Nakamichi', rating: 0, reviews: 0, discount: 0, compatibility: [], isNew: true, isBestseller: false },
   { id: '1102', name_en: 'Nissan Air Filter 4BAIB', name_bn: '', price: 850, category: 'Accessories', stock_quantity: 10, is_available: true, images: [{ image_url: '/P2/4 Background Removed Medium.webp' }], brand: '', rating: 0, reviews: 0, discount: 0, compatibility: [], isNew: false, isBestseller: false },
@@ -1899,6 +1900,8 @@ function AccessoriesPage() {
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
   const [showFilters, setShowFilters] = useState(false);
 
+  // A-02 fix: sync local cart with global CartContext to fix badge drift
+  const globalCart = (() => { try { return useGlobalCart(); } catch { return null; } })();
   // Cart, Wishlist, Compare
   const [cart, setCart] = useState<CartItem[]>([]);
   const [wishlist, setWishlist] = useState<WishlistItem[]>([]);
@@ -1988,10 +1991,23 @@ function AccessoriesPage() {
 
     const fetchProducts = async () => {
       try {
-        const { data } = await supabase
-          .from('products')
-          .select('*, images:product_images(*)')
-          .eq('is_available', true);
+        // A-04 fix: unified table (try accessories then products), whitelist + limit/order + pagination safety
+        let data: any[] | null = null;
+        const tryFetch = async (table: string) => {
+          const res = await supabase
+            .from(table)
+            .select('id,name_en,name_bn,description_en,description_bn,category,price,stock_quantity,sku,is_available,images,brand,rating,reviews,discount,compatibility,isNew,isBestseller')
+            .eq('is_available', true)
+            .order('created_at', { ascending: false })
+            .limit(100);
+          return res;
+        };
+        let res = await tryFetch('accessories');
+        if (res.error || !res.data || res.data.length === 0) {
+          const fallback = await tryFetch('products');
+          if (!fallback.error && fallback.data) res = fallback;
+        }
+        data = res.data;
 
         if (data && data.length > 0) {
           // Deduplicate products by id
@@ -2040,7 +2056,7 @@ function AccessoriesPage() {
     // No return value here
   }, []);
 
-  // Cart functions
+  // Cart functions — synced to global cart (A-02)
   const addToCart = useCallback((product: AccessoryProduct, quantity: number = 1) => {
     setCart(prev => {
       const existing = prev.find(item => item.product.id === product.id);
@@ -2053,7 +2069,9 @@ function AccessoriesPage() {
       }
       return [...prev, { product, quantity }];
     });
-  }, []);
+    // Sync to global cart so Header badge & /cart page reflect Accessories adds
+    globalCart?.addToCart({ id: product.id, name: product.name_en, price: product.price, quantity, image: product.images?.[0]?.image_url });
+  }, [globalCart]);
 
   const updateCartQuantity = useCallback((productId: string, quantity: number) => {
     if (quantity <= 0) {
@@ -2069,11 +2087,13 @@ function AccessoriesPage() {
 
   const removeFromCart = useCallback((productId: string) => {
     setCart(prev => prev.filter(item => item.product.id !== productId));
-  }, []);
+    globalCart?.removeFromCart(productId);
+  }, [globalCart]);
 
   const clearCart = useCallback(() => {
     setCart([]);
-  }, []);
+    globalCart?.clearCart();
+  }, [globalCart]);
 
   // Checkout handler - open modern checkout form modal
   const handleCheckout = useCallback(() => {

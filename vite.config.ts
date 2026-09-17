@@ -42,8 +42,8 @@ export default defineConfig({
         }
       }
     },
-  // Custom domain deployment - use relative base for GitHub Pages root
-  base: './',
+  // Custom domain deployment - absolute base for https://autosparkbd.com (P0 fix: './' breaks SW scope/preload on deep hash routes)
+  base: '/',
   build: {
     outDir: 'dist',
     sourcemap: false,
@@ -87,6 +87,9 @@ export default defineConfig({
           if (id.includes('@supabase')) {
             return 'supabase';
           }
+          if (id.includes('react-helmet-async')) return 'helmet';
+          if (id.includes('react-hook-form') || id.includes('@hookform') || id.includes('zod')) return 'form';
+          if (id.includes('@react-three/drei')) return 'drei';
         },
         // Optimize asset file names
         assetFileNames: (assetInfo) => {

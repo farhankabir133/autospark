@@ -1561,9 +1561,13 @@ const EMICalculator: React.FC<{ principal: number }> = ({ principal }) => {
             </div>
 
             {loading ? (
-              <div className="text-center py-20">
-                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
-                <p className={`mt-4 ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>{t('common.loading')}</p>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {Array.from({ length: 6 }).map((_, i) => (
+                  <div key={i} className="rounded-xl overflow-hidden border border-gray-700 bg-gray-800 animate-pulse">
+                    <div className="h-48 bg-gray-700" />
+                    <div className="p-4 space-y-3"><div className="h-4 bg-gray-700 rounded w-3/4" /><div className="h-3 bg-gray-700 rounded w-1/2" /></div>
+                  </div>
+                ))}
               </div>
             ) : filteredVehicles.length === 0 ? (
               <motion.div 

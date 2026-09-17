@@ -19,7 +19,9 @@ export const PAYMENT_API = {
   INIT_FUNCTION_ID: import.meta.env.VITE_APPWRITE_FUNCTION_ID || 'sslcommerz-api',
   INIT_URL:
     import.meta.env.VITE_PAYMENT_INIT_URL ||
-    `${import.meta.env.VITE_PAYMENT_API_URL}/api/payment/init` ||
+    (import.meta.env.VITE_PAYMENT_API_URL
+      ? `${import.meta.env.VITE_PAYMENT_API_URL}/api/payment/init`
+      : undefined) ||
     'https://autosparkbd.com/api/payment/init',
 };
 

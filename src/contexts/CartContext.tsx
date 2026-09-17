@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useCallback } from 'react';
+import React, { createContext, useContext, useState, useCallback, useMemo } from 'react';
 
 export interface CartItem {
   id: string;
@@ -63,7 +63,7 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
     };
   }, [cartItems, cartTotal]);
 
-  const value: CartContextType = {
+  const value: CartContextType = useMemo(() => ({
     cartItems,
     cartTotal,
     addToCart,
@@ -71,7 +71,7 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
     updateQuantity,
     clearCart,
     getCartSummary,
-  };
+  }), [cartItems, cartTotal, addToCart, removeFromCart, updateQuantity, clearCart, getCartSummary]);
 
   return <CartContext.Provider value={value}>{children}</CartContext.Provider>;
 };

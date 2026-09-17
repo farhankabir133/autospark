@@ -86,28 +86,37 @@ export const OptimizedImage = memo<OptimizedImageProps>(({
         />
       )}
 
-      {/* Actual image */}
-      <img
-        ref={imgRef}
-        src={shouldLoad ? src : undefined}
-        data-src={src}
-        alt={alt}
-        width={width}
-        height={height}
-        loading={priority ? 'eager' : 'lazy'}
-        decoding="async"
-        onLoad={handleLoad}
-        className={`
-          w-full h-full object-cover
-          transition-opacity duration-300
-          ${isLoaded ? 'opacity-100' : 'opacity-0'}
-        `}
-        style={{
-          position: height ? 'absolute' : 'relative',
-          top: 0,
-          left: 0,
-        }}
-      />
+      {/* Actual image — P-01: srcSet/sizes for pexels + WebP */}
+      {(() => {
+        const isPexels = src.includes('pexels.com');
+        const srcSet = isPexels ? `${src.replace(/w=\d+/, 'w=400')} 400w, ${src.replace(/w=\d+/, 'w=800')} 800w, ${src.replace(/w=\d+/, 'w=1200')} 1200w` : undefined;
+        const sizes = isPexels ? '(max-width:640px) 90vw, (max-width:1024px) 50vw, 400px' : undefined;
+        return (
+          <img
+            ref={imgRef}
+            src={shouldLoad ? src : undefined}
+            srcSet={shouldLoad ? srcSet : undefined}
+            sizes={shouldLoad ? sizes : undefined}
+            data-src={src}
+            alt={alt}
+            width={width}
+            height={height}
+            loading={priority ? 'eager' : 'lazy'}
+            decoding="async"
+            onLoad={handleLoad}
+            className={`
+              w-full h-full object-cover
+              transition-opacity duration-300
+              ${isLoaded ? 'opacity-100' : 'opacity-0'}
+            `}
+            style={{
+              position: height ? 'absolute' : 'relative',
+              top: 0,
+              left: 0,
+            }}
+          />
+        );
+      })()}
     </div>
   );
 });

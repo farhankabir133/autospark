@@ -32,7 +32,9 @@ const getRequiredEnv = () => {
     functionId: (import.meta.env.VITE_APPWRITE_FUNCTION_ID || '').trim(),
   };
 
-  if (config.endpoint !== 'https://sgp.cloud.appwrite.io/v1') {
+  // P0 fix: allow localhost/proxy endpoint in DEV, enforce production endpoint only in PROD
+  const isDevEndpoint = config.endpoint.includes('localhost') || config.endpoint.includes('127.0.0.1');
+  if (!isDevEndpoint && config.endpoint !== 'https://sgp.cloud.appwrite.io/v1' && import.meta.env.PROD) {
     throw new Error(
       `Invalid VITE_APPWRITE_ENDPOINT: "${config.endpoint}". Expected "https://sgp.cloud.appwrite.io/v1" for production.`
     );

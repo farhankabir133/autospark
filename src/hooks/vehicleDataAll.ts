@@ -14,6 +14,9 @@ function parsePriceBDT(price: string | number): number {
   return parseFloat(price);
 }
 
+// A-01 fix: deterministic timestamp (build-time) + tight typing to avoid SSR hydration mismatch
+const BUILD_TIMESTAMP = '2026-01-01T00:00:00.000Z';
+
 function createVehicle({
   id,
   stock_number,
@@ -64,9 +67,10 @@ function createVehicle({
     is_featured,
     video_url,
     view_count,
-    created_at: new Date().toISOString(),
-    updated_at: new Date().toISOString(),
-    images
+    // Deterministic for SSR/build caching; real Supabase rows should provide actual timestamps
+    created_at: BUILD_TIMESTAMP,
+    updated_at: BUILD_TIMESTAMP,
+    images: images.map((img: any) => ({ ...img, created_at: img.created_at || BUILD_TIMESTAMP })),
   };
 }
 

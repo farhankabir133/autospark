@@ -59,12 +59,16 @@ export const ProductDetailPage = () => {
   useEffect(() => {
     const fetchProduct = async () => {
       try {
-        const { data, error } = await supabase
-          .from('accessories')
-          .select('*')
-          .eq('id', id)
-          .single();
-
+        // A-04 fix: whitelist select + try accessories then products
+        let data: any = null;
+        let error: any = null;
+        const sel = 'id,name_en,name_bn,description_en,description_bn,category,price,stock_quantity,sku,is_available,images,brand,rating,reviews,discount,compatibility';
+        let res = await supabase.from('accessories').select(sel).eq('id', id).single();
+        data = res.data; error = res.error;
+        if (error || !data) {
+          const fb = await supabase.from('products').select(sel).eq('id', id).single();
+          if (!fb.error && fb.data) { data = fb.data; error = null; }
+        }
         if (error) throw error;
 
         // Parse images if stored as JSON

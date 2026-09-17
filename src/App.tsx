@@ -13,9 +13,17 @@ const AccessDenied = () => (
   <div className="min-h-screen bg-[#050505] flex flex-col items-center justify-center p-6 text-center">
     <h1 className="text-[#C00000] text-4xl font-bold mb-4">ACCESS DENIED</h1>
     <p className="text-white text-lg max-w-md">
-      We're sorry, but AutoSpark BD is currently only accessible to users within Asia Continent.
+      We're sorry, but AutoSpark BD is currently only accessible to users within Bangladesh (BD).
     </p>
     <div className="mt-8 w-16 h-1 bg-[#C00000]" />
+  </div>
+);
+
+const NotFound = () => (
+  <div className="min-h-[60vh] flex flex-col items-center justify-center p-8 text-center">
+    <h1 className="text-6xl font-black text-[#C00000] mb-2">404</h1>
+    <p className="text-white text-lg mb-4">Page not found</p>
+    <a href="/#/" className="px-6 py-2 bg-[#C00000] text-white rounded-lg hover:bg-[#FF1A1A] transition-colors">Go Home</a>
   </div>
 );
 
@@ -57,14 +65,18 @@ function App() {
   useEffect(() => {
     // 1. Check Geo-Location
     async function checkGeoLocation() {
-      // Allow during development
-      if (process.env.NODE_ENV === 'development') {
+      // Allow during development - fixed: use import.meta.env.DEV for Vite (process is undefined in browser)
+      if (import.meta.env.DEV) {
         setIsAllowed(true);
         return;
       }
 
       try {
-        const response = await fetch('https://ipapi.co/json/');
+        // P0 fix: abort after 3s to avoid infinite PageLoader if ipapi is slow/blocked
+        const controller = new AbortController();
+        const timeout = setTimeout(() => controller.abort(), 3000);
+        const response = await fetch('https://ipapi.co/json/', { signal: controller.signal });
+        clearTimeout(timeout);
         const data = await response.json();
         // Set allowed only if country is Bangladesh (BD)
         setIsAllowed(data.country_code === 'BD');
@@ -145,6 +157,7 @@ function App() {
                     <Route path="/payment/success" element={<PaymentSuccessPage />} />
                     <Route path="/payment/fail" element={<PaymentFailPage />} />
                     <Route path="/payment/cancel" element={<PaymentCancelPage />} />
+                    <Route path="*" element={<NotFound />} />
                   </Routes>
                 </Suspense>
               </Layout>

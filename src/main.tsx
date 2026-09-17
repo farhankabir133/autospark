@@ -3,6 +3,7 @@ import { createRoot } from 'react-dom/client';
 import { HelmetProvider } from 'react-helmet-async';
 import App from './App.tsx';
 import './index.css';
+import './lib/env'; // A-05: validate env early
 
 // HashRouter compatibility for direct callback hits on custom domain.
 // SSLCommerz redirects can land on pathname routes like /payment-success,
@@ -202,6 +203,11 @@ const silenceOnScrollLike = () => {
   }
 };
 
-window.addEventListener('scroll', silenceOnScrollLike, { passive: true });
-window.addEventListener('wheel', silenceOnScrollLike, { passive: true });
-window.addEventListener('touchmove', silenceOnScrollLike, { passive: true });
+// P-03 fix: throttle to rAF to avoid per-pixel jank
+let scrollSilenceTicking = false;
+const throttledSilence = () => {
+  if (scrollSilenceTicking) return;
+  scrollSilenceTicking = true;
+  requestAnimationFrame(() => { silenceOnScrollLike(); scrollSilenceTicking = false; });
+};
+window.addEventListener('scroll', throttledSilence, { passive: true });

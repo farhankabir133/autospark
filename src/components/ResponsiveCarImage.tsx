@@ -13,13 +13,11 @@ interface ResponsiveCarImageProps {
   sizes?: string;
 }
 
-export const ResponsiveCarImage: React.FC<ResponsiveCarImageProps> = ({ alt, images, className }) => (
+export const ResponsiveCarImage: React.FC<ResponsiveCarImageProps> = ({ alt, images, className, sizes = '100vw' }) => (
   <picture>
-    {images.avif && <source srcSet={images.avif} type="image/avif" />}
-    {/* Only add .webp source if the fallback is not a .png (since .webp may not exist for provided PNGs) */}
-    {!images.fallback.endsWith('.png') && (
-      <source srcSet={images.webp} type="image/webp" sizes="100vw" />
-    )}
+    {images.avif && <source srcSet={images.avif} type="image/avif" sizes={sizes} />}
+    {/* P-01 fix: always serve webp source; modern browsers handle png fallback correctly */}
+    <source srcSet={images.webp} type="image/webp" sizes={sizes} />
     <img
       src={images.fallback}
       alt={alt}
@@ -28,7 +26,7 @@ export const ResponsiveCarImage: React.FC<ResponsiveCarImageProps> = ({ alt, ima
       decoding="async"
       loading="lazy"
       className={className}
-      sizes="100vw"
+      sizes={sizes}
       style={{ aspectRatio: `${images.width}/${images.height}` }}
     />
   </picture>

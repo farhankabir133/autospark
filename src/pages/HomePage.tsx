@@ -68,15 +68,12 @@ const VideoHero = ({ children }: { children: React.ReactNode }) => {
     window.addEventListener('pageshow', onPageShow);
     window.addEventListener('popstate', onPopState);
 
-    // Belt-and-suspenders: keep-alive check every 3 s
-    const keepAlive = window.setInterval(resume, 3000);
-
+    // P-04 fix: remove aggressive 3s keepAlive interval (battery drain), rely on events only
     return () => {
       document.removeEventListener('visibilitychange', onVisibility);
       window.removeEventListener('focus', onFocus);
       window.removeEventListener('pageshow', onPageShow);
       window.removeEventListener('popstate', onPopState);
-      window.clearInterval(keepAlive);
     };
   }, []);
 
@@ -90,7 +87,8 @@ const VideoHero = ({ children }: { children: React.ReactNode }) => {
           muted
           loop
           playsInline
-          preload="auto"
+          preload="metadata"
+          fetchPriority="high"
           disablePictureInPicture
           disableRemotePlayback
           onPlaying={() => setVideoReady(true)}
