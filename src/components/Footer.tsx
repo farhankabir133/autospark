@@ -193,6 +193,17 @@ export const Footer = () => {
           <p className="text-xs sm:text-sm text-gray-400">
             &copy; {currentYear} {t('site.title')}. {t('footer.rights')}
           </p>
+          <p className="mt-2 text-xs sm:text-sm text-gray-500">
+            This site is built by{' '}
+            <a
+              href="https://farhankabir.tech/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="font-medium text-gray-300 hover:text-[#FF1A1A] underline underline-offset-4 transition-colors"
+            >
+              Farhan Kabir
+            </a>
+          </p>
         </div>
       </div>
     </footer>

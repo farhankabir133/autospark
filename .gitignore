@@ -30,3 +30,4 @@ assistant-next/
 # Ignore local build outputs
 .next/
 .vercel/
+.vercel

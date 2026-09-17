@@ -36,7 +36,7 @@ import { PerformanceGauge } from '../components/PerformanceGauge';
 const MotionVehicleFlipCard = lazy(() => import('../components/VehicleFlipCardMotion').then(m => ({ default: m.default })));
 
 // ─── Only CarShowcase3D stays lazy (pulls in three.js ≈ 1 MB) ─────
-const CarShowcase3D = lazy(() => import('../components/3d/CarShowcase3D'));
+// const CarShowcase3D = lazy(() => import('../components/3d/CarShowcase3D'));
 
 // ─── Video Hero (primary) ─────────────────────────────────────────
 const VideoHero = ({ children }: { children: React.ReactNode }) => {
@@ -188,6 +188,7 @@ interface VehicleFlipCardProps {
   isSelected: boolean;
   onSelect: () => void;
   flipTimeoutRef: React.MutableRefObject<ReturnType<typeof setTimeout> | null>;
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   animate: boolean;
 }
 // Lightweight fallback flip card (CSS-only, no framer-motion)
@@ -666,112 +667,330 @@ export const HomePage = () => {
           </div>
         </section>
 
-        {/* ══ FEATURED VEHICLES (flip cards) ════════════════════════ */}
+        {/* ══ FEATURED VEHICLES (Interactive Showcase) ════════════════════════ */}
         <LazySection minHeight="400px" rootMargin="300px">
           <section className={`section-padding relative overflow-hidden ${theme === 'dark' ? 'bg-[#0a0a0a]' : 'bg-gray-900'}`}>
-            {/* Background animations removed from homepage (dark-mode friendly) */}
+            {/* Subtle ambient glow orbs for depth */}
+            {device.supportsRichAnimations && (
+              <>
+                <motion.div
+                  className="absolute top-1/4 left-1/4 w-72 h-72 rounded-full blur-3xl pointer-events-none"
+                  style={{ background: 'rgba(192, 0, 0, 0.08)' }}
+                  initial={{ scale: 0.8, opacity: 0 }}
+                  animate={{ scale: [1, 1.05, 1], opacity: [0.4, 0.6, 0.4] }}
+                  transition={{ duration: 8, repeat: Infinity, ease: 'easeInOut' }}
+                  aria-hidden="true"
+                />
+                <motion.div
+                  className="absolute bottom-1/4 right-1/4 w-64 h-64 rounded-full blur-3xl pointer-events-none"
+                  style={{ background: 'rgba(192, 0, 0, 0.06)' }}
+                  initial={{ scale: 0.8, opacity: 0 }}
+                  animate={{ scale: [1, 1.03, 1], opacity: [0.3, 0.5, 0.3] }}
+                  transition={{ duration: 10, repeat: Infinity, ease: 'easeInOut', delay: 2 }}
+                  aria-hidden="true"
+                />
+              </>
+            )}
 
             <div className="container-fluid relative z-10">
-              <ScrollReveal className="text-center mb-6">
+              <ScrollReveal className="text-center mb-6" delay={0.1}>
                 <span className="text-sm font-semibold uppercase tracking-wider text-red-400">
                   {language === 'en' ? 'Interactive Showcase' : 'ইন্টারঅ্যাক্টিভ প্রদর্শনী'}
                 </span>
                 <h2 className="heading-responsive font-bold mt-2 mb-4 text-white drop-shadow-lg">
                   {language === 'en' ? 'Featured Vehicles' : 'বৈশিষ্ট্যযুক্ত গাড়ি'}
                 </h2>
+                <p className="text-gray-400 max-w-xl mx-auto">
+                  {language === 'en' ? 'Hover or click to explore detailed specifications' : 'বিস্তারিত স্পেসিফিকেশন জানতে হোভার বা ক্লিক করুন'}
+                </p>
               </ScrollReveal>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 justify-items-center">
-                {carSlides.slice(0, 3).map(car => (
-                  <div key={car.id} className="w-full flex justify-center">
+              <StaggerContainer className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 justify-items-center" stagger={0.08}>
+                {carSlides.slice(0, 3).map((car, _index) => (
+                  <motion.div
+                    key={car.id}
+                    variants={staggerItemVariants}
+                    className="w-full flex justify-center"
+                    style={{ willChange: 'transform, opacity' }}
+                  >
                     <EnhancedFlipCard
                       frontContent={
                         <div className="flex flex-col h-full">
-                          <ResponsiveCarImage
-                            alt={car.model}
-                            images={{ webp: car.image.replace(/\.(jpg|jpeg|png)$/i, '.webp'), fallback: car.image, width: 320, height: 160 }}
-                            className="w-full h-full object-cover rounded-xl"
-                          />
-                          <h3 className="text-xl font-bold mb-2 text-white">{car.brand} {car.model}</h3>
-                          <p className="text-sm mb-2 text-gray-300">{car.year} • {car.bodyType}</p>
-                          <p className="text-lg font-bold mt-auto text-green-400">{car.price}</p>
+                          <div className="relative overflow-hidden rounded-xl">
+                            <ResponsiveCarImage
+                              alt={car.model}
+                              images={{ webp: car.image.replace(/\.(jpg|jpeg|png)$/i, '.webp'), fallback: car.image, width: 320, height: 160 }}
+                              className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                            />
+                            {car.features.some(f => f.toLowerCase().includes('hybrid')) && (
+                              <span className="absolute top-3 left-3 px-2 py-1 text-xs font-bold bg-green-500 text-white rounded-full shadow-lg">
+                                HYBRID
+                              </span>
+                            )}
+                            <span className="absolute top-3 right-3 px-2 py-1 text-xs font-bold bg-white/90 text-gray-900 rounded-full shadow-lg">
+                              {car.year}
+                            </span>
+                          </div>
+                          <div className="mt-4 flex-1 flex flex-col">
+                            <h3 className="text-xl font-bold text-white">{car.brand} {car.model}</h3>
+                            <p className="text-sm mt-1 text-gray-300">{car.bodyType} • {car.color}</p>
+                            <p className="text-lg font-bold mt-auto text-green-400 flex items-center gap-2">
+                              {car.price}
+                              <motion.span
+                                className="text-sm font-normal text-green-300"
+                                initial={{ opacity: 0, x: -10 }}
+                                animate={{ opacity: 1, x: 0 }}
+                                transition={{ delay: 0.3, duration: 0.4 }}
+                              >
+                                {language === 'en' ? 'Starting at' : 'থেকে শুরু'}
+                              </motion.span>
+                            </p>
+                          </div>
                         </div>
                       }
                       backContent={
-                        <div className="space-y-4">
-                          <h3 className="text-lg font-bold text-white">{language === 'en' ? 'Specifications' : 'স্পেসিফিকেশন'}</h3>
-                          <div className="space-y-2">
+                        <div className="space-y-4 p-2">
+                          <h3 className="text-lg font-bold text-white flex items-center gap-2">
+                            <motion.span
+                              initial={{ rotate: -90, opacity: 0 }}
+                              animate={{ rotate: 0, opacity: 1 }}
+                              transition={{ delay: 0.2, duration: 0.4 }}
+                            >
+                              ⚙
+                            </motion.span>
+                            {language === 'en' ? 'Specifications' : 'স্পেসিফিকেশন'}
+                          </h3>
+                          <div className="space-y-3">
                             {[
-                              [language === 'en' ? 'Engine' : 'ইঞ্জিন', car.features[0]],
-                              [language === 'en' ? 'Type' : 'টাইপ', car.bodyType],
-                              [language === 'en' ? 'Color' : 'রঙ', car.color],
-                              [language === 'en' ? 'Year' : 'সন', car.year],
-                              [language === 'en' ? 'Features' : 'বৈশিষ্ট্য', car.features[1]],
-                              [language === 'en' ? 'Price' : 'মূল্য', <span className="text-green-400">{car.price}</span>],
-                            ].map(([label, val]) => (
-                              <div key={String(label)} className="flex justify-between text-sm text-gray-300">
-                                <span>{label}</span>
-                                <span className="font-semibold">{val}</span>
-                              </div>
+                              { label: language === 'en' ? 'Engine' : 'ইঞ্জিন', value: car.features[0], icon: '⚡' },
+                              { label: language === 'en' ? 'Type' : 'টাইপ', value: car.bodyType, icon: '🚗' },
+                              { label: language === 'en' ? 'Color' : 'রঙ', value: car.color, icon: '🎨' },
+                              { label: language === 'en' ? 'Year' : 'সন', value: car.year.toString(), icon: '📅' },
+                              { label: language === 'en' ? 'Features' : 'বৈশিষ্ট্য', value: car.features[1], icon: '✨' },
+                              { label: language === 'en' ? 'Price' : 'মূল্য', value: car.price, icon: '💰', highlight: true },
+                            ].map((spec, i) => (
+                              <motion.div
+                                key={spec.label}
+                                initial={{ opacity: 0, x: -20 }}
+                                animate={{ opacity: 1, x: 0 }}
+                                transition={{ delay: 0.15 + i * 0.05, duration: 0.3 }}
+                                className={`flex items-center justify-between text-sm text-gray-300 py-2 border-b border-gray-800/50 ${spec.highlight ? 'text-green-400 font-semibold' : ''}`}
+                              >
+                                <span className="flex items-center gap-2">
+                                  <span className="text-base">{spec.icon}</span>
+                                  {spec.label}
+                                </span>
+                                <span className="font-medium text-white">{spec.value}</span>
+                              </motion.div>
                             ))}
                           </div>
-                          <button
-                            className="w-full mt-4 py-2 bg-red-500 hover:bg-red-600 text-white rounded-lg font-semibold transition-colors touch-target"
+                          <motion.button
+                            initial={{ opacity: 0, y: 20 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ delay: 0.5, duration: 0.4 }}
+                            whileHover={{ scale: 1.02 }}
+                            whileTap={{ scale: 0.98 }}
+                            className="w-full mt-4 py-3 bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white rounded-xl font-semibold transition-all touch-target shadow-lg hover:shadow-xl"
                             onClick={() => handleAddToComparison(car as unknown as Vehicle)}
                           >
-                            {language === 'en' ? 'Add to Comparison' : 'তুলনায় যুক্ত করুন'}
-                          </button>
+                            <span className="flex items-center justify-center gap-2">
+                              {language === 'en' ? 'Add to Comparison' : 'তুলনায় যুক্ত করুন'}
+                              <motion.span
+                                animate={{ x: [0, 4, 0] }}
+                                transition={{ duration: 1.5, repeat: Infinity }}
+                              >
+                                →
+                              </motion.span>
+                            </span>
+                          </motion.button>
                         </div>
                       }
                       theme={theme}
-                      autoFlipDelay={animate ? 3500 : 0}
+                      autoFlipDelay={animate ? 4000 : 0}
                       onFlipChange={(isFlipped: boolean) => {
                         if (isFlipped && animate) import('../utils/AudioManager').then(m => m.AudioManager.playVehicleSelect());
                       }}
                     />
-                  </div>
+                  </motion.div>
                 ))}
-              </div>
+              </StaggerContainer>
             </div>
           </section>
         </LazySection>
 
         {/* ══ FEATURED VEHICLES (DB) ════════════════════════════════ */}
         {featuredVehicles.length > 0 && (
-          <section className={`section-padding ${theme === 'dark' ? 'bg-gray-900/80' : 'bg-gray-50'}`}>
-            <div className="container-fluid">
-              <ScrollReveal className="text-center mb-8">
-                <h2 className={`heading-responsive font-bold mb-4 ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
+          <section className={`section-padding relative overflow-hidden ${theme === 'dark' ? 'bg-gray-900/80' : 'bg-gray-50'}`}>
+            {/* Subtle background glow */}
+            {device.supportsRichAnimations && (
+              <motion.div
+                className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-1/2 pointer-events-none"
+                style={{
+                  background: theme === 'dark'
+                    ? 'radial-gradient(ellipse at center, rgba(192,0,0,0.06) 0%, transparent 70%)'
+                    : 'radial-gradient(ellipse at center, rgba(192,0,0,0.04) 0%, transparent 70%)'
+                }}
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ duration: 1, delay: 0.3 }}
+                aria-hidden="true"
+              />
+            )}
+
+            <div className="container-fluid relative z-10">
+              <ScrollReveal className="text-center mb-10" delay={0.1}>
+                <span className="text-sm font-semibold uppercase tracking-wider text-red-400">
+                  {language === 'en' ? 'Curated Selection' : 'নির্বাচিত সংগ্রহ'}
+                </span>
+                <h2 className={`heading-responsive font-bold mt-2 mb-4 ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
                   {language === 'en' ? 'Featured Vehicles' : 'বৈশিষ্ট্যযুক্ত গাড়ি'}
                 </h2>
+                <p className={`text-lg max-w-2xl mx-auto ${theme === 'dark' ? 'text-gray-400' : 'text-gray-600'}`}>
+                  {language === 'en' ? 'Hand-picked premium vehicles ready for immediate delivery' : 'তাত্ক্ষণিক ডেলিভারির জন্য হাতের ন surviv নির্বাচিত প্রিমিয়াম গাড়ি'}
+                </p>
               </ScrollReveal>
-              <StaggerContainer className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8" stagger={0.1}>
-                {featuredVehicles.map((vehicle) => (
-                  <motion.div key={vehicle.id} variants={staggerItemVariants}>
-                    <Link to={`/vehicle/${vehicle.id}`}>
-                      <Card className={`group overflow-hidden cursor-pointer transition-all duration-300 hover:-translate-y-1 hover:shadow-lift ${theme === 'dark' ? 'glass' : 'hover:shadow-xl'}`}>
-                        <div className="relative h-64 overflow-hidden">
-                          <img
+
+              <StaggerContainer className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8" stagger={0.08}>
+                {featuredVehicles.map((vehicle, index) => (
+                  <motion.div
+                    key={vehicle.id}
+                    variants={staggerItemVariants}
+                    style={{ willChange: 'transform, opacity, box-shadow' }}
+                    className="group"
+                  >
+                    <Link
+                      to={`/vehicle/${vehicle.id}`}
+                      className="block"
+                      aria-label={language === 'en' ? `View ${vehicle.model} details` : `${vehicle.model} এর বিবরণ দেখুন`}
+                    >
+                      <motion.div
+                        whileHover={{ y: -8, boxShadow: theme === 'dark'
+                          ? '0 25px 50px rgba(192,0,0,0.2), 0 0 0 1px rgba(192,0,0,0.1)'
+                          : '0 25px 50px rgba(192,0,0,0.15), 0 0 0 1px rgba(192,0,0,0.05)' }}
+                        whileTap={{ scale: 0.98 }}
+                        transition={{ type: 'spring', stiffness: 300, damping: 30 }}
+                      >
+                        <Card
+                          className={`overflow-hidden cursor-pointer transition-all duration-500 ${
+                            theme === 'dark'
+                              ? 'bg-gray-800/50 backdrop-blur-sm border border-gray-700/50 hover:border-red-500/30 hover:shadow-[0_20px_40px_rgba(192,0,0,0.15)]'
+                              : 'bg-white border border-gray-100 hover:border-red-200 hover:shadow-[0_20px_40px_rgba(192,0,0,0.1)]'
+                          } rounded-2xl`}
+                        >
+                          <motion.img
                             src={encodeURI(vehicle.images?.[0]?.image_url || 'https://images.pexels.com/photos/3964962/pexels-photo-3964962.jpeg?auto=compress&cs=tinysrgb&w=400&fm=webp')}
                             alt={vehicle.model}
-                            className="w-full h-full object-contain car-img-hover transition-transform duration-500 group-hover:scale-110"
+                            className="w-full h-full object-cover"
                             loading="lazy"
                             decoding="async"
                             width={400}
                             height={256}
+                            style={{ willChange: 'transform' }}
+                            initial={{ scale: 1 }}
+                            whileHover={{ scale: 1.08 }}
+                            transition={{ duration: 0.6, ease: 'easeOut' }}
                           />
-                          <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-                        </div>
-                        <div className="p-6">
-                          <h3 className={`text-xl font-bold mb-2 ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
-                            {language === 'en' ? (vehicle.description_en || vehicle.model) : (vehicle.description_bn || vehicle.model)}
-                          </h3>
-                          <div className={`flex items-center justify-between mb-4 ${theme === 'dark' ? 'text-gray-300' : 'text-gray-600'}`}>
-                            <span>{vehicle.year}</span>
-                            <span className="text-green-500 font-bold">{formatPrice(vehicle.price)}</span>
-                          </div>
+                          {/* Gradient overlay */}
+                          <motion.div
+                            className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/10 to-transparent"
+                            initial={{ opacity: 0 }}
+                            whileHover={{ opacity: 1 }}
+                            transition={{ duration: 0.3 }}
+                          />
+                          {/* Vehicle type badge */}
+                          <motion.div
+                            className="absolute top-4 left-4"
+                            initial={{ opacity: 0, y: -10 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ delay: 0.2 + index * 0.05, duration: 0.3 }}
+                            whileHover={{ scale: 1.05 }}
+                          >
+                            <span className="px-3 py-1.5 text-xs font-bold rounded-full bg-gradient-to-r from-red-500 to-red-600 text-white shadow-lg">
+                              {vehicle.body_type || (language === 'en' ? 'Premium' : 'প্রিমিয়াম')}
+                            </span>
+                          </motion.div>
+                          {/* Favorite/Heart icon placeholder */}
+                          <motion.div
+                            className="absolute top-4 right-4 p-2 bg-white/10 backdrop-blur-sm rounded-full"
+                            initial={{ opacity: 0, x: 10 }}
+                            animate={{ opacity: 1, x: 0 }}
+                            transition={{ delay: 0.3 + index * 0.05, duration: 0.3 }}
+                            whileHover={{ scale: 1.1, backgroundColor: 'rgba(255,255,255,0.2)' }}
+                          >
+                            <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+                            </svg>
+                          </motion.div>
+                        <div className="p-5 space-y-3">
+                          <motion.div
+                            initial={{ opacity: 0, y: 10 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ delay: 0.2 + index * 0.05, duration: 0.4 }}
+                          >
+                            <h3 className={`text-lg font-bold ${theme === 'dark' ? 'text-white' : 'text-gray-900'} truncate`}>
+                              {language === 'en' ? (vehicle.description_en || vehicle.model) : (vehicle.description_bn || vehicle.model)}
+                            </h3>
+                          </motion.div>
+                          <motion.div
+                            initial={{ opacity: 0, y: 10 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ delay: 0.25 + index * 0.05, duration: 0.4 }}
+                            className="flex items-center justify-between text-sm"
+                          >
+                            <span className={`flex items-center gap-1.5 ${theme === 'dark' ? 'text-gray-400' : 'text-gray-500'}`}>
+                              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                              </svg>
+                              {vehicle.year}
+                            </span>
+                            <span className="text-green-500 font-bold text-lg">{formatPrice(vehicle.price)}</span>
+                          </motion.div>
+                          {/* Quick specs */}
+                          <motion.div
+                            initial={{ opacity: 0, y: 10 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ delay: 0.3 + index * 0.05, duration: 0.4 }}
+                            className="flex flex-wrap gap-2"
+                          >
+                            {vehicle.fuel_type && (
+                              <span className="px-2.5 py-1 text-xs font-medium rounded-full bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300">
+                                {vehicle.fuel_type}
+                              </span>
+                            )}
+                            {vehicle.transmission && (
+                              <span className="px-2.5 py-1 text-xs font-medium rounded-full bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-300">
+                                {vehicle.transmission}
+                              </span>
+                            )}
+                            {vehicle.engine_capacity && (
+                              <span className="px-2.5 py-1 text-xs font-medium rounded-full bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-300">
+                                {vehicle.engine_capacity}
+                              </span>
+                            )}
+                          </motion.div>
+                          {/* CTA Arrow */}
+                          <motion.div
+                            initial={{ opacity: 0, x: -10 }}
+                            animate={{ opacity: 1, x: 0 }}
+                            transition={{ delay: 0.35 + index * 0.05, duration: 0.4 }}
+                            className="flex items-center justify-between pt-2 border-t border-gray-200/50 dark:border-gray-700/50"
+                          >
+                            <span className={`text-sm font-medium ${theme === 'dark' ? 'text-gray-300' : 'text-gray-600'}`}>
+                              {language === 'en' ? 'View Details' : 'বিস্তারিত দেখুন'}
+                            </span>
+                            <motion.span
+                              whileHover={{ x: 4 }}
+                              transition={{ duration: 0.2 }}
+                              className="flex items-center gap-1 text-red-500 font-semibold"
+                            >
+                              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
+                              </svg>
+                            </motion.span>
+                          </motion.div>
                         </div>
                       </Card>
+                      </motion.div>
                     </Link>
                   </motion.div>
                 ))}
