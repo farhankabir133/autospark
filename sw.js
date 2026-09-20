@@ -1,6 +1,8 @@
 // Service Worker — Cache-first for static assets, network-first for API calls
-// Use a runtime-derived cache name so each new SW install uses a new cache
-const CACHE_NAME = `autospark-${Date.now()}`;
+// Bump CACHE_VERSION when deploying breaking changes to cached assets.
+// Old caches are cleaned up on activate.
+const CACHE_VERSION = 'v1';
+const CACHE_NAME = `autospark-${CACHE_VERSION}`;
 
 // Assets to precache on install (only lightweight critical assets)
 // Ferrari GLB + DRACO removed — cached on-demand when 3D scene loads

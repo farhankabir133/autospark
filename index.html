@@ -51,7 +51,10 @@
       /* Critical CSS - prevents layout shift */
       *,*::before,*::after{box-sizing:border-box}
       html{line-height:1.5;-webkit-text-size-adjust:100%;font-family:Inter,system-ui,-apple-system,sans-serif}
-      body{margin:0;background:#0f0f0f;color:#fff}
+      body{margin:0;color:#fff}
+      /* Theme-aware background — defaults to dark, light mode overrides */
+      body{background:#0f0f0f}
+      html:not(.dark) body{background:#f9fafb;color:#111827}
       #root{min-height:100vh}
       /* Hero section placeholder to prevent CLS */
       .hero-placeholder{position:relative;width:100%;height:100vh;background:#0a0a0a;display:flex;align-items:center;justify-content:center}
@@ -64,6 +67,23 @@
       /* content-visibility:auto only for below-fold images (avoids LCP issues on hero) */
       img[loading="lazy"]{content-visibility:auto}
     </style>
+
+    <!-- Prevent FOUC: apply theme class before first paint -->
+    <script>
+      (function(){
+        try {
+          var stored = localStorage.getItem('theme');
+          var isDark = stored ? stored === 'dark' : !window.matchMedia('(prefers-color-scheme: light)').matches;
+          if (isDark) {
+            document.documentElement.classList.add('dark');
+          } else {
+            document.documentElement.classList.remove('dark');
+          }
+        } catch(e) {
+          document.documentElement.classList.add('dark');
+        }
+      })();
+    </script>
 
     <!-- Structured Data (JSON-LD) for SEO -->
     <script type="application/ld+json">
@@ -86,14 +106,14 @@
     </script>
 
     <!-- Custom domain: Removed GitHub Pages SPA redirect logic -->
-    <script type="module" crossorigin src="/assets/js/index-CuIqQVsc.js"></script>
+    <script type="module" crossorigin src="/assets/js/index-B9KW-lQZ.js"></script>
     <link rel="modulepreload" crossorigin href="/assets/js/react-vendor-uQDcgnot.js">
     <link rel="modulepreload" crossorigin href="/assets/js/helmet-B4aieuAN.js">
-    <link rel="modulepreload" crossorigin href="/assets/js/router-Bz09i6hE.js">
-    <link rel="modulepreload" crossorigin href="/assets/js/framer-motion-uzJO-EN6.js">
-    <link rel="modulepreload" crossorigin href="/assets/js/icons-C-oFqYYk.js">
+    <link rel="modulepreload" crossorigin href="/assets/js/router-CmfxOuF6.js">
+    <link rel="modulepreload" crossorigin href="/assets/js/framer-motion-32uYpxWc.js">
+    <link rel="modulepreload" crossorigin href="/assets/js/icons--ip9SqRU.js">
     <link rel="modulepreload" crossorigin href="/assets/js/form-C884NXx8.js">
-    <link rel="stylesheet" crossorigin href="/assets/index-DI5wbiG2.css">
+    <link rel="stylesheet" crossorigin href="/assets/index-BPKNMAAw.css">
   </head>
   <body>
     <!-- Skip to content link for accessibility (keyboard nav) -->
