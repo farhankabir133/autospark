@@ -10,9 +10,9 @@ import { SplashScreen } from './components/SplashScreen';
 
 // --- ADDED: BLOCKING VIEW COMPONENT ---
 const AccessDenied = () => (
-  <div className="min-h-screen bg-[#050505] flex flex-col items-center justify-center p-6 text-center">
+  <div className="min-h-screen bg-[#050505] dark:bg-[#050505] flex flex-col items-center justify-center p-6 text-center">
     <h1 className="text-[#C00000] text-4xl font-bold mb-4">ACCESS DENIED</h1>
-    <p className="text-white text-lg max-w-md">
+    <p className="text-white dark:text-gray-300 text-lg max-w-md">
       We're sorry, but AutoSpark BD is currently only accessible to users within Bangladesh (BD).
     </p>
     <div className="mt-8 w-16 h-1 bg-[#C00000]" />
@@ -22,7 +22,7 @@ const AccessDenied = () => (
 const NotFound = () => (
   <div className="min-h-[60vh] flex flex-col items-center justify-center p-8 text-center">
     <h1 className="text-6xl font-black text-[#C00000] mb-2">404</h1>
-    <p className="text-white text-lg mb-4">Page not found</p>
+    <p className="text-white dark:text-gray-300 text-lg mb-4">Page not found</p>
     <a href="/#/" className="px-6 py-2 bg-[#C00000] text-white rounded-lg hover:bg-[#FF1A1A] transition-colors">Go Home</a>
   </div>
 );

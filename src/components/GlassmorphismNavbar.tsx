@@ -1,13 +1,52 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { Menu, X, Moon, Sun, Globe, Search, Volume2, VolumeX } from 'lucide-react';
-import { m, LazyMotion, domMax, AnimatePresence } from 'framer-motion';
+import { m, LazyMotion, domAnimation, AnimatePresence } from 'framer-motion';
 import { useLanguage } from '../contexts/LanguageContext';
 import { useTheme } from '../contexts/ThemeContext';
 
 // Dynamic AudioManager — never imported synchronously in the critical path
 const playClick = () => import('../utils/AudioManager').then(mod => mod.AudioManager.playClick());
 const playButtonClick = () => import('../utils/AudioManager').then(mod => mod.AudioManager.playButtonClick());
+
+// Animation variants — defined at module scope to avoid re-creation on every render
+const navbarContainerVariants = {
+  hidden: { opacity: 0, y: -20 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: { duration: 0.5, ease: 'easeOut' as const },
+  },
+};
+
+const mobileMenuVariants = {
+  hidden: { opacity: 0, y: -10, scale: 0.95 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    scale: 1,
+    transition: { duration: 0.3, ease: 'easeOut' as const },
+  },
+  exit: {
+    opacity: 0,
+    y: -10,
+    scale: 0.95,
+    transition: { duration: 0.2, ease: 'easeIn' as const },
+  },
+};
+
+const navLinkVariants = {
+  hidden: { opacity: 0, y: -10 },
+  visible: (i: number) => ({
+    opacity: 1,
+    y: 0,
+    transition: { delay: i * 0.05, duration: 0.3 },
+  }),
+  hover: {
+    scale: 1.05,
+    transition: { duration: 0.2 },
+  },
+};
 
 export const GlassmorphismNavbar = () => {
   const [isScrolled, setIsScrolled] = useState(false);
@@ -44,7 +83,7 @@ export const GlassmorphismNavbar = () => {
     const handleScroll = () => {
       setIsScrolled(window.scrollY > 50);
     };
-    window.addEventListener('scroll', handleScroll);
+    window.addEventListener('scroll', handleScroll, { passive: true });
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
@@ -91,44 +130,42 @@ export const GlassmorphismNavbar = () => {
     setIsMobileMenuOpen(!isMobileMenuOpen);
   };
 
-  // Animation variants
-  const navbarContainerVariants = {
-    hidden: { opacity: 0, y: -20 },
-    visible: {
-      opacity: 1,
-      y: 0,
-      transition: { duration: 0.5, ease: 'easeOut' as const },
-    },
-  };
+  // Focus trap for mobile menu
+  const mobileMenuRef = useRef<HTMLDivElement>(null);
+  const previousFocusRef = useRef<HTMLElement | null>(null);
 
-  const mobileMenuVariants = {
-    hidden: { opacity: 0, y: -10, scale: 0.95 },
-    visible: {
-      opacity: 1,
-      y: 0,
-      scale: 1,
-      transition: { duration: 0.3, ease: 'easeOut' as const },
-    },
-    exit: {
-      opacity: 0,
-      y: -10,
-      scale: 0.95,
-      transition: { duration: 0.2, ease: 'easeIn' as const },
-    },
-  };
+  useEffect(() => {
+    if (isMobileMenuOpen) {
+      previousFocusRef.current = document.activeElement as HTMLElement;
+      // Focus the first link in the mobile menu after a tick
+      requestAnimationFrame(() => {
+        const firstLink = mobileMenuRef.current?.querySelector('a, button');
+        if (firstLink && 'focus' in firstLink) (firstLink as HTMLElement).focus();
+      });
+    } else if (previousFocusRef.current) {
+      previousFocusRef.current.focus();
+      previousFocusRef.current = null;
+    }
+  }, [isMobileMenuOpen]);
 
-  const navLinkVariants = {
-    hidden: { opacity: 0, y: -10 },
-    visible: (i: number) => ({
-      opacity: 1,
-      y: 0,
-      transition: { delay: i * 0.05, duration: 0.3 },
-    }),
-    hover: {
-      scale: 1.05,
-      transition: { duration: 0.2 },
-    },
-  };
+  const handleMenuKeyDown = useCallback((e: React.KeyboardEvent) => {
+    if (e.key === 'Escape') {
+      setIsMobileMenuOpen(false);
+      return;
+    }
+    if (e.key !== 'Tab' || !mobileMenuRef.current) return;
+    const focusable = mobileMenuRef.current.querySelectorAll<HTMLElement>('a[href], button:not([disabled]), [tabindex]:not([tabindex="-1"])');
+    if (focusable.length === 0) return;
+    const first = focusable[0];
+    const last = focusable[focusable.length - 1];
+    if (e.shiftKey && document.activeElement === first) {
+      e.preventDefault();
+      last.focus();
+    } else if (!e.shiftKey && document.activeElement === last) {
+      e.preventDefault();
+      first.focus();
+    }
+  }, []);
 
   const glassBackground = theme === 'dark'
   ? 'bg-gray-900/40 backdrop-blur-xl border-b border-gray-700/30'
@@ -139,7 +176,7 @@ export const GlassmorphismNavbar = () => {
   : 'bg-white/80 backdrop-blur-2xl border-b border-gray-200/40 shadow-2xl shadow-black/10';
 
   return (
-    <LazyMotion features={domMax}>
+    <LazyMotion features={domAnimation}>
     <m.header
       initial="hidden"
       animate="visible"
@@ -178,7 +215,7 @@ export const GlassmorphismNavbar = () => {
                   <m.img
                     src={currentLogo}
                     alt="Auto Spark BD"
-                    className="h-16 w-16 sm:h-14 sm:w-14 lg:h-16 lg:w-16 relative z-10 drop-shadow-[0_0_8px_rgba(192,0,0,0.5)]"
+                    className="h-10 w-10 sm:h-10 sm:w-10 lg:h-12 lg:w-12 relative z-10 drop-shadow-[0_0_8px_rgba(192,0,0,0.5)]"
                     initial={{ opacity: 0, scale: 0.5, rotate: -180 }}
                     animate={{ opacity: 1, scale: 1, rotate: 0 }}
                     transition={{ 
@@ -205,7 +242,7 @@ export const GlassmorphismNavbar = () => {
             <div className="hidden lg:flex items-center space-x-0.5">
               {navLinks.map((link, index) => {
                 const isExternal = link.to.startsWith('tel:');
-                const commonClasses = `px-3 py-1.5 rounded-lg text-sm font-medium transition-all duration-300 relative outline-none focus:ring-2 focus:ring-blue-500 ${
+                const commonClasses = `px-3 py-1.5 rounded-lg text-sm font-medium transition-all duration-300 relative outline-none focus-visible:ring-2 focus-visible:ring-[#C00000] ${
                   activeLink === link.to
                     ? theme === 'dark'
                       ? 'text-[#FF1A1A]'
@@ -269,7 +306,7 @@ export const GlassmorphismNavbar = () => {
                 whileHover={{ scale: 1.1 }}
                 whileTap={{ scale: 0.95 }}
                 onClick={() => playClick()}
-                className={`hidden md:flex p-1.5 rounded-lg transition-all ${
+                className={`hidden md:flex p-2.5 rounded-lg transition-all ${
                   theme === 'dark'
                     ? 'hover:bg-gray-700/50 text-gray-400 hover:text-[#FF1A1A]'
                     : 'hover:bg-gray-100/50 text-gray-600 hover:text-[#C00000]'
@@ -284,7 +321,7 @@ export const GlassmorphismNavbar = () => {
                 whileHover={{ scale: 1.1 }}
                 whileTap={{ scale: 0.95 }}
                 onClick={handleToggleAudio}
-                className={`p-1.5 rounded-lg transition-all ${
+                className={`p-2.5 rounded-lg transition-all ${
                   theme === 'dark'
                     ? 'hover:bg-gray-700/50 text-gray-400 hover:text-white'
                     : 'hover:bg-gray-100/50 text-gray-600 hover:text-gray-900'
@@ -299,7 +336,7 @@ export const GlassmorphismNavbar = () => {
                 whileHover={{ scale: 1.1, rotate: 20 }}
                 whileTap={{ scale: 0.95 }}
                 onClick={handleToggleTheme}
-                className={`p-1.5 rounded-lg transition-all ${
+                className={`p-2.5 rounded-lg transition-all ${
                   theme === 'dark'
                     ? 'hover:bg-gray-700/50 text-yellow-400'
                     : 'hover:bg-gray-100/50 text-gray-800'
@@ -318,7 +355,7 @@ export const GlassmorphismNavbar = () => {
                 whileHover={{ scale: 1.1 }}
                 whileTap={{ scale: 0.95 }}
                 onClick={toggleLanguage}
-                className={`p-1.5 rounded-lg transition-all ${
+                className={`p-2.5 rounded-lg transition-all ${
                   theme === 'dark'
                     ? 'hover:bg-gray-700/50 text-[#FF1A1A]'
                     : 'hover:bg-gray-100/50 text-[#C00000]'
@@ -355,6 +392,8 @@ export const GlassmorphismNavbar = () => {
                     : 'hover:bg-gray-100/50 text-gray-600'
                 }`}
                 aria-label="Toggle menu"
+                aria-expanded={isMobileMenuOpen}
+                aria-controls="mobile-menu"
               >
                 <AnimatePresence mode="wait">
                   {isMobileMenuOpen ? (
@@ -387,11 +426,16 @@ export const GlassmorphismNavbar = () => {
           <AnimatePresence>
             {isMobileMenuOpen && (
               <m.div
+                ref={mobileMenuRef}
+                id="mobile-menu"
                 variants={mobileMenuVariants}
                 initial="hidden"
                 animate="visible"
                 exit="exit"
                 className="lg:hidden mt-4"
+                role="menu"
+                aria-label="Mobile navigation"
+                onKeyDown={handleMenuKeyDown}
               >
                 <div className={`space-y-2 p-4 rounded-xl ${
                   theme === 'dark'
@@ -401,7 +445,7 @@ export const GlassmorphismNavbar = () => {
                   {/* Mobile Navigation Links */}
                   {navLinks.map((link, index) => {
                     const isExternal = link.to.startsWith('tel:');
-                    const commonClasses = `block px-4 py-4 rounded-lg transition-all outline-none focus:ring-2 focus:ring-blue-500 ${
+                    const commonClasses = `block px-4 py-4 rounded-lg transition-all outline-none focus-visible:ring-2 focus-visible:ring-[#C00000] ${
                       activeLink === link.to
                         ? theme === 'dark'
                           ? 'bg-[#C00000]/30 border border-[#C00000]/50 text-[#FF1A1A]'

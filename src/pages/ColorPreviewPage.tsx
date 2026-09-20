@@ -54,7 +54,7 @@ export const ColorPreviewPage: React.FC = () => {
     <div className="min-h-screen w-full bg-white dark:bg-gray-900 text-gray-900 dark:text-white">
       <div className="max-w-6xl mx-auto p-6">
         <div className="flex items-center justify-between mb-6">
-          <button onClick={() => navigate(-1)} className="px-3 py-2 rounded-md border">Back</button>
+          <button onClick={() => navigate(-1)} className="px-3 py-2 rounded-md border min-h-[44px] min-w-[44px]" aria-label="Go back">Back</button>
           <h1 className="text-xl font-bold">{vehicleModel} — {selectedColor?.name || ''}</h1>
           <div />
         </div>
@@ -82,7 +82,7 @@ export const ColorPreviewPage: React.FC = () => {
             <h2 className="font-semibold mb-3">Choose a color</h2>
             <div className="grid grid-cols-3 sm:grid-cols-6 gap-3 mb-4">
               {availableColors.map(c => (
-                <button key={c.name} onClick={() => handleColorClick(c)} className={`w-full aspect-square rounded-xl border-2 ${selectedColor?.name === c.name ? 'border-blue-500 shadow-lg' : 'border-gray-300 dark:border-gray-700'}`} style={{ backgroundColor: c.hex }}>
+                <button key={c.name} onClick={() => handleColorClick(c)} aria-label={`Select color: ${c.name}`} aria-pressed={selectedColor?.name === c.name} className={`w-full aspect-square rounded-xl border-2 ${selectedColor?.name === c.name ? 'border-blue-500 shadow-lg' : 'border-gray-300 dark:border-gray-700'}`} style={{ backgroundColor: c.hex }}>
                 </button>
               ))}
             </div>

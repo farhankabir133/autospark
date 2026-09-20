@@ -63,6 +63,9 @@ export const ImageCarousel = ({
       className={`relative ${height} overflow-hidden rounded-lg group`}
       onMouseEnter={() => setIsAutoPlay(false)}
       onMouseLeave={() => setIsAutoPlay(autoPlay)}
+      role="region"
+      aria-roledescription="carousel"
+      aria-label={images[currentIndex].alt || `Image carousel, slide ${currentIndex + 1} of ${images.length}`}
     >
       <AnimatePresence mode="wait">
         <motion.img
@@ -85,6 +88,7 @@ export const ImageCarousel = ({
         <>
           <motion.button
             onClick={goToPrevious}
+            aria-label="Previous image"
             className={`absolute left-4 top-1/2 transform -translate-y-1/2 p-2 rounded-full transition-all z-10 ${
               theme === 'dark'
                 ? 'bg-white/20 hover:bg-white/40 text-white'
@@ -98,6 +102,7 @@ export const ImageCarousel = ({
 
           <motion.button
             onClick={goToNext}
+            aria-label="Next image"
             className={`absolute right-4 top-1/2 transform -translate-y-1/2 p-2 rounded-full transition-all z-10 ${
               theme === 'dark'
                 ? 'bg-white/20 hover:bg-white/40 text-white'
@@ -118,6 +123,8 @@ export const ImageCarousel = ({
             <motion.button
               key={index}
               onClick={() => goToSlide(index)}
+              aria-label={`Go to slide ${index + 1}`}
+              aria-current={index === currentIndex ? 'true' : undefined}
               className={`rounded-full transition-all ${
                 index === currentIndex
                   ? 'bg-white w-2 h-2'

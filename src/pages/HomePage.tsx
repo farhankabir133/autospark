@@ -1,8 +1,8 @@
 import { ResponsiveCarImage } from '../components/ResponsiveCarImage';
-import { useEffect, useState, useRef, lazy, Suspense } from 'react';
+import { useEffect, useState, useRef, lazy, Suspense, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Link } from 'react-router-dom';
-import { motion, useScroll, useTransform } from 'framer-motion';
+import { motion, useScroll, useTransform, useMotionTemplate } from 'framer-motion';
 import { ArrowRight, Car, Wrench, Shield, Users, Award, ChevronDown, Zap, Fuel } from 'lucide-react';
 import { useLanguage } from '../contexts/LanguageContext';
 import { useTheme } from '../contexts/ThemeContext';
@@ -331,6 +331,7 @@ export const HomePage = () => {
   const heroOpacity = useTransform(scrollY, [0, 400], [1, 0]);
   const heroScale = useTransform(scrollY, [0, 400], [1, 1.1]);
   const heroBlur = useTransform(scrollY, [0, 400], [0, 8]);
+  const heroBlurFilter = useMotionTemplate`blur(${heroBlur}px)`;
 
   const pageTitle = language === 'en' ? 'Autospark — Premium Cars in Rajshahi' : 'রাজশাহী প্রিমিয়াম গাড়ি — অটোস্পার্ক';
   const pageDescription = language === 'en'
@@ -341,6 +342,7 @@ export const HomePage = () => {
     fetchFeaturedVehicles();
     fetchTestimonials();
     return () => { if (flipTimeoutRef.current) clearTimeout(flipTimeoutRef.current); };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // Dynamically import the homepage carousel after initial paint / during idle
@@ -368,7 +370,7 @@ export const HomePage = () => {
     carouselSectionRef.current?.scrollIntoView({ behavior: 'smooth' });
   };
 
-  const fetchFeaturedVehicles = async () => {
+  const fetchFeaturedVehicles = useCallback(async () => {
     try {
       const { supabase } = await import('../lib/supabase');
       const { data, error } = await supabase
@@ -389,9 +391,10 @@ export const HomePage = () => {
       console.warn('fetchFeaturedVehicles failed:', err);
       setFeaturedVehicles([]);
     }
-  };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
-  const fetchTestimonials = async () => {
+  const fetchTestimonials = useCallback(async () => {
     try {
       const { supabase } = await import('../lib/supabase');
       const { data, error } = await supabase
@@ -411,7 +414,8 @@ export const HomePage = () => {
       console.warn('fetchTestimonials failed:', err);
       setTestimonials([]);
     }
-  };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const handleVehicleSelect = (vehicleId: typeof showcaseVehicle) => {
     setShowcaseVehicle(vehicleId);
@@ -489,7 +493,7 @@ export const HomePage = () => {
   // Choose a distinct color name for each model on load and rotate periodically
   const [initialColors, setInitialColors] = useState<Record<string, string>>({});
 
-  const pickUniqueColors = () => {
+  const pickUniqueColors = useCallback(() => {
     const result: Record<string, string> = {};
     const used = new Set<string>();
     personalizeModels.forEach((model) => {
@@ -503,16 +507,16 @@ export const HomePage = () => {
       used.add(pick);
     });
     return result;
-  };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   useEffect(() => {
     // initial pick
     setInitialColors(pickUniqueColors());
-    // rotate every 8 seconds
-    const id = setInterval(() => setInitialColors(pickUniqueColors()), 8000);
+    // rotate every 12 seconds (increased from 8s to reduce churn)
+    const id = setInterval(() => setInitialColors(pickUniqueColors()), 12000);
     return () => clearInterval(id);
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [pickUniqueColors]);
 
   return (
     <div className={`min-h-screen ${theme === 'dark' ? 'bg-[#0a0a0a]' : 'bg-gray-50'}`}>
@@ -534,7 +538,7 @@ export const HomePage = () => {
           {/* Scroll-linked parallax background */}
           <motion.div
             className="absolute inset-0"
-            style={{ opacity: heroOpacity, scale: heroScale, filter: `blur(${heroBlur.get()}px)` }}
+            style={{ opacity: heroOpacity, scale: heroScale, filter: heroBlurFilter }}
           >
             {device.supports3D ? (
               <VideoHero>
@@ -844,7 +848,7 @@ export const HomePage = () => {
                   {language === 'en' ? 'Featured Vehicles' : 'বৈশিষ্ট্যযুক্ত গাড়ি'}
                 </h2>
                 <p className={`text-lg max-w-2xl mx-auto ${theme === 'dark' ? 'text-gray-400' : 'text-gray-600'}`}>
-                  {language === 'en' ? 'Hand-picked premium vehicles ready for immediate delivery' : 'তাত্ক্ষণিক ডেলিভারির জন্য হাতের ন surviv নির্বাচিত প্রিমিয়াম গাড়ি'}
+                  {language === 'en' ? 'Hand-picked premium vehicles ready for immediate delivery' : 'তাত্ক্ষণিক ডেলিভারির জন্য হাতেনির্বাচিত প্রিমিয়াম গাড়ি'}
                 </p>
               </ScrollReveal>
 
@@ -1061,7 +1065,7 @@ export const HomePage = () => {
                 </h2>
               </ScrollReveal>
 
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-start">
                 {/* Left: carousel */}
                 <ScrollReveal>
                   <div className="relative w-full max-w-md mx-auto">
@@ -1155,7 +1159,7 @@ export const HomePage = () => {
                 </h2>
               </ScrollReveal>
 
-              <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                 {(['prado','harrier','crown'] as const).map((model, i) => {
                   const imgs: Record<string, string> = {
                     prado: `${import.meta.env.BASE_URL}customize-cars/prado/white.webp`,
@@ -1204,7 +1208,7 @@ export const HomePage = () => {
                     {language === 'en' ? 'Morphing Showcase' : 'আকৃতি-পরিবর্তনকারী শোকেস'}
                   </h2>
                 </ScrollReveal>
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                   <MorphingShapeTransition
                     images={[
                       { src: 'https://images.pexels.com/photos/36318402/pexels-photo-36318402.png?auto=compress&cs=tinysrgb&w=400&fm=webp', name: 'Toyota Prado' },
@@ -1233,36 +1237,7 @@ export const HomePage = () => {
           </LazySection>
         )}
 
-        {/* ══ COUNTERS ══════════════════════════════════════════════ */}
-        <section className={`section-padding ${theme === 'dark' ? 'bg-gradient-to-br from-gray-900 to-gray-800' : 'bg-gradient-to-br from-white to-gray-50'}`}>
-          <div className="container-fluid">
-            <ScrollReveal className="text-center mb-8">
-              <h2 className={`heading-responsive font-bold mb-4 ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
-                {language === 'en' ? 'Why Choose Us' : 'কেন আমাদের বেছে নিন'}
-              </h2>
-            </ScrollReveal>
-            <StaggerContainer className="grid grid-cols-1 md:grid-cols-3 gap-8" stagger={0.15}>
-              {[
-                { value: 450, label: language === 'en' ? 'Premium Vehicles in Stock' : 'স্টকে প্রিমিয়াম গাড়ি', suffix: '+', icon: Car },
-                { value: 8500, label: language === 'en' ? 'Happy Customers Served' : 'খুশি গ্রাহক সেবা', suffix: '+', icon: Users },
-                { value: 25, label: language === 'en' ? 'Years of Excellence' : 'উৎকর্ষতার বছর', suffix: '+', icon: Award },
-              ].map((stat, i) => (
-                <motion.div key={i} variants={staggerItemVariants}>
-                  <div className={`relative p-8 rounded-2xl text-center glass gradient-border overflow-hidden ${
-                    theme === 'dark' ? '' : 'bg-white/80'
-                  }`}>
-                    <GlowPulse className="top-0 left-1/2 -translate-x-1/2" color="rgba(192,0,0,0.08)" size={150} speed={4} />
-                    <stat.icon className={`h-12 w-12 mx-auto mb-4 relative z-10 ${theme === 'dark' ? 'text-red-400' : 'text-red-600'}`} />
-                    <div className={`text-4xl md:text-5xl font-black relative z-10 ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
-                      <CountUp target={stat.value} suffix={stat.suffix} duration={2.5} />
-                    </div>
-                    <p className={`mt-2 text-sm relative z-10 ${theme === 'dark' ? 'text-gray-400' : 'text-gray-600'}`}>{stat.label}</p>
-                  </div>
-                </motion.div>
-              ))}
-            </StaggerContainer>
-          </div>
-        </section>
+        {/* ══ WHY CHOOSE US ═════════════════════════════════════════ */}
 
         {/* ══ COMPARISON SLIDER (only on capable devices) ══════════ */}
         {device.supportsRichAnimations && (
@@ -1405,7 +1380,7 @@ export const HomePage = () => {
               </h2>
             </ScrollReveal>
 
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-8 mb-8">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 lg:gap-8 mb-8">
               {/* Address + hours */}
               <div className="flex flex-col gap-5">
                 {[

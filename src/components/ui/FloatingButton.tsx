@@ -78,7 +78,9 @@ export const FloatingButton = ({
     // compute extra offset by scanning for other fixed elements near the bottom
     function computeExtra() {
       try {
-        const elems = Array.from(document.querySelectorAll<HTMLElement>('*'));
+        // Use targeted selectors instead of querySelectorAll('*') for O(1) performance
+        const selectors = '[style*="position: fixed"], [style*="position:fixed"], [class*="fixed"], [class*="toast"], [class*="cart-bar"], [class*="snackbar"]';
+        const elems = Array.from(document.querySelectorAll<HTMLElement>(selectors));
         const bounds = elems
           .map((el) => {
             const style = getComputedStyle(el);
@@ -110,7 +112,21 @@ export const FloatingButton = ({
     computeExtra();
     window.addEventListener('resize', computeExtra, { passive: true });
     window.addEventListener('orientationchange', computeExtra);
-    const iv = setInterval(computeExtra, 1500); // periodic check for dynamic overlays
+
+    // Pause interval when tab is hidden to save battery
+    let iv: ReturnType<typeof setInterval> | null = null;
+    const startInterval = () => {
+      if (iv) clearInterval(iv);
+      iv = setInterval(computeExtra, 3000);
+    };
+    const stopInterval = () => {
+      if (iv) { clearInterval(iv); iv = null; }
+    };
+    const onVisibility = () => {
+      if (document.hidden) stopInterval(); else startInterval();
+    };
+    document.addEventListener('visibilitychange', onVisibility);
+    startInterval();
 
     // visualViewport: detect virtual keyboard on mobile; hide FABs when keyboard is open
     const onViewport = () => {
@@ -129,7 +145,8 @@ export const FloatingButton = ({
     return () => {
       window.removeEventListener('resize', computeExtra);
       window.removeEventListener('orientationchange', computeExtra);
-      clearInterval(iv);
+      document.removeEventListener('visibilitychange', onVisibility);
+      stopInterval();
       if (vvRoot) {
         vvRoot.removeEventListener('resize', onViewport);
       }
@@ -154,7 +171,7 @@ export const FloatingButton = ({
     ...(computedBottom ? { bottom: computedBottom } : {}),
     // apply extra offset if other fixed elements detected
     ...(dynamicExtraOffset ? { transform: `translateY(-${dynamicExtraOffset}px)` } : {}),
-    display: hiddenForKeyboard ? 'none' : undefined,
+    display: hiddenForKeyboard ? 'none' : 'flex',
   };
 
   return (

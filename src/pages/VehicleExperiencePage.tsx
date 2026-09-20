@@ -1,71 +1,79 @@
+import { useMemo, lazy, Suspense } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { ALL_VEHICLES } from '../hooks/vehicleDataAll';
 import { useLanguage } from '../contexts/LanguageContext';
 import { useTheme } from '../contexts/ThemeContext';
-import { InteractiveVehicleComparison } from '../components/3d/InteractiveVehicleComparison';
-import { VirtualShowroomTour } from '../components/3d/VirtualShowroomTour';
+
+// Lazy-load heavy 3D components — they pull in Three.js (~1 MB)
+const InteractiveVehicleComparison = lazy(() => import('../components/3d/InteractiveVehicleComparison').then(m => ({ default: m.InteractiveVehicleComparison })));
+const VirtualShowroomTour = lazy(() => import('../components/3d/VirtualShowroomTour').then(m => ({ default: m.VirtualShowroomTour })));
 
 export const VehicleExperiencePage = () => {
   const { language } = useLanguage();
   const { theme } = useTheme();
+  const navigate = useNavigate();
 
-  // Map ALL_VEHICLES to InteractiveVehicleComparison format
-  const comparisonVehicles = ALL_VEHICLES.map(v => ({
-    id: v.id,
-    name: v.model === 'Corolla Cross Z' ? 'Corolla Cross' : v.model,
-    brand: v.brand_name,
-    image:
-      v.images && v.images.length > 0
-        ? encodeURI(v.images[0].image_url)
-        : (v.model === 'Corolla Cross' && v.price === 2800000)
-          ? 'https://images.pexels.com/photos/3839293/pexels-photo-3839293.jpeg?auto=compress&cs=tinysrgb&w=800&h=600&dpr=1'
-          : v.model === 'Corolla Cross' || v.model === 'Corolla Cross Z'
-            ? 'https://images.pexels.com/photos/35509100/pexels-photo-35509100.png?auto=compress&cs=tinysrgb&w=600'
-            : '',
-    price: v.price,
-    specs: {
-      engine: v.engine_capacity || '',
-      horsepower: 0, // You can add real horsepower if available
-      torque: 0, // You can add real torque if available
-      fuel_type: v.fuel_type || '',
-      transmission: v.transmission || '',
-      seating: 5, // You can add real seating if available
-      mileage: v.mileage ? `${v.mileage} km` : '',
-      acceleration: '',
-      top_speed: '',
-      warranty: '',
-    }
-  }));
+  // Map ALL_VEHICLES to InteractiveVehicleComparison format — memoized to avoid recomputation
+  const comparisonVehicles = useMemo(() => {
+    const vehicles = ALL_VEHICLES.map(v => ({
+      id: v.id,
+      name: v.model === 'Corolla Cross Z' ? 'Corolla Cross' : v.model,
+      brand: v.brand_name,
+      image:
+        v.images && v.images.length > 0
+          ? encodeURI(v.images[0].image_url)
+          : (v.model === 'Corolla Cross' && v.price === 2800000)
+            ? 'https://images.pexels.com/photos/3839293/pexels-photo-3839293.jpeg?auto=compress&cs=tinysrgb&w=800&h=600&dpr=1'
+            : v.model === 'Corolla Cross' || v.model === 'Corolla Cross Z'
+              ? 'https://images.pexels.com/photos/35509100/pexels-photo-35509100.png?auto=compress&cs=tinysrgb&w=600'
+              : '',
+      price: v.price,
+      specs: {
+        engine: v.engine_capacity || '',
+        horsepower: 0,
+        torque: 0,
+        fuel_type: v.fuel_type || '',
+        transmission: v.transmission || '',
+        seating: 5,
+        mileage: v.mileage ? `${v.mileage} km` : '',
+        acceleration: '',
+        top_speed: '',
+        warranty: '',
+      }
+    }));
 
-  // Ensure Corolla Cross card is always present
-  if (!comparisonVehicles.some(v => v.name === 'Corolla Cross')) {
-    // Find Corolla Cross Z in inventory
-    const corollaCrossZ = ALL_VEHICLES.find(v => v.model === 'Corolla Cross Z');
-    if (corollaCrossZ) {
-      comparisonVehicles.unshift({
-        id: corollaCrossZ.id,
-        name: 'Corolla Cross',
-        brand: corollaCrossZ.brand_name,
-        image:
-          corollaCrossZ.images && corollaCrossZ.images.length > 0
-            ? encodeURI(corollaCrossZ.images[0].image_url)
-            : 'https://images.pexels.com/photos/35509100/pexels-photo-35509100.png?auto=compress&cs=tinysrgb&w=600',
-        price: corollaCrossZ.price,
-        specs: {
-          engine: corollaCrossZ.engine_capacity || '',
-          horsepower: 0,
-          torque: 0,
-          fuel_type: corollaCrossZ.fuel_type || '',
-          transmission: corollaCrossZ.transmission || '',
-          seating: 5,
-          mileage: corollaCrossZ.mileage ? `${corollaCrossZ.mileage} km` : '',
-          acceleration: '',
-          top_speed: '',
-          warranty: '',
-        }
-      });
+    // Ensure Corolla Cross card is always present
+    if (!vehicles.some(v => v.name === 'Corolla Cross')) {
+      const corollaCrossZ = ALL_VEHICLES.find(v => v.model === 'Corolla Cross Z');
+      if (corollaCrossZ) {
+        vehicles.unshift({
+          id: corollaCrossZ.id,
+          name: 'Corolla Cross',
+          brand: corollaCrossZ.brand_name,
+          image:
+            corollaCrossZ.images && corollaCrossZ.images.length > 0
+              ? encodeURI(corollaCrossZ.images[0].image_url)
+              : 'https://images.pexels.com/photos/35509100/pexels-photo-35509100.png?auto=compress&cs=tinysrgb&w=600',
+          price: corollaCrossZ.price,
+          specs: {
+            engine: corollaCrossZ.engine_capacity || '',
+            horsepower: 0,
+            torque: 0,
+            fuel_type: corollaCrossZ.fuel_type || '',
+            transmission: corollaCrossZ.transmission || '',
+            seating: 5,
+            mileage: corollaCrossZ.mileage ? `${corollaCrossZ.mileage} km` : '',
+            acceleration: '',
+            top_speed: '',
+            warranty: '',
+          }
+        });
+      }
     }
-  }
+
+    return vehicles;
+  }, []);
     return (
       <div className={`min-h-screen pt-32 pb-20 ${theme === 'dark' ? 'bg-gray-950' : 'bg-gray-50'}`}>
         <div className="container mx-auto px-4 lg:px-8">
@@ -122,7 +130,9 @@ export const VehicleExperiencePage = () => {
               transition={{ duration: 0.6, delay: 0.2 }}
               viewport={{ once: true }}
             >
-              <InteractiveVehicleComparison vehicles={comparisonVehicles} />
+              <Suspense fallback={<div className="h-96 flex items-center justify-center text-gray-400">Loading 3D experience...</div>}>
+                <InteractiveVehicleComparison vehicles={comparisonVehicles} />
+              </Suspense>
             </motion.div>
           </motion.div>
           {/* Divider */}
@@ -170,7 +180,9 @@ export const VehicleExperiencePage = () => {
               transition={{ duration: 0.6, delay: 0.2 }}
               viewport={{ once: true }}
             >
-              <VirtualShowroomTour />
+              <Suspense fallback={<div className="h-96 flex items-center justify-center text-gray-400">Loading virtual tour...</div>}>
+                <VirtualShowroomTour />
+              </Suspense>
             </motion.div>
           </motion.div>
           {/* CTA Section */}
@@ -199,6 +211,7 @@ export const VehicleExperiencePage = () => {
                 : 'আমাদের ইনভেন্টরি অন্বেষণ করতে এবং আপনার প্রয়োজন অনুসারে গাড়ি আবিষ্কার করতে এই ইন্টারেক্টিভ সরঞ্জামগুলি ব্যবহার করুন'}
             </p>
             <motion.button
+              onClick={() => navigate('/inventory')}
               className={`px-8 py-3 rounded-lg font-bold text-white transition-all ${
                 theme === 'dark'
                   ? 'bg-white/20 hover:bg-white/30'

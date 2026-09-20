@@ -24,7 +24,9 @@ interface LanguageProviderProps {
 export const LanguageProvider = ({ children }: LanguageProviderProps) => {
   const [language, setLanguageState] = useState<Language>(() => {
     const stored = localStorage.getItem('language');
-    return (stored === 'bn' ? 'bn' : 'en') as Language;
+    if (stored === 'bn' || stored === 'en') return stored as Language;
+    const browserLang = navigator.language || (navigator as any).userLanguage || '';
+    return browserLang.startsWith('bn') ? 'bn' : 'en';
   });
 
   useEffect(() => {

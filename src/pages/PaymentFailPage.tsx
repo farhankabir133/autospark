@@ -1,24 +1,11 @@
-'use client';
-
-import { useEffect, useState } from 'react';
-import { useNavigate, useSearchParams } from 'react-router-dom';
+import { useState } from 'react';
+import { useNavigate, useSearchParams, Link } from 'react-router-dom';
 import { XCircle, Home, AlertTriangle } from 'lucide-react';
 
 const PaymentFailPage = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
-  const [transactionId, setTransactionId] = useState<string | null>(null);
-
-  useEffect(() => {
-    setTransactionId(searchParams.get('tran_id'));
-
-    // Redirect to cart after 5 seconds if user doesn't click
-    const timer = setTimeout(() => {
-      navigate('/payment');
-    }, 5000);
-
-    return () => clearTimeout(timer);
-  }, [navigate, searchParams]);
+  const [transactionId] = useState<string | null>(() => searchParams.get('tran_id'));
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-red-50 to-white flex items-center justify-center p-4">
@@ -83,7 +70,7 @@ const PaymentFailPage = () => {
             Try Payment Again
           </button>
           <button
-            onClick={() => navigate('/accessories')}
+            onClick={() => navigate('/cart')}
             className="w-full py-3 bg-white border-2 text-gray-800 font-semibold rounded-lg hover:bg-gray-50 transition-colors"
             style={{ borderColor: '#F28C38' }}
           >
@@ -100,12 +87,7 @@ const PaymentFailPage = () => {
 
         {/* Support */}
         <p className="text-xs text-gray-500 mt-4">
-          Need help? <a href="/contact" className="text-blue-600 hover:underline">Contact our support team</a>
-        </p>
-
-        {/* Auto-redirect notice */}
-        <p className="text-xs text-gray-500 mt-2">
-          Redirecting to cart in 5 seconds...
+          Need help? <Link to="/contact" className="text-blue-600 hover:underline">Contact our support team</Link>
         </p>
       </div>
     </div>

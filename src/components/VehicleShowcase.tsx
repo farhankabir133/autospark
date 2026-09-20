@@ -78,12 +78,15 @@ export const VehicleShowcase = ({
             initial={{ opacity: 0 }}
           >
             <motion.button
-              onClick={() => {
+              onClick={(e) => {
+                e.stopPropagation();
+                window.open(videoUrl, '_blank', 'noopener,noreferrer');
                 AudioManager.playClick();
               }}
-              className="bg-blue-500 hover:bg-blue-600 text-white rounded-full p-6 transition-colors"
+              className="bg-[#C00000] hover:bg-[#FF1A1A] text-white rounded-full p-6 transition-colors"
               whileHover={{ scale: 1.1 }}
               whileTap={{ scale: 0.95 }}
+              aria-label={language === 'en' ? `Play ${vehicleName} video` : `${vehicleName} ভিডিও চালান`}
             >
               <Play className="w-8 h-8 fill-current" />
             </motion.button>
@@ -179,10 +182,17 @@ export const VehicleShowcase = ({
         {audioUrl && (
           <motion.div className="flex gap-2 mt-4">
             <motion.button
-              onClick={() => setIsMusicPlaying(!isMusicPlaying)}
+              onClick={() => {
+                if (isMusicPlaying) {
+                  AudioManager.stop();
+                } else {
+                  AudioManager.playEngine();
+                }
+                setIsMusicPlaying(!isMusicPlaying);
+              }}
               className={`flex-1 py-2 rounded-lg font-semibold transition-colors flex items-center justify-center gap-2 ${
                 isMusicPlaying
-                  ? 'bg-blue-500 text-white hover:bg-blue-600'
+                  ? 'bg-[#C00000] text-white hover:bg-[#FF1A1A]'
                   : theme === 'dark'
                     ? 'bg-gray-700 text-gray-300 hover:bg-gray-600'
                     : 'bg-gray-200 text-gray-700 hover:bg-gray-300'

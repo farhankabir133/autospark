@@ -140,7 +140,7 @@ export const VehicleDetailsPage = () => {
   if (!vehicle) {
     return (
       <div className={`min-h-screen flex items-center justify-center pt-20 ${isDark ? 'bg-gray-900' : 'bg-gray-50'}`}>
-        <div className="text-center">
+        <div className="text-center" role="alert">
           <h2 className={isDark ? 'text-white text-xl' : 'text-gray-900 text-xl'}>Vehicle not found</h2>
           <p className={isDark ? 'text-gray-400' : 'text-gray-600'}>We couldn't find that vehicle. It may have been removed or the link is incorrect.</p>
           <div className="mt-4">
@@ -189,7 +189,7 @@ export const VehicleDetailsPage = () => {
           {language === 'en' ? 'Back to Inventory' : 'ইনভেন্টরিতে ফিরে যান'}
         </Link>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-12">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-12">
           <div>
             <div className="relative rounded-lg overflow-hidden shadow-xl mb-4">
               <img

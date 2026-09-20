@@ -675,22 +675,6 @@ export const InventoryPage = () => {
     setShowBookingModal(true);
   };
 
-    // Debug: Log when booking modal opens
-    useEffect(() => {
-      if (showBookingModal) {
-        // eslint-disable-next-line no-console
-        console.log('[DEBUG] Booking Modal Opened', { showBookingModal, selectedVehicle });
-      }
-    }, [showBookingModal, selectedVehicle]);
-
-    // Debug: Log when booking modal opens
-    useEffect(() => {
-      if (showBookingModal) {
-        // eslint-disable-next-line no-console
-        console.log('[DEBUG] Booking Modal Opened', { showBookingModal, selectedVehicle });
-      }
-    }, [showBookingModal, selectedVehicle]);
-
   const closeBookingModal = () => {
     setShowBookingModal(false);
     setIsSubmittingBooking(false);
@@ -814,20 +798,10 @@ export const InventoryPage = () => {
   // Fetch vehicles
   useEffect(() => {
     setLoading(true);
-    setTimeout(() => {
-      setVehicles(ALL_VEHICLES);
-      setFilteredVehicles(ALL_VEHICLES);
-      setLoading(false);
-    }, 500);
+    setVehicles(ALL_VEHICLES);
+    setFilteredVehicles(ALL_VEHICLES);
+    setLoading(false);
   }, []);
-
-  // Debug: Log when booking modal opens
-  useEffect(() => {
-    if (showBookingModal) {
-      // eslint-disable-next-line no-console
-      console.log('[DEBUG] Booking Modal Opened', { showBookingModal, selectedVehicle });
-    }
-  }, [showBookingModal, selectedVehicle]);
 
   // If the URL contains ?open=<id>, open the drawer and scroll the item into view
   useEffect(() => {
@@ -1233,7 +1207,6 @@ const EMICalculator: React.FC<{ principal: number }> = ({ principal }) => {
                 </button>
                 <button
                   onClick={() => {
-                    console.log('[DEBUG] Confirm & Pay clicked', { bookingForm, selectedVehicle });
                     confirmAndInitiateBooking();
                   }}
                   disabled={isSubmittingBooking}

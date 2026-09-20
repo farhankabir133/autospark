@@ -1,12 +1,9 @@
-'use client';
-
 import { useEffect, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
-import { CheckCircle, Home } from 'lucide-react';
+import { CheckCircle, Home, ShoppingBag } from 'lucide-react';
 import { useCart } from '../contexts/CartContext';
 import { appwritePaymentApi } from '../services/appwritePaymentApi';
 
-const SITE_URL = (import.meta.env.VITE_SITE_URL || 'https://autosparkbd.com').replace(/\/$/, '');
 const SUCCESS_STATES = new Set(['VALIDATED', 'COMPLETE', 'COMPLETED', 'PAID', 'SUCCESS']);
 
 const PaymentSuccessPage = () => {
@@ -81,10 +78,10 @@ const PaymentSuccessPage = () => {
     if (!isValidated) return;
     const timer = setTimeout(() => {
       const tranIdQuery = transactionId ? `?tran_id=${encodeURIComponent(transactionId)}` : '';
-      window.location.href = `${SITE_URL}/#/thank-you${tranIdQuery}`;
+      navigate(`/thank-you${tranIdQuery}`, { replace: true });
     }, 5000);
     return () => clearTimeout(timer);
-  }, [isValidated, transactionId]);
+  }, [isValidated, transactionId, navigate]);
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-green-50 to-white flex items-center justify-center p-4">
@@ -107,7 +104,7 @@ const PaymentSuccessPage = () => {
 
         {/* Error if any */}
         {error && (
-          <div className="bg-red-50 border border-red-200 rounded-lg p-4 mb-6">
+          <div role="alert" className="bg-red-50 border border-red-200 rounded-lg p-4 mb-6">
             <p className="text-sm text-red-700">{error}</p>
           </div>
         )}
@@ -149,10 +146,11 @@ const PaymentSuccessPage = () => {
         {/* Action Buttons */}
         <div className="space-y-3">
           <button
-            onClick={() => navigate('/')}
-            className="w-full py-3 bg-white border-2 text-gray-800 font-semibold rounded-lg hover:bg-gray-50 transition-colors"
+            onClick={() => navigate('/accessories')}
+            className="w-full py-3 bg-white border-2 text-gray-800 font-semibold rounded-lg hover:bg-gray-50 transition-colors flex items-center justify-center"
             style={{ borderColor: '#F28C38' }}
           >
+            <ShoppingBag className="mr-2 w-5 h-5" />
             Continue Shopping
           </button>
           <button

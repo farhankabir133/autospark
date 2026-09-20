@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useTheme } from '../contexts/ThemeContext';
 import { useLanguage } from '../contexts/LanguageContext';
@@ -14,6 +14,16 @@ import {
   X,
 } from 'lucide-react';
 import { getStockStatus, formatStockMessage } from '../lib/inventoryUtils';
+
+const STAT_COLOR_CLASSES: Record<string, string> = {
+  blue: 'text-blue-500',
+  green: 'text-green-500',
+  yellow: 'text-yellow-500',
+  red: 'text-red-500',
+  purple: 'text-purple-500',
+};
+
+type FilterStatus = 'all' | 'in-stock' | 'low-stock' | 'out-of-stock';
 
 interface Product {
   id: string;
@@ -38,7 +48,7 @@ const InventoryManagementPage: React.FC = () => {
   const [products, setProducts] = useState<EditingProduct[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
-  const [filterStatus, setFilterStatus] = useState<'all' | 'in-stock' | 'low-stock' | 'out-of-stock'>('all');
+  const [filterStatus, setFilterStatus] = useState<FilterStatus>('all');
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editValues, setEditValues] = useState<Record<string, number>>({});
 
@@ -118,7 +128,7 @@ const InventoryManagementPage: React.FC = () => {
   }, []);
 
   // Filter products
-  const filteredProducts = products.filter((product) => {
+  const filteredProducts = useMemo(() => products.filter((product) => {
     const matchesSearch =
       product.name_en.toLowerCase().includes(searchTerm.toLowerCase()) ||
       product.name_bn.includes(searchTerm) ||
@@ -128,16 +138,16 @@ const InventoryManagementPage: React.FC = () => {
     const matchesFilter = filterStatus === 'all' || stockInfo.status === filterStatus;
 
     return matchesSearch && matchesFilter;
-  });
+  }), [products, searchTerm, filterStatus]);
 
   // Calculate stats
-  const stats = {
+  const stats = useMemo(() => ({
     total: products.length,
     inStock: products.filter((p) => p.stock_quantity > 10).length,
     lowStock: products.filter((p) => p.stock_quantity > 0 && p.stock_quantity <= 10).length,
     outOfStock: products.filter((p) => p.stock_quantity === 0).length,
     totalValue: products.reduce((sum, p) => sum + p.price * p.stock_quantity, 0),
-  };
+  }), [products]);
 
   const handleEdit = (product: Product) => {
     setEditingId(product.id);
@@ -177,7 +187,7 @@ const InventoryManagementPage: React.FC = () => {
         </div>
       </div>
 
-      <div className="max-w-7xl mx-auto px-4 py-8">
+      <main className="max-w-7xl mx-auto px-4 py-8">
         {/* Stats Cards */}
         <div className="grid grid-cols-2 md:grid-cols-5 gap-4 mb-8">
           {[
@@ -201,7 +211,7 @@ const InventoryManagementPage: React.FC = () => {
                     {stat.value}
                   </p>
                 </div>
-                <stat.icon size={32} className={`text-${stat.color}-500`} />
+                <stat.icon size={32} className={STAT_COLOR_CLASSES[stat.color] || 'text-gray-500'} />
               </div>
             </motion.div>
           ))}
@@ -232,7 +242,7 @@ const InventoryManagementPage: React.FC = () => {
                   key={status}
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
-                  onClick={() => setFilterStatus(status as any)}
+                  onClick={() => setFilterStatus(status as FilterStatus)}
                   className={`px-4 py-2 rounded-lg font-medium transition-all ${
                     filterStatus === status
                       ? 'bg-blue-500 text-white shadow-lg'
@@ -242,18 +252,99 @@ const InventoryManagementPage: React.FC = () => {
                   }`}
                 >
                   <Filter size={16} className="inline mr-2" />
-                  {status === 'all' ? t('inventory') : status.replace('-', ' ')}
+                  {status === 'all' ? 'All' : status.replace('-', ' ')}
                 </motion.button>
               ))}
             </div>
           </div>
         </div>
 
-        {/* Products Table */}
+        {/* Products — Mobile Card Layout */}
+        <div className="md:hidden space-y-3">
+          <AnimatePresence>
+            {filteredProducts.length > 0 ? (
+              filteredProducts.map((product) => {
+                const stockInfo = getStockStatus(product.stock_quantity);
+                const isEditing = editingId === product.id;
+                return (
+                  <motion.div
+                    key={product.id}
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0 }}
+                    className={`rounded-lg p-4 ${isDark ? 'bg-gray-800 border border-gray-700' : 'bg-white shadow-md border border-gray-200'}`}
+                  >
+                    <div className="flex items-start justify-between mb-2">
+                      <div className="flex-1 min-w-0">
+                        <p className={`font-medium truncate ${isDark ? 'text-white' : 'text-gray-900'}`}>{product.name_en}</p>
+                        <p className={`text-xs ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>{product.category} · {product.sku}</p>
+                      </div>
+                      <span className={`ml-2 flex-shrink-0 px-2 py-0.5 rounded-full text-xs font-bold ${
+                        stockInfo.status === 'in-stock'
+                          ? isDark ? 'bg-green-500/20 text-green-400' : 'bg-green-50 text-green-700'
+                          : stockInfo.status === 'low-stock'
+                          ? isDark ? 'bg-yellow-500/20 text-yellow-400' : 'bg-yellow-50 text-yellow-700'
+                          : isDark ? 'bg-red-500/20 text-red-400' : 'bg-red-50 text-red-700'
+                      }`}>
+                        {formatStockMessage(stockInfo)}
+                      </span>
+                    </div>
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <p className={`text-sm font-semibold ${isDark ? 'text-white' : 'text-gray-900'}`}>
+                          ৳{product.price.toLocaleString()}
+                        </p>
+                        <p className={`text-xs ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>
+                          {t('stock')}: {isEditing ? (
+                            <input
+                              type="number"
+                              value={editValues[product.id] || product.stock_quantity}
+                              onChange={(e) =>
+                                setEditValues({
+                                  ...editValues,
+                                  [product.id]: Math.max(0, parseInt(e.target.value, 10) || 0),
+                                })
+                              }
+                              className={`w-16 px-1 py-0.5 rounded text-center border text-xs ${
+                                isDark ? 'bg-gray-700 border-gray-600 text-white' : 'bg-white border-gray-300 text-gray-900'
+                              }`}
+                            />
+                          ) : product.stock_quantity}
+                        </p>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        {isEditing ? (
+                          <>
+                            <button onClick={() => handleSave(product)} className="p-2 rounded bg-green-500 text-white" aria-label="Save">
+                              <Save size={14} />
+                            </button>
+                            <button onClick={() => setEditingId(null)} className={`p-2 rounded ${isDark ? 'bg-gray-700' : 'bg-gray-200'}`} aria-label="Cancel">
+                              <X size={14} />
+                            </button>
+                          </>
+                        ) : (
+                          <button onClick={() => handleEdit(product)} className={`p-2 rounded ${isDark ? 'text-gray-400 hover:bg-gray-700' : 'text-gray-600 hover:bg-gray-100'}`} aria-label={`Edit ${product.name_en}`}>
+                            <Edit2 size={14} />
+                          </button>
+                        )}
+                      </div>
+                    </div>
+                  </motion.div>
+                );
+              })
+            ) : (
+              <div className={`rounded-lg p-8 text-center ${isDark ? 'bg-gray-800' : 'bg-white shadow-md'}`}>
+                <p className={isDark ? 'text-gray-400' : 'text-gray-600'}>{t('noResults')}</p>
+              </div>
+            )}
+          </AnimatePresence>
+        </div>
+
+        {/* Products Table — Desktop */}
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          className={`rounded-lg overflow-hidden ${isDark ? 'bg-gray-800' : 'bg-white shadow-md'}`}
+          className={`rounded-lg overflow-hidden hidden md:block ${isDark ? 'bg-gray-800' : 'bg-white shadow-md'}`}
         >
           <div className="overflow-x-auto">
             <table className="w-full">
@@ -309,7 +400,7 @@ const InventoryManagementPage: React.FC = () => {
                                 onChange={(e) =>
                                   setEditValues({
                                     ...editValues,
-                                    [product.id]: Math.max(0, parseInt(e.target.value)),
+                                    [product.id]: Math.max(0, parseInt(e.target.value, 10) || 0),
                                   })
                                 }
                                 className={`w-20 px-2 py-1 rounded text-center border ${
@@ -388,7 +479,7 @@ const InventoryManagementPage: React.FC = () => {
             </table>
           </div>
         </motion.div>
-      </div>
+      </main>
     </div>
   );
 };

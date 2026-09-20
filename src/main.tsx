@@ -3,6 +3,7 @@ import { createRoot } from 'react-dom/client';
 import { HelmetProvider } from 'react-helmet-async';
 import App from './App.tsx';
 import './index.css';
+import './styles/tokens.css'; // Phase 1: design-system tokens (Liquid Glass + gold)
 import './lib/env'; // A-05: validate env early
 
 // HashRouter compatibility for direct callback hits on custom domain.

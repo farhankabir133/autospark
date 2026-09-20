@@ -1,24 +1,11 @@
-'use client';
-
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { AlertCircle, Home } from 'lucide-react';
 
 const PaymentCancelPage = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
-  const [transactionId, setTransactionId] = useState<string | null>(null);
-
-  useEffect(() => {
-    setTransactionId(searchParams.get('tran_id'));
-
-    // Redirect to cart after 5 seconds if user doesn't click
-    const timer = setTimeout(() => {
-      navigate('/payment');
-    }, 5000);
-
-    return () => clearTimeout(timer);
-  }, [navigate, searchParams]);
+  const [transactionId] = useState<string | null>(() => searchParams.get('tran_id'));
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white flex items-center justify-center p-4">
@@ -84,10 +71,6 @@ const PaymentCancelPage = () => {
           </button>
         </div>
 
-        {/* Auto-redirect notice */}
-        <p className="text-xs text-gray-500 mt-4">
-          Redirecting to cart in 5 seconds...
-        </p>
       </div>
     </div>
   );

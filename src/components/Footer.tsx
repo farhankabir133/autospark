@@ -113,44 +113,44 @@ export const Footer = () => {
           {/* Social & Media */}
           <div className="md:col-span-1 flex flex-col gap-4">
             <h3 className="text-white font-semibold text-base mb-4 tracking-wide">Connect</h3>
-            <div className="flex gap-4 mb-4">
-              <a href="https://www.facebook.com/autosparkbd" target="_blank" rel="noopener noreferrer" className="hover:text-[#FF1A1A]">
+            <div className="flex gap-4 mb-4 flex-wrap">
+              <a href="https://www.facebook.com/autosparkbd" target="_blank" rel="noopener noreferrer" aria-label="Facebook" className="hover:text-[#FF1A1A] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#C00000] rounded">
                 <Facebook className="w-6 h-6" />
               </a>
-              <a href="https://www.instagram.com/autosparkbd" target="_blank" rel="noopener noreferrer" className="hover:text-[#FF1A1A]">
+              <a href="https://www.instagram.com/autosparkbd" target="_blank" rel="noopener noreferrer" aria-label="Instagram" className="hover:text-[#FF1A1A] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#C00000] rounded">
                 <Instagram className="w-6 h-6" />
               </a>
-              <a href="https://www.youtube.com/@autosparkbd1131" target="_blank" rel="noopener noreferrer" aria-label="YouTube" className="hover:text-[#FF1A1A]">
+              <a href="https://www.youtube.com/@autosparkbd1131" target="_blank" rel="noopener noreferrer" aria-label="YouTube" className="hover:text-[#FF1A1A] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#C00000] rounded">
                 <Youtube className="w-6 h-6" />
               </a>
-              <a href="https://www.tiktok.com/@auto_spark0" target="_blank" rel="noopener noreferrer" aria-label="TikTok" className="hover:text-[#FF1A1A]">
+              <a href="https://www.tiktok.com/@auto_spark0" target="_blank" rel="noopener noreferrer" aria-label="TikTok" className="hover:text-[#FF1A1A] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#C00000] rounded">
                 <Music2 className="w-6 h-6" />
               </a>
-              <a href={`tel:${showroom.phone}`} aria-label={`Call showroom ${showroom.phone}`} className="inline-flex items-center px-2 py-2 rounded-lg hover:text-[#FF1A1A] touch-target-large">
+              <a href={`tel:${showroom.phone}`} aria-label={`Call showroom ${showroom.phone}`} className="inline-flex items-center px-2 py-2 rounded-lg hover:text-[#FF1A1A] touch-target-large focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#C00000]">
                 <Phone className="w-6 h-6" />
               </a>
-              <a href={`mailto:${showroom.email}`} aria-label="Email" rel="noopener noreferrer" className="hover:text-[#FF1A1A]">
+              <a href={`mailto:${showroom.email}`} aria-label="Email us" className="hover:text-[#FF1A1A] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#C00000] rounded">
                 <Mail className="w-6 h-6" />
               </a>
-              <a href={`https://${showroom.website}`} target="_blank" rel="noopener noreferrer" aria-label="Website" className="hover:text-[#FF1A1A]">
+              <a href={`https://${showroom.website}`} target="_blank" rel="noopener noreferrer" aria-label="Visit website" className="hover:text-[#FF1A1A] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#C00000] rounded">
                 <MapPin className="w-6 h-6" />
               </a>
             </div>
             {/* Awards/Trust Badges */}
             <div className="flex flex-wrap gap-2 mb-4">
-              <span className="inline-flex items-center px-2 py-1 bg-yellow-100 text-yellow-800 rounded text-xs font-semibold border border-yellow-300">🏆 Award</span>
-              <span className="inline-flex items-center px-2 py-1 bg-blue-100 text-blue-800 rounded text-xs font-semibold border border-blue-300">✔️ Verified</span>
-              <span className="inline-flex items-center px-2 py-1 bg-green-100 text-green-800 rounded text-xs font-semibold border border-green-300">🛡️ Security</span>
-              <span className="inline-flex items-center px-2 py-1 bg-purple-100 text-purple-800 rounded text-xs font-semibold border border-purple-300">📄 Certificate</span>
+              <span className="inline-flex items-center px-2 py-1 bg-yellow-100 text-yellow-800 rounded text-xs font-semibold border border-yellow-300 dark:bg-yellow-900/30 dark:text-yellow-400 dark:border-yellow-700">🏆 Award</span>
+              <span className="inline-flex items-center px-2 py-1 bg-blue-100 text-blue-800 rounded text-xs font-semibold border border-blue-300 dark:bg-blue-900/30 dark:text-blue-400 dark:border-blue-700">✔️ Verified</span>
+              <span className="inline-flex items-center px-2 py-1 bg-green-100 text-green-800 rounded text-xs font-semibold border border-green-300 dark:bg-green-900/30 dark:text-green-400 dark:border-green-700">🛡️ Security</span>
+              <span className="inline-flex items-center px-2 py-1 bg-purple-100 text-purple-800 rounded text-xs font-semibold border border-purple-300 dark:bg-purple-900/30 dark:text-purple-400 dark:border-purple-700">📄 Certificate</span>
             </div>
             {/* Mini Gallery/Instagram Feed */}
             <div className="mb-4">
-              <h4 className="text-xs font-semibold text-white mb-2">Latest Gallery</h4>
+              <h4 className="text-xs font-semibold text-white dark:text-gray-300 mb-2">Latest Gallery</h4>
               <div className="flex gap-2">
-                <img src="https://images.pexels.com/photos/1409999/pexels-photo-1409999.jpeg?auto=compress&h=60&w=60" alt="Gallery1" className="rounded-lg h-10 w-10 object-cover" />
-                <img src="https://images.pexels.com/photos/3802510/pexels-photo-3802510.jpeg?auto=compress&h=60&w=60" alt="Gallery2" className="rounded-lg h-10 w-10 object-cover" />
-                <img src="https://images.pexels.com/photos/1707828/pexels-photo-1707828.jpeg?auto=compress&h=60&w=60" alt="Gallery3" className="rounded-lg h-10 w-10 object-cover" />
-                <img src="https://images.pexels.com/photos/210019/pexels-photo-210019.jpeg?auto=compress&h=60&w=60" alt="Gallery4" className="rounded-lg h-10 w-10 object-cover" />
+                <img src="https://images.pexels.com/photos/1409999/pexels-photo-1409999.jpeg?auto=compress&h=60&w=60" alt="Premium car exterior showcase" className="rounded-lg h-10 w-10 object-cover" loading="lazy" width={40} height={40} />
+                <img src="https://images.pexels.com/photos/3802510/pexels-photo-3802510.jpeg?auto=compress&h=60&w=60" alt="Car service center workshop" className="rounded-lg h-10 w-10 object-cover" loading="lazy" width={40} height={40} />
+                <img src="https://images.pexels.com/photos/1707828/pexels-photo-1707828.jpeg?auto=compress&h=60&w=60" alt="Vehicle detail interior" className="rounded-lg h-10 w-10 object-cover" loading="lazy" width={40} height={40} />
+                <img src="https://images.pexels.com/photos/210019/pexels-photo-210019.jpeg?auto=compress&h=60&w=60" alt="Car showroom display" className="rounded-lg h-10 w-10 object-cover" loading="lazy" width={40} height={40} />
               </div>
             </div>
             {/* Accessibility Features */}
