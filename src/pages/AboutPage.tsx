@@ -156,7 +156,7 @@ export const AboutPage = () => {
           ? 'AutoSpark BD — premier premium car dealership and service center in Rajshahi. Learn about our mission, team, and milestones.'
           : 'অটো স্পার্ক বিডি — রাজশাহীর একটি প্রিমিয়াম গাড়ি ডিলার এবং সার্ভিস সেন্টার। আমাদের মিশন, টিম এবং মাইলস্টোন সম্পর্কে জানুন।'
 
-        image={`${import.meta.env.BASE_URL}img/og/about-og.jpg`}
+         image={`${import.meta.env.BASE_URL}img/og/about-og.jpg`},
         jsonLd={{
           "@context": "https://schema.org",
           "@type": "AutoDealer",
