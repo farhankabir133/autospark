@@ -76,6 +76,7 @@ const TeamCard: React.FC<{ person: Person; language: string; theme: string; show
                <Globe className="w-4 h-4" />
             </a>
             </div>
+        </div>
       </div>
     </Card>
   );

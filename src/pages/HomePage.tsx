@@ -1,39 +1,28 @@
-import { ResponsiveCarImage } from '../components/ResponsiveCarImage';
 import { useEffect, useState, useRef, lazy, Suspense, useCallback } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { Link } from 'react-router-dom';
 import { motion, useScroll, useTransform, useMotionTemplate } from 'framer-motion';
-import { ArrowRight, Car, Wrench, Shield, Users, Award, ChevronDown, Zap, Fuel } from 'lucide-react';
+import { ArrowRight, Car, Wrench, Shield, Award, ChevronDown, Zap, Fuel } from 'lucide-react';
 import { useLanguage } from '../contexts/LanguageContext';
 import { useTheme } from '../contexts/ThemeContext';
 import { useDeviceCapability } from '../hooks/useDeviceCapability';
 import { Button } from '../components/ui/Button';
 import PageHead from '../components/PageHead';
-import { Card } from '../components/ui/Card';
-import { ImageCarousel } from '../components/ImageCarousel';
 import type { Vehicle, Testimonial } from '../types';
 import { formatPrice } from '../utils/format';
-import { carSlides } from '../data/carSlides';
-import type { CarFocusCarouselHandle } from '../components/CarFocusCarouselLite';
 import type { VehicleColor } from '../components/InteractiveColorCustomizer';
 import { FilterAnimations } from '../components/FilterAnimations';
-import { ScrollReveal, StaggerContainer, staggerItemVariants, CountUp, MagneticButton, GlowPulse } from '../components/motion';
+import { ScrollReveal, StaggerContainer, staggerItemVariants, MagneticButton, GlowPulse } from '../components/motion';
 
-// CarFocusCarousel should mount immediately for autoplay and visibility — import directly
-// CarFocusCarousel is heavy-ish and not required for first paint — dynamically import after initial paint
-// to reduce initial bundle and improve LCP on mobile.
-// We'll load it during idle time and show a lightweight placeholder in the meantime.
-// Note: keep the type import for the handle to preserve typing.
-// import CarFocusCarousel from '../components/CarFocusCarouselLite';
+// CarFocusCarousel, flip-card showcase and duplicate grids removed (Phase A):
+// single unified <FeaturedVehicles /> is the only featured showcase.
 const MorphingShapeTransition = lazy(() => import('../components/MorphingShapeTransition').then(m => ({ default: m.MorphingShapeTransition })));
 const AnimatedComparisonSlider = lazy(() => import('../components/AnimatedComparisonSlider').then(m => ({ default: m.AnimatedComparisonSlider })));
 // Floating/background animations intentionally disabled on the homepage to keep it static and distraction-free.
-const EnhancedFlipCard = lazy(() => import('../components/EnhancedFlipCard').then(m => ({ default: m.EnhancedFlipCard })));
 const InteractiveColorCustomizer = lazy(() => import('../components/InteractiveColorCustomizer').then(m => ({ default: m.InteractiveColorCustomizer })));
 const ComparisonSidebar = lazy(() => import('../components/ComparisonSidebar').then(m => ({ default: m.ComparisonSidebar })));
 import { LazySection } from '../components/LazySection';
+import FeaturedVehicles from '../components/home/FeaturedVehicles';
 import { PerformanceGauge } from '../components/PerformanceGauge';
-const MotionVehicleFlipCard = lazy(() => import('../components/VehicleFlipCardMotion').then(m => ({ default: m.default })));
 
 // ─── Only CarShowcase3D stays lazy (pulls in three.js ≈ 1 MB) ─────
 // const CarShowcase3D = lazy(() => import('../components/3d/CarShowcase3D'));
@@ -155,148 +144,8 @@ const LightweightHero = ({
 
 // (Removed unused SmallPlaceholder and StatCard helpers to avoid including
 // extra code in the initial bundle; they were not referenced anywhere.)
-
-// ─── Vehicle Flip Card ─────────────────────────────────────────────
-interface ShowcaseVehicle {
-  id: string;
-  name: string;
-  subtitle: string;
-  price: string;
-  image: string;
-  engine: string;
-  fuel: string;
-  transmission: string;
-  year: number;
-  gradient: string;
-  lightGradient: string;
-  safetyRating: number;
-  warrantyYears: number;
-  mileage: string;
-  emissions: string;
-  horsepower: number;
-  torque: string;
-  efficiency: number;
-  features: string[];
-}
-interface VehicleFlipCardProps {
-  vehicle: ShowcaseVehicle;
-  index: number;
-  theme: string;
-  language: string;
-  isSelected: boolean;
-  onSelect: () => void;
-  flipTimeoutRef: React.MutableRefObject<ReturnType<typeof setTimeout> | null>;
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  animate: boolean;
-}
-// Lightweight fallback flip card (CSS-only, no framer-motion)
-const VehicleFlipCardFallback = ({ vehicle, index: _index, theme, language, isSelected, onSelect, flipTimeoutRef: _flipTimeoutRef, animate }: VehicleFlipCardProps) => (
-  <div className={`relative h-32 cursor-pointer group ${isSelected ? 'ring-2 ring-offset-2 ring-blue-500' : ''}`} style={{ perspective: '1000px' }} onClick={onSelect}>
-    <div className="relative w-full h-full">
-      <div className={`absolute inset-0 rounded-xl p-4 flex items-center gap-4 bg-gradient-to-br ${theme === 'dark' ? vehicle.gradient : vehicle.lightGradient} shadow-lg`} style={{ backfaceVisibility: 'hidden' }}>
-        <div className="relative w-24 h-20 rounded-lg overflow-hidden flex-shrink-0 bg-black/20">
-          <ResponsiveCarImage alt={vehicle.name} images={{ webp: vehicle.image.replace(/\.(jpg|jpeg|png)$/i, '.webp'), fallback: vehicle.image, width: 96, height: 80 }} className="w-full h-full object-cover" />
-          <span className="absolute top-1 left-1 px-1.5 py-0.5 text-[9px] font-bold bg-white/90 text-gray-800 rounded">{vehicle.year}</span>
-          {vehicle.fuel === 'Hybrid' && <span className="absolute bottom-1 right-1 px-1.5 py-0.5 text-[8px] font-bold bg-green-500 text-white rounded">HYBRID</span>}
-        </div>
-        <div className="flex-1 min-w-0">
-          <h3 className="text-white font-bold text-base truncate">{vehicle.name}</h3>
-          <p className="text-white/80 text-xs mt-0.5 truncate">{vehicle.subtitle}</p>
-          <p className="text-white font-bold text-sm mt-2">{vehicle.price}</p>
-        </div>
-        {isSelected && <div className="absolute top-2 right-2 w-3 h-3 bg-white rounded-full animate-pulse" />}
-        {animate && <div className="absolute bottom-2 right-2 text-white/60 text-[10px] opacity-0 group-hover:opacity-100 transition-opacity">{language === 'en' ? 'Hover to see specs →' : 'স্পেক দেখতে হোভার করুন →'}</div>}
-      </div>
-    </div>
-  </div>
-);
-
-// ─── Showcase vehicle data ─────────────────────────────────────────
-const SHOWCASE_VEHICLES = (language: string): ShowcaseVehicle[] => [
-  {
-    id: 'prado', name: language === 'en' ? 'Toyota Prado' : 'টয়োটা প্রাডো',
-    subtitle: language === 'en' ? 'Premium 7-Seater SUV' : 'প্রিমিয়াম 7-সিটার এসইউভি',
-    price: '৳ 72,00,000', image: 'https://images.pexels.com/photos/36318402/pexels-photo-36318402.png?auto=compress&cs=tinysrgb&w=400&fm=webp',
-    engine: '2.7L V6', fuel: 'Petrol', transmission: 'Automatic', year: 2024,
-    gradient: 'from-blue-600 to-blue-800', lightGradient: 'from-blue-500 to-blue-600',
-    safetyRating: 5, warrantyYears: 3, mileage: '10.5', emissions: 'Euro 5', horsepower: 282, torque: '365 Nm', efficiency: 10.5,
-    features: ['All-Wheel Drive', 'Sunroof', 'Leather Seats', 'Premium Sound'],
-  },
-  {
-    id: 'harrier', name: language === 'en' ? 'Toyota Harrier' : 'টয়োটা হ্যারিয়ার',
-    subtitle: language === 'en' ? 'Luxury Premium SUV' : 'বিলাসবহুল প্রিমিয়াম এসইউভি',
-    price: '৳ 75,00,000', image: 'https://images.pexels.com/photos/35515996/pexels-photo-35515996.png?auto=compress&cs=tinysrgb&w=400&fm=webp',
-    engine: '2.5L Hybrid', fuel: 'Hybrid', transmission: 'CVT', year: 2024,
-    gradient: 'from-purple-600 to-purple-800', lightGradient: 'from-purple-500 to-purple-600',
-    safetyRating: 5, warrantyYears: 3, mileage: '17.5', emissions: 'Euro 6', horsepower: 246, torque: '313 Nm', efficiency: 17.5,
-    features: ['Hybrid Technology', 'Panoramic Roof', 'Climate Control', 'Safety Suite'],
-  },
-  {
-    id: 'crown', name: language === 'en' ? 'Toyota Crown RS' : 'টয়োটা ক্রাউন আরএস',
-    subtitle: language === 'en' ? 'Executive Premium Sedan' : 'এক্সিকিউটিভ প্রিমিয়াম সেডান',
-    price: '৳ 70,00,000', image: 'https://images.pexels.com/photos/35509198/pexels-photo-35509198.png?auto=compress&cs=tinysrgb&w=400&fm=webp',
-    engine: '2.5L Hybrid', fuel: 'Hybrid', transmission: 'Automatic', year: 2024,
-    gradient: 'from-red-600 to-red-800', lightGradient: 'from-red-500 to-red-600',
-    safetyRating: 5, warrantyYears: 3, mileage: '16.8', emissions: 'Euro 6', horsepower: 248, torque: '300 Nm', efficiency: 16.8,
-    features: ['Luxury Interior', 'Ambient Lighting', 'Premium Audio', 'Adaptive Suspension'],
-  },
-  {
-    id: 'yaris', name: language === 'en' ? 'Toyota Yaris Cross' : 'টয়োটা ইয়ারিস ক্রস',
-    subtitle: language === 'en' ? 'Compact Hybrid Crossover' : 'কম্পাক্ট হাইব্রিড ক্রসওভার',
-    price: '৳ 38,00,000', image: 'https://images.pexels.com/photos/36319317/pexels-photo-36319317.png?auto=compress&cs=tinysrgb&w=400&fm=webp',
-    engine: '1.5L Hybrid', fuel: 'Hybrid', transmission: 'CVT', year: 2023,
-    gradient: 'from-amber-600 to-amber-800', lightGradient: 'from-amber-500 to-amber-600',
-    safetyRating: 4, warrantyYears: 3, mileage: '20.3', emissions: 'Euro 5', horsepower: 120, torque: '196 Nm', efficiency: 20.3,
-    features: ['Compact Size', 'Good Mileage', 'Modern Design', 'Smart Features'],
-  },
-  {
-    id: 'chr', name: language === 'en' ? 'Toyota C-HR' : 'টয়োটা C-HR',
-    subtitle: language === 'en' ? 'Stylish Compact SUV' : 'স্টাইলিশ কমপ্যাক্ট এসইউভি',
-    price: '৳ 45,00,000', image: 'https://images.pexels.com/photos/36324034/pexels-photo-36324034.png?auto=compress&cs=tinysrgb&w=400&fm=webp',
-    engine: '1.8L Hybrid', fuel: 'Hybrid', transmission: 'CVT', year: 2023,
-    gradient: 'from-green-600 to-green-800', lightGradient: 'from-green-500 to-green-600',
-    safetyRating: 4, warrantyYears: 3, mileage: '18.5', emissions: 'Euro 5', horsepower: 144, torque: '190 Nm', efficiency: 18.5,
-    features: ['Bold Styling', 'AWD Option', 'Eco Mode', 'Compact Footprint'],
-  },
-  {
-    id: 'premio', name: language === 'en' ? 'Toyota Premio' : 'টয়োটা প্রিমিও',
-    subtitle: language === 'en' ? 'Fuel-Efficient Sedan' : 'জ্বালানি-দক্ষ সেডান',
-    price: '৳ 40,00,000', image: 'https://images.pexels.com/photos/35516334/pexels-photo-35516334.png?auto=compress&cs=tinysrgb&w=400&fm=webp',
-    engine: '1.5L Hybrid', fuel: 'Hybrid', transmission: 'CVT', year: 2023,
-    gradient: 'from-pink-600 to-pink-800', lightGradient: 'from-pink-500 to-pink-600',
-    safetyRating: 4, warrantyYears: 3, mileage: '21.5', emissions: 'Euro 5', horsepower: 110, torque: '172 Nm', efficiency: 21.5,
-    features: ['Excellent Mileage', 'Affordable', 'Practical Design', 'Reliable Engine'],
-  },
-  {
-    id: 'noah', name: language === 'en' ? 'Toyota Noah' : 'টয়োটা নোয়াহ',
-    subtitle: language === 'en' ? 'Family MPV 8-Seater' : 'পারিবারিক এমপিভি 8-সিটার',
-    price: '৳ 38,00,000', image: 'https://images.pexels.com/photos/35516440/pexels-photo-35516440.png?auto=compress&cs=tinysrgb&w=400&fm=webp',
-    engine: '1.8L Hybrid', fuel: 'Hybrid', transmission: 'CVT', year: 2023,
-    gradient: 'from-cyan-600 to-cyan-800', lightGradient: 'from-cyan-500 to-cyan-600',
-    safetyRating: 4, warrantyYears: 3, mileage: '18.2', emissions: 'Euro 5', horsepower: 144, torque: '190 Nm', efficiency: 18.2,
-    features: ['8-Seater', 'Family-Friendly', 'Spacious Interior', 'Sliding Doors'],
-  },
-];
-
-// ─── Carousel images map ───────────────────────────────────────────
-const CAROUSEL_IMAGES: Record<string, { url: string; alt: string }[]> = {
-  prado: [
-    { url: 'https://images.pexels.com/photos/36318402/pexels-photo-36318402.png?auto=compress&cs=tinysrgb&w=400&fm=webp', alt: 'Prado Front' },
-    { url: 'https://images.pexels.com/photos/36318403/pexels-photo-36318403.png?auto=compress&cs=tinysrgb&w=400&fm=webp', alt: 'Prado Side' },
-  ],
-  harrier: [{ url: 'https://images.pexels.com/photos/35515996/pexels-photo-35515996.png?auto=compress&cs=tinysrgb&w=400&fm=webp', alt: 'Harrier Front' }],
-  crown: [{ url: 'https://images.pexels.com/photos/35509198/pexels-photo-35509198.png?auto=compress&cs=tinysrgb&w=400&fm=webp', alt: 'Crown Front' }],
-  yaris: [
-    { url: 'https://images.pexels.com/photos/36319317/pexels-photo-36319317.png?auto=compress&cs=tinysrgb&w=400&fm=webp', alt: 'Yaris Front' },
-    { url: 'https://images.pexels.com/photos/36319316/pexels-photo-36319316.png?auto=compress&cs=tinysrgb&w=400&fm=webp', alt: 'Yaris Side' },
-  ],
-  chr: [
-    { url: 'https://images.pexels.com/photos/36324034/pexels-photo-36324034.png?auto=compress&cs=tinysrgb&w=400&fm=webp', alt: 'C-HR Front' },
-    { url: 'https://images.pexels.com/photos/36324033/pexels-photo-36324033.png?auto=compress&cs=tinysrgb&w=400&fm=webp', alt: 'C-HR Side' },
-  ],
-  premio: [{ url: 'https://images.pexels.com/photos/35516334/pexels-photo-35516334.png?auto=compress&cs=tinysrgb&w=400&fm=webp', alt: 'Premio Front' }],
-  noah: [{ url: 'https://images.pexels.com/photos/35516440/pexels-photo-35516440.png?auto=compress&cs=tinysrgb&w=400&fm=webp', alt: 'Noah Front' }],
-};
+// Phase A: duplicate flip-card showcase, SHOWCASE_VEHICLES + CAROUSEL_IMAGES removed —
+// single unified <FeaturedVehicles /> is the only featured showcase.
 
 // ─── ScrollReveal replaces old FadeIn — uses Framer Motion whileInView ──
 
@@ -310,21 +159,14 @@ export const HomePage = () => {
 
   const [featuredVehicles, setFeaturedVehicles] = useState<Vehicle[]>([]);
   const [testimonials, setTestimonials] = useState<Testimonial[]>([]);
-  const [showcaseVehicle, setShowcaseVehicle] = useState<keyof typeof CAROUSEL_IMAGES>('prado');
-  const [selectedCarId, setSelectedCarId] = useState<string | undefined>(undefined);
+  // Drives the Performance Overview gauges below; showcase sections removed (Phase A).
+  const [showcaseVehicle] = useState<string>('harrier');
   const [comparisonVehicles, setComparisonVehicles] = useState<Vehicle[]>([]);
   const [showComparison, setShowComparison] = useState(false);
   const [selectedVehicleColor, setSelectedVehicleColor] = useState<VehicleColor | null>(null);
   const [filteredResultCount, setFilteredResultCount] = useState(450);
 
-  const carouselRef = useRef<CarFocusCarouselHandle>(null);
-  const carouselSectionRef = useRef<HTMLDivElement>(null);
-  const flipTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-
-  const animate = device.supportsRichAnimations;
-  const showcaseVehicles = SHOWCASE_VEHICLES(language);
-  const navigate = useNavigate();
-  const [CarFocusCarouselComp, setCarFocusCarouselComp] = useState<React.ComponentType<any> | null>(null);
+  const featuredSectionRef = useRef<HTMLDivElement>(null);
 
   // ── Scroll-linked hero effects ──
   const { scrollY } = useScroll();
@@ -341,33 +183,11 @@ export const HomePage = () => {
   useEffect(() => {
     fetchFeaturedVehicles();
     fetchTestimonials();
-    return () => { if (flipTimeoutRef.current) clearTimeout(flipTimeoutRef.current); };
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // Dynamically import the homepage carousel after initial paint / during idle
-  useEffect(() => {
-    let mounted = true;
-    const load = async () => {
-      try {
-        const mod = await import('../components/CarFocusCarouselLite');
-        if (!mounted) return;
-        setCarFocusCarouselComp(() => (mod && (mod.default || mod)) as any);
-      } catch (e) {
-        // ignore — carousel will remain placeholder
-      }
-    };
-    if ('requestIdleCallback' in window) {
-      (window as any).requestIdleCallback(load, { timeout: 1500 });
-    } else {
-      const t = setTimeout(load, 800);
-      return () => { clearTimeout(t); mounted = false; };
-    }
-    return () => { mounted = false; };
-  }, []);
-
   const scrollToContent = () => {
-    carouselSectionRef.current?.scrollIntoView({ behavior: 'smooth' });
+    featuredSectionRef.current?.scrollIntoView({ behavior: 'smooth' });
   };
 
   const fetchFeaturedVehicles = useCallback(async () => {
@@ -416,18 +236,6 @@ export const HomePage = () => {
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-
-  const handleVehicleSelect = (vehicleId: typeof showcaseVehicle) => {
-    setShowcaseVehicle(vehicleId);
-    import('../utils/AudioManager').then(m => m.AudioManager.playVehicleSelect());
-  };
-
-  const handleCarSelect = (carId: string) => {
-    // Open vehicle details page (inventory context) instead of showing in the carousel
-    // This navigates to the vehicle details page which includes a "Back to Inventory" link.
-    // Navigate to the inventory page and request the item to be opened in the drawer
-    navigate(`/inventory?open=${encodeURIComponent(carId)}`);
-  };
 
   const handleAddToComparison = (vehicle: Vehicle) => {
     if (!comparisonVehicles.find(v => v.id === vehicle.id)) {
@@ -594,412 +402,18 @@ export const HomePage = () => {
           </motion.button>
         </section>
 
-        {/* ══ PREMIUM CAR FOCUS CAROUSEL (always-mounted for immediate autoplay) ════════════════════════════ */}
-        <div ref={carouselSectionRef}>
-          {CarFocusCarouselComp ? (
-            <CarFocusCarouselComp
-              ref={carouselRef}
-              initialCarId={selectedCarId}
-              onCarChange={setSelectedCarId}
+        {/* ══ FEATURED VEHICLES — single unified showcase (DB with carSlides fallback) ═ */}
+        <div ref={featuredSectionRef}>
+          <LazySection minHeight="500px" rootMargin="300px">
+            <FeaturedVehicles
+              vehicles={featuredVehicles}
+              theme={theme}
+              language={language}
+              supportsRichAnimations={device.supportsRichAnimations}
+              onAddToCompare={handleAddToComparison}
             />
-          ) : (
-            <div className="w-full h-64 sm:h-80 md:h-96 flex items-center justify-center bg-gradient-to-b from-black/50 to-black/30 text-white">
-              <div className="animate-fade-in text-center">
-                <div className="spinner-red mx-auto mb-4" />
-                <p className="text-sm opacity-80">{language === 'en' ? 'Loading showcase…' : 'শোকেস লোড হচ্ছে…'}</p>
-              </div>
-            </div>
-          )}
+          </LazySection>
         </div>
-
-        {/* ══ PREMIUM COLLECTION GRID ═══════════════════════════════ */}
-        <section className={`section-padding ${theme === 'dark' ? 'bg-gray-900/80' : 'bg-gray-50'}`}>
-          <div className="container-fluid">
-            <ScrollReveal className="text-center mb-6">
-              <span className={`text-sm font-semibold uppercase tracking-wider ${theme === 'dark' ? 'text-red-400' : 'text-red-600'}`}>
-                {language === 'en' ? 'Browse Our Collection' : 'আমাদের সংগ্রহ দেখুন'}
-              </span>
-              <h2 className={`heading-responsive font-bold mt-2 mb-4 ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
-                {language === 'en' ? 'Premium Collection' : 'প্রিমিয়াম সংগ্রহ'}
-              </h2>
-              <p className={`text-lg max-w-2xl mx-auto ${theme === 'dark' ? 'text-gray-400' : 'text-gray-600'}`}>
-                {language === 'en' ? 'Click any vehicle to view in the showcase carousel above' : 'উপরের শোকেস ক্যারোসেলে দেখতে যেকোনো গাড়িতে ক্লিক করুন'}
-              </p>
-            </ScrollReveal>
-
-            <StaggerContainer className="grid-auto-cards" stagger={0.04}>
-              {carSlides.map((car) => (
-                <motion.div key={car.id} variants={staggerItemVariants}>
-                  <div
-                    onClick={() => handleCarSelect(car.id)}
-                    role="button"
-                    tabIndex={0}
-                    onKeyDown={e => e.key === 'Enter' && handleCarSelect(car.id)}
-                    className={`car-card group cursor-pointer relative overflow-hidden rounded-2xl transition-all duration-300 shadow-lg hover:shadow-xl hover:-translate-y-1 ${
-                      theme === 'dark'
-                        ? 'bg-gray-800 border border-gray-700 hover:border-red-500/50'
-                        : 'bg-white border border-gray-200 hover:border-red-400'
-                    } ${selectedCarId === car.id ? 'ring-2 ring-red-500 ring-offset-2 ring-offset-transparent glow-red-sm' : ''}`}
-                  >
-                    {selectedCarId === car.id && (
-                      <div className="absolute top-2 right-2 z-10 w-3 h-3 bg-red-500 rounded-full animate-pulse" />
-                    )}
-                    <div className="relative car-card-img overflow-hidden bg-[#0b0b0b]">
-                      <ResponsiveCarImage
-                        alt={`${car.brand} ${car.model}`}
-                        images={{ webp: car.image.replace(/\.(jpg|jpeg|png)$/i, '.webp'), fallback: car.image, width: 320, height: 160 }}
-                        className="w-full h-full object-contain object-center car-img-hover"
-                      />
-                    </div>
-                    <div className="p-3">
-                      <p className={`text-xs font-semibold truncate ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>{car.brand} {car.model}</p>
-                      <p className={`text-xs font-bold ${theme === 'dark' ? 'text-green-400' : 'text-green-600'}`}>{car.price}</p>
-                    </div>
-                    <div className={`overlay-hover absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 ${
-                      theme === 'dark' ? 'bg-red-500/20' : 'bg-red-500/10'
-                    }`}>
-                      <span className={`px-4 py-2 rounded-full text-sm font-semibold ${theme === 'dark' ? 'bg-white text-gray-900' : 'bg-gray-900 text-white'}`}>
-                        {language === 'en' ? 'View in Inventory' : 'ইনভেন্টরিতে দেখুন'}
-                      </span>
-                    </div>
-                  </div>
-                </motion.div>
-              ))}
-            </StaggerContainer>
-          </div>
-        </section>
-
-        {/* ══ FEATURED VEHICLES (Interactive Showcase) ════════════════════════ */}
-        <LazySection minHeight="400px" rootMargin="300px">
-          <section className={`section-padding relative overflow-hidden ${theme === 'dark' ? 'bg-[#0a0a0a]' : 'bg-gray-900'}`}>
-            {/* Subtle ambient glow orbs for depth */}
-            {device.supportsRichAnimations && (
-              <>
-                <motion.div
-                  className="absolute top-1/4 left-1/4 w-72 h-72 rounded-full blur-3xl pointer-events-none"
-                  style={{ background: 'rgba(192, 0, 0, 0.08)' }}
-                  initial={{ scale: 0.8, opacity: 0 }}
-                  animate={{ scale: [1, 1.05, 1], opacity: [0.4, 0.6, 0.4] }}
-                  transition={{ duration: 8, repeat: Infinity, ease: 'easeInOut' }}
-                  aria-hidden="true"
-                />
-                <motion.div
-                  className="absolute bottom-1/4 right-1/4 w-64 h-64 rounded-full blur-3xl pointer-events-none"
-                  style={{ background: 'rgba(192, 0, 0, 0.06)' }}
-                  initial={{ scale: 0.8, opacity: 0 }}
-                  animate={{ scale: [1, 1.03, 1], opacity: [0.3, 0.5, 0.3] }}
-                  transition={{ duration: 10, repeat: Infinity, ease: 'easeInOut', delay: 2 }}
-                  aria-hidden="true"
-                />
-              </>
-            )}
-
-            <div className="container-fluid relative z-10">
-              <ScrollReveal className="text-center mb-6" delay={0.1}>
-                <span className="text-sm font-semibold uppercase tracking-wider text-red-400">
-                  {language === 'en' ? 'Interactive Showcase' : 'ইন্টারঅ্যাক্টিভ প্রদর্শনী'}
-                </span>
-                <h2 className="heading-responsive font-bold mt-2 mb-4 text-white drop-shadow-lg">
-                  {language === 'en' ? 'Featured Vehicles' : 'বৈশিষ্ট্যযুক্ত গাড়ি'}
-                </h2>
-                <p className="text-gray-400 max-w-xl mx-auto">
-                  {language === 'en' ? 'Hover or click to explore detailed specifications' : 'বিস্তারিত স্পেসিফিকেশন জানতে হোভার বা ক্লিক করুন'}
-                </p>
-              </ScrollReveal>
-
-              <StaggerContainer className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 justify-items-center" stagger={0.08}>
-                {carSlides.slice(0, 3).map((car, _index) => (
-                  <motion.div
-                    key={car.id}
-                    variants={staggerItemVariants}
-                    className="w-full flex justify-center"
-                    style={{ willChange: 'transform, opacity' }}
-                  >
-                    <EnhancedFlipCard
-                      frontContent={
-                        <div className="flex flex-col h-full">
-                          <div className="relative overflow-hidden rounded-xl">
-                            <ResponsiveCarImage
-                              alt={car.model}
-                              images={{ webp: car.image.replace(/\.(jpg|jpeg|png)$/i, '.webp'), fallback: car.image, width: 320, height: 160 }}
-                              className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
-                            />
-                            {car.features.some(f => f.toLowerCase().includes('hybrid')) && (
-                              <span className="absolute top-3 left-3 px-2 py-1 text-xs font-bold bg-green-500 text-white rounded-full shadow-lg">
-                                HYBRID
-                              </span>
-                            )}
-                            <span className="absolute top-3 right-3 px-2 py-1 text-xs font-bold bg-white/90 text-gray-900 rounded-full shadow-lg">
-                              {car.year}
-                            </span>
-                          </div>
-                          <div className="mt-4 flex-1 flex flex-col">
-                            <h3 className="text-xl font-bold text-white">{car.brand} {car.model}</h3>
-                            <p className="text-sm mt-1 text-gray-300">{car.bodyType} • {car.color}</p>
-                            <p className="text-lg font-bold mt-auto text-green-400 flex items-center gap-2">
-                              {car.price}
-                              <motion.span
-                                className="text-sm font-normal text-green-300"
-                                initial={{ opacity: 0, x: -10 }}
-                                animate={{ opacity: 1, x: 0 }}
-                                transition={{ delay: 0.3, duration: 0.4 }}
-                              >
-                                {language === 'en' ? 'Starting at' : 'থেকে শুরু'}
-                              </motion.span>
-                            </p>
-                          </div>
-                        </div>
-                      }
-                      backContent={
-                        <div className="space-y-4 p-2">
-                          <h3 className="text-lg font-bold text-white flex items-center gap-2">
-                            <motion.span
-                              initial={{ rotate: -90, opacity: 0 }}
-                              animate={{ rotate: 0, opacity: 1 }}
-                              transition={{ delay: 0.2, duration: 0.4 }}
-                            >
-                              ⚙
-                            </motion.span>
-                            {language === 'en' ? 'Specifications' : 'স্পেসিফিকেশন'}
-                          </h3>
-                          <div className="space-y-3">
-                            {[
-                              { label: language === 'en' ? 'Engine' : 'ইঞ্জিন', value: car.features[0], icon: '⚡' },
-                              { label: language === 'en' ? 'Type' : 'টাইপ', value: car.bodyType, icon: '🚗' },
-                              { label: language === 'en' ? 'Color' : 'রঙ', value: car.color, icon: '🎨' },
-                              { label: language === 'en' ? 'Year' : 'সন', value: car.year.toString(), icon: '📅' },
-                              { label: language === 'en' ? 'Features' : 'বৈশিষ্ট্য', value: car.features[1], icon: '✨' },
-                              { label: language === 'en' ? 'Price' : 'মূল্য', value: car.price, icon: '💰', highlight: true },
-                            ].map((spec, i) => (
-                              <motion.div
-                                key={spec.label}
-                                initial={{ opacity: 0, x: -20 }}
-                                animate={{ opacity: 1, x: 0 }}
-                                transition={{ delay: 0.15 + i * 0.05, duration: 0.3 }}
-                                className={`flex items-center justify-between text-sm text-gray-300 py-2 border-b border-gray-800/50 ${spec.highlight ? 'text-green-400 font-semibold' : ''}`}
-                              >
-                                <span className="flex items-center gap-2">
-                                  <span className="text-base">{spec.icon}</span>
-                                  {spec.label}
-                                </span>
-                                <span className="font-medium text-white">{spec.value}</span>
-                              </motion.div>
-                            ))}
-                          </div>
-                          <motion.button
-                            initial={{ opacity: 0, y: 20 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            transition={{ delay: 0.5, duration: 0.4 }}
-                            whileHover={{ scale: 1.02 }}
-                            whileTap={{ scale: 0.98 }}
-                            className="w-full mt-4 py-3 bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white rounded-xl font-semibold transition-all touch-target shadow-lg hover:shadow-xl"
-                            onClick={() => handleAddToComparison(car as unknown as Vehicle)}
-                          >
-                            <span className="flex items-center justify-center gap-2">
-                              {language === 'en' ? 'Add to Comparison' : 'তুলনায় যুক্ত করুন'}
-                              <motion.span
-                                animate={{ x: [0, 4, 0] }}
-                                transition={{ duration: 1.5, repeat: Infinity }}
-                              >
-                                →
-                              </motion.span>
-                            </span>
-                          </motion.button>
-                        </div>
-                      }
-                      theme={theme}
-                      autoFlipDelay={animate ? 4000 : 0}
-                      onFlipChange={(isFlipped: boolean) => {
-                        if (isFlipped && animate) import('../utils/AudioManager').then(m => m.AudioManager.playVehicleSelect());
-                      }}
-                    />
-                  </motion.div>
-                ))}
-              </StaggerContainer>
-            </div>
-          </section>
-        </LazySection>
-
-        {/* ══ FEATURED VEHICLES (DB) ════════════════════════════════ */}
-        {featuredVehicles.length > 0 && (
-          <section className={`section-padding relative overflow-hidden ${theme === 'dark' ? 'bg-gray-900/80' : 'bg-gray-50'}`}>
-            {/* Subtle background glow */}
-            {device.supportsRichAnimations && (
-              <motion.div
-                className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-1/2 pointer-events-none"
-                style={{
-                  background: theme === 'dark'
-                    ? 'radial-gradient(ellipse at center, rgba(192,0,0,0.06) 0%, transparent 70%)'
-                    : 'radial-gradient(ellipse at center, rgba(192,0,0,0.04) 0%, transparent 70%)'
-                }}
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ duration: 1, delay: 0.3 }}
-                aria-hidden="true"
-              />
-            )}
-
-            <div className="container-fluid relative z-10">
-              <ScrollReveal className="text-center mb-10" delay={0.1}>
-                <span className="text-sm font-semibold uppercase tracking-wider text-red-400">
-                  {language === 'en' ? 'Curated Selection' : 'নির্বাচিত সংগ্রহ'}
-                </span>
-                <h2 className={`heading-responsive font-bold mt-2 mb-4 ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
-                  {language === 'en' ? 'Featured Vehicles' : 'বৈশিষ্ট্যযুক্ত গাড়ি'}
-                </h2>
-                <p className={`text-lg max-w-2xl mx-auto ${theme === 'dark' ? 'text-gray-400' : 'text-gray-600'}`}>
-                  {language === 'en' ? 'Hand-picked premium vehicles ready for immediate delivery' : 'তাত্ক্ষণিক ডেলিভারির জন্য হাতেনির্বাচিত প্রিমিয়াম গাড়ি'}
-                </p>
-              </ScrollReveal>
-
-              <StaggerContainer className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8" stagger={0.08}>
-                {featuredVehicles.map((vehicle, index) => (
-                  <motion.div
-                    key={vehicle.id}
-                    variants={staggerItemVariants}
-                    style={{ willChange: 'transform, opacity, box-shadow' }}
-                    className="group"
-                  >
-                    <Link
-                      to={`/vehicle/${vehicle.id}`}
-                      className="block"
-                      aria-label={language === 'en' ? `View ${vehicle.model} details` : `${vehicle.model} এর বিবরণ দেখুন`}
-                    >
-                      <motion.div
-                        whileHover={{ y: -8, boxShadow: theme === 'dark'
-                          ? '0 25px 50px rgba(192,0,0,0.2), 0 0 0 1px rgba(192,0,0,0.1)'
-                          : '0 25px 50px rgba(192,0,0,0.15), 0 0 0 1px rgba(192,0,0,0.05)' }}
-                        whileTap={{ scale: 0.98 }}
-                        transition={{ type: 'spring', stiffness: 300, damping: 30 }}
-                      >
-                        <Card
-                          className={`overflow-hidden cursor-pointer transition-all duration-500 ${
-                            theme === 'dark'
-                              ? 'bg-gray-800/50 backdrop-blur-sm border border-gray-700/50 hover:border-red-500/30 hover:shadow-[0_20px_40px_rgba(192,0,0,0.15)]'
-                              : 'bg-white border border-gray-100 hover:border-red-200 hover:shadow-[0_20px_40px_rgba(192,0,0,0.1)]'
-                          } rounded-2xl`}
-                        >
-                          <motion.img
-                            src={encodeURI(vehicle.images?.[0]?.image_url || 'https://images.pexels.com/photos/3964962/pexels-photo-3964962.jpeg?auto=compress&cs=tinysrgb&w=400&fm=webp')}
-                            alt={vehicle.model}
-                            className="w-full h-full object-cover"
-                            loading="lazy"
-                            decoding="async"
-                            width={400}
-                            height={256}
-                            style={{ willChange: 'transform' }}
-                            initial={{ scale: 1 }}
-                            whileHover={{ scale: 1.08 }}
-                            transition={{ duration: 0.6, ease: 'easeOut' }}
-                          />
-                          {/* Gradient overlay */}
-                          <motion.div
-                            className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/10 to-transparent"
-                            initial={{ opacity: 0 }}
-                            whileHover={{ opacity: 1 }}
-                            transition={{ duration: 0.3 }}
-                          />
-                          {/* Vehicle type badge */}
-                          <motion.div
-                            className="absolute top-4 left-4"
-                            initial={{ opacity: 0, y: -10 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            transition={{ delay: 0.2 + index * 0.05, duration: 0.3 }}
-                            whileHover={{ scale: 1.05 }}
-                          >
-                            <span className="px-3 py-1.5 text-xs font-bold rounded-full bg-gradient-to-r from-red-500 to-red-600 text-white shadow-lg">
-                              {vehicle.body_type || (language === 'en' ? 'Premium' : 'প্রিমিয়াম')}
-                            </span>
-                          </motion.div>
-                          {/* Favorite/Heart icon placeholder */}
-                          <motion.div
-                            className="absolute top-4 right-4 p-2 bg-white/10 backdrop-blur-sm rounded-full"
-                            initial={{ opacity: 0, x: 10 }}
-                            animate={{ opacity: 1, x: 0 }}
-                            transition={{ delay: 0.3 + index * 0.05, duration: 0.3 }}
-                            whileHover={{ scale: 1.1, backgroundColor: 'rgba(255,255,255,0.2)' }}
-                          >
-                            <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
-                            </svg>
-                          </motion.div>
-                        <div className="p-5 space-y-3">
-                          <motion.div
-                            initial={{ opacity: 0, y: 10 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            transition={{ delay: 0.2 + index * 0.05, duration: 0.4 }}
-                          >
-                            <h3 className={`text-lg font-bold ${theme === 'dark' ? 'text-white' : 'text-gray-900'} truncate`}>
-                              {language === 'en' ? (vehicle.description_en || vehicle.model) : (vehicle.description_bn || vehicle.model)}
-                            </h3>
-                          </motion.div>
-                          <motion.div
-                            initial={{ opacity: 0, y: 10 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            transition={{ delay: 0.25 + index * 0.05, duration: 0.4 }}
-                            className="flex items-center justify-between text-sm"
-                          >
-                            <span className={`flex items-center gap-1.5 ${theme === 'dark' ? 'text-gray-400' : 'text-gray-500'}`}>
-                              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                              </svg>
-                              {vehicle.year}
-                            </span>
-                            <span className="text-green-500 font-bold text-lg">{formatPrice(vehicle.price)}</span>
-                          </motion.div>
-                          {/* Quick specs */}
-                          <motion.div
-                            initial={{ opacity: 0, y: 10 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            transition={{ delay: 0.3 + index * 0.05, duration: 0.4 }}
-                            className="flex flex-wrap gap-2"
-                          >
-                            {vehicle.fuel_type && (
-                              <span className="px-2.5 py-1 text-xs font-medium rounded-full bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300">
-                                {vehicle.fuel_type}
-                              </span>
-                            )}
-                            {vehicle.transmission && (
-                              <span className="px-2.5 py-1 text-xs font-medium rounded-full bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-300">
-                                {vehicle.transmission}
-                              </span>
-                            )}
-                            {vehicle.engine_capacity && (
-                              <span className="px-2.5 py-1 text-xs font-medium rounded-full bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-300">
-                                {vehicle.engine_capacity}
-                              </span>
-                            )}
-                          </motion.div>
-                          {/* CTA Arrow */}
-                          <motion.div
-                            initial={{ opacity: 0, x: -10 }}
-                            animate={{ opacity: 1, x: 0 }}
-                            transition={{ delay: 0.35 + index * 0.05, duration: 0.4 }}
-                            className="flex items-center justify-between pt-2 border-t border-gray-200/50 dark:border-gray-700/50"
-                          >
-                            <span className={`text-sm font-medium ${theme === 'dark' ? 'text-gray-300' : 'text-gray-600'}`}>
-                              {language === 'en' ? 'View Details' : 'বিস্তারিত দেখুন'}
-                            </span>
-                            <motion.span
-                              whileHover={{ x: 4 }}
-                              transition={{ duration: 0.2 }}
-                              className="flex items-center gap-1 text-red-500 font-semibold"
-                            >
-                              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
-                              </svg>
-                            </motion.span>
-                          </motion.div>
-                        </div>
-                      </Card>
-                      </motion.div>
-                    </Link>
-                  </motion.div>
-                ))}
-              </StaggerContainer>
-            </div>
-          </section>
-        )}
 
         {/* ══ FILTER / SORT ════════════════════════════════════════ */}
         <section className={`section-padding relative overflow-hidden ${
@@ -1050,104 +464,6 @@ export const HomePage = () => {
             />
           </div>
         </section>
-
-        {/* ══ CAROUSEL SHOWCASE + FLIP CARDS ═══════════════════════ */}
-        <LazySection minHeight="600px" rootMargin="200px">
-          <section className={`section-padding relative overflow-hidden ${
-            theme === 'dark' ? 'bg-gradient-to-br from-gray-900 to-gray-800' : 'bg-gradient-to-br from-blue-50 to-indigo-50'
-          }`}>
-            {/* Background animations removed from homepage (particles/parallax disabled) */}
-
-            <div className="container-fluid relative z-10">
-              <ScrollReveal className="text-center mb-8">
-                <h2 className={`heading-responsive font-bold mb-4 ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
-                  {language === 'en' ? 'Explore Our Premium Collection' : 'আমাদের প্রিমিয়াম সংগ্রহ অন্বেষণ করুন'}
-                </h2>
-              </ScrollReveal>
-
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-start">
-                {/* Left: carousel */}
-                <ScrollReveal>
-                  <div className="relative w-full max-w-md mx-auto">
-                    <div className={`absolute inset-0 bg-gradient-to-br ${
-                      theme === 'dark' ? 'from-red-900/20 to-purple-900/20' : 'from-red-200/30 to-purple-200/30'
-                    } rounded-3xl blur-2xl`} />
-                    <div className={`relative rounded-3xl overflow-hidden shadow-2xl border-4 ${
-                      theme === 'dark' ? 'border-red-500/30' : 'border-red-300/50'
-                    }`}>
-                      <ImageCarousel
-                        images={CAROUSEL_IMAGES[showcaseVehicle] || CAROUSEL_IMAGES.prado}
-                        autoPlay={!device.isLowEnd}
-                        autoPlayInterval={4000}
-                        showIndicators
-                        showArrows
-                        height="h-64 sm:h-80 md:h-96"
-                      />
-                    </div>
-
-                    {/* Vehicle selector chips */}
-                    <div className="flex flex-wrap gap-2 mt-4 justify-center">
-                      {(['prado','harrier','crown','yaris','chr','premio','noah'] as const).map(id => (
-                        <button
-                          key={id}
-                          onClick={() => handleVehicleSelect(id)}
-                          className={`px-3 py-1.5 rounded-full font-semibold transition-all text-xs sm:text-sm ${
-                            showcaseVehicle === id
-                              ? 'bg-red-600 text-white shadow-lg'
-                              : theme === 'dark' ? 'bg-gray-700 text-gray-300 hover:bg-gray-600' : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
-                          }`}
-                        >
-                          {id.charAt(0).toUpperCase() + id.slice(1)}
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-                </ScrollReveal>
-
-                {/* Right: flip cards */}
-                <div className="space-y-3">
-                  {showcaseVehicles.map((vehicle, index) => (
-                    animate ? (
-                      <Suspense key={vehicle.id} fallback={<div className="h-32" />}>
-                        <MotionVehicleFlipCard
-                          vehicle={vehicle}
-                          index={index}
-                          theme={theme}
-                          language={language}
-                          isSelected={showcaseVehicle === vehicle.id}
-                          onSelect={() => handleVehicleSelect(vehicle.id as typeof showcaseVehicle)}
-                          flipTimeoutRef={flipTimeoutRef}
-                          animate={animate}
-                        />
-                      </Suspense>
-                    ) : (
-                      <VehicleFlipCardFallback
-                        key={vehicle.id}
-                        vehicle={vehicle}
-                        index={index}
-                        theme={theme}
-                        language={language}
-                        isSelected={showcaseVehicle === vehicle.id}
-                        onSelect={() => handleVehicleSelect(vehicle.id as typeof showcaseVehicle)}
-                        flipTimeoutRef={flipTimeoutRef}
-                        animate={animate}
-                      />
-                    )
-                  ))}
-                </div>
-              </div>
-
-              <ScrollReveal className="text-center mt-12">
-                <Link to="/inventory">
-                  <Button size="lg" className="bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 shadow-glow-red">
-                    {language === 'en' ? 'View All Vehicles' : 'সমস্ত গাড়ি দেখুন'}
-                    <ArrowRight className="ml-2 h-5 w-5" />
-                  </Button>
-                </Link>
-              </ScrollReveal>
-            </div>
-          </section>
-        </LazySection>
 
         {/* ══ COLOR CUSTOMIZER ══════════════════════════════════════ */}
         <LazySection minHeight="400px" rootMargin="200px">

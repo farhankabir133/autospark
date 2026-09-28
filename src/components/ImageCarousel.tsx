@@ -59,8 +59,8 @@ export const ImageCarousel = ({
   };
 
   return (
-    <div 
-      className={`relative ${height} overflow-hidden rounded-lg group`}
+    <div
+      className={`relative ${height} overflow-hidden group ${theme === 'dark' ? 'bg-gray-800' : 'bg-gray-100'}`}
       onMouseEnter={() => setIsAutoPlay(false)}
       onMouseLeave={() => setIsAutoPlay(autoPlay)}
       role="region"
@@ -72,7 +72,8 @@ export const ImageCarousel = ({
           key={currentIndex}
           src={encodeURI(images[currentIndex].url)}
           alt={images[currentIndex].alt || `Slide ${currentIndex + 1}`}
-          className="w-full h-full object-cover"
+          className="w-full h-full object-contain"
+          draggable={false}
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
@@ -80,8 +81,8 @@ export const ImageCarousel = ({
         />
       </AnimatePresence>
 
-      {/* Gradient overlay on bottom for better indicator visibility */}
-      <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/40 to-transparent h-20 pointer-events-none" />
+      {/* Subtle scrim only behind the dots so the car stays fully bright */}
+      <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/30 to-transparent h-8 pointer-events-none" />
 
       {/* Navigation Arrows */}
       {showArrows && images.length > 1 && (

@@ -1070,7 +1070,7 @@ const EMICalculator: React.FC<{ principal: number }> = ({ principal }) => {
   const isDark = theme === 'dark';
 
   return (
-    <div className={`min-h-screen ${isDark ? 'bg-transparent' : 'bg-gray-50'} pt-20`}>
+    <div className={`min-h-screen ${isDark ? 'bg-gray-900' : 'bg-gray-50'} pt-20`}>
       {/* Booking Modal */}
       <AnimatePresence>
         {showBookingModal && (
@@ -1349,7 +1349,7 @@ const EMICalculator: React.FC<{ principal: number }> = ({ principal }) => {
 
             <div className={`
               ${showMobileFilters ? 'block' : 'hidden lg:block'}
-              ${isDark ? 'bg-gray-800/50 border-gray-700/50' : 'bg-white/70 border-white/50'}
+              ${isDark ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'}
               backdrop-blur-xl rounded-2xl shadow-xl border p-6 sticky top-24
             `}>
               <div className="flex items-center justify-between mb-6">
@@ -1588,17 +1588,16 @@ const EMICalculator: React.FC<{ principal: number }> = ({ principal }) => {
                         transition={{ duration: 0.4, delay: index * 0.05 }}
                         whileHover={{ y: -5 }}
                       >
-                        <Card hover className={`overflow-hidden ${isDark ? 'bg-gray-800/50 border-gray-700' : 'bg-white border-gray-200'} ${viewMode === 'list' ? 'flex' : ''}`}>
+                        <Card hover className={`overflow-hidden ${isDark ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'} ${viewMode === 'list' ? 'flex' : ''}`}>
                           <Link to={`/vehicle/${vehicle.id}`} className={viewMode === 'list' ? 'flex w-full' : 'w-full'}>
-                            <div className={viewMode === 'list' ? 'w-1/3' : 'w-full'}>
+                            <div className={viewMode === 'list' ? 'w-2/5 shrink-0' : 'w-full'}>
                               <div className="relative">
                                 <ImageCarousel
                                   images={carouselImages}
-                                  autoPlay={true}
-                                  autoPlayInterval={4000}
+                                  autoPlay={false}
                                   showIndicators={true}
                                   showArrows={carouselImages.length > 1}
-                                  height={viewMode === 'list' ? 'h-48' : 'h-64'}
+                                  height="aspect-[4/3]"
                                 />
                                 <div className="absolute top-3 left-3 flex gap-2">
                                   {vehicle.is_featured && (
@@ -1615,7 +1614,7 @@ const EMICalculator: React.FC<{ principal: number }> = ({ principal }) => {
                                 </div>
                               </div>
                             </div>
-                            <div className={`p-6 ${viewMode === 'list' ? 'w-2/3' : 'w-full'}`}>
+                            <div className={`p-6 ${viewMode === 'list' ? 'w-3/5' : 'w-full'}`}>
                               <div className={`text-sm mb-1 ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>
                                 {t('vehicle.stock')}: {vehicle.stock_number}
                               </div>
@@ -1705,12 +1704,12 @@ const EMICalculator: React.FC<{ principal: number }> = ({ principal }) => {
 
                 <div className="mt-4 space-y-4 overflow-auto h-[calc(100vh-120px)]">
                   {/* Image / small carousel */}
-                        <div className="w-full h-48 bg-gray-100 rounded-lg overflow-hidden">
+                        <div className="w-full h-56 bg-gradient-to-br from-slate-700 via-slate-800 to-slate-900 rounded-lg overflow-hidden">
                           {/* Prefer displayImage from router state when present (user clicked a color on landing) */}
                           {routerState?.displayImage && routerState.openId === vehicle.id ? (
                             <img src={encodeURI(routerState.displayImage)} alt={`${vehicle.brand_name} ${vehicle.model}`} className="w-full h-full object-contain" />
                           ) : vehicle.images && vehicle.images.length > 0 ? (
-                            <img src={encodeURI((vehicle.images[0] as any).image_url || (vehicle.images[0] as any).url)} alt={`${vehicle.brand_name} ${vehicle.model}`} className="w-full h-full object-cover" />
+                            <img src={encodeURI((vehicle.images[0] as any).image_url || (vehicle.images[0] as any).url)} alt={`${vehicle.brand_name} ${vehicle.model}`} className="w-full h-full object-contain bg-gray-100 dark:bg-gray-900" />
                           ) : (
                             <div className="w-full h-full flex items-center justify-center text-gray-400">No image</div>
                           )}
