@@ -1,1 +1,0 @@
-import{c as t}from"./supabase-BQEU2DLB.js";import{e as o}from"./index-CmtUJN1P.js";import"./react-vendor-DhXR2kkw.js";import"./helmet-C08GvW3y.js";import"./icons-D65UljL2.js";import"./router-4Vw86Dv4.js";import"./framer-motion-kDYbtVDL.js";import"./form-DBOPlaGR.js";const r=o.VITE_SUPABASE_URL,p=o.VITE_SUPABASE_ANON_KEY,E=t(r,p);export{E as supabase};
