@@ -184,9 +184,9 @@ export const VehicleShowcase = ({
             <motion.button
               onClick={() => {
                 if (isMusicPlaying) {
-                  AudioManager.stop();
+                  AudioManager.stopAll();
                 } else {
-                  AudioManager.playEngine();
+                  AudioManager.playVehicleSelect();
                 }
                 setIsMusicPlaying(!isMusicPlaying);
               }}

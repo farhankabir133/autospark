@@ -8,9 +8,11 @@ const PORT = process.env.PORT || 8787
 
 app.use(bodyParser.json())
 
-// Basic CORS for local dev (frontend on 5173, backend on 8787)
+// Basic CORS for local dev (frontend on 5173, backend on 8787) — restricted allowlist
+const ALLOWED_ORIGINS = new Set(['https://autosparkbd.com','https://www.autosparkbd.com','http://localhost:5173','http://localhost:5174','http://127.0.0.1:5173'])
 app.use((req, res, next) => {
-  res.header('Access-Control-Allow-Origin', '*')
+  const origin = req.headers.origin
+  res.header('Access-Control-Allow-Origin', ALLOWED_ORIGINS.has(origin) ? origin : 'https://autosparkbd.com')
   res.header('Access-Control-Allow-Methods', 'GET,POST,PUT,PATCH,DELETE,OPTIONS')
   res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization')
   if (req.method === 'OPTIONS') {
@@ -25,9 +27,9 @@ const AGENT_URL = 'https://epbmkschwzip4c6atjl2tgbu.agents.do-ai.run/api/v1/chat
 // Payment API URL - legacy proxy target (no longer used for new SSLCommerz flow)
 const PAYMENT_API_URL = process.env.PAYMENT_API_URL || 'https://autospark-one.vercel.app'
 
-// SSLCommerz credentials (use env vars in real deployments)
-const SSLCZ_STORE_ID = process.env.SSLCZ_STORE_ID || 'autos69cccc023b067'
-const SSLCZ_STORE_PASSWD = process.env.SSLCZ_STORE_PASSWD || 'autos69cccc023b067@ssl'
+// SSLCommerz credentials — server-only env vars, no hardcoded fallback
+const SSLCZ_STORE_ID = process.env.SSLCZ_STORE_ID || process.env.SSLCOMMERZ_STORE_ID
+const SSLCZ_STORE_PASSWD = process.env.SSLCZ_STORE_PASSWD || process.env.SSLCOMMERZ_STORE_PASSWORD
 const SSLCZ_IS_LIVE = process.env.SSLCZ_IS_LIVE === 'true' // default sandbox
 
 // Base URL of this backend for callback URLs (update in production)
@@ -97,11 +99,15 @@ app.post('/api/payment/init', async (req, res) => {
     if (!total_amount || !customer_name || !mobile) {
       return res.status(400).json({ error: 'Missing required payment fields' })
     }
+    if (!/^01[3-9]\d{8}$/.test(String(mobile))) return res.status(400).json({ error: 'Invalid BD mobile' })
+    const amount = Number(total_amount)
+    if (!Number.isFinite(amount) || amount < 10 || amount > 5000000) return res.status(400).json({ error: 'Invalid amount' })
+    if (!SSLCZ_STORE_ID || !SSLCZ_STORE_PASSWD) return res.status(500).json({ error: 'Payment gateway not configured' })
 
-    const uniqueTranId = tran_id || 'AS-' + Date.now()
+    const uniqueTranId = 'AS-' + Date.now() + '-' + Math.random().toString(36).slice(2, 8)
 
     const data = {
-      total_amount: Number(total_amount),
+      total_amount: amount,
       currency,
       tran_id: uniqueTranId,
       success_url: BASE_URL + '/api/payment/success',

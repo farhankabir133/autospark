@@ -54,7 +54,7 @@ export const MagneticButton: React.FC<MagneticButtonProps> = ({
     <Component
       ref={ref as React.Ref<HTMLButtonElement & HTMLAnchorElement>}
       className={className}
-      style={{ x: springX, y: springY, scale } as React.CSSProperties}
+      style={{ x: springX, y: springY, scale } as unknown as React.CSSProperties}
       onMouseMove={handleMouseMove}
       onMouseEnter={() => {}}
       onMouseLeave={handleMouseLeave}

@@ -1,63 +1,46 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
-
-const corsHeaders = {
-  'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Methods': 'POST, GET, OPTIONS',
-  'Access-Control-Allow-Headers': 'Content-Type',
-};
+import { corsOrigin, setCors } from './_helpers';
 
 export default async function handler(
   request: VercelRequest,
   response: VercelResponse
 ) {
+  const origin = corsOrigin(request.headers.origin as string | undefined);
   // Handle CORS preflight
   if (request.method === 'OPTIONS') {
     return response
       .status(200)
-      .setHeader('Access-Control-Allow-Origin', '*')
+      .setHeader('Access-Control-Allow-Origin', origin)
       .setHeader('Access-Control-Allow-Methods', 'POST, GET, OPTIONS')
       .setHeader('Access-Control-Allow-Headers', 'Content-Type')
       .end();
   }
 
   try {
-    const { tran_id, error, faliure_message } = request.method === 'GET' ? request.query : request.body;
+    const { tran_id } = request.method === 'GET' ? request.query : request.body;
 
-    // Log payment failure
-    console.log('Payment Failed:', {
-      tran_id,
-      error,
-      faliure_message,
-    });
+    console.log('Payment Failed:', String(tran_id ?? '').slice(0, 40));
 
     // Acknowledge the callback
-    console.log('❌ Payment failed for transaction:', tran_id);
-    console.log('Error:', error || faliure_message);
-
-    // In production, update order status to "failed" in database
-    // Send notification email to customer
-    // Offer retry option
+    // In production, update order status to "failed" in database (idempotent by tran_id)
 
     // Return JSON response
     return response
       .status(200)
-      .setHeader('Access-Control-Allow-Origin', '*')
+      .setHeader('Access-Control-Allow-Origin', origin)
       .json({
         success: false,
         message: 'Payment failed',
-        tran_id,
-        error: error || faliure_message,
+        tran_id: typeof tran_id === 'string' ? tran_id.slice(0, 80) : tran_id,
         timestamp: new Date().toISOString(),
       });
   } catch (error) {
-    const errorMessage =
-      error instanceof Error ? error.message : 'Unknown error';
-    console.error('Payment fail handler error:', errorMessage);
+    console.error('Payment fail handler error');
     return response
       .status(500)
-      .setHeader('Access-Control-Allow-Origin', '*')
+      .setHeader('Access-Control-Allow-Origin', origin)
       .json({
-        error: `Server error: ${errorMessage}`,
+        error: 'Server error',
       });
   }
 }

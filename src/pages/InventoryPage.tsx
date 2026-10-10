@@ -1083,6 +1083,10 @@ const EMICalculator: React.FC<{ principal: number }> = ({ principal }) => {
               onClick={closeBookingModal}
             />
             <motion.div
+              role="dialog"
+              aria-modal="true"
+              aria-label="Pre-order booking form"
+              onKeyDown={e => { if (e.key === 'Escape') closeBookingModal(); }}
               initial={{ opacity: 0, y: 30, scale: 0.98 }}
               animate={{ opacity: 1, y: 0, scale: 1 }}
               exit={{ opacity: 0, y: 20, scale: 0.98 }}
@@ -1095,16 +1099,17 @@ const EMICalculator: React.FC<{ principal: number }> = ({ principal }) => {
                 <button
                   onClick={closeBookingModal}
                   disabled={isSubmittingBooking}
-                  className={`p-2 rounded-full ${isDark ? 'hover:bg-gray-800' : 'hover:bg-gray-100'} disabled:opacity-50`}
+                  className={`p-2 rounded-full min-w-[44px] min-h-[44px] flex items-center justify-center ${isDark ? 'hover:bg-gray-800' : 'hover:bg-gray-100'} disabled:opacity-50`}
                   aria-label="Close booking form"
                 >
-                  <span className={isDark ? 'text-gray-300' : 'text-gray-700'}>×</span>
+                  <span aria-hidden className={isDark ? 'text-gray-300 text-xl leading-none' : 'text-gray-700 text-xl leading-none'}>×</span>
                 </button>
               </div>
               <div className="flex-1 overflow-y-auto p-3 sm:p-3.5 grid grid-cols-1 sm:grid-cols-2 gap-x-2.5 gap-y-1 sm:gap-y-1.5">
                 <div className="sm:col-span-2 space-y-0">
-                  <label className={`block text-xs font-semibold leading-tight ${isDark ? 'text-gray-200' : 'text-gray-700'}`}>Full Name</label>
+                  <label htmlFor="booking-name" className={`block text-xs font-semibold leading-tight ${isDark ? 'text-gray-200' : 'text-gray-700'}`}>Full Name</label>
                   <input
+                    id="booking-name"
                     value={bookingForm.customer_name}
                     onChange={e => updateBookingField('customer_name', e.target.value)}
                     className={`w-full px-3 py-1 rounded-lg border text-sm leading-tight ${isDark ? 'bg-gray-800 border-gray-700 text-white' : 'bg-white border-gray-300 text-gray-900'}`}
@@ -1112,8 +1117,10 @@ const EMICalculator: React.FC<{ principal: number }> = ({ principal }) => {
                   />
                 </div>
                 <div className="space-y-0">
-                  <label className={`block text-xs font-semibold leading-tight ${isDark ? 'text-gray-200' : 'text-gray-700'}`}>Mobile</label>
+                  <label htmlFor="booking-mobile" className={`block text-xs font-semibold leading-tight ${isDark ? 'text-gray-200' : 'text-gray-700'}`}>Mobile</label>
                   <input
+                    id="booking-mobile"
+                    inputMode="tel"
                     value={bookingForm.mobile}
                     onChange={e => updateBookingField('mobile', e.target.value)}
                     className={`w-full px-3 py-1 rounded-lg border text-sm leading-tight ${isDark ? 'bg-gray-800 border-gray-700 text-white' : 'bg-white border-gray-300 text-gray-900'}`}
@@ -1137,7 +1144,7 @@ const EMICalculator: React.FC<{ principal: number }> = ({ principal }) => {
                     className={`w-full px-3 py-1 rounded-lg border text-sm leading-tight bg-gray-100 text-gray-500`}
                   />
                   {selectedVehicle == null && (
-                    <div className="text-xs text-red-500">[DEBUG] No vehicle selected. Please try again.</div>
+                    <div role="alert" className="text-xs text-red-600">No vehicle selected. Please close and try again.</div>
                   )}
                 </div>
                 <div className="space-y-0">

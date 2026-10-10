@@ -1,10 +1,11 @@
-import { Client, Databases, ID } from 'appwrite';
+import { Client, Databases, ID, Query } from 'appwrite';
+import { env } from '../lib/env';
 
-// P0 fix: validate Appwrite env early with clear error (prevents undefined databaseId crashes)
-const APPWRITE_ENDPOINT = import.meta.env.VITE_APPWRITE_ENDPOINT;
-const APPWRITE_PROJECT_ID = import.meta.env.VITE_APPWRITE_PROJECT_ID;
-const DATABASE_ID = import.meta.env.VITE_APPWRITE_DATABASE_ID;
-const COLLECTION_ID = import.meta.env.VITE_APPWRITE_COLLECTION_ID;
+// No hardcoded fallbacks: env.ts throws in PROD when required vars are missing.
+const APPWRITE_ENDPOINT = env.VITE_APPWRITE_ENDPOINT as string;
+const APPWRITE_PROJECT_ID = env.VITE_APPWRITE_PROJECT_ID as string;
+const DATABASE_ID = env.VITE_APPWRITE_DATABASE_ID as string;
+const COLLECTION_ID = env.VITE_APPWRITE_COLLECTION_ID as string;
 
 function assertAppwriteEnv() {
   const missing: string[] = [];
@@ -16,7 +17,7 @@ function assertAppwriteEnv() {
 }
 
 const client = new Client()
-  .setEndpoint(APPWRITE_ENDPOINT || 'https://sgp.cloud.appwrite.io/v1')
+  .setEndpoint(APPWRITE_ENDPOINT)
   .setProject(APPWRITE_PROJECT_ID || '');
 
 const databases = new Databases(client);
@@ -25,6 +26,7 @@ const databases = new Databases(client);
 export const savePaymentRequest = async (paymentData: {
   customer_name: string;
   mobile: string;
+  email?: string;
   address: string;
   thana: string;
   district: string;
@@ -43,6 +45,7 @@ export const savePaymentRequest = async (paymentData: {
       {
         customer_name: paymentData.customer_name,
         mobile: paymentData.mobile,
+        email: paymentData.email ?? null,
         address: paymentData.address,
         thana: paymentData.thana,
         district: paymentData.district,
@@ -50,6 +53,7 @@ export const savePaymentRequest = async (paymentData: {
         cart_items: cartPayload,
         session_id: sessionId,
         status: 'pending',
+        created_at: new Date().toISOString(),
       }
     );
 
@@ -104,20 +108,16 @@ export const getPaymentById = async (documentId: string) => {
   }
 };
 
-// Get all payments (for admin dashboard) — A-03/A-04: add pagination
-export const getAllPayments = async (limit = 25, offset = 0) => {
+// Get all payments — cursor pagination (preferred over offset)
+export const getAllPayments = async (limit = 25, cursorAfter?: string) => {
   assertAppwriteEnv();
   try {
-    const { Query } = await import('appwrite');
-    const response = await databases.listDocuments(
-      DATABASE_ID,
-      COLLECTION_ID,
-      [Query.limit(limit), Query.offset(offset), Query.orderDesc('$createdAt')]
-    );
-    console.log('✅ Payments retrieved:', response);
+    const queries = [Query.limit(Math.min(limit, 100)), Query.orderDesc('$createdAt'), Query.select(['$id', 'status', 'total_amount', 'session_id', 'transaction_id', '$createdAt'])];
+    if (cursorAfter) queries.push(Query.cursorAfter(cursorAfter));
+    const response = await databases.listDocuments(DATABASE_ID, COLLECTION_ID, queries);
     return response;
   } catch (error) {
-    console.error('❌ Error fetching payments:', error);
+    console.error('Error fetching payments:', error);
     throw error;
   }
 };

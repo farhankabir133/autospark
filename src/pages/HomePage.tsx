@@ -11,7 +11,7 @@ import type { Vehicle, Testimonial } from '../types';
 import { formatPrice } from '../utils/format';
 import type { VehicleColor } from '../components/InteractiveColorCustomizer';
 import { FilterAnimations } from '../components/FilterAnimations';
-import { ScrollReveal, StaggerContainer, staggerItemVariants, MagneticButton, GlowPulse } from '../components/motion';
+import { ScrollReveal, StaggerContainer, staggerItemVariants, GlowPulse } from '../components/motion';
 
 // CarFocusCarousel, flip-card showcase and duplicate grids removed (Phase A):
 // single unified <FeaturedVehicles /> is the only featured showcase.
@@ -77,7 +77,8 @@ const VideoHero = ({ children }: { children: React.ReactNode }) => {
           loop
           playsInline
           preload="metadata"
-          fetchPriority="high"
+          aria-hidden="true"
+          poster="/hero/hero-poster.webp"
           disablePictureInPicture
           disableRemotePlayback
           onPlaying={() => setVideoReady(true)}
@@ -352,21 +353,15 @@ export const HomePage = () => {
               <VideoHero>
                 <div className="flex flex-col items-center gap-6 text-center px-4">
                   <div className="flex flex-row flex-wrap gap-2 sm:gap-3 justify-center">
-                    <MagneticButton className="inline-flex items-center gap-2 px-5 py-2.5 bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 text-white font-semibold rounded-xl text-xs sm:text-sm md:text-base shadow-glow-red transition-all">
-                      <Link to="/inventory" className="flex items-center gap-2">
-                        {t('hero.browse')}<ArrowRight className="ml-1.5 h-3.5 w-3.5 md:h-5 md:w-5" />
-                      </Link>
-                    </MagneticButton>
-                    <MagneticButton className="inline-flex items-center px-5 py-2.5 bg-white/10 backdrop-blur-sm border border-white/20 text-white hover:bg-white/20 font-semibold rounded-xl text-xs sm:text-sm md:text-base transition-all">
-                      <Link to="/services" className="flex items-center">
-                        {t('hero.book_service')}
-                      </Link>
-                    </MagneticButton>
-                    <MagneticButton className="inline-flex items-center px-5 py-2.5 bg-white/5 border border-white/10 text-white hover:bg-white/10 font-semibold rounded-xl text-xs sm:text-sm md:text-base transition-all">
-                      <Link to="/sell" className="flex items-center">
-                        {t('hero.sell')}
-                      </Link>
-                    </MagneticButton>
+                    <Link to="/inventory" className="inline-flex items-center gap-2 px-5 py-2.5 bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 text-white font-semibold rounded-xl text-xs sm:text-sm md:text-base shadow-glow-red transition-all">
+                      {t('hero.browse')}<ArrowRight className="ml-1.5 h-3.5 w-3.5 md:h-5 md:w-5" aria-hidden />
+                    </Link>
+                    <Link to="/services" className="inline-flex items-center px-5 py-2.5 bg-white/10 backdrop-blur-sm border border-white/20 text-white hover:bg-white/20 font-semibold rounded-xl text-xs sm:text-sm md:text-base transition-all">
+                      {t('hero.book_service')}
+                    </Link>
+                    <Link to="/sell" className="inline-flex items-center px-5 py-2.5 bg-white/5 border border-white/10 text-white hover:bg-white/10 font-semibold rounded-xl text-xs sm:text-sm md:text-base transition-all">
+                      {t('hero.sell')}
+                    </Link>
                   </div>
                 </div>
               </VideoHero>
@@ -791,12 +786,12 @@ export const HomePage = () => {
                 {language === 'en' ? 'Browse our inventory or visit our showroom in Rajshahi.' : 'আমাদের ইনভেন্টরি ব্রাউজ করুন বা রাজশাহীতে আমাদের শোরুম পরিদর্শন করুন।'}
               </p>
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                <MagneticButton as="a" href="#/inventory" className="inline-flex items-center justify-center px-8 py-3.5 bg-white text-red-600 hover:bg-gray-100 font-bold rounded-xl shadow-lg transition-all">
+                <Link to="/inventory" className="inline-flex items-center justify-center px-8 py-3.5 bg-white text-red-600 hover:bg-gray-100 font-bold rounded-xl shadow-lg transition-all">
                   {language === 'en' ? 'Browse Inventory' : 'ইনভেন্টরি ব্রাউজ করুন'}
-                </MagneticButton>
-                <MagneticButton as="a" href="#/contact" className="inline-flex items-center justify-center px-8 py-3.5 border-2 border-white text-white hover:bg-white/10 font-bold rounded-xl transition-all">
+                </Link>
+                <Link to="/contact" className="inline-flex items-center justify-center px-8 py-3.5 border-2 border-white text-white hover:bg-white/10 font-bold rounded-xl transition-all">
                   {language === 'en' ? 'Contact Us' : 'যোগাযোগ করুন'}
-                </MagneticButton>
+                </Link>
               </div>
             </ScrollReveal>
           </div>

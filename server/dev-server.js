@@ -14,8 +14,9 @@ const paymentRecords = new Map();
 // Helper function to initialize SSLCommerz payment
 async function initializeSSLCommerz(paymentData) {
   const SSLCOMMERZ_API_URL = 'https://sandbox.sslcommerz.com/gwprocess/v4/api.php';
-  const STORE_ID = process.env.VITE_SSLCOMMERZ_STORE_ID || 'autosparkbd0live';
-  const STORE_PASSWORD = process.env.VITE_SSLCOMMERZ_PASSWORD || '69DBB19BAB55E48107';
+  const STORE_ID = process.env.SSLCOMMERZ_STORE_ID;
+  const STORE_PASSWORD = process.env.SSLCOMMERZ_STORE_PASSWORD;
+  if (!STORE_ID || !STORE_PASSWORD) throw new Error('Missing SSLCommerz credentials');
   
   // Auto-detect the frontend port (default to 5173, but fallback to 5174 if 5173 is in use)
   const FRONTEND_PORT = process.env.FRONTEND_PORT || '5174';

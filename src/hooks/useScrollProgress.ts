@@ -14,7 +14,7 @@ interface UseScrollProgressReturn {
 export const useScrollProgress = (
   options?: UseScrollProgressOptions
 ): UseScrollProgressReturn => {
-  const { scrollYProgress, scrollY } = useScroll({
+  const { scrollYProgress } = useScroll({
     offset: options?.offset as any,
   });
 

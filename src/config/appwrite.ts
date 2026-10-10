@@ -1,14 +1,9 @@
 import { Client, Functions } from 'appwrite';
+import { env } from '../lib/env';
 
-/**
- * Appwrite Configuration for Payment Gateway
- * Endpoint: Singapore (sgp.cloud.appwrite.io)
- * Project: Auto Spark (69d09ead0018cd1663a7)
- * Function: sslcommerz-api (SSLCommerz Payment Integration)
- */
-
-const APPWRITE_ENDPOINT = import.meta.env.VITE_APPWRITE_ENDPOINT || 'https://sgp.cloud.appwrite.io/v1';
-const APPWRITE_PROJECT_ID = import.meta.env.VITE_APPWRITE_PROJECT_ID || '69d09ead0018cd1663a7';
+/** Appwrite configuration — no hardcoded project fallback. */
+const APPWRITE_ENDPOINT = env.VITE_APPWRITE_ENDPOINT as string;
+const APPWRITE_PROJECT_ID = env.VITE_APPWRITE_PROJECT_ID as string;
 
 const client = new Client()
     .setEndpoint(APPWRITE_ENDPOINT)
@@ -16,9 +11,8 @@ const client = new Client()
 
 export const functions = new Functions(client);
 
-// Export configuration for reference
 export const APPWRITE_CONFIG = {
     endpoint: APPWRITE_ENDPOINT,
     projectId: APPWRITE_PROJECT_ID,
-    functionId: import.meta.env.VITE_APPWRITE_FUNCTION_ID || 'sslcommerz-api'
+    functionId: (env.VITE_APPWRITE_FUNCTION_ID as string) || 'sslcommerz-api'
 };

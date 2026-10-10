@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Upload, DollarSign } from 'lucide-react';
+import { Upload, DollarSign, CreditCard, AlertCircle, CheckCircle } from 'lucide-react';
 import { useLanguage } from '../contexts/LanguageContext';
 import { useTheme } from '../contexts/ThemeContext';
 import { Button } from '../components/ui/Button';
@@ -20,36 +20,62 @@ export const SellCarPage = () => {
     condition: 'good',
     description: '',
   });
+  const [status, setStatus] = useState<{ type: 'idle' | 'success' | 'error'; message?: string }>({ type: 'idle' });
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setStatus({ type: 'idle' });
 
-    const { error } = await supabase.from('trade_in_requests').insert({
-      customer_name: formData.customerName,
-      customer_email: formData.customerEmail,
-      customer_phone: formData.customerPhone,
-      vehicle_brand: formData.vehicleBrand,
-      vehicle_model: formData.vehicleModel,
-      vehicle_year: formData.vehicleYear,
-      mileage: formData.mileage,
-      condition: formData.condition,
-      description: formData.description,
-      status: 'pending',
-    });
+    // Client-side validation
+    if (!formData.customerName.trim() || !formData.customerEmail.trim() || !formData.customerPhone.trim()) {
+      setStatus({ type: 'error', message: 'Please fill in all required fields.' });
+      return;
+    }
+    if (!/^01[3-9]\d{8}$/.test(formData.customerPhone)) {
+      setStatus({ type: 'error', message: 'Enter a valid Bangladesh mobile number (01XXXXXXXXX).' });
+      return;
+    }
+    if (formData.vehicleYear < 1990 || formData.vehicleYear > new Date().getFullYear() + 1) {
+      setStatus({ type: 'error', message: 'Enter a valid vehicle year.' });
+      return;
+    }
+    if (formData.mileage < 0) {
+      setStatus({ type: 'error', message: 'Mileage cannot be negative.' });
+      return;
+    }
 
-    if (!error) {
-      alert(t('common.success'));
-      setFormData({
-        customerName: '',
-        customerEmail: '',
-        customerPhone: '',
-        vehicleBrand: '',
-        vehicleModel: '',
-        vehicleYear: new Date().getFullYear(),
-        mileage: 0,
-        condition: 'good',
-        description: '',
+    try {
+      const { error } = await supabase.from('trade_in_requests').insert({
+        customer_name: formData.customerName,
+        customer_email: formData.customerEmail,
+        customer_phone: formData.customerPhone,
+        vehicle_brand: formData.vehicleBrand,
+        vehicle_model: formData.vehicleModel,
+        vehicle_year: formData.vehicleYear,
+        mileage: formData.mileage,
+        condition: formData.condition,
+        description: formData.description,
+        status: 'pending',
       });
+
+      if (!error) {
+        setStatus({ type: 'success', message: t('common.success') });
+        setFormData({
+          customerName: '',
+          customerEmail: '',
+          customerPhone: '',
+          vehicleBrand: '',
+          vehicleModel: '',
+          vehicleYear: new Date().getFullYear(),
+          mileage: 0,
+          condition: 'good',
+          description: '',
+        });
+      } else {
+        setStatus({ type: 'error', message: 'Submission failed. Please try again.' });
+      }
+    } catch {
+      setStatus({ type: 'error', message: 'Submission failed. Please try again later.' });
     }
   };
 
@@ -77,7 +103,7 @@ export const SellCarPage = () => {
                 description: language === 'en' ? 'Simple and fast evaluation' : 'সহজ এবং দ্রুত মূল্যায়ন',
               },
               {
-                icon: DollarSign,
+                icon: CreditCard,
                 title: language === 'en' ? 'Instant Payment' : 'তাৎক্ষণিক পেমেন্ট',
                 description: language === 'en' ? 'Get paid immediately' : 'অবিলম্বে অর্থ প্রদান পান',
               },
@@ -94,13 +120,20 @@ export const SellCarPage = () => {
             <h2 className={`text-xl sm:text-2xl font-bold mb-4 sm:mb-6 ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
               {t('sell.valuation')}
             </h2>
+            {status.type !== 'idle' && (
+              <div role="alert" className={`mb-4 p-3 rounded-lg ${status.type === 'success' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`}>
+                {status.type === 'success' ? <CheckCircle size={18} className="inline-block mr-2" /> : <AlertCircle size={18} className="inline-block mr-2" />}
+                {status.message}
+              </div>
+            )}
             <form onSubmit={handleSubmit} className="space-y-4">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                  <label className={`block text-sm font-medium mb-2 ${theme === 'dark' ? 'text-gray-300' : 'text-gray-700'}`}>
+                  <label htmlFor="sell-name" className={`block text-sm font-medium mb-2 ${theme === 'dark' ? 'text-gray-300' : 'text-gray-700'}`}>
                     {t('form.name')} *
                   </label>
                   <input
+                    id="sell-name"
                     type="text"
                     required
                     value={formData.customerName}
@@ -109,10 +142,11 @@ export const SellCarPage = () => {
                   />
                 </div>
                 <div>
-                  <label className={`block text-sm font-medium mb-2 ${theme === 'dark' ? 'text-gray-300' : 'text-gray-700'}`}>
+                  <label htmlFor="sell-email" className={`block text-sm font-medium mb-2 ${theme === 'dark' ? 'text-gray-300' : 'text-gray-700'}`}>
                     {t('form.email')} *
                   </label>
                   <input
+                    id="sell-email"
                     type="email"
                     required
                     value={formData.customerEmail}
@@ -123,24 +157,27 @@ export const SellCarPage = () => {
               </div>
 
               <div>
-                <label className={`block text-sm font-medium mb-2 ${theme === 'dark' ? 'text-gray-300' : 'text-gray-700'}`}>
+                <label htmlFor="sell-phone" className={`block text-sm font-medium mb-2 ${theme === 'dark' ? 'text-gray-300' : 'text-gray-700'}`}>
                   {t('form.phone')} *
                 </label>
                 <input
+                  id="sell-phone"
                   type="tel"
                   required
                   value={formData.customerPhone}
                   onChange={(e) => setFormData({ ...formData, customerPhone: e.target.value })}
+                  placeholder="01XXXXXXXXX"
                   className={`w-full px-3 sm:px-4 py-2 border rounded-lg focus:ring-2 focus:ring-[#C00000] focus:border-transparent ${theme === 'dark' ? 'bg-black/50 border-gray-700 text-white' : 'border-gray-300'}`}
                 />
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
                 <div>
-                  <label className={`block text-sm font-medium mb-2 ${theme === 'dark' ? 'text-gray-300' : 'text-gray-700'}`}>
+                  <label htmlFor="sell-brand" className={`block text-sm font-medium mb-2 ${theme === 'dark' ? 'text-gray-300' : 'text-gray-700'}`}>
                     {t('filter.brand')} *
                   </label>
                   <input
+                    id="sell-brand"
                     type="text"
                     required
                     value={formData.vehicleBrand}
@@ -149,10 +186,11 @@ export const SellCarPage = () => {
                   />
                 </div>
                 <div>
-                  <label className={`block text-sm font-medium mb-2 ${theme === 'dark' ? 'text-gray-300' : 'text-gray-700'}`}>
+                  <label htmlFor="sell-model" className={`block text-sm font-medium mb-2 ${theme === 'dark' ? 'text-gray-300' : 'text-gray-700'}`}>
                     {t('filter.model')} *
                   </label>
                   <input
+                    id="sell-model"
                     type="text"
                     required
                     value={formData.vehicleModel}
@@ -161,16 +199,17 @@ export const SellCarPage = () => {
                   />
                 </div>
                 <div className="sm:col-span-2 md:col-span-1">
-                  <label className={`block text-sm font-medium mb-2 ${theme === 'dark' ? 'text-gray-300' : 'text-gray-700'}`}>
+                  <label htmlFor="sell-year" className={`block text-sm font-medium mb-2 ${theme === 'dark' ? 'text-gray-300' : 'text-gray-700'}`}>
                     {t('vehicle.year')} *
                   </label>
                   <input
+                    id="sell-year"
                     type="number"
                     required
                     value={formData.vehicleYear}
-                    onChange={(e) => setFormData({ ...formData, vehicleYear: parseInt(e.target.value) })}
+                    onChange={(e) => setFormData({ ...formData, vehicleYear: parseInt(e.target.value) || 0 })}
                     min="1990"
-                    max={new Date().getFullYear()}
+                    max={new Date().getFullYear() + 1}
                     className={`w-full px-3 sm:px-4 py-2 border rounded-lg focus:ring-2 focus:ring-[#C00000] focus:border-transparent ${theme === 'dark' ? 'bg-black/50 border-gray-700 text-white' : 'border-gray-300'}`}
                   />
                 </div>
@@ -178,22 +217,25 @@ export const SellCarPage = () => {
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                  <label className={`block text-sm font-medium mb-2 ${theme === 'dark' ? 'text-gray-300' : 'text-gray-700'}`}>
+                  <label htmlFor="sell-mileage" className={`block text-sm font-medium mb-2 ${theme === 'dark' ? 'text-gray-300' : 'text-gray-700'}`}>
                     {t('vehicle.mileage')} (km) *
                   </label>
                   <input
+                    id="sell-mileage"
                     type="number"
                     required
+                    min="0"
                     value={formData.mileage}
-                    onChange={(e) => setFormData({ ...formData, mileage: parseInt(e.target.value) })}
+                    onChange={(e) => setFormData({ ...formData, mileage: parseInt(e.target.value) || 0 })}
                     className={`w-full px-3 sm:px-4 py-2 border rounded-lg focus:ring-2 focus:ring-[#C00000] focus:border-transparent ${theme === 'dark' ? 'bg-black/50 border-gray-700 text-white' : 'border-gray-300'}`}
                   />
                 </div>
                 <div>
-                  <label className={`block text-sm font-medium mb-2 ${theme === 'dark' ? 'text-gray-300' : 'text-gray-700'}`}>
+                  <label htmlFor="sell-condition" className={`block text-sm font-medium mb-2 ${theme === 'dark' ? 'text-gray-300' : 'text-gray-700'}`}>
                     {t('vehicle.condition')} *
                   </label>
                   <select
+                    id="sell-condition"
                     value={formData.condition}
                     onChange={(e) => setFormData({ ...formData, condition: e.target.value })}
                     className={`w-full px-3 sm:px-4 py-2 border rounded-lg focus:ring-2 focus:ring-[#C00000] focus:border-transparent ${theme === 'dark' ? 'bg-black/50 border-gray-700 text-white' : 'border-gray-300'}`}
@@ -207,10 +249,11 @@ export const SellCarPage = () => {
               </div>
 
               <div>
-                <label className={`block text-sm font-medium mb-2 ${theme === 'dark' ? 'text-gray-300' : 'text-gray-700'}`}>
+                <label htmlFor="sell-description" className={`block text-sm font-medium mb-2 ${theme === 'dark' ? 'text-gray-300' : 'text-gray-700'}`}>
                   {t('form.message')}
                 </label>
                 <textarea
+                  id="sell-description"
                   rows={4}
                   value={formData.description}
                   onChange={(e) => setFormData({ ...formData, description: e.target.value })}

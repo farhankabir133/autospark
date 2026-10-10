@@ -1,36 +1,13 @@
-import { MapPin, Phone, Mail, Clock, Facebook, Instagram } from 'lucide-react';
+import { MapPin, Phone, Mail } from 'lucide-react';
 import { useLanguage } from '../contexts/LanguageContext';
 import { useTheme } from '../contexts/ThemeContext';
 import { Button } from '../components/ui/Button';
+import { ShowroomCards } from '../components/ShowroomCards';
 import { Card } from '../components/ui/Card';
 import { useState } from 'react';
+import { supabase } from '../lib/supabase';
 
 export const ContactPage = () => {
-  // Showroom and Service Center Details
-  const showroom = {
-    address: 'Station Road, Near Shuvo Petroleum, Sheroil, Ghoramara, Boalia Rajshahi, Rajshahi, Bangladesh, 6207',
-    city: 'Rajshahi, Rajshahi Division, Bangladesh',
-    website: 'autosparkbd.com',
-    youtube: 'https://www.youtube.com/@autosparkbd1131',
-    tiktok: 'https://www.tiktok.com/@auto_spark0',
-    phone: '+880 1760-401605',
-    email: 'autosparkbd@gmail.com',
-    name: 'AutoSpark',
-  logo: `${import.meta.env.BASE_URL}logo/logoAS3.svg`,
-    awards: ['Award', 'Verified', 'Security', 'Certificate'],
-  };
-  const serviceCenter = {
-    address: 'Meherchandi, West Side of School Mor, Rajshahi, Rajshahi, Bangladesh, 6202',
-    city: 'Rajshahi, Rajshahi Division, Bangladesh',
-    website: 'autosparkbd.com',
-    youtube: 'https://www.youtube.com/@autosparkbd1131',
-    tiktok: 'http://www.tiktok.com/@easycareeasylife',
-    phone: '+880 1321-233670',
-    email: 'autosparkbd@gmail.com',
-    name: 'Auto Spark Service Center',
-  logo: `${import.meta.env.BASE_URL}logo/logoassc.svg`,
-    awards: ['Award', 'Verified', 'Security', 'Certificate'],
-  };
   const { t, language } = useLanguage();
   const { theme } = useTheme();
   const [name, setName] = useState('');
@@ -40,68 +17,43 @@ export const ContactPage = () => {
   const [submitting, setSubmitting] = useState(false);
   const [status, setStatus] = useState<{ type: 'idle' | 'success' | 'error'; message?: string }>({ type: 'idle' });
 
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    setStatus({ type: 'idle' });
+    if (!name.trim() || !email.trim() || !phone.trim() || !message.trim()) {
+      setStatus({ type: 'error', message: 'Please fill in all required fields.' });
+      return;
+    }
+    setSubmitting(true);
+    try {
+      const { error } = await supabase.from('service_appointments').insert([{
+        customer_name: name,
+        phone,
+        notes: `${email} — ${message}`,
+        service_type: 'general_inquiry',
+        preferred_date: new Date().toISOString().slice(0, 10)
+      }]);
+      if (error) {
+        console.warn('Supabase insert failed', error);
+        setStatus({ type: 'success', message: 'Thanks — we received your message.' });
+      } else {
+        setStatus({ type: 'success', message: 'Thanks — we received your message.' });
+        try { (await import('../lib/analytics')).trackEvent('contact_submitted', { name, email }); } catch (_) {}
+      }
+      setName(''); setEmail(''); setPhone(''); setMessage('');
+    } catch (err) {
+      console.error(err);
+      setStatus({ type: 'error', message: 'Submission failed — please try again later.' });
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
   return (
     <div>
+      <ShowroomCards />
       <section className="container mx-auto px-4 py-8">
-        <h2 className="text-2xl font-bold mb-8 text-center">Showroom & Service Center Details</h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-          {/* Showroom Card */}
-          <Card className="p-6 flex flex-col items-center text-center shadow-lg bg-white dark:bg-gray-900">
-            <img src={showroom.logo} alt="Showroom Logo" className="h-16 w-16 mb-4" />
-            <h3 className="text-xl font-bold text-[#C00000] mb-2">{showroom.name}</h3>
-            <div className="text-sm text-gray-700 dark:text-gray-300 mb-2">{showroom.address}</div>
-            <div className="text-xs text-gray-500 mb-2">{showroom.city}</div>
-            {/* Phone, Email, Website removed as requested */}
-            <div className="flex gap-4 mb-2">
-              <a href="https://www.facebook.com/autosparkbd" target="_blank" rel="noopener noreferrer" className="hover:text-[#FF1A1A]">
-                <Facebook className="w-6 h-6" />
-              </a>
-              <a href="https://www.instagram.com/autosparkbd" target="_blank" rel="noopener noreferrer" className="hover:text-[#FF1A1A]">
-                <Instagram className="w-6 h-6" />
-              </a>
-              <a href="https://www.youtube.com/@autosparkbd1131" target="_blank" rel="noopener noreferrer" className="hover:text-[#FF1A1A]">
-                <Mail className="w-6 h-6" />
-              </a>
-              <a href="https://www.tiktok.com/@auto_spark0" target="_blank" rel="noopener noreferrer" className="hover:text-[#FF1A1A]">
-                <MapPin className="w-6 h-6" />
-              </a>
-            </div>
-            <div className="flex gap-2 mt-2">
-              <span className="inline-flex items-center px-2 py-1 bg-yellow-100 text-yellow-800 rounded text-xs font-semibold border border-yellow-300">🏆 Award</span>
-              <span className="inline-flex items-center px-2 py-1 bg-blue-100 text-blue-800 rounded text-xs font-semibold border border-blue-300">✔️ Verified</span>
-              <span className="inline-flex items-center px-2 py-1 bg-green-100 text-green-800 rounded text-xs font-semibold border border-green-300">🛡️ Security</span>
-              <span className="inline-flex items-center px-2 py-1 bg-purple-100 text-purple-800 rounded text-xs font-semibold border border-purple-300">📄 Certificate</span>
-            </div>
-          </Card>
-          {/* Service Center Card */}
-          <Card className="p-6 flex flex-col items-center text-center shadow-lg bg-white dark:bg-gray-900">
-            <img src={serviceCenter.logo} alt="Service Center Logo" className="h-16 w-16 mb-4" />
-            <h3 className="text-xl font-bold text-[#C00000] mb-2">{serviceCenter.name}</h3>
-            <div className="text-sm text-gray-700 dark:text-gray-300 mb-2">{serviceCenter.address}</div>
-            <div className="text-xs text-gray-500 mb-2">{serviceCenter.city}</div>
-            {/* Phone, Email, Website removed as requested */}
-            <div className="flex gap-4 mb-2">
-              <a href="https://www.facebook.com/autosparkbd" target="_blank" rel="noopener noreferrer" className="hover:text-[#FF1A1A]">
-                <Facebook className="w-6 h-6" />
-              </a>
-              <a href="https://www.instagram.com/autosparkbd" target="_blank" rel="noopener noreferrer" className="hover:text-[#FF1A1A]">
-                <Instagram className="w-6 h-6" />
-              </a>
-              <a href="https://www.youtube.com/@autosparkbd1131" target="_blank" rel="noopener noreferrer" className="hover:text-[#FF1A1A]">
-                <Mail className="w-6 h-6" />
-              </a>
-              <a href="http://www.tiktok.com/@easycareeasylife" target="_blank" rel="noopener noreferrer" className="hover:text-[#FF1A1A]">
-                <MapPin className="w-6 h-6" />
-              </a>
-            </div>
-            <div className="flex gap-2 mt-2">
-              <span className="inline-flex items-center px-2 py-1 bg-yellow-100 text-yellow-800 rounded text-xs font-semibold border border-yellow-300">🏆 Award</span>
-              <span className="inline-flex items-center px-2 py-1 bg-blue-100 text-blue-800 rounded text-xs font-semibold border border-blue-300">✔️ Verified</span>
-              <span className="inline-flex items-center px-2 py-1 bg-green-100 text-green-800 rounded text-xs font-semibold border border-green-300">🛡️ Security</span>
-              <span className="inline-flex items-center px-2 py-1 bg-purple-100 text-purple-800 rounded text-xs font-semibold border border-purple-300">📄 Certificate</span>
-            </div>
-          </Card>
-        </div>
+        <h2 className="text-2xl font-bold mb-8 text-center">Contact Form</h2>
       </section>
       <div className={`min-h-screen ${theme === 'dark' ? 'bg-transparent' : 'bg-gray-50'} pt-20`}>
         <div className="bg-gradient-to-r from-[#0D0D0D] to-[#1a0a0a] text-white py-10 sm:py-12 md:py-16">
@@ -115,89 +67,56 @@ export const ContactPage = () => {
 
         <div className="container mx-auto px-3 sm:px-4 md:px-6 py-8 sm:py-10 md:py-12">
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 md:gap-8 mb-8 sm:mb-10 md:mb-12">
-            {/* Showroom Address Card */}
             <Card className={`p-4 sm:p-6 text-center ${theme === 'dark' ? 'bg-black/30 backdrop-blur-sm border-gray-800' : ''}`}>
               <MapPin className="h-10 w-10 sm:h-12 sm:w-12 text-[#C00000] mx-auto mb-3 sm:mb-4" />
-              <h3 className={`text-lg sm:text-xl font-bold mb-2 ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}> 
-                {showroom.name}
+              <h3 className={`text-lg sm:text-xl font-bold mb-2 ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
+                AutoSpark
               </h3>
-              <p className={`text-sm sm:text-base ${theme === 'dark' ? 'text-gray-400' : 'text-gray-600'}`}>{showroom.address}</p>
-              <p className={`text-xs ${theme === 'dark' ? 'text-gray-500' : 'text-gray-700'}`}>{showroom.city}</p>
+              <p className={`text-sm sm:text-base ${theme === 'dark' ? 'text-gray-400' : 'text-gray-600'}`}>Station Road, Near Shuvo Petroleum, Sheroil, Ghoramara, Boalia Rajshahi, Rajshahi, Bangladesh, 6207</p>
+              <p className={`text-xs ${theme === 'dark' ? 'text-gray-500' : 'text-gray-700'}`}>Rajshahi, Rajshahi Division, Bangladesh</p>
             </Card>
-            {/* Service Center Address Card */}
             <Card className={`p-4 sm:p-6 text-center ${theme === 'dark' ? 'bg-black/30 backdrop-blur-sm border-gray-800' : ''}`}>
               <MapPin className="h-10 w-10 sm:h-12 sm:w-12 text-[#C00000] mx-auto mb-3 sm:mb-4" />
-              <h3 className={`text-lg sm:text-xl font-bold mb-2 ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}> 
-                {serviceCenter.name}
+              <h3 className={`text-lg sm:text-xl font-bold mb-2 ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
+                Auto Spark Service Center
               </h3>
-              <p className={`text-sm sm:text-base ${theme === 'dark' ? 'text-gray-400' : 'text-gray-600'}`}>{serviceCenter.address}</p>
-              <p className={`text-xs ${theme === 'dark' ? 'text-gray-500' : 'text-gray-700'}`}>{serviceCenter.city}</p>
+              <p className={`text-sm sm:text-base ${theme === 'dark' ? 'text-gray-400' : 'text-gray-600'}`}>Meherchandi, West Side of School Mor, Rajshahi, Rajshahi, Bangladesh, 6202</p>
+              <p className={`text-xs ${theme === 'dark' ? 'text-gray-500' : 'text-gray-700'}`}>Rajshahi, Rajshahi Division, Bangladesh</p>
+            </Card>
+            <Card className={`p-4 sm:p-6 text-center ${theme === 'dark' ? 'bg-black/30 backdrop-blur-sm border-gray-800' : ''}`}>
+              <Phone className="h-10 w-10 sm:h-12 sm:w-12 text-[#C00000] mx-auto mb-3 sm:mb-4" />
+              <h3 className={`text-lg sm:text-xl font-bold mb-2 ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
+                {language === 'en' ? 'Call Us' : 'কল করুন'}
+              </h3>
+              <div className="flex flex-col gap-1">
+                <a href={`tel:+8801760401605`} className="text-[#C00000] hover:text-[#FF1A1A] text-sm sm:text-base font-semibold">Showroom: +880 1760-401605</a>
+                <a href={`tel:+8801321233670`} className="text-[#C00000] hover:text-[#FF1A1A] text-sm sm:text-base font-semibold">Service Center: +880 1321-233670</a>
+              </div>
+            </Card>
+            <Card className={`p-4 sm:p-6 text-center sm:col-span-2 lg:col-span-1 ${theme === 'dark' ? 'bg-black/30 backdrop-blur-sm border-gray-800' : ''}`}>
+              <Mail className="h-10 w-10 sm:h-12 sm:w-12 text-[#C00000] mx-auto mb-3 sm:mb-4" />
+              <h3 className={`text-lg sm:text-xl font-bold mb-2 ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
+                {language === 'en' ? 'Email Us' : 'ইমেইল করুন'}
+              </h3>
+              <div className="flex flex-col gap-1">
+                <a href="mailto:autosparkbd@gmail.com" className="text-[#C00000] hover:text-[#FF1A1A] text-sm sm:text-base font-semibold break-all">Showroom: autosparkbd@gmail.com</a>
+                <a href="mailto:autosparkbd@gmail.com" className="text-[#C00000] hover:text-[#FF1A1A] text-sm sm:text-base font-semibold break-all">Service Center: autosparkbd@gmail.com</a>
+              </div>
             </Card>
           </div>
-        {/* Add Call Us and Email Us cards inside the main grid */}
-        <Card className={`p-4 sm:p-6 text-center ${theme === 'dark' ? 'bg-black/30 backdrop-blur-sm border-gray-800' : ''}`}>
-          <Phone className="h-10 w-10 sm:h-12 sm:w-12 text-[#C00000] mx-auto mb-3 sm:mb-4" />
-          <h3 className={`text-lg sm:text-xl font-bold mb-2 ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}> 
-            {language === 'en' ? 'Call Us' : 'কল করুন'}
-          </h3>
-          <div className="flex flex-col gap-1">
-            <a href={`tel:+8801760401605`} className="text-[#C00000] hover:text-[#FF1A1A] text-sm sm:text-base font-semibold">Showroom: +880 1760-401605</a>
-            <a href={`tel:+8801321233670`} className="text-[#C00000] hover:text-[#FF1A1A] text-sm sm:text-base font-semibold">Service Center: +880 1321-233670</a>
-          </div>
-        </Card>
-        <Card className={`p-4 sm:p-6 text-center sm:col-span-2 lg:col-span-1 ${theme === 'dark' ? 'bg-black/30 backdrop-blur-sm border-gray-800' : ''}`}>
-          <Mail className="h-10 w-10 sm:h-12 sm:w-12 text-[#C00000] mx-auto mb-3 sm:mb-4" />
-          <h3 className={`text-lg sm:text-xl font-bold mb-2 ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}> 
-            {language === 'en' ? 'Email Us' : 'ইমেইল করুন'}
-          </h3>
-          <div className="flex flex-col gap-1">
-            <a href="mailto:autosparkbd@gmail.com" className="text-[#C00000] hover:text-[#FF1A1A] text-sm sm:text-base font-semibold break-all">Showroom: autosparkbd@gmail.com</a>
-            <a href="mailto:autosparkbd@gmail.com" className="text-[#C00000] hover:text-[#FF1A1A] text-sm sm:text-base font-semibold break-all">Service Center: autosparkbd@gmail.com</a>
-          </div>
-        </Card>
-      </div>
+        </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 md:gap-8">
-        <Card className={`p-4 sm:p-6 md:p-8 ${theme === 'dark' ? 'bg-black/30 backdrop-blur-sm border-gray-800' : ''}`}>
-          <h2 className={`text-xl sm:text-2xl font-bold mb-4 sm:mb-6 ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
-            {language === 'en' ? 'Send us a Message' : 'আমাদের একটি বার্তা পাঠান'}
-          </h2>
-          <form className="space-y-4" onSubmit={async (e) => {
-              e.preventDefault();
-              setStatus({ type: 'idle' });
-              // Simple client-side validation
-              if (!name.trim() || !email.trim() || !phone.trim() || !message.trim()) {
-                setStatus({ type: 'error', message: 'Please fill in all required fields.' });
-                return;
-              }
-              setSubmitting(true);
-              try {
-                // Dynamically import Supabase to avoid including it in the initial bundle
-                const mod = await import('../lib/supabase');
-                const { supabase } = mod as any;
-                if (supabase && supabase.from) {
-                  const { error } = await supabase.from('contacts').insert([{ name, email, phone, message }]);
-                  if (error) {
-                    console.warn('Supabase insert failed', error);
-                    // fallback: treat as success for UX, but inform in console
-                    setStatus({ type: 'success', message: 'Thanks — we received your message.' });
-                  } else {
-                    setStatus({ type: 'success', message: 'Thanks — we received your message.' });
-                    try { (await import('../lib/analytics')).trackEvent('contact_submitted', { name, email }); } catch (_) {}
-                  }
-                } else {
-                  // No supabase configured — simulate success
-                  setStatus({ type: 'success', message: 'Thanks — we received your message.' });
-                  try { (await import('../lib/analytics')).trackEvent('contact_submitted', { name, email }); } catch (_) {}
-                }
-                setName(''); setEmail(''); setPhone(''); setMessage('');
-              } catch (err) {
-                console.error(err);
-                setStatus({ type: 'error', message: 'Submission failed — please try again later.' });
-              } finally {
-                setSubmitting(false);
-              }
-            }}>
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 md:gap-8">
+          <Card className={`p-4 sm:p-6 md:p-8 ${theme === 'dark' ? 'bg-black/30 backdrop-blur-sm border-gray-800' : ''}`}>
+            <h2 className={`text-xl sm:text-2xl font-bold mb-4 sm:mb-6 ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
+              {language === 'en' ? 'Send us a Message' : 'আমাদের একটি বার্তা পাঠান'}
+            </h2>
+            <form onSubmit={handleSubmit} className="space-y-4">
+              {status.type !== 'idle' && (
+                <div role="alert" className={`p-3 rounded-lg ${status.type === 'success' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`}>
+                  {status.message}
+                </div>
+              )}
               <div>
                 <label htmlFor="contact-name" className={`block text-sm font-medium mb-2 ${theme === 'dark' ? 'text-gray-300' : 'text-gray-700'}`}>
                   {t('form.name')} *
@@ -240,6 +159,7 @@ export const ContactPage = () => {
                   type="tel"
                   required
                   aria-required="true"
+                  placeholder="01XXXXXXXXX"
                   className={`w-full px-3 sm:px-4 py-2.5 sm:py-2 border rounded-lg focus:ring-2 focus:ring-[#C00000] focus:border-transparent ${theme === 'dark' ? 'bg-black/50 border-gray-700 text-white' : 'border-gray-300'}`}
                 />
               </div>
@@ -250,63 +170,19 @@ export const ContactPage = () => {
                 <textarea
                   id="contact-message"
                   name="message"
-                  rows={5}
                   value={message}
                   onChange={(e) => setMessage(e.target.value)}
+                  rows={4}
                   required
                   aria-required="true"
                   className={`w-full px-3 sm:px-4 py-2.5 sm:py-2 border rounded-lg focus:ring-2 focus:ring-[#C00000] focus:border-transparent ${theme === 'dark' ? 'bg-black/50 border-gray-700 text-white' : 'border-gray-300'}`}
-                ></textarea>
+                />
               </div>
-              <div>
-                <Button type="submit" className="w-full min-h-[44px]" disabled={submitting}>
-                  {submitting ? 'Sending…' : t('form.submit')}
-                </Button>
-              </div>
-              {/* Status messages */}
-              <div role="status" aria-live="polite" className="mt-2">
-                {status.type === 'success' && <div className="text-green-500">{status.message}</div>}
-                {status.type === 'error' && <div className="text-red-500">{status.message}</div>}
-              </div>
+              <Button type="submit" size="lg" className="w-full" disabled={submitting}>
+                {submitting ? 'Sending…' : t('form.send')}
+              </Button>
             </form>
           </Card>
-
-          <div className="space-y-4 sm:space-y-6">
-            <Card className={`p-4 sm:p-6 ${theme === 'dark' ? 'bg-black/30 backdrop-blur-sm border-gray-800' : ''}`}>
-              <h3 className={`text-lg sm:text-xl font-bold mb-3 sm:mb-4 flex items-center ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
-                <Clock className="h-5 w-5 sm:h-6 sm:w-6 text-[#C00000] mr-2" />
-                {t('contact.hours')}
-              </h3>
-              <p className={`text-sm sm:text-base ${theme === 'dark' ? 'text-gray-400' : 'text-gray-700'}`}>{t('contact.hours_value')}</p>
-            </Card>
-
-            <div className="space-y-6">
-              {/* Showroom Map */}
-              <div className="rounded-lg overflow-hidden shadow-lg h-64 sm:h-80 md:h-96">
-                <iframe
-                  src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3634.3846758707845!2d88.60447931496736!3d24.374532984292816!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x39fbefa96a38d031%3A0x10f93a950ed6b5f9!2sStation%20Road%2C%20Rajshahi!5e0!3m2!1sen!2sbd!4v1234567890"
-                  width="100%"
-                  height="100%"
-                  style={{ border: 0 }}
-                  allowFullScreen
-                  loading="lazy"
-                  referrerPolicy="no-referrer-when-downgrade"
-                ></iframe>
-              </div>
-              {/* Service Center Map */}
-              <div className="rounded-lg overflow-hidden shadow-lg h-64 sm:h-80 md:h-96">
-                <iframe
-                  src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3634.3846758707845!2d88.6346711!3d24.3817492!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x39fbf17f21c0ee57:0x373f79532c58e48a!2sAuto+Spark+Service+Center!5e0!3m2!1sen!2sbd!4v1709999999999"
-                  width="100%"
-                  height="100%"
-                  style={{ border: 0 }}
-                  allowFullScreen
-                  loading="lazy"
-                  referrerPolicy="no-referrer-when-downgrade"
-                ></iframe>
-              </div>
-            </div>
-          </div>
         </div>
       </div>
     </div>

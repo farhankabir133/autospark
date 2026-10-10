@@ -1,33 +1,14 @@
-import { lazy, Suspense, useState, useEffect } from 'react';
-import { HashRouter as Router, Routes, Route } from 'react-router-dom';
+import { Suspense, lazy } from 'react';
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { ScrollToTop } from './components/ScrollToTop';
 import { LanguageProvider } from './contexts/LanguageContext';
 import { ThemeProvider } from './contexts/ThemeContext';
 import { CartProvider } from './contexts/CartContext';
 import { Layout } from './components/Layout';
 import ErrorBoundary from './components/ErrorBoundary';
-import { SplashScreen } from './components/SplashScreen';
+import { GeoBanner } from './components/GeoBanner';
+import { RouteFallback } from './components/RouteFallback';
 
-// --- ADDED: BLOCKING VIEW COMPONENT ---
-const AccessDenied = () => (
-  <div className="min-h-screen bg-[#050505] dark:bg-[#050505] flex flex-col items-center justify-center p-6 text-center">
-    <h1 className="text-[#C00000] text-4xl font-bold mb-4">ACCESS DENIED</h1>
-    <p className="text-white dark:text-gray-300 text-lg max-w-md">
-      We're sorry, but AutoSpark BD is currently only accessible to users within Bangladesh (BD).
-    </p>
-    <div className="mt-8 w-16 h-1 bg-[#C00000]" />
-  </div>
-);
-
-const NotFound = () => (
-  <div className="min-h-[60vh] flex flex-col items-center justify-center p-8 text-center">
-    <h1 className="text-6xl font-black text-[#C00000] mb-2">404</h1>
-    <p className="text-white dark:text-gray-300 text-lg mb-4">Page not found</p>
-    <a href="/#/" className="px-6 py-2 bg-[#C00000] text-white rounded-lg hover:bg-[#FF1A1A] transition-colors">Go Home</a>
-  </div>
-);
-
-// Lazy load pages
 const HomePage = lazy(() => import('./pages/HomePage').then(m => ({ default: m.HomePage })));
 const InventoryPage = lazy(() => import('./pages/InventoryPage').then(m => ({ default: m.InventoryPage })));
 const VehicleDetailsPage = lazy(() => import('./pages/VehicleDetailsPage').then(m => ({ default: m.VehicleDetailsPage })));
@@ -40,87 +21,23 @@ const ContactPage = lazy(() => import('./pages/ContactPage').then(m => ({ defaul
 const VehicleExperiencePage = lazy(() => import('./pages/VehicleExperiencePage').then(m => ({ default: m.VehicleExperiencePage })));
 const TestimonialsPage = lazy(() => import('./pages/TestimonialsPage').then(m => ({ default: m.TestimonialsPage })));
 const ColorPreviewPage = lazy(() => import('./pages/ColorPreviewPage').then(m => ({ default: m.ColorPreviewPage })));
-const PaymentPage = lazy(() => import('./pages/PaymentPage'));
 const CartPage = lazy(() => import('./pages/CartPage'));
 const CheckoutPage = lazy(() => import('./pages/CheckoutPage'));
 const InventoryManagementPage = lazy(() => import('./pages/InventoryManagementPage'));
-const PaymentSuccessPage = lazy(() => import('./pages/PaymentSuccessPage'));
+const PaymentSuccessPage = lazy(() => import('./pages/PaymentSuccessPage').then(m => ({ default: m.PaymentSuccessPage })));
 const PaymentFailPage = lazy(() => import('./pages/PaymentFailPage'));
 const PaymentCancelPage = lazy(() => import('./pages/PaymentCancelPage'));
 const ThankYouPage = lazy(() => import('./pages/ThankYouPage'));
 
-const PageLoader = () => (
-  <div className="min-h-screen bg-[#050505] flex items-center justify-center">
-    <div className="w-8 h-8 border-2 border-[#C00000] border-t-transparent rounded-full animate-spin" />
+const NotFound = () => (
+  <div className="min-h-[60vh] flex flex-col items-center justify-center p-8 text-center">
+    <h1 className="text-6xl font-black text-[var(--brand-red,#C00000)] mb-2">404</h1>
+    <p className="text-lg mb-4">Page not found</p>
+    <a href="/" className="px-6 py-2 bg-[var(--brand-red,#C00000)] text-white rounded-lg">Go Home</a>
   </div>
 );
 
 function App() {
-  const [showSplash, setShowSplash] = useState(true);
-  const [isFirstVisit, setIsFirstVisit] = useState(true);
-  
-  // --- ADDED: GEO-RESTRICTION STATES ---
-  const [isAllowed, setIsAllowed] = useState<boolean | null>(null); // null = checking
-
-  useEffect(() => {
-    // 1. Check Geo-Location
-    async function checkGeoLocation() {
-      // Allow during development - fixed: use import.meta.env.DEV for Vite (process is undefined in browser)
-      if (import.meta.env.DEV) {
-        setIsAllowed(true);
-        return;
-      }
-
-      try {
-        // P0 fix: abort after 3s to avoid infinite PageLoader if ipapi is slow/blocked
-        const controller = new AbortController();
-        const timeout = setTimeout(() => controller.abort(), 3000);
-        const response = await fetch('https://ipapi.co/json/', { signal: controller.signal });
-        clearTimeout(timeout);
-        const data = await response.json();
-        // Set allowed only if country is Bangladesh (BD)
-        setIsAllowed(data.country_code === 'BD');
-      } catch (error) {
-        // If API fails, default to allowed so legitimate users aren't locked out
-        console.error("Geo-check failed:", error);
-        setIsAllowed(true);
-      }
-    }
-
-    checkGeoLocation();
-
-    // 2. Original Splash Logic
-    const hasVisited = sessionStorage.getItem('hasVisitedAutoSpark');
-    if (hasVisited) {
-      setIsFirstVisit(false);
-      setShowSplash(false);
-    } else {
-      const failSafe = setTimeout(() => {
-        setShowSplash(false);
-        sessionStorage.setItem('hasVisitedAutoSpark', 'true');
-      }, 4000);
-      return () => clearTimeout(failSafe);
-    }
-  }, []);
-
-  const handleSplashComplete = () => {
-    setShowSplash(false);
-    sessionStorage.setItem('hasVisitedAutoSpark', 'true');
-  };
-
-  // --- RENDER LOGIC ---
-  
-  // 1. Still verifying location
-  if (isAllowed === null) {
-    return <PageLoader />;
-  }
-
-  // 2. Blocked from outside BD
-  if (isAllowed === false) {
-    return <AccessDenied />;
-  }
-
-  // 3. Normal App for BD users
   return (
     <ThemeProvider>
       <LanguageProvider>
@@ -128,38 +45,34 @@ function App() {
           <ErrorBoundary>
             <Router>
               <ScrollToTop />
+              <GeoBanner />
               <Layout>
-                {isFirstVisit && showSplash && (
-                  <SplashScreen onComplete={handleSplashComplete} duration={1200} />
-                )}
-                <Suspense fallback={<PageLoader />}>
-                  <Routes>
-                    <Route path="/" element={<HomePage />} />
-                    <Route path="/inventory" element={<InventoryPage />} />
-                    <Route path="/vehicle/:id" element={<VehicleDetailsPage />} />
-                    <Route path="/experience" element={<VehicleExperiencePage />} />
-                    <Route path="/services" element={<ServicesPage />} />
-                    <Route path="/accessories" element={<AccessoriesPage />} />
-                    <Route path="/product/:id" element={<ProductDetailPage />} />
-                    <Route path="/cart" element={<CartPage />} />
-                    <Route path="/checkout" element={<CheckoutPage />} />
-                    <Route path="/inventory-management" element={<InventoryManagementPage />} />
-                    <Route path="/about" element={<AboutPage />} />
-                    <Route path="/testimonials" element={<TestimonialsPage />} />
-                    <Route path="/sell" element={<SellCarPage />} />
-                    <Route path="/contact" element={<ContactPage />} />
-                    <Route path="/color-preview" element={<ColorPreviewPage />} />
-                    <Route path="/payment" element={<PaymentPage />} />
-                    <Route path="/payment-success" element={<PaymentSuccessPage />} />
-                    <Route path="/payment-fail" element={<PaymentFailPage />} />
-                    <Route path="/payment-cancel" element={<PaymentCancelPage />} />
-                    <Route path="/thank-you" element={<ThankYouPage />} />
-                    <Route path="/payment/success" element={<PaymentSuccessPage />} />
-                    <Route path="/payment/fail" element={<PaymentFailPage />} />
-                    <Route path="/payment/cancel" element={<PaymentCancelPage />} />
-                    <Route path="*" element={<NotFound />} />
-                  </Routes>
-                </Suspense>
+                <Routes>
+                  <Route path="/" element={<Suspense fallback={<RouteFallback />}><HomePage /></Suspense>} />
+                  <Route path="/inventory" element={<Suspense fallback={<RouteFallback />}><InventoryPage /></Suspense>} />
+                  <Route path="/vehicle/:id" element={<Suspense fallback={<RouteFallback />}><VehicleDetailsPage /></Suspense>} />
+                  <Route path="/experience" element={<Suspense fallback={<RouteFallback />}><VehicleExperiencePage /></Suspense>} />
+                  <Route path="/services" element={<Suspense fallback={<RouteFallback />}><ServicesPage /></Suspense>} />
+                  <Route path="/accessories" element={<Suspense fallback={<RouteFallback />}><AccessoriesPage /></Suspense>} />
+                  <Route path="/product/:id" element={<Suspense fallback={<RouteFallback />}><ProductDetailPage /></Suspense>} />
+                  <Route path="/cart" element={<Suspense fallback={<RouteFallback />}><CartPage /></Suspense>} />
+                  <Route path="/checkout" element={<Suspense fallback={<RouteFallback />}><CheckoutPage /></Suspense>} />
+                  <Route path="/payment" element={<Navigate to="/checkout" replace />} />
+                  <Route path="/inventory-management" element={<Suspense fallback={<RouteFallback />}><InventoryManagementPage /></Suspense>} />
+                  <Route path="/about" element={<Suspense fallback={<RouteFallback />}><AboutPage /></Suspense>} />
+                  <Route path="/testimonials" element={<Suspense fallback={<RouteFallback />}><TestimonialsPage /></Suspense>} />
+                  <Route path="/sell" element={<Suspense fallback={<RouteFallback />}><SellCarPage /></Suspense>} />
+                  <Route path="/contact" element={<Suspense fallback={<RouteFallback />}><ContactPage /></Suspense>} />
+                  <Route path="/color-preview" element={<Suspense fallback={<RouteFallback />}><ColorPreviewPage /></Suspense>} />
+                  <Route path="/payment-success" element={<Suspense fallback={<RouteFallback />}><PaymentSuccessPage /></Suspense>} />
+                  <Route path="/payment-fail" element={<Suspense fallback={<RouteFallback />}><PaymentFailPage /></Suspense>} />
+                  <Route path="/payment-cancel" element={<Suspense fallback={<RouteFallback />}><PaymentCancelPage /></Suspense>} />
+                  <Route path="/payment/success" element={<Navigate to="/payment-success" replace />} />
+                  <Route path="/payment/fail" element={<Navigate to="/payment-fail" replace />} />
+                  <Route path="/payment/cancel" element={<Navigate to="/payment-cancel" replace />} />
+                  <Route path="/thank-you" element={<Suspense fallback={<RouteFallback />}><ThankYouPage /></Suspense>} />
+                  <Route path="*" element={<NotFound />} />
+                </Routes>
               </Layout>
             </Router>
           </ErrorBoundary>

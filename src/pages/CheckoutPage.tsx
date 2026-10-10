@@ -114,9 +114,25 @@ const CheckoutPage = () => {
 				</div>
 
 				{error && (
-					<div className="mx-6 mt-4 rounded-lg border border-red-500/20 bg-red-500/10 p-3 text-xs text-red-300">
+					<div role="alert" className="mx-6 mt-4 rounded-lg border border-red-500/20 bg-red-500/10 p-3 text-xs text-red-300">
 						{error}
 					</div>
+				)}
+				{(!cartItems || cartItems.length === 0) && (
+					<div role="status" className="mx-6 mt-4 rounded-lg border border-slate-700 bg-slate-900 p-4 text-center text-sm">
+						Your cart is empty.{' '}
+						<button type="button" onClick={() => navigate('/accessories')} className="underline">Browse accessories</button>
+					</div>
+				)}
+				{cartItems.length > 0 && (
+					<ul aria-label="Order summary" className="mx-6 mt-4 space-y-1 text-xs text-slate-300">
+						{cartItems.map(item => (
+							<li key={item.id} className="flex justify-between gap-3">
+								<span>{item.name} × {item.quantity}</span>
+								<span>৳{(item.price * item.quantity).toLocaleString()}</span>
+							</li>
+						))}
+					</ul>
 				)}
 
 				<form onSubmit={handleSubmit(onSubmit)} className="p-6">
@@ -235,7 +251,7 @@ const CheckoutPage = () => {
 								disabled={isSubmitting || cartItems.length === 0}
 								className="flex-1 rounded-lg bg-indigo-600 px-8 py-2.5 text-sm font-bold text-white shadow-lg shadow-indigo-500/20 transition hover:bg-indigo-500 disabled:opacity-50 sm:flex-none"
 							>
-								{isSubmitting ? 'Processing...' : 'Confirm Order'}
+								{isSubmitting ? 'Redirecting to payment…' : 'Pay Now'}
 							</button>
 						</div>
 					</div>

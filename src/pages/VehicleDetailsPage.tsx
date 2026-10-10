@@ -140,11 +140,12 @@ export const VehicleDetailsPage = () => {
   if (!vehicle) {
     return (
       <div className={`min-h-screen flex items-center justify-center pt-20 ${isDark ? 'bg-gray-900' : 'bg-gray-50'}`}>
-        <div className="text-center" role="alert">
+        <div className="text-center max-w-md px-6" role="alert">
           <h2 className={isDark ? 'text-white text-xl' : 'text-gray-900 text-xl'}>Vehicle not found</h2>
-          <p className={isDark ? 'text-gray-400' : 'text-gray-600'}>We couldn't find that vehicle. It may have been removed or the link is incorrect.</p>
-          <div className="mt-4">
-            <Link to="/inventory" className="text-[var(--accent)] underline">Back to inventory</Link>
+          <p className={`mt-2 ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>We couldn't find that vehicle. It may have been removed or the link is incorrect.</p>
+          <div className="mt-4 flex gap-3 justify-center">
+            <Link to="/inventory" className="px-5 py-2 bg-[var(--brand-red,#C00000)] text-white rounded-lg">Browse inventory</Link>
+            <Link to="/" className="px-5 py-2 border rounded-lg">Go home</Link>
           </div>
         </div>
       </div>
@@ -192,6 +193,7 @@ export const VehicleDetailsPage = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-12">
           <div>
             <div className="relative rounded-lg overflow-hidden shadow-xl mb-4">
+              <div aria-live="polite" className="sr-only">Image {currentImageIndex + 1} of {Math.max(images.length, 1)}</div>
               <img
                 src={currentImage}
                 alt={`${vehicle.brand_name} ${vehicle.model}`}
@@ -229,7 +231,7 @@ export const VehicleDetailsPage = () => {
                     key={img.id}
                     onClick={() => setCurrentImageIndex(index)}
                     type="button"
-                    aria-label={`View thumbnail ${index + 1}`}
+                    aria-label={`View ${vehicle.brand_name} ${vehicle.model} image ${index + 1} of ${images.length}`}
                     className={`rounded-lg overflow-hidden ${
                       currentImageIndex === index ? 'ring-2 ring-blue-600' : ''
                     }`}
@@ -257,7 +259,7 @@ export const VehicleDetailsPage = () => {
               <h1 className={`text-3xl font-bold mb-2 ${isDark ? 'text-white' : 'text-gray-900'}`}>
                 {vehicle.brand_name} {vehicle.model}
               </h1>
-              <div className="text-4xl font-bold text-blue-600 mb-6">
+              <div className="text-4xl font-bold text-[var(--brand-red,#C00000)] mb-6">
                 {vehicle.price && vehicle.price > 0 ? formatPrice(vehicle.price, language) : (language === 'en' ? 'Price on request' : 'মূল্য অনুরোধে')}
               </div>
 

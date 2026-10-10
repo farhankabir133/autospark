@@ -16,7 +16,7 @@ const envSchema = z.object({
 export const env = envSchema.parse(import.meta.env);
 
 if (import.meta.env.PROD) {
-  const required = ['VITE_SUPABASE_URL', 'VITE_SUPABASE_ANON_KEY'] as const;
+  const required = ['VITE_SUPABASE_URL', 'VITE_SUPABASE_ANON_KEY', 'VITE_APPWRITE_DATABASE_ID', 'VITE_APPWRITE_COLLECTION_ID'] as const;
   const missing = required.filter(k => !env[k as keyof typeof env]);
-  if (missing.length) console.error(`[env] Missing required in PROD: ${missing.join(', ')} — build will use fallbacks but may fail at runtime`);
+  if (missing.length) throw new Error(`[env] Missing required in PROD: ${missing.join(', ')}`);
 }

@@ -59,16 +59,12 @@ export const ProductDetailPage = () => {
   useEffect(() => {
     const fetchProduct = async () => {
       try {
-        // A-04 fix: whitelist select + try accessories then products
+        // Query canonical products table (there is no separate accessories table)
         let data: any = null;
         let error: any = null;
         const sel = 'id,name_en,name_bn,description_en,description_bn,category,price,stock_quantity,sku,is_available,images,brand,rating,reviews,discount,compatibility';
-        let res = await supabase.from('accessories').select(sel).eq('id', id).single();
+        const res = await supabase.from('products').select(sel).eq('id', id).limit(1).single();
         data = res.data; error = res.error;
-        if (error || !data) {
-          const fb = await supabase.from('products').select(sel).eq('id', id).single();
-          if (!fb.error && fb.data) { data = fb.data; error = null; }
-        }
         if (error) throw error;
 
         // Parse images if stored as JSON
@@ -117,10 +113,10 @@ export const ProductDetailPage = () => {
   };
 
   const getStockStatus = () => {
-    if (product?.stock_quantity === 0) return { label: 'Out of Stock', color: 'red', icon: '❌' };
+    if (product?.stock_quantity === 0) return { label: 'Out of Stock', color: 'red' };
     if (product?.stock_quantity && product.stock_quantity <= 5)
-      return { label: `Low Stock (${product.stock_quantity})`, color: 'orange', icon: '⚠️' };
-    return { label: 'In Stock', color: 'green', icon: '✅' };
+      return { label: `Low Stock (only ${product.stock_quantity} left)`, color: 'orange' };
+    return { label: 'In Stock', color: 'green' };
   };
 
   const stockStatus = getStockStatus();
@@ -281,7 +277,7 @@ export const ProductDetailPage = () => {
                     ? 'bg-red-900/20'
                     : 'bg-red-50'
             }`}>
-              <span className="text-xl">{stockStatus.icon}</span>
+              <span aria-hidden className={`w-2.5 h-2.5 rounded-full ${stockStatus.color === 'green' ? 'bg-green-600' : stockStatus.color === 'orange' ? 'bg-orange-500' : 'bg-red-600'}`} />
               <span
                 className={`font-semibold ${
                   stockStatus.color === 'green'
@@ -328,21 +324,22 @@ export const ProductDetailPage = () => {
                   <button
                     onClick={() => setQuantity(Math.max(1, quantity - 1))}
                     disabled={quantity <= 1}
-                    className={`p-2 ${quantity <= 1 ? 'opacity-50 cursor-not-allowed' : 'hover:bg-gray-200 dark:hover:bg-gray-800'}`}
+                    aria-label="Decrease quantity"
+                    className={`p-2 min-w-[44px] min-h-[44px] flex items-center justify-center ${quantity <= 1 ? 'opacity-50 cursor-not-allowed' : 'hover:bg-gray-200 dark:hover:bg-gray-800'}`}
                   >
-                    <Minus size={16} />
+                    <Minus size={16} aria-hidden />
                   </button>
-                  <span className={`px-4 py-2 font-bold ${isDark ? 'text-white' : 'text-black'}`}>{quantity}</span>
+                  <span role="status" aria-label={`Quantity ${quantity}`} className={`px-4 py-2 font-bold ${isDark ? 'text-white' : 'text-black'}`}>{quantity}</span>
                   <button
                     onClick={() => setQuantity(Math.min(product.stock_quantity || 10, quantity + 1))}
                     disabled={(product.stock_quantity || 10) <= quantity}
-                    className={`p-2 ${
-                      (product.stock_quantity || 10) <= quantity
+                    aria-label="Increase quantity"
+                    className={`p-2 min-w-[44px] min-h-[44px] flex items-center justify-center ${(product.stock_quantity || 10) <= quantity
                         ? 'opacity-50 cursor-not-allowed'
                         : 'hover:bg-gray-200 dark:hover:bg-gray-800'
                     }`}
                   >
-                    <Plus size={16} />
+                    <Plus size={16} aria-hidden />
                   </button>
                 </div>
               </div>

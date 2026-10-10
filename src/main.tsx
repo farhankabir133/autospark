@@ -6,25 +6,8 @@ import './index.css';
 import './styles/tokens.css'; // Phase 1: design-system tokens (Liquid Glass + gold)
 import './lib/env'; // A-05: validate env early
 
-// HashRouter compatibility for direct callback hits on custom domain.
-// SSLCommerz redirects can land on pathname routes like /payment-success,
-// but HashRouter expects /#/payment-success.
-const callbackPaths = new Set([
-  '/payment-success',
-  '/payment-fail',
-  '/payment-cancel',
-  '/payment/success',
-  '/payment/fail',
-  '/payment/cancel',
-]);
-
-if (typeof window !== 'undefined') {
-  const { pathname, search, hash } = window.location;
-  if (!hash && callbackPaths.has(pathname)) {
-    const normalized = `/#${pathname}${search}`;
-    window.history.replaceState(null, '', normalized);
-  }
-}
+// BrowserRouter is used (see App.tsx) with SPA fallback (vercel.json).
+// No hash normalization needed; gateway callbacks land on real paths.
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>

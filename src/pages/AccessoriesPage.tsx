@@ -651,9 +651,10 @@ const dedupeProducts = (items: AccessoryProduct[]): AccessoryProduct[] => {
 
   const seenByNamePrice = new Set<string>();
   return Array.from(uniqueById.values()).filter((p) => {
+    if (!Number.isFinite(p.price) || p.price <= 0) return false;
     const normalizedName = (p.name_en || '').trim().toLowerCase().replace(/\s+/g, ' ');
+    if (!normalizedName) return false;
     const key = `${normalizedName}::${p.price}`;
-    if (!normalizedName) return true;
     if (seenByNamePrice.has(key)) return false;
     seenByNamePrice.add(key);
     return true;

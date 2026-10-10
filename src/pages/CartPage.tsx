@@ -24,8 +24,11 @@ const CartPage: React.FC = () => {
   const isDark = theme === 'dark';
   const [appliedCoupon, setAppliedCoupon] = useState<string>('');
   const [couponDiscount, setCouponDiscount] = useState<number>(0);
+  const [couponError, setCouponError] = useState<string>('');
   const [shippingCost, setShippingCost] = useState<number>(100);
   const [shippingMethod, setShippingMethod] = useState<'dhaka' | 'outside'>('dhaka');
+
+  const FREE_SHIPPING_THRESHOLD = 2000;
 
   // Translations
   const translations = {
@@ -87,13 +90,14 @@ const CartPage: React.FC = () => {
     return language === 'en' ? translations.en[key] : translations.bn[key];
   };
 
-  // Handle shipping cost change
+  // Handle shipping cost change (free over threshold)
   useEffect(() => {
-    setShippingCost(shippingMethod === 'dhaka' ? 100 : 200);
-  }, [shippingMethod]);
+    setShippingCost(cartTotal - couponDiscount >= FREE_SHIPPING_THRESHOLD ? 0 : shippingMethod === 'dhaka' ? 100 : 200);
+  }, [shippingMethod, cartTotal, couponDiscount]);
 
   // Calculate discount
   const handleApplyCoupon = (coupon: string) => {
+    const code = coupon.trim().toUpperCase();
     // Demo coupon codes
     const coupons: { [key: string]: number } = {
       'WELCOME10': 0.10,
@@ -101,15 +105,22 @@ const CartPage: React.FC = () => {
       'SUMMER20': 0.20,
       'GIFT50': 50,
     };
-    
-    if (coupons[coupon]) {
-      const discountValue = typeof coupons[coupon] === 'number' && coupons[coupon] < 1
-        ? cartTotal * coupons[coupon]
-        : coupons[coupon];
+
+    if (!code) { setCouponError('Enter a coupon code.'); return; }
+    if (appliedCoupon === code) { setCouponError('Coupon already applied.'); return; }
+    if (coupons[code]) {
+      const discountValue = typeof coupons[code] === 'number' && coupons[code] < 1
+        ? cartTotal * coupons[code]
+        : coupons[code];
       setCouponDiscount(discountValue);
-      setAppliedCoupon(coupon);
+      setAppliedCoupon(code);
+      setCouponError('');
+    } else {
+      setCouponError(`"${code}" is not a valid coupon.`);
     }
   };
+
+  const handleRemoveCoupon = () => { setAppliedCoupon(''); setCouponDiscount(0); setCouponError(''); };
 
   // Calculate totals
   const subtotal = cartTotal;
@@ -369,8 +380,15 @@ const CartPage: React.FC = () => {
                     </motion.button>
                   </div>
                   <p className={`text-xs mt-2 ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>
-                    Try: WELCOME10, SAVE15, SUMMER20
+                    Try: WELCOME10, SAVE15, SUMMER20 · Free shipping over ৳2,000
                   </p>
+                  {couponError && <p role="alert" className="text-xs mt-2 text-red-600">{couponError}</p>}
+                  {appliedCoupon && couponDiscount > 0 && !couponError && (
+                    <div className="mt-2 flex items-center gap-2 text-xs">
+                      <span className="px-2 py-1 rounded bg-green-100 text-green-800">{appliedCoupon} applied</span>
+                      <button onClick={handleRemoveCoupon} className="underline">Remove</button>
+                    </div>
+                  )}
                 </div>
 
                 {/* Price Breakdown */}

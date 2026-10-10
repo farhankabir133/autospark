@@ -1,20 +1,16 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
-
-const corsHeaders = {
-  'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Methods': 'POST, GET, OPTIONS',
-  'Access-Control-Allow-Headers': 'Content-Type',
-};
+import { corsOrigin, setCors } from './_helpers';
 
 export default async function handler(
   request: VercelRequest,
   response: VercelResponse
 ) {
+  const origin = corsOrigin(request.headers.origin as string | undefined);
   // Handle CORS preflight
   if (request.method === 'OPTIONS') {
     return response
       .status(200)
-      .setHeader('Access-Control-Allow-Origin', '*')
+      .setHeader('Access-Control-Allow-Origin', origin)
       .setHeader('Access-Control-Allow-Methods', 'POST, GET, OPTIONS')
       .setHeader('Access-Control-Allow-Headers', 'Content-Type')
       .end();
@@ -23,40 +19,28 @@ export default async function handler(
   try {
     const { tran_id, status } = request.method === 'GET' ? request.query : request.body;
 
-    // Log payment cancellation
-    console.log('Payment Cancelled:', {
-      tran_id,
-      status,
-    });
+    console.log('Payment Cancelled:', String(tran_id ?? '').slice(0, 40));
 
     // User cancelled the payment on SSLCommerz gateway
-    console.log('⏸️ Payment cancelled by user for transaction:', tran_id);
-
-    // In production:
-    // Update order status to "cancelled" in database
-    // Clear session data
-    // Allow user to retry
 
     // Return JSON response
     return response
       .status(200)
-      .setHeader('Access-Control-Allow-Origin', '*')
+      .setHeader('Access-Control-Allow-Origin', origin)
       .json({
         success: false,
         message: 'Payment cancelled by user',
-        tran_id,
+        tran_id: typeof tran_id === 'string' ? tran_id.slice(0, 80) : tran_id,
         status,
         timestamp: new Date().toISOString(),
       });
   } catch (error) {
-    const errorMessage =
-      error instanceof Error ? error.message : 'Unknown error';
-    console.error('Payment cancel handler error:', errorMessage);
+    console.error('Payment cancel handler error');
     return response
       .status(500)
-      .setHeader('Access-Control-Allow-Origin', '*')
+      .setHeader('Access-Control-Allow-Origin', origin)
       .json({
-        error: `Server error: ${errorMessage}`,
+        error: 'Server error',
       });
   }
 }

@@ -490,11 +490,12 @@ const AnimatedCounter: React.FC<{ end: number; suffix?: string }> = ({ end, suff
 // Star Rating Component
 const StarRating: React.FC<{ rating: number; size?: number }> = ({ rating, size = 16 }) => {
   return (
-    <div className="flex gap-0.5">
+    <div className="flex gap-0.5" role="img" aria-label={`Rated ${rating} out of 5 stars`}>
       {[1, 2, 3, 4, 5].map((star) => (
         <Star
           key={star}
           size={size}
+          aria-hidden
           className={star <= rating ? 'fill-yellow-400 text-yellow-400' : 'text-gray-300'}
         />
       ))}
@@ -588,13 +589,21 @@ const ServicesPage: React.FC = () => {
     setSelectedPackage(prev => prev === packageId ? null : packageId);
   };
 
-  // Check service status
+  // Check service status — looks up locally-created bookings only; never fabricates.
   const checkServiceStatus = () => {
     if (serviceStatusId) {
-      setServiceStatus({
-        step: Math.floor(Math.random() * 4) + 1,
-        status: ['Received', 'In Progress', 'Quality Check', 'Ready'][Math.floor(Math.random() * 4)]
-      });
+      try {
+        const raw = localStorage.getItem('autospark-service-bookings');
+        const bookings = raw ? JSON.parse(raw) : [];
+        const found = bookings.find((b: any) => b.id === serviceStatusId.trim());
+        if (found) {
+          setServiceStatus({ step: found.step ?? 1, status: found.status ?? 'Received' });
+        } else {
+          setServiceStatus({ step: 0, status: 'Not found — check your booking ID or contact the showroom.' });
+        }
+      } catch {
+        setServiceStatus({ step: 0, status: 'Not found — check your booking ID or contact the showroom.' });
+      }
     }
   };
 

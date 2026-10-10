@@ -54,18 +54,24 @@ export const ColorPreviewPage: React.FC = () => {
     <div className="min-h-screen w-full bg-white dark:bg-gray-900 text-gray-900 dark:text-white">
       <div className="max-w-6xl mx-auto p-6">
         <div className="flex items-center justify-between mb-6">
-          <button onClick={() => navigate(-1)} className="px-3 py-2 rounded-md border min-h-[44px] min-w-[44px]" aria-label="Go back">Back</button>
-          <h1 className="text-xl font-bold">{vehicleModel} — {selectedColor?.name || ''}</h1>
+          <button onClick={() => { if (window.history.length > 1) navigate(-1); else navigate('/'); }} className="px-3 py-2 rounded-md border min-h-[44px] min-w-[44px]" aria-label="Go back">Back</button>
+          <h1 className="text-xl font-bold">{selectedColor?.name ? `${vehicleModel} — ${selectedColor.name}` : vehicleModel}</h1>
           <div />
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div className="bg-black/5 dark:bg-black rounded-lg flex items-center justify-center min-h-[320px]">
-            {!imageLoaded && (
+            {!displayImage ? (
+              <div role="status" className="p-8 text-center">
+                <p className="font-semibold">No color selected</p>
+                <p className="mt-1 text-sm opacity-70">Pick a vehicle color from inventory first.</p>
+                <button onClick={() => navigate('/inventory')} className="mt-4 px-4 py-2 bg-[var(--brand-red,#C00000)] text-white rounded-lg">Browse Inventory</button>
+              </div>
+            ) : !imageLoaded ? (
               <div className="w-full h-full p-6">
                 <div className="w-full h-80 md:h-[520px] rounded-lg bg-gray-200 dark:bg-gray-700 animate-pulse" />
               </div>
-            )}
+            ) : null}
 
             {displayImage && (
               <img

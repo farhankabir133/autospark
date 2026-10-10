@@ -48,7 +48,7 @@ export const TextReveal: React.FC<TextRevealProps> = ({
 
   const tokens = splitBy === 'char' ? text.split('') : text.split(' ');
 
-  const Tag = motion[typeof as] as typeof motion.h2;
+  const Tag = motion[as as keyof typeof motion] as unknown as typeof motion.h2;
 
   return (
     <Tag

@@ -1,5 +1,5 @@
 
-import { Award, Shield, Users, TrendingUp, Target, Eye, Star, Car, CheckCircle, Phone, Mail, Linkedin, Facebook, Instagram, MapPin } from 'lucide-react';
+import { Award, Shield, Users, TrendingUp, Target, Eye, Star, Car, CheckCircle, Phone, Mail, Linkedin, Facebook, Instagram, Youtube, Music2 } from 'lucide-react';
 import { useLanguage } from '../contexts/LanguageContext';
 import { useTheme } from '../contexts/ThemeContext';
 import { Card } from '../components/ui/Card';
@@ -199,18 +199,18 @@ export const AboutPage = () => {
               <a href="https://www.instagram.com/autosparkbd" target="_blank" rel="noopener noreferrer" className="hover:text-[#FF1A1A]">
                 <Instagram className="w-6 h-6" />
               </a>
-              <a href="https://www.youtube.com/@autosparkbd1131" target="_blank" rel="noopener noreferrer" className="hover:text-[#FF1A1A]">
-                <Mail className="w-6 h-6" />
+              <a href="https://www.youtube.com/@autosparkbd1131" target="_blank" rel="noopener noreferrer" aria-label="YouTube" className="hover:text-[#FF1A1A]">
+                <Youtube className="w-6 h-6" />
               </a>
-              <a href="https://www.tiktok.com/@auto_spark0" target="_blank" rel="noopener noreferrer" className="hover:text-[#FF1A1A]">
-                <MapPin className="w-6 h-6" />
+              <a href="https://www.tiktok.com/@auto_spark0" target="_blank" rel="noopener noreferrer" aria-label="TikTok" className="hover:text-[#FF1A1A]">
+                <Music2 className="w-6 h-6" />
               </a>
             </div>
             <div className="flex gap-2 mt-2">
-              <span className="inline-flex items-center px-2 py-1 bg-yellow-100 text-yellow-800 rounded text-xs font-semibold border border-yellow-300">🏆 Award</span>
-              <span className="inline-flex items-center px-2 py-1 bg-blue-100 text-blue-800 rounded text-xs font-semibold border border-blue-300">✔️ Verified</span>
-              <span className="inline-flex items-center px-2 py-1 bg-green-100 text-green-800 rounded text-xs font-semibold border border-green-300">🛡️ Security</span>
-              <span className="inline-flex items-center px-2 py-1 bg-purple-100 text-purple-800 rounded text-xs font-semibold border border-purple-300">📄 Certificate</span>
+              <span className="inline-flex items-center px-2 py-1 bg-yellow-100 text-yellow-800 rounded text-xs font-semibold border border-yellow-300">Award</span>
+              <span className="inline-flex items-center px-2 py-1 bg-blue-100 text-blue-800 rounded text-xs font-semibold border border-blue-300">Verified</span>
+              <span className="inline-flex items-center px-2 py-1 bg-green-100 text-green-800 rounded text-xs font-semibold border border-green-300">Security</span>
+              <span className="inline-flex items-center px-2 py-1 bg-purple-100 text-purple-800 rounded text-xs font-semibold border border-purple-300">Certificate</span>
             </div>
           </Card>
           {/* Service Center Card */}
@@ -226,18 +226,18 @@ export const AboutPage = () => {
               <a href="https://www.instagram.com/autosparkbd" target="_blank" rel="noopener noreferrer" className="hover:text-[#FF1A1A]">
                 <Instagram className="w-6 h-6" />
               </a>
-              <a href="https://www.youtube.com/@autosparkbd1131" target="_blank" rel="noopener noreferrer" className="hover:text-[#FF1A1A]">
-                <Mail className="w-6 h-6" />
+              <a href="https://www.youtube.com/@autosparkbd1131" target="_blank" rel="noopener noreferrer" aria-label="YouTube" className="hover:text-[#FF1A1A]">
+                <Youtube className="w-6 h-6" />
               </a>
-              <a href="http://www.tiktok.com/@easycareeasylife" target="_blank" rel="noopener noreferrer" className="hover:text-[#FF1A1A]">
-                <MapPin className="w-6 h-6" />
+              <a href="http://www.tiktok.com/@easycareeasylife" target="_blank" rel="noopener noreferrer" aria-label="TikTok" className="hover:text-[#FF1A1A]">
+                <Music2 className="w-6 h-6" />
               </a>
             </div>
             <div className="flex gap-2 mt-2">
-              <span className="inline-flex items-center px-2 py-1 bg-yellow-100 text-yellow-800 rounded text-xs font-semibold border border-yellow-300">🏆 Award</span>
-              <span className="inline-flex items-center px-2 py-1 bg-blue-100 text-blue-800 rounded text-xs font-semibold border border-blue-300">✔️ Verified</span>
-              <span className="inline-flex items-center px-2 py-1 bg-green-100 text-green-800 rounded text-xs font-semibold border border-green-300">🛡️ Security</span>
-              <span className="inline-flex items-center px-2 py-1 bg-purple-100 text-purple-800 rounded text-xs font-semibold border border-purple-300">📄 Certificate</span>
+              <span className="inline-flex items-center px-2 py-1 bg-yellow-100 text-yellow-800 rounded text-xs font-semibold border border-yellow-300">Award</span>
+              <span className="inline-flex items-center px-2 py-1 bg-blue-100 text-blue-800 rounded text-xs font-semibold border border-blue-300">Verified</span>
+              <span className="inline-flex items-center px-2 py-1 bg-green-100 text-green-800 rounded text-xs font-semibold border border-green-300">Security</span>
+              <span className="inline-flex items-center px-2 py-1 bg-purple-100 text-purple-800 rounded text-xs font-semibold border border-purple-300">Certificate</span>
             </div>
           </Card>
         </div>

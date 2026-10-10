@@ -130,8 +130,8 @@ export const VehicleExperiencePage = () => {
               transition={{ duration: 0.6, delay: 0.2 }}
               viewport={{ once: true }}
             >
-              <Suspense fallback={<div className="h-96 flex items-center justify-center text-gray-400">Loading 3D experience...</div>}>
-                <InteractiveVehicleComparison vehicles={comparisonVehicles} />
+              <Suspense fallback={<div role="status" className="h-96 flex flex-col items-center justify-center gap-3"><div className="w-8 h-8 border-2 border-cyan-500 border-t-transparent rounded-full animate-spin" aria-hidden /><span className="text-gray-400">Loading 3D experience…</span></div>}>
+                <InteractiveVehicleComparison vehicles={comparisonVehicles.filter(v => v.image)} />
               </Suspense>
             </motion.div>
           </motion.div>
@@ -180,7 +180,7 @@ export const VehicleExperiencePage = () => {
               transition={{ duration: 0.6, delay: 0.2 }}
               viewport={{ once: true }}
             >
-              <Suspense fallback={<div className="h-96 flex items-center justify-center text-gray-400">Loading virtual tour...</div>}>
+              <Suspense fallback={<div role="status" className="h-96 flex flex-col items-center justify-center gap-3"><div className="w-8 h-8 border-2 border-cyan-500 border-t-transparent rounded-full animate-spin" aria-hidden /><span className="text-gray-400">Loading virtual tour…</span></div>}>
                 <VirtualShowroomTour />
               </Suspense>
             </motion.div>
