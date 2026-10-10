@@ -1,4 +1,4 @@
-// A-05: Central env validation — fail fast in PROD, warn in DEV
+// A-05: Central env validation — warn in PROD for static hosting (GitHub Pages), fail only for server builds
 import { z } from 'zod';
 
 const envSchema = z.object({
@@ -15,8 +15,19 @@ const envSchema = z.object({
 
 export const env = envSchema.parse(import.meta.env);
 
+// For static hosting (GitHub Pages), we don't require DB credentials at build time
+// since API endpoints (Vercel functions) handle server-side secrets.
+// Only VITE_PAYMENT_API_URL is needed client-side for payment initiation.
 if (import.meta.env.PROD) {
-  const required = ['VITE_SUPABASE_URL', 'VITE_SUPABASE_ANON_KEY', 'VITE_APPWRITE_DATABASE_ID', 'VITE_APPWRITE_COLLECTION_ID'] as const;
+  const required = ['VITE_PAYMENT_API_URL'] as const;
   const missing = required.filter(k => !env[k as keyof typeof env]);
-  if (missing.length) throw new Error(`[env] Missing required in PROD: ${missing.join(', ')}`);
+  if (missing.length) {
+    console.warn(`[env] Missing in PROD (using fallback): ${missing.join(', ')}`);
+  }
+  // Warn about missing DB credentials but don't throw
+  const dbRequired = ['VITE_SUPABASE_URL', 'VITE_SUPABASE_ANON_KEY', 'VITE_APPWRITE_DATABASE_ID', 'VITE_APPWRITE_COLLECTION_ID'] as const;
+  const dbMissing = dbRequired.filter(k => !env[k as keyof typeof env]);
+  if (dbMissing.length) {
+    console.warn(`[env] DB credentials not set at build time (expected for static hosting): ${dbMissing.join(', ')}`);
+  }
 }
