@@ -23,14 +23,20 @@ interface ThemeProviderProps {
 
 export const ThemeProvider = ({ children }: ThemeProviderProps) => {
   const [theme, setTheme] = useState<Theme>(() => {
-    // M-03 fix: respect user preference + stored value, no hostname override
-    if (typeof window !== 'undefined') {
-      const stored = localStorage.getItem('theme');
-      if (stored === 'dark' || stored === 'light') {
-        return stored as Theme;
+    // M-03 fix: respect user preference + stored value, no hostname override.
+    // Wrapped in try/catch: localStorage throws (SecurityError) in some
+    // private-mode / blocked-cookie browsers — must never crash the app.
+    try {
+      if (typeof window !== 'undefined') {
+        const stored = localStorage.getItem('theme');
+        if (stored === 'dark' || stored === 'light') {
+          return stored as Theme;
+        }
+        // Respect OS preference for first visit
+        if (window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches) return 'light';
       }
-      // Respect OS preference for first visit
-      if (window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches) return 'light';
+    } catch {
+      /* storage unavailable — fall through to default */
     }
     return 'dark';
   });

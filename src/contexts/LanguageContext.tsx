@@ -23,15 +23,28 @@ interface LanguageProviderProps {
 
 export const LanguageProvider = ({ children }: LanguageProviderProps) => {
   const [language, setLanguageState] = useState<Language>(() => {
-    const stored = localStorage.getItem('language');
-    if (stored === 'bn' || stored === 'en') return stored as Language;
-    const browserLang = navigator.language || (navigator as any).userLanguage || '';
-    return browserLang.startsWith('bn') ? 'bn' : 'en';
+    // localStorage / navigator access guarded: must never throw during init.
+    try {
+      const stored = localStorage.getItem('language');
+      if (stored === 'bn' || stored === 'en') return stored as Language;
+      const browserLang = navigator.language || (navigator as any).userLanguage || '';
+      return browserLang.startsWith('bn') ? 'bn' : 'en';
+    } catch {
+      return 'en';
+    }
   });
 
   useEffect(() => {
-    localStorage.setItem('language', language);
-    document.documentElement.lang = language;
+    try {
+      localStorage.setItem('language', language);
+    } catch {
+      /* storage unavailable (private mode) — non-critical */
+    }
+    try {
+      document.documentElement.lang = language;
+    } catch {
+      /* ignore */
+    }
   }, [language]);
 
   const setLanguage = useCallback((lang: Language) => {

@@ -1,7 +1,7 @@
 import { useEffect, useState, useRef, lazy, Suspense, useCallback } from 'react';
 import { Link } from 'react-router-dom';
 import { motion, useScroll, useTransform, useMotionTemplate } from 'framer-motion';
-import { ArrowRight, Car, Wrench, Shield, Award, ChevronDown, Zap, Fuel } from 'lucide-react';
+import { ArrowRight, Car, Wrench, Shield, Award, ChevronDown, Zap, Fuel, Clock, Phone, MapPin as MapPinIcon } from 'lucide-react';
 import { useLanguage } from '../contexts/LanguageContext';
 import { useTheme } from '../contexts/ThemeContext';
 import { useDeviceCapability } from '../hooks/useDeviceCapability';
@@ -31,12 +31,20 @@ import { PerformanceGauge } from '../components/PerformanceGauge';
 const VideoHero = ({ children }: { children: React.ReactNode }) => {
   const videoRef = useRef<HTMLVideoElement>(null);
   const [videoReady, setVideoReady] = useState(false);
+  const [showControls, setShowControls] = useState(false);
+  const prefersReducedMotion = useReducedMotion();
 
   // Ensure video is always playing — covers tab switch, back/forward,
   // mobile background/foreground, orientation change, and SPA navigation.
   useEffect(() => {
     const v = videoRef.current;
     if (!v) return;
+
+    // Respect reduced motion preference
+    if (prefersReducedMotion) {
+      v.pause();
+      return;
+    }
 
     const resume = () => {
       if (v.paused && !document.hidden) {
@@ -64,12 +72,12 @@ const VideoHero = ({ children }: { children: React.ReactNode }) => {
       window.removeEventListener('pageshow', onPageShow);
       window.removeEventListener('popstate', onPopState);
     };
-  }, []);
+  }, [prefersReducedMotion]);
 
   return (
     <div className="relative w-full h-full overflow-hidden bg-black">
       {/* Subtle Ken Burns drift — very slow zoom + pan for a living feel */}
-      <div className="absolute inset-[-2%] animate-hero-drift will-change-transform">
+      <div className="absolute inset-[-2%] animate-hero-drift will-change-transform" style={{ animationPlayState: prefersReducedMotion ? 'paused' : 'running' }}>
         <video
           ref={videoRef}
           autoPlay
@@ -81,7 +89,10 @@ const VideoHero = ({ children }: { children: React.ReactNode }) => {
           poster="/hero/hero-poster.webp"
           disablePictureInPicture
           disableRemotePlayback
+          controls={showControls}
           onPlaying={() => setVideoReady(true)}
+          onMouseEnter={() => setShowControls(true)}
+          onMouseLeave={() => setShowControls(false)}
           className="absolute inset-0 w-full h-full object-cover"
           style={{ opacity: videoReady ? 1 : 0, transition: 'opacity 0.3s ease-in' }}
         >
@@ -96,6 +107,21 @@ const VideoHero = ({ children }: { children: React.ReactNode }) => {
     </div>
   );
 };
+
+// Hook for prefers-reduced-motion
+function useReducedMotion() {
+  const [prefersReduced, setPrefersReduced] = useState(false);
+
+  useEffect(() => {
+    const mediaQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
+    setPrefersReduced(mediaQuery.matches);
+    const handler = (e: MediaQueryListEvent) => setPrefersReduced(e.matches);
+    mediaQuery.addEventListener('change', handler);
+    return () => mediaQuery.removeEventListener('change', handler);
+  }, []);
+
+  return prefersReduced;
+}
 
 // ─── Lightweight Hero Fallback for very low-end devices ───────────
 const LightweightHero = ({
@@ -696,24 +722,24 @@ export const HomePage = () => {
               <div className="flex flex-col gap-5">
                 {[
                   {
-                    icon: '📍',
+                    icon: <MapPinIcon className="w-8 h-8 text-[#C00000]" />,
                     title: language === 'en' ? 'Address' : 'ঠিকানা',
                     content: 'AutoSpark — Station Road, Near Shuvo Petroleum, Sheroil, Ghoramara, Boalia, Rajshahi 6207',
                   },
                   {
-                    icon: '🕐',
+                    icon: <Clock className="w-8 h-8 text-[#C00000]" />,
                     title: language === 'en' ? 'Business Hours' : 'ব্যবসায়িক সময়',
                     content: `${language === 'en' ? 'Mon–Fri' : 'সোম–শুক্র'}: 9AM–6PM | ${language === 'en' ? 'Sat' : 'শনি'}: 10AM–5PM`,
                   },
                   {
-                    icon: '📞',
+                    icon: <Phone className="w-8 h-8 text-[#C00000]" />,
                     title: language === 'en' ? 'Contact' : 'যোগাযোগ',
                     content: '+880 1760-401605 | autosparkbd@gmail.com',
                   },
                 ].map(card => (
                   <div key={card.title} className="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-lg border border-gray-200 dark:border-gray-700">
                     <div className="flex items-start gap-3">
-                      <span className="text-2xl">{card.icon}</span>
+                      <span className="flex-shrink-0">{card.icon}</span>
                       <div>
                         <h3 className="font-bold text-gray-900 dark:text-white mb-1">{card.title}</h3>
                         <p className="text-sm text-gray-600 dark:text-gray-300">{card.content}</p>
@@ -725,9 +751,10 @@ export const HomePage = () => {
                   href="https://www.google.com/maps/place/Auto+Spark/@24.3744264,88.6135805,17z"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="block w-full bg-gradient-to-r from-red-600 to-red-700 text-white font-bold py-4 rounded-xl text-center hover:opacity-90 transition-opacity"
+                  className="block w-full bg-gradient-to-r from-red-600 to-red-700 text-white font-bold py-4 rounded-xl text-center hover:opacity-90 transition-opacity flex items-center justify-center gap-2"
                 >
-                  📍 {language === 'en' ? 'Get Directions on Google Maps' : 'গুগল ম্যাপে দিকনির্দেশনা পান'}
+                  <MapPinIcon className="w-5 h-5" />
+                  {language === 'en' ? 'Get Directions on Google Maps' : 'গুগল ম্যাপে দিকনির্দেশনা পান'}
                 </a>
               </div>
 

@@ -1,6 +1,11 @@
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 import { HelmetProvider } from 'react-helmet-async';
+import { TooltipProvider } from './components/ui/tooltip';
+import { Toaster } from './components/ui/sonner';
+import { ThemeProvider } from './contexts/ThemeContext';
+import { LanguageProvider } from './contexts/LanguageContext';
+import { CartProvider } from './contexts/CartContext';
 import App from './App.tsx';
 import './index.css';
 import './styles/tokens.css'; // Phase 1: design-system tokens (Liquid Glass + gold)
@@ -9,10 +14,52 @@ import './lib/env'; // A-05: validate env early
 // BrowserRouter is used (see App.tsx) with SPA fallback (vercel.json).
 // No hash normalization needed; gateway callbacks land on real paths.
 
+// Global backstop: stale-deploy chunk failures that escape React (e.g. thrown
+// outside Suspense) trigger ONE hard reload per session, then show the
+// ErrorBoundary instead of looping.
+if (typeof window !== 'undefined') {
+  const CHUNK_RE = /loading chunk|failed to fetch dynamically imported module|importing a module script failed|chunkloaderror/i;
+  const shouldAutoReload = (message: string) => {
+    if (!CHUNK_RE.test(message)) return false;
+    try {
+      if (sessionStorage.getItem('autospark-chunk-reload') === '1') return false;
+      sessionStorage.setItem('autospark-chunk-reload', '1');
+      return true;
+    } catch {
+      return false;
+    }
+  };
+  window.addEventListener('unhandledrejection', (event) => {
+    try {
+      const msg = event.reason instanceof Error ? event.reason.message : String(event.reason ?? '');
+      if (shouldAutoReload(msg)) window.location.reload();
+    } catch {
+      /* ignore */
+    }
+  });
+  window.addEventListener('error', (event) => {
+    try {
+      const msg = event.message || '';
+      if (shouldAutoReload(msg)) window.location.reload();
+    } catch {
+      /* ignore */
+    }
+  }, true);
+}
+
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <HelmetProvider>
-      <App />
+      <TooltipProvider>
+        <ThemeProvider>
+          <LanguageProvider>
+            <CartProvider>
+              <App />
+              <Toaster position="bottom-right" richColors />
+            </CartProvider>
+          </LanguageProvider>
+        </ThemeProvider>
+      </TooltipProvider>
     </HelmetProvider>
   </StrictMode>
 );
@@ -54,11 +101,20 @@ if ('serviceWorker' in navigator && import.meta.env.PROD) {
           }
         });
 
-        // If a new service worker takes control, reload to load the new assets
+        // If a new service worker takes control, reload ONCE per SW version to
+        // load the new assets. Guarded by sessionStorage so two-tab races and
+        // repeated controllerchange events can't cause a reload loop.
         navigator.serviceWorker.addEventListener('controllerchange', () => {
           // Avoid infinite reload loop
           if (!window.__swRefreshing) {
             window.__swRefreshing = true;
+            try {
+              const key = 'autospark-sw-reload';
+              if (sessionStorage.getItem(key)) return;
+              sessionStorage.setItem(key, '1');
+            } catch {
+              return;
+            }
             window.location.reload();
           }
         });

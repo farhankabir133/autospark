@@ -718,7 +718,7 @@ export const AboutPage = () => {
                     person={{
                       name: language === 'en' ? 'Farhan Kabir' : 'ফারহান কবির',
                       role: language === 'en' ? 'Lead Engineer / Lead Developer' : 'প্রধান প্রকৌশলী / প্রধান ডেভেলপার',
-                      title: language === 'en' ? '💻 Lead Engineer' : '💻 লিড ইঞ্জিনিয়ার',
+                      title: language === 'en' ? 'Lead Engineer' : 'লিড ইঞ্জিনিয়ার',
                       image: 'https://images.pexels.com/photos/34067041/pexels-photo-34067041.png?auto=compress&cs=tinysrgb&w=600&fm=webp',
                       bio: language === 'en' ? 'Driving digital innovation and creating seamless experiences for our customers.' : 'ডিজিটাল উদ্ভাবন চালনা এবং গ্রাহকদের জন্য নিরবচ্ছিন্ন অভিজ্ঞতা তৈরি করছেন।',
                        website: 'https://farhankabir.tech/',
@@ -752,7 +752,7 @@ export const AboutPage = () => {
                     person={{
                       name: language === 'en' ? 'Abu Hasan' : 'আবু হাসান',
                       role: language === 'en' ? 'General Manager' : 'জেনারেল ম্যানেজার',
-                      title: language === 'en' ? '👔 Leadership' : '👔 নেতৃত্ব',
+                      title: language === 'en' ? 'Leadership' : 'নেতৃত্ব',
                       image: 'https://images.pexels.com/photos/36705238/pexels-photo-36705238.png?auto=compress&cs=tinysrgb&w=600&fm=webp',
                       bio: language === 'en' ? 'Leading our operations with strategic vision and excellence in customer service.' : 'কৌশলগত দৃষ্টিভঙ্গি এবং গ্রাহক সেবায় উৎকর্ষতার সাথে আমাদের কার্যক্রম পরিচালনা করছেন।',
                     }}
@@ -795,11 +795,11 @@ export const AboutPage = () => {
                         animate={{ scale: [1, 1.1, 1] }}
                         transition={{ duration: 2, repeat: Infinity, ease: "easeInOut", delay: 0.6 }}
                       >
-                        🚗
+                        <Car className="w-3 h-3" />
                       </motion.div>
                     </div>
                     <div className="text-center md:text-right flex-1">
-                      <span className="text-[#C00000] font-bold text-xs sm:text-sm">🚗 Sales Expert</span>
+                      <span className="text-[#C00000] font-bold text-xs sm:text-sm flex items-center gap-1"><Car className="w-3 h-3" /> Sales Expert</span>
                       <h4 className={`text-lg sm:text-xl font-bold ${theme === 'dark' ? 'text-white' : 'text-gray-900'} mt-1`}>
                         {language === 'en' ? 'SM Sohan' : 'এস এম সোহান'}
                       </h4>
@@ -847,7 +847,7 @@ export const AboutPage = () => {
                     person={{
                       name: language === 'en' ? 'Amir Rahman' : 'আমির রহমান',
                       role: language === 'en' ? 'Senior Technician' : 'সিনিয়র টেকনিশিয়ান',
-                      title: language === 'en' ? '🔧 Tech Expert' : '🔧 টেক এক্সপার্ট',
+                      title: language === 'en' ? 'Tech Expert' : 'টেক এক্সপার্ট',
                       image: 'https://images.pexels.com/photos/36839140/pexels-photo-36839140.png',
                       bio: language === 'en' ? 'Ensuring every vehicle meets our rigorous quality and safety standards.' : 'প্রতিটি গাড়ি আমাদের কঠোর মান এবং নিরাপত্তা মানদণ্ড পূরণ করছে তা নিশ্চিত করছেন।',
                     }}
@@ -877,7 +877,7 @@ export const AboutPage = () => {
                     person={{
                       name: language === 'en' ? 'Farzana Shurovi' : 'ফারজানা শুরভি',
                       role: language === 'en' ? 'Sales Executive' : 'সেলস এক্সিকিউটিভ',
-                      title: language === 'en' ? '💼 Sales Executive' : '💼 সেলস এক্সিকিউটিভ',
+                      title: language === 'en' ? 'Sales Executive' : 'সেলস এক্সিকিউটিভ',
                       image: 'https://images.pexels.com/photos/36833099/pexels-photo-36833099.png',
                       bio: language === 'en' ? 'Delivering exceptional service and helping customers choose the right vehicle.' : 'উত্তম পরিষেবা প্রদান এবং গ্রাহকদের সঠিক গাড়ি বেছে নিতে সাহায্য করছেন।',
                     }}
@@ -908,7 +908,7 @@ export const AboutPage = () => {
                     person={{
                       name: language === 'en' ? 'Tanzila Jui' : 'তানজিলা জুই',
                       role: language === 'en' ? 'Sales Executive' : 'সেলস এক্সিকিউটিভ',
-                      title: language === 'en' ? '💼 Sales Executive' : '💼 সেলস এক্সিকিউটিভ',
+                      title: language === 'en' ? 'Sales Executive' : 'সেলস এক্সিকিউটিভ',
                       image: 'https://images.pexels.com/photos/36833100/pexels-photo-36833100.png',
                       bio: language === 'en' ? 'Assisting buyers with a friendly approach and thorough product knowledge.' : 'বন্ধুত্বপূর্ণ পদ্ধতি এবং সম্যক পণ্য জ্ঞানের মাধ্যমে ক্রেতাদের সহায়তা করছেন।',
                     }}
