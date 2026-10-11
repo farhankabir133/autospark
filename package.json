@@ -8,7 +8,7 @@
     "dev": "vite",
     "dev:full": "concurrently \"node server/dev-server.js\" \"npm run dev\"",
     "dev:api": "node server/dev-server.js",
-    "build": "tsc --noEmit -p tsconfig.app.json && vite build",
+    "build": "tsc --noEmit -p tsconfig.app.json && vite build && node scripts/copy-index-404.cjs",
     "lint": "eslint .",
     "preview": "vite preview",
     "audit:pa11y": "npx pa11y http://127.0.0.1:4173 --standard wcag2aa --timeout 20000 > pa11y-report.txt",
