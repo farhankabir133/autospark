@@ -220,6 +220,7 @@ export const HomePage = () => {
   const fetchFeaturedVehicles = useCallback(async () => {
     try {
       const { supabase } = await import('../lib/supabase');
+      if (!supabase) throw new Error('Supabase not configured');
       const { data, error } = await supabase
         .from('vehicles')
         .select('*, images:vehicle_images(*)')
@@ -244,6 +245,7 @@ export const HomePage = () => {
   const fetchTestimonials = useCallback(async () => {
     try {
       const { supabase } = await import('../lib/supabase');
+      if (!supabase) throw new Error('Supabase not configured');
       const { data, error } = await supabase
         .from('testimonials')
         .select('*')

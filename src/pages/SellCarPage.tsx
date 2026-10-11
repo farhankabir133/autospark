@@ -45,6 +45,7 @@ export const SellCarPage = () => {
     }
 
     try {
+      if (!supabase) throw new Error('Supabase not configured');
       const { error } = await supabase.from('trade_in_requests').insert({
         customer_name: formData.customerName,
         customer_email: formData.customerEmail,

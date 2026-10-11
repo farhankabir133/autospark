@@ -1995,6 +1995,7 @@ function AccessoriesPage() {
         // A-04 fix: unified table (try accessories then products), whitelist + limit/order + pagination safety
         let data: any[] | null = null;
         const tryFetch = async (table: string) => {
+          if (!supabase) throw new Error('Supabase not configured');
           const res = await supabase
             .from(table)
             .select('id,name_en,name_bn,description_en,description_bn,category,price,stock_quantity,sku,is_available,images,brand,rating,reviews,discount,compatibility,isNew,isBestseller')

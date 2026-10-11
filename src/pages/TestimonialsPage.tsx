@@ -811,6 +811,7 @@ export const TestimonialsPage = () => {
     const fetchTestimonials = async () => {
       try {
         const { supabase } = await import('../lib/supabase');
+        if (!supabase) throw new Error('Supabase not configured');
         const { data, error } = await supabase
           .from('testimonials')
           .select('*')

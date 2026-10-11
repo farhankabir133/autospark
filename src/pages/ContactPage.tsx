@@ -26,6 +26,7 @@ export const ContactPage = () => {
     }
     setSubmitting(true);
     try {
+      if (!supabase) throw new Error('Supabase not configured');
       const { error } = await supabase.from('service_appointments').insert([{
         customer_name: name,
         phone,

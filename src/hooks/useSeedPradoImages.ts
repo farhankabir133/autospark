@@ -32,6 +32,7 @@ export const useSeedPradoImages = () => {
   useEffect(() => {
     const seedPradoImages = async () => {
       try {
+        if (!supabase) return;
         // Find the Prado vehicle
         const { data: vehicles, error: vehicleError } = await supabase
           .from('vehicles')

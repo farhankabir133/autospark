@@ -32,6 +32,7 @@ export const useSeedChrImages = () => {
   useEffect(() => {
     const seedChrImages = async () => {
       try {
+        if (!supabase) return;
         // Find the C-HR vehicle
         const { data: vehicles, error: vehicleError } = await supabase
           .from('vehicles')
