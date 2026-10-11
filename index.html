@@ -105,7 +105,25 @@
     }
     </script>
 
-    <!-- Custom domain: Removed GitHub Pages SPA redirect logic -->
+    <!-- Custom domain: no ?/-redirect hack. GitHub serves dist/404.html (a copy
+         of this shell, generated post-build) for deep URLs, so the app boots
+         at the real path. The snippet below only heals LEGACY mangled links
+         (/?/product/123) left over from the old hack: one history.replaceState,
+         no reload — it cannot loop. -->
+    <script>
+      (function () {
+        try {
+          var s = window.location.search;
+          if (s && s.slice(0, 2) === '?/') {
+            var parts = s.slice(2).split('&');
+            var path = (parts[0] || '').replace(/~and~/g, '&');
+            var rest = parts.slice(1).join('&').replace(/~and~/g, '&');
+            var clean = '/' + path + (rest ? '?' + rest : '') + window.location.hash;
+            window.history.replaceState(null, '', clean);
+          }
+        } catch (e) {}
+      })();
+    </script>
     <script type="module" crossorigin src="/assets/js/index-BySP-YWA.js"></script>
     <link rel="modulepreload" crossorigin href="/assets/js/react-vendor-DhXR2kkw.js">
     <link rel="modulepreload" crossorigin href="/assets/js/helmet-C08GvW3y.js">
