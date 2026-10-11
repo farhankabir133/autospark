@@ -1,7 +1,9 @@
 // Service Worker — Cache-first for static assets, network-first for API calls
 // Bump CACHE_VERSION when deploying breaking changes to cached assets.
-// Old caches are cleaned up on activate.
-const CACHE_VERSION = 'v1';
+// Old caches are cleaned up on activate. v2: purges stale v1 JS chunks that
+// caused "Something went wrong" after deploys (old hashed chunks served
+// alongside a fresh index.html).
+const CACHE_VERSION = 'v2';
 const CACHE_NAME = `autospark-${CACHE_VERSION}`;
 
 // Assets to precache on install (only lightweight critical assets)
