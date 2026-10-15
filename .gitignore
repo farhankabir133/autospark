@@ -31,3 +31,6 @@ assistant-next/
 .next/
 .vercel/
 .vercel
+.env
+.env.local
+.env.*.local
