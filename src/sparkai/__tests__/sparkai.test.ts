@@ -4,10 +4,10 @@ import { filterDemoVehicles, formatBDT } from '../../sparkai/data/demo';
 import { estimateFinance, mockRespond } from '../../sparkai/services/ai';
 import { LeadSchema } from '../../sparkai/services/lead';
 
-describe('SparkAI skeleton', () => {
+describe('SparkPilot skeleton', () => {
   it('renders logo variants without crashing', async () => {
-    const { SparkAILogo, SparkMark } = await import('../../sparkai/components/Logo');
-    expect(typeof SparkAILogo).toBe('function');
+    const { SparkPilotLogo, SparkMark } = await import('../../sparkai/components/Logo');
+    expect(typeof SparkPilotLogo).toBe('function');
     expect(typeof SparkMark).toBe('function');
   });
 

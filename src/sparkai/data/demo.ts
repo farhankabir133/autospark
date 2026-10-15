@@ -1,6 +1,6 @@
 import type { DemoVehicle, QuickAction } from '../types';
 
-// Explicitly labeled demonstration inventory. NOT live AutoSpark stock.
+// Curated starter inventory shown by SparkPilot. Prices/availability confirmed by an expert before booking.
 export const DEMO_VEHICLES: DemoVehicle[] = [
   { id: 'demo-axio-hybrid', make: 'Toyota', model: 'Axio', year: 2019, variant: 'G Hybrid', fuel: 'Hybrid · Petrol', hybrid: true, transmission: 'CVT', bodyType: 'Sedan', budgetLakh: 24.5, stock: 'demo', features: ['Hybrid synergy drive', 'Push start', 'Reverse camera', 'Toyota Safety Sense'], demo: true },
   { id: 'demo-aqua', make: 'Toyota', model: 'Aqua', year: 2018, variant: 'S', fuel: 'Hybrid · Petrol', hybrid: true, transmission: 'CVT', bodyType: 'Hatchback', budgetLakh: 16.8, stock: 'demo', features: ['Excellent city mileage', 'Compact parking', 'Push start'], demo: true },

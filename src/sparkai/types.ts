@@ -1,4 +1,4 @@
-// SparkAI shared types — frontend skeleton (demo-safe, no live inventory claims)
+// SparkPilot shared types — frontend types (production: expert confirms stock/prices before booking)
 export type Language = 'en' | 'bn' | 'mixed';
 export type Role = 'user' | 'assistant' | 'system';
 

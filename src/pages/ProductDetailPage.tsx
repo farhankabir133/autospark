@@ -19,7 +19,7 @@ import {
   Check,
   Sparkles,
 } from 'lucide-react';
-import { openSparkAI } from '../sparkai/components/openSparkAI';
+import { openSparkPilot } from '../sparkai/components/openSparkPilot';
 import { supabase } from '../lib/supabase';
 import { getProductById, DEMO_PRODUCTS } from '../data/demoProducts';
 import { PageHead } from '../components/PageHead';
@@ -732,14 +732,14 @@ export const ProductDetailPage = () => {
                 {addedToCart ? 'Added to Cart!' : 'Add to Cart'}
               </button>
 
-              {/* Ask SparkAI — right-side assistant entry point for this product */}
+              {/* Ask SparkPilot — right-side assistant entry point for this product */}
               <button
-                onClick={() => openSparkAI(`I have a question about "${productName}" (৳${discountedPrice.toLocaleString()}, ${product.category}). Is it compatible with my car, and is it worth the price?`)}
+                onClick={() => openSparkPilot(`I have a question about "${productName}" (৳${discountedPrice.toLocaleString()}, ${product.category}). Is it compatible with my car, and is it worth the price?`)}
                 className="w-full py-3 rounded-lg font-bold flex items-center justify-center gap-2 transition text-white bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400"
-                aria-label={`Ask SparkAI about ${productName}`}
+                aria-label={`Ask SparkPilot about ${productName}`}
               >
                 <Sparkles size={20} aria-hidden />
-                {language === 'bn' ? 'SparkAI-কে জিজ্ঞাসা করুন' : 'Ask SparkAI about this product'}
+                {language === 'bn' ? 'SparkPilot-কে জিজ্ঞাসা করুন' : 'Ask SparkPilot about this product'}
               </button>
             </div>
 

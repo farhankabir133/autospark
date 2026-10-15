@@ -34,10 +34,13 @@ export function Card({ children, className = '' }: { children: ReactNode; classN
   );
 }
 
-export function DemoBadge() {
+export function LiveBadge() {
   return (
-    <span className="inline-flex items-center gap-1.5 rounded-full bg-amber-500/15 border border-amber-500/30 text-amber-600 dark:text-amber-300 text-[11px] font-bold px-2.5 py-1 uppercase tracking-wider">
-      <span className="w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse" /> Demo mode
+    <span className="inline-flex items-center gap-1.5 rounded-full bg-emerald-500/15 border border-emerald-500/30 text-emerald-600 dark:text-emerald-300 text-[11px] font-bold px-2.5 py-1 uppercase tracking-wider">
+      <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" /> Live · AI expert
     </span>
   );
 }
+
+/** @deprecated Use LiveBadge — kept for backwards compatibility. */
+export const DemoBadge = LiveBadge;

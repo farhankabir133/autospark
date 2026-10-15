@@ -8,8 +8,8 @@ import { useTheme } from '../../contexts/ThemeContext';
 import type { ChatMessage, Conversation, ConversationIntent, DemoVehicle } from '../types';
 import { STARTER_ACTIONS, DEMO_VEHICLES, filterDemoVehicles } from '../data/demo';
 import { respond } from '../services/ai';
-import { SPARKAI_CONFIG } from '../config';
-import { SparkAILogo, SparkMark } from './Logo';
+import { SPARKPILOT_CONFIG } from '../config';
+import { SparkPilotLogo, SparkMark } from './Logo';
 import { SButton, Card, DemoBadge, useDark } from './ui';
 import { VehicleCard, VehicleComparison, ExpertHandoff } from './Vehicles';
 import { BudgetPlanner } from './Finance';
@@ -20,7 +20,7 @@ const now = () => Date.now();
 
 const GREETING: ChatMessage = {
   id: 'greet', role: 'assistant', createdAt: now(),
-  text: "Hello! I'm SparkAI — let's find the right car for you.\n\nTell me what you're looking for, and I'll help you explore options, understand your budget, and connect with an AutoSpark expert when you're ready.",
+  text: "Hello! I'm SparkPilot — let's find the right car for you.\n\nTell me what you're looking for, and I'll help you explore options, understand your budget, and connect with an AutoSpark expert when you're ready.",
 };
 
 function newConversation(): Conversation {
@@ -49,7 +49,7 @@ function intentMessage(intent: ConversationIntent): string {
   }
 }
 
-export function SparkAIApp() {
+export function SparkPilotApp() {
   const { theme, toggleTheme } = useTheme();
   const dark = useDark();
   const [convs, setConvs] = useState<Conversation[]>(() => {
@@ -108,7 +108,7 @@ export function SparkAIApp() {
       if (r.followUp === 'lead' || r.intent === 'expert' || r.followUp === 'preorder' || r.followUp === 'service') setPanel('expert');
       if (r.intent === 'budget') setPanel('budget');
     } catch {
-      patch(conv.id, (c) => ({ ...c, messages: [...c.messages, { id: uid(), role: 'assistant', text: 'Something went wrong reaching the demo assistant. Please retry — nothing was submitted.', createdAt: now(), status: 'failed' }] }));
+      patch(conv.id, (c) => ({ ...c, messages: [...c.messages, { id: uid(), role: 'assistant', text: 'Something went wrong reaching SparkPilot. Please retry — nothing was submitted.', createdAt: now(), status: 'failed' }] }));
     } finally { setBusy(false); }
   }, [busy, conv, patch]);
 
@@ -137,11 +137,11 @@ export function SparkAIApp() {
 
   const sidebarBody = (
     <div className="flex flex-col h-full gap-4">
-      <SparkAILogo dark={dark} />
+      <SparkPilotLogo dark={dark} />
       <SButton onClick={() => { const n = newConversation(); setConvs((p) => [n, ...p]); setActiveId(n.id); setSidebar(false); }}>
         <Plus className="w-4 h-4" /> New conversation
       </SButton>
-      <nav aria-label="SparkAI sections" className="space-y-1">
+      <nav aria-label="SparkPilot sections" className="space-y-1">
         {NAV.map((n) => (
           <button
             key={n.act}
@@ -168,7 +168,7 @@ export function SparkAIApp() {
           <button onClick={toggleTheme} aria-label="Toggle theme" className="inline-flex items-center gap-2 text-xs font-semibold px-3 min-h-[40px] rounded-full border border-current/20">
             {theme === 'dark' ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />} {theme === 'dark' ? 'Light' : 'Dark'}
           </button>
-          <span className="text-[11px] opacity-50">{SPARKAI_CONFIG.hours}</span>
+          <span className="text-[11px] opacity-50">{SPARKPILOT_CONFIG.hours}</span>
         </div>
       </div>
     </div>
@@ -176,12 +176,12 @@ export function SparkAIApp() {
 
   return (
     <div className={`min-h-[calc(100dvh-0px)] ${shell}`}>
-      <div aria-live="polite" className="sr-only">{busy ? 'SparkAI is typing' : ''}</div>
+      <div aria-live="polite" className="sr-only">{busy ? 'SparkPilot is typing' : ''}</div>
       {toast && <div role="status" className="fixed top-4 left-1/2 -translate-x-1/2 z-50 bg-emerald-600 text-white text-xs font-semibold px-4 py-2 rounded-full shadow-lg flex items-center gap-2"><Check className="w-3.5 h-3.5" />{toast}</div>}
 
       <div className="mx-auto max-w-[1400px] px-3 sm:px-5 py-4 grid gap-4 lg:grid-cols-[250px_minmax(0,1fr)_320px]">
         {/* Sidebar (desktop) */}
-        <aside className={`hidden lg:block rounded-2xl border p-4 sticky top-4 h-[calc(100dvh-2rem)] ${panelBg}`} aria-label="SparkAI navigation">{sidebarBody}</aside>
+        <aside className={`hidden lg:block rounded-2xl border p-4 sticky top-4 h-[calc(100dvh-2rem)] ${panelBg}`} aria-label="SparkPilot navigation">{sidebarBody}</aside>
 
         {/* Mobile drawer */}
         <AnimatePresence>
@@ -201,9 +201,9 @@ export function SparkAIApp() {
             <button className="lg:hidden p-2.5 -ml-2" aria-label="Open menu" onClick={() => setSidebar(true)}><Menu className="w-5 h-5" /></button>
             <SparkMark size={30} />
             <div className="min-w-0">
-              <p className="font-bold text-sm leading-tight truncate">{conv?.title || 'SparkAI'}</p>
+              <p className="font-bold text-sm leading-tight truncate">{conv?.title || 'SparkPilot'}</p>
               <p className="text-[11px] opacity-60 flex items-center gap-1.5">
-                <span className={`w-1.5 h-1.5 rounded-full ${aiLive === false ? 'bg-amber-500' : 'bg-emerald-500'}`} /> {aiLive === false ? 'Demo mode · AI offline' : 'AI sales expert · replies instantly'}
+                <span className={`w-1.5 h-1.5 rounded-full ${aiLive === false ? 'bg-amber-500' : 'bg-emerald-500'}`} /> {aiLive === false ? 'Connecting to AI expert…' : 'AI sales expert · replies instantly'}
               </p>
             </div>
             <div className="ml-auto flex items-center gap-2"><DemoBadge /></div>
@@ -258,7 +258,7 @@ export function SparkAIApp() {
             ))}
 
             {busy && (
-              <div className="flex gap-2.5" aria-label="SparkAI is typing">
+              <div className="flex gap-2.5" aria-label="SparkPilot is typing">
                 <SparkMark size={28} />
                 <div className={`rounded-2xl px-4 py-3 flex gap-1.5 ${dark ? 'bg-white/[0.05] border border-white/10' : 'bg-slate-100 border border-slate-200'}`}>
                   {[0, 1, 2].map((i) => <motion.span key={i} className="w-2 h-2 rounded-full bg-cyan-500" animate={reduceMotion ? {} : { opacity: [0.3, 1, 0.3] }} transition={{ duration: 1, repeat: Infinity, delay: i * 0.2 }} />)}
@@ -281,7 +281,7 @@ export function SparkAIApp() {
             onSubmit={(e) => { e.preventDefault(); send(input); }}
           >
             <div className={`flex items-end gap-2 rounded-2xl border p-2 pl-4 ${dark ? 'bg-white/[0.04] border-white/10 focus-within:border-cyan-500/50' : 'bg-slate-50 border-slate-200 focus-within:border-cyan-500'}`}>
-              <label htmlFor="sparkai-input" className="sr-only">Message SparkAI (Enter to send, Shift+Enter for new line)</label>
+              <label htmlFor="sparkai-input" className="sr-only">Message SparkPilot (Enter to send, Shift+Enter for new line)</label>
               <textarea
                 id="sparkai-input"
                 value={input}
@@ -297,7 +297,7 @@ export function SparkAIApp() {
                 ? <button type="button" aria-label="Stop" onClick={() => setBusy(false)} className="p-3 rounded-xl bg-red-500/15 text-red-500"><Square className="w-4 h-4" /></button>
                 : <button type="submit" aria-label="Send message" disabled={!input.trim()} className="p-3 rounded-xl bg-gradient-to-r from-cyan-500 to-blue-600 text-white disabled:opacity-40 min-w-[48px] min-h-[48px] flex items-center justify-center"><Send className="w-4 h-4" /></button>}
             </div>
-            <p className="text-[10px] opacity-50 mt-1.5 px-1 flex items-center gap-1"><Sparkles className="w-3 h-3" /> SparkAI expert — demo inventory shown; prices/stock must be confirmed by an expert.</p>
+            <p className="text-[10px] opacity-50 mt-1.5 px-1 flex items-center gap-1"><Sparkles className="w-3 h-3" /> SparkPilot sales expert — prices & availability confirmed by an AutoSpark expert before booking.</p>
           </form>
         </section>
 
@@ -319,7 +319,7 @@ export function SparkAIApp() {
                 <label className="flex items-center gap-2 text-xs font-semibold cursor-pointer"><input type="checkbox" checked={filters.hybrid === true} onChange={(e) => setFilters((f) => ({ ...f, hybrid: e.target.checked ? true : undefined }))} className="w-4 h-4 accent-cyan-500" /> Hybrid only</label>
                 <div className="space-y-2.5 max-h-[52dvh] overflow-y-auto pr-0.5">
                   {discovered.map((v) => <VehicleCard key={v.id} v={v} onAsk={askVehicle} onCompare={(x) => { setCompare((p) => [...p.filter((y) => y.id !== x.id), x].slice(-3)); setPanel('compare'); }} onExpert={expertVehicle} />)}
-                  {!discovered.length && <p className="text-xs opacity-60">No demo matches — widen the budget or clear filters.</p>}
+                  {!discovered.length && <p className="text-xs opacity-60">No matches — widen the budget or clear filters.</p>}
                 </div>
                 {(conv.preferences.budgetLakh || conv.preferences.bodyType) && (
                   <Card className="p-3 text-xs"><p className="font-bold mb-1">Your preferences (this chat)</p>
@@ -334,8 +334,8 @@ export function SparkAIApp() {
               <div className="space-y-4">
                 <ExpertHandoff interest={conv.preferences.bodyType ?? conv.title} />
                 <PreorderMini step={preorderStep} setStep={setPreorderStep} onSend={send} />
-                <LeadForm interestDefault={conv.title === 'New conversation' ? '' : conv.title} onDone={(ref) => { setToast(`Lead ${ref} submitted (demo).`); setTimeout(() => setToast(null), 3000); }} />
-                <p className="text-[11px] opacity-50">{SPARKAI_CONFIG.productName} {SPARKAI_CONFIG.attribution} · {SPARKAI_CONFIG.showroom} · {SPARKAI_CONFIG.hours}</p>
+                <LeadForm interestDefault={conv.title === 'New conversation' ? '' : conv.title} onDone={(ref) => { setToast(`Lead ${ref} submitted.`); setTimeout(() => setToast(null), 3000); }} />
+                <p className="text-[11px] opacity-50">{SPARKPILOT_CONFIG.productName} {SPARKPILOT_CONFIG.attribution} · {SPARKPILOT_CONFIG.showroom} · {SPARKPILOT_CONFIG.hours}</p>
               </div>
             )}
           </div>

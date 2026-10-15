@@ -1,5 +1,5 @@
 // The Intelligent Spark — original geometric brand mark (custom vector paths).
-export function SparkMark({ size = 36, title = 'SparkAI symbol' }: { size?: number; title?: string }) {
+export function SparkMark({ size = 36, title = 'SparkPilot symbol' }: { size?: number; title?: string }) {
   return (
     <svg width={size} height={size} viewBox="0 0 48 48" role="img" aria-label={title} aria-hidden={title ? undefined : true}>
       <defs>
@@ -22,12 +22,12 @@ export function SparkMark({ size = 36, title = 'SparkAI symbol' }: { size?: numb
   );
 }
 
-export function SparkAILogo({ dark = true, compact = false }: { dark?: boolean; compact?: boolean }) {
+export function SparkPilotLogo({ dark = true, compact = false }: { dark?: boolean; compact?: boolean }) {
   if (compact) return <SparkMark size={32} />;
   const fg = dark ? '#FFFFFF' : '#0B1220';
   const sub = dark ? '#93A4BC' : '#5B6B82';
   return (
-    <span style={{ display: 'inline-flex', alignItems: 'center', gap: 10 }} role="img" aria-label="SparkAI by AutoSpark">
+    <span style={{ display: 'inline-flex', alignItems: 'center', gap: 10 }} role="img" aria-label="SparkPilot by AutoSpark">
       <SparkMark size={36} />
       <span style={{ lineHeight: 1.05 }}>
         <span style={{ display: 'block', fontWeight: 800, fontSize: 19, letterSpacing: '-0.02em', color: fg }}>

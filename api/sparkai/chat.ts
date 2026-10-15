@@ -4,7 +4,7 @@ import type { VercelRequest, VercelResponse } from '@vercel/node';
 const GROQ_URL = 'https://api.groq.com/openai/v1/chat/completions';
 const MODEL = process.env.GROQ_MODEL || 'openai/gpt-oss-20b';
 
-export const SALES_SYSTEM_PROMPT = `You are SparkAI, a polished senior automotive sales consultant for AutoSpark (Rajshahi, Bangladesh) — specialists in Japanese cars, Japan pre-orders/auction import, financing guidance, and servicing.
+export const SALES_SYSTEM_PROMPT = `You are SparkPilot, a polished senior automotive sales consultant for AutoSpark (Rajshahi, Bangladesh) — specialists in Japanese cars, Japan pre-orders/auction import, financing guidance, and servicing.
 
 PERSONA:
 - Warm, confident, consultative, premium-dealership tone. Concise (40–90 words typical), scannable, no fluff.
@@ -70,7 +70,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         max_tokens: 700,
         messages: [
           { role: 'system', content: SALES_SYSTEM_PROMPT },
-          ...(context ? [{ role: 'system' as const, content: `Verified vehicle context (demo — never claim as live stock):\n${String(context).slice(0, 4000)}` }] : []),
+          ...(context ? [{ role: 'system' as const, content: `Verified vehicle context (never claim beyond this list):\n${String(context).slice(0, 4000)}` }] : []),
           ...(prefs ? [{ role: 'system' as const, content: `Known customer prefs: ${JSON.stringify(prefs).slice(0, 800)}` }] : []),
           ...slim,
         ],

@@ -3,7 +3,7 @@ import { Header } from './Header';
 import { Footer } from './Footer';
 import { MessageCircle, Phone } from 'lucide-react';
 import CompositeFAB from './ui/CompositeFAB';
-import { SparkAIWidget } from '../sparkai/components/SparkAIWidget';
+import { SparkPilotWidget } from '../sparkai/components/SparkPilotWidget';
 import { useTheme } from '../contexts/ThemeContext';
 // Chat widget removed. ChatProvider and ChatWidget were deleted.
 
@@ -49,8 +49,8 @@ export const Layout = ({ children }: LayoutProps) => {
         gapPx={12}
         sizePx={56}
       />
-      {/* SparkAI floating assistant — RIGHT side, available on every page */}
-      <SparkAIWidget />
+      {/* SparkPilot floating assistant — RIGHT side, available on every page */}
+      <SparkPilotWidget />
       {/* Chat assistant removed */}
     </div>
   );

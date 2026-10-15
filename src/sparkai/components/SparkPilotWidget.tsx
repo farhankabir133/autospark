@@ -4,23 +4,23 @@ import { Send, X, Maximize2, MessageCircle } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { useTheme } from '../../contexts/ThemeContext';
 import { respond } from '../services/ai';
-import { SPARKAI_CONFIG, buildWhatsAppUrl } from '../config';
+import { SPARKPILOT_CONFIG, buildWhatsAppUrl } from '../config';
 import { SparkMark } from './Logo';
 import { DemoBadge } from './ui';
-import { SPARKAI_OPEN_EVENT } from './openSparkAI';
+import { SPARKPILOT_OPEN_EVENT } from './openSparkPilot';
 import type { ChatMessage, CustomerPreferences } from '../types';
 
 const uid = () => Math.random().toString(36).slice(2, 10);
 const SEED: ChatMessage = {
   id: 'seed', role: 'assistant', createdAt: Date.now(),
-  text: "Hi! I'm SparkAI, AutoSpark's sales assistant. Ask me about this product — price, compatibility, budget — or anything about Japanese cars.",
+  text: "Hi! I'm SparkPilot, AutoSpark's sales assistant. Ask me about this product — price, compatibility, budget — or anything about Japanese cars.",
 };
 
 /**
- * Floating SparkAI assistant — fixed on the RIGHT side of every page.
+ * Floating SparkPilot assistant — fixed on the RIGHT side of every page.
  * Compact chat drawer; full experience lives at /sparkai.
  */
-export function SparkAIWidget() {
+export function SparkPilotWidget() {
   const { theme } = useTheme();
   const dark = theme === 'dark';
   const [open, setOpen] = useState(false);
@@ -39,8 +39,8 @@ export function SparkAIWidget() {
       setUnread(false);
       if (detail?.message) void sendRef.current(detail.message);
     };
-    window.addEventListener(SPARKAI_OPEN_EVENT, onOpen);
-    return () => window.removeEventListener(SPARKAI_OPEN_EVENT, onOpen);
+    window.addEventListener(SPARKPILOT_OPEN_EVENT, onOpen);
+    return () => window.removeEventListener(SPARKPILOT_OPEN_EVENT, onOpen);
   }, []);
 
   useEffect(() => {
@@ -59,7 +59,7 @@ export function SparkAIWidget() {
       setMessages((p) => [...p, { id: uid(), role: 'assistant', text: r.text, createdAt: Date.now(), status: 'sent', vehicles: r.vehicles }]);
       if (!open) setUnread(true);
     } catch {
-      setMessages((p) => [...p, { id: uid(), role: 'assistant', text: 'Sorry — the demo assistant failed. Please retry; nothing was submitted.', createdAt: Date.now(), status: 'failed' }]);
+      setMessages((p) => [...p, { id: uid(), role: 'assistant', text: 'Sorry — SparkPilot failed to respond. Please retry; nothing was submitted.', createdAt: Date.now(), status: 'failed' }]);
     } finally {
       setBusy(false);
     }
@@ -76,14 +76,14 @@ export function SparkAIWidget() {
           initial={reduceMotion ? false : { scale: 0.6, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}
           onClick={() => { setOpen(true); setUnread(false); }}
-          aria-label="Open SparkAI assistant"
+          aria-label="Open SparkPilot assistant"
           className="fixed z-50 right-4 sm:right-6 rounded-full p-[3px] shadow-2xl focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400"
           style={{ bottom: 'calc(env(safe-area-inset-bottom,0px) + 16px)', background: 'linear-gradient(135deg,#22D3EE,#2563EB,#7C3AED)' }}
         >
           <span className={`relative flex items-center gap-2 rounded-full pl-1.5 pr-4 py-1.5 ${dark ? 'bg-[#0B1322]' : 'bg-white'}`}>
             <SparkMark size={36} />
             <span className="text-left leading-tight">
-              <span className={`block text-[13px] font-extrabold ${dark ? 'text-white' : 'text-slate-900'}`}>Ask SparkAI</span>
+              <span className={`block text-[13px] font-extrabold ${dark ? 'text-white' : 'text-slate-900'}`}>Ask SparkPilot</span>
               <span className="block text-[10px] font-medium opacity-60">AutoSpark expert AI</span>
             </span>
             {unread && <span className="absolute -top-1 -right-1 w-3.5 h-3.5 rounded-full bg-red-500 border-2 border-white" aria-label="New message" />}
@@ -104,7 +104,7 @@ export function SparkAIWidget() {
             <motion.section
               role="dialog"
               aria-modal="true"
-              aria-label="SparkAI assistant"
+              aria-label="SparkPilot assistant"
               initial={reduceMotion ? { opacity: 0 } : { x: 420, opacity: 0.5 }}
               animate={{ x: 0, opacity: 1 }}
               exit={reduceMotion ? { opacity: 0 } : { x: 420, opacity: 0 }}
@@ -116,16 +116,16 @@ export function SparkAIWidget() {
               <header className={`flex items-center gap-2.5 px-4 py-3 border-b ${dark ? 'border-white/10' : 'border-slate-200'}`}>
                 <SparkMark size={30} />
                 <div className="min-w-0 flex-1">
-                  <p className="font-bold text-sm leading-tight">SparkAI <span className="font-medium opacity-50 text-xs">by AutoSpark</span></p>
+                  <p className="font-bold text-sm leading-tight">SparkPilot <span className="font-medium opacity-50 text-xs">by AutoSpark</span></p>
                   <p className="text-[11px] opacity-60 flex items-center gap-1.5">
                     <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" /> Online · AI expert
                   </p>
                 </div>
                 <DemoBadge />
-                <Link to="/sparkai" aria-label="Open full SparkAI page" className="p-2.5 rounded-lg hover:bg-black/5 dark:hover:bg-white/10" onClick={() => setOpen(false)}>
+                <Link to="/sparkpilot" aria-label="Open full SparkPilot page" className="p-2.5 rounded-lg hover:bg-black/5 dark:hover:bg-white/10" onClick={() => setOpen(false)}>
                   <Maximize2 className="w-4 h-4" />
                 </Link>
-                <button aria-label="Close SparkAI" onClick={() => setOpen(false)} className="p-2.5 rounded-lg hover:bg-black/5 dark:hover:bg-white/10 min-w-[44px] min-h-[44px]">
+                <button aria-label="Close SparkPilot" onClick={() => setOpen(false)} className="p-2.5 rounded-lg hover:bg-black/5 dark:hover:bg-white/10 min-w-[44px] min-h-[44px]">
                   <X className="w-5 h-5" />
                 </button>
               </header>
@@ -148,7 +148,7 @@ export function SparkAIWidget() {
                               onClick={() => void send(`Tell me more about the ${v.make} ${v.model} ${v.year}.`)}
                               className={`block w-full text-left text-xs font-semibold rounded-lg px-2.5 py-2 border ${dark ? 'border-cyan-500/30 bg-cyan-500/10' : 'border-cyan-600/30 bg-cyan-50'}`}
                             >
-                              {v.make} {v.model} {v.year} · ৳{v.budgetLakh.toFixed(1)} lakh <span className="opacity-60 font-normal">(demo)</span>
+                              {v.make} {v.model} {v.year} · ৳{v.budgetLakh.toFixed(1)} lakh <span className="opacity-60 font-normal">· verify with expert</span>
                             </button>
                           ))}
                         </div>
@@ -157,7 +157,7 @@ export function SparkAIWidget() {
                   </div>
                 ))}
                 {busy && (
-                  <div className="flex gap-2" aria-label="SparkAI is typing">
+                  <div className="flex gap-2" aria-label="SparkPilot is typing">
                     <SparkMark size={26} />
                     <div className={`rounded-2xl px-4 py-3 flex gap-1.5 ${dark ? 'bg-white/[0.06]' : 'bg-slate-100'}`}>
                       {[0, 1, 2].map((i) => (
@@ -176,7 +176,7 @@ export function SparkAIWidget() {
 
               <form className={`p-3 border-t ${dark ? 'border-white/10' : 'border-slate-200'}`} onSubmit={(e) => { e.preventDefault(); void send(input); }}>
                 <div className={`flex items-center gap-2 rounded-xl border px-2 py-1.5 ${dark ? 'bg-white/[0.04] border-white/10 focus-within:border-cyan-500/50' : 'bg-slate-50 border-slate-200 focus-within:border-cyan-500'}`}>
-                  <label htmlFor="sparkai-widget-input" className="sr-only">Message SparkAI</label>
+                  <label htmlFor="sparkai-widget-input" className="sr-only">Message SparkPilot</label>
                   <input
                     id="sparkai-widget-input"
                     value={input}
@@ -191,9 +191,9 @@ export function SparkAIWidget() {
                   </button>
                 </div>
                 <div className="flex items-center justify-between mt-1.5 px-0.5">
-                  <Link to="/sparkai" onClick={() => setOpen(false)} className="text-[11px] font-semibold text-cyan-600 dark:text-cyan-300 hover:underline">Open full SparkAI →</Link>
+                  <Link to="/sparkpilot" onClick={() => setOpen(false)} className="text-[11px] font-semibold text-cyan-600 dark:text-cyan-300 hover:underline">Open full SparkPilot →</Link>
                   <a href={buildWhatsAppUrl('Hello AutoSpark! I need help with a product.')} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 text-[11px] font-semibold opacity-70 hover:opacity-100">
-                    <MessageCircle className="w-3 h-3" /> {SPARKAI_CONFIG.phoneDisplay}
+                    <MessageCircle className="w-3 h-3" /> {SPARKPILOT_CONFIG.phoneDisplay}
                   </a>
                 </div>
               </form>

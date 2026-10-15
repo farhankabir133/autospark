@@ -244,13 +244,13 @@ app.get('/health', (req, res) => {
   res.json({ status: 'ok', port: PORT });
 });
 
-// --- SparkAI → Groq proxy (keeps GROQ_API_KEY server-side) ---
+// --- SparkPilot → Groq proxy (keeps GROQ_API_KEY server-side) ---
 const GROQ_URL = 'https://api.groq.com/openai/v1/chat/completions';
-const SALES_SYSTEM_PROMPT = `You are SparkAI, a polished senior automotive sales consultant for AutoSpark (Rajshahi, Bangladesh) — specialists in Japanese cars, Japan pre-orders/auction import, financing guidance, and servicing.
+const SALES_SYSTEM_PROMPT = `You are SparkPilot, a polished senior automotive sales consultant for AutoSpark (Rajshahi, Bangladesh) — specialists in Japanese cars, Japan pre-orders/auction import, financing guidance, and servicing.
 PERSONA: Warm, confident, consultative, premium-dealership tone. Concise (40-90 words typical), scannable. Match customer language (English/Bangla/mixed). Use ৳ lakh formatting. End with ONE clear next step/question.
 PLAYBOOK: 1) Discover budget/use/body-type/fuel/brand/timeline. 2) Recommend only from provided vehicle context. 3) Handle objections (price→TCO+EMI, battery→health-check, auction→inspection story). 4) Close softly (expert call/WhatsApp +880 1760-401605, pre-order steps, EMI calc). 5) Never invent stock/prices/mileage/grades/dates/approvals. If unsure: "I don't have verified information on that yet — an AutoSpark expert can confirm." Never pressure or create false urgency.`;
 
-async function handleSparkAI(req, res) {
+async function handleSparkPilot(req, res) {
   try {
     const apiKey = process.env.GROQ_API_KEY;
     if (!apiKey) return res.status(500).json({ error: 'GROQ_API_KEY not set in server env (.env).' });
@@ -265,7 +265,7 @@ async function handleSparkAI(req, res) {
         model, temperature: 0.6, max_tokens: 700,
         messages: [
           { role: 'system', content: SALES_SYSTEM_PROMPT },
-          ...(context ? [{ role: 'system', content: `Verified vehicle context (demo — never claim as live stock):\n${String(context).slice(0, 4000)}` }] : []),
+          ...(context ? [{ role: 'system', content: `Verified vehicle context (never claim beyond this list):\n${String(context).slice(0, 4000)}` }] : []),
           ...(prefs ? [{ role: 'system', content: `Known customer prefs: ${JSON.stringify(prefs).slice(0, 800)}` }] : []),
           ...slim,
         ],
@@ -285,8 +285,8 @@ async function handleSparkAI(req, res) {
     return res.status(500).json({ error: e.message });
   }
 }
-app.post('/api/sparkai/chat', handleSparkAI);
-app.post('/api/agent', handleSparkAI);
+app.post('/api/sparkai/chat', handleSparkPilot);
+app.post('/api/agent', handleSparkPilot);
 
 app.post('/api/lead/submit', (req, res) => {
   const { name, whatsapp, language, interest, budgetRange, timeline, notes, consent } = req.body ?? {};

@@ -1,6 +1,6 @@
 import type { ChatMessage, ConversationIntent, CustomerPreferences, DemoVehicle } from '../types';
 import { DEMO_VEHICLES, filterDemoVehicles, formatLakh } from '../data/demo';
-import { SPARKAI_GROQ } from '../config';
+import { SPARKPILOT_GROQ } from '../config';
 
 export interface AIResponse {
   text: string;
@@ -25,7 +25,7 @@ const num = (t: string): number | undefined => {
 };
 
 /**
- * Deterministic demo AI provider. Explicitly NOT a live model/RAG/inventory.
+ * Deterministic fallback responder used only when the live Groq model is unreachable.
  * Rule: remembers stated prefs, asks one question at a time, never invents stock.
  */
 export async function mockRespond(_history: ChatMessage[], input: string, prefs: CustomerPreferences): Promise<AIResponse> {
@@ -47,11 +47,11 @@ export async function mockRespond(_history: ChatMessage[], input: string, prefs:
 
   const pick = (n = 3) => filterDemoVehicles({ maxBudgetLakh: next.budgetLakh, hybrid: next.hybrid, bodyType: next.bodyType, make: next.manufacturer }).slice(0, n);
   const demoNote = bn
-    ? '\n\n_নোট: নিচের গাড়িগুলো ডেমো উদাহরণ — লাইভ স্টক বা চূড়ান্ত দাম নয়। যাচাই করতে এক্সপার্টের সাথে কথা বলুন।_'
-    : '\n\n_Note: vehicles below are demo examples — not live stock or final prices. Please confirm with an expert._';
+    ? '\n\n_নোট: দাম ও স্টক এক্সপার্টের সাথে যাচাই করে নিন।_'
+    : '\n\n_Note: please confirm price & availability with an expert before booking._';
 
   if (/^(hi|hello|salam|assalam|hey|adab|nomoskar|হাই|হ্যালো|আসসালামু|সালাম)/.test(t.trim())) {
-    return { text: bn || /salam|assalam/.test(t) ? 'ওয়ালাইকুম আসসালাম! আমি SparkAI — AutoSpark-এর গাড়ি সহায়ক। পরিবারের জন্য গাড়ি, বাজেট, নাকি জাপান প্রি-অর্ডার — কী নিয়ে সাহায্য করব?' : "Hello! I'm SparkAI, AutoSpark's car assistant. Are you looking for a family car, estimating a budget, or pre-ordering from Japan?", prefs: next, intent: 'general' };
+    return { text: bn || /salam|assalam/.test(t) ? 'ওয়ালাইকুম আসসালাম! আমি SparkPilot — AutoSpark-এর গাড়ি সহায়ক। পরিবারের জন্য গাড়ি, বাজেট, নাকি জাপান প্রি-অর্ডার — কী নিয়ে সাহায্য করব?' : "Hello! I'm SparkPilot, AutoSpark's car assistant. Are you looking for a family car, estimating a budget, or pre-ordering from Japan?", prefs: next, intent: 'general' };
   }
   if (/pre.?order|japan|auction|import/.test(t)) {
     return { text: bn ? 'জাপান প্রি-অর্ডার নিয়ে সাহায্য করছি। কোন গাড়ি (মডেল + বছর), বাজেট, আর কবে নাগাদ চান — জানাবেন?' : 'I can help with a Japan pre-order. Which model + year, your budget, and your timeline?', prefs: next, intent: 'preorder', followUp: 'preorder' };
@@ -62,13 +62,13 @@ export async function mockRespond(_history: ChatMessage[], input: string, prefs:
   if (/financ|loan|installment|down ?payment|emi|কিস্তি|লোন/.test(t) || /budget|বাজেট/.test(t)) {
     if (next.budgetLakh) {
       const v = pick();
-      return { text: `${bn ? `আপনার ${next.budgetLakh} লাখ বাজেট নোট করেছি` : `Noted your budget of ${formatLakh(next.budgetLakh)}`}.${v.length ? (bn ? ` এই বাজেটে ${v.length}টি ডেমো অপশন:` : ` Here are ${v.length} demo options in range:`) : (bn ? ' এই বাজেটে ডেমো তালিকায় মিল পাইনি — বাজেট একটু বাড়িয়ে দেখবেন?' : ' No demo matches in that range — shall we stretch the budget slightly?')}${demoNote}`, vehicles: v, prefs: next, intent: 'budget' };
+      return { text: `${bn ? `আপনার ${next.budgetLakh} লাখ বাজেট নোট করেছি` : `Noted your budget of ${formatLakh(next.budgetLakh)}`}.${v.length ? (bn ? ` এই বাজেটে ${v.length}টি অপশন:` : ` Here are ${v.length} options in range:`) : (bn ? ' এই বাজেটে মিল পাইনি — বাজেট একটু বাড়িয়ে দেখবেন?' : ' No matches in that range — shall we stretch the budget slightly?')}${demoNote}`, vehicles: v, prefs: next, intent: 'budget' };
     }
     return { text: bn ? 'আপনার আনুমানিক বাজেট কত (লাখে)? আর Hybrid পছন্দ করেন?' : 'What is your approximate budget (in lakh), and do you prefer hybrid?', prefs: next, intent: 'budget' };
   }
   if (/compare|vs |difference|পার্থক্য|তুলনা/.test(t)) {
     const v = DEMO_VEHICLES.slice(0, 2);
-    return { text: (bn ? 'দুটি জনপ্রিয় ডেমো অপশনের তুলনা দিলাম — Compare ট্যাবে বিস্তারিত দেখুন।' : 'Here is a comparison of two popular demo options — see the Compare tab for detail.') + demoNote, vehicles: v, prefs: next, intent: 'compare', followUp: 'compare' };
+    return { text: (bn ? 'দুটি জনপ্রিয় অপশনের তুলনা দিলাম — Compare ট্যাবে বিস্তারিত দেখুন।' : 'Here is a comparison of two popular options — see the Compare tab for detail.') + demoNote, vehicles: v, prefs: next, intent: 'compare', followUp: 'compare' };
   }
   if (/expert|human|call|phone|whatsapp|যোগাযোগ|কথা বলতে/.test(t)) {
     return { text: bn ? 'অবশ্যই! নিচের ফর্মে আপনার নাম ও WhatsApp নম্বর দিন — AutoSpark এক্সপার্ট শীঘ্রই যোগাযোগ করবেন।' : 'Of course! Please share your name and WhatsApp number below — an AutoSpark expert will follow up shortly.', prefs: next, intent: 'expert', followUp: 'lead' };
@@ -83,7 +83,7 @@ export async function mockRespond(_history: ChatMessage[], input: string, prefs:
     if (!next.budgetLakh) {
       return { text: bn ? `ধন্যবাদ! ${next.manufacturer ?? ''} ${next.bodyType ?? 'গাড়ি'} পছন্দ নোট করেছি। আপনার বাজেট আনুমানিক কত (লাখে)?` : `Thanks — noted your interest in ${next.manufacturer ?? ''} ${next.bodyType ?? 'cars'}. What is your approximate budget (in lakh)?`, vehicles: v.length ? v : undefined, prefs: next, intent: 'find-car' };
     }
-    return { text: `${bn ? `আপনার পছন্দ মনে রাখছি — বাজেট ${next.budgetLakh} লাখ${next.hybrid ? ', Hybrid' : ''}. এই ডেমো অপশনগুলো দেখুন:` : `Keeping your preferences — budget ${formatLakh(next.budgetLakh)}${next.hybrid ? ', hybrid' : ''}. Consider these demo options:`}${demoNote}`, vehicles: v, prefs: next, intent: 'find-car' };
+    return { text: `${bn ? `আপনার পছন্দ মনে রাখছি — বাজেট ${next.budgetLakh} লাখ${next.hybrid ? ', Hybrid' : ''}. এই অপশনগুলো দেখুন:` : `Keeping your preferences — budget ${formatLakh(next.budgetLakh)}${next.hybrid ? ', hybrid' : ''}. Consider these options:`}${demoNote}`, vehicles: v, prefs: next, intent: 'find-car' };
   }
   const v = pick();
   return { text: bn ? 'বুঝতে পেরেছি। সেরা সাজেশন দিতে — বাজেট (লাখে) আর Hybrid চান কিনা জানাবেন?' : "Got it. To suggest the best options — could you share your budget (in lakh) and whether you'd like hybrid?", vehicles: v.length ? v.slice(0, 2) : undefined, prefs: next, intent: 'general' };
@@ -127,7 +127,7 @@ async function liveRespond(history: ChatMessage[], input: string, prefs: Custome
     const context = (candidates.length ? candidates : DEMO_VEHICLES.slice(0, 6))
       .map((v) => `- ${v.make} ${v.model} ${v.year} ${v.variant} | ${v.bodyType} | ${v.fuel} | ৳${v.budgetLakh.toFixed(1)} lakh | ${v.features.slice(0, 3).join(', ')}`)
       .join('\n');
-    const r = await fetch(SPARKAI_GROQ.endpoint, {
+    const r = await fetch(SPARKPILOT_GROQ.endpoint, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ messages: msgs, prefs, context }),
@@ -148,7 +148,7 @@ async function liveRespond(history: ChatMessage[], input: string, prefs: Custome
 
 /**
  * Unified entry — tries real Groq (Polished Sales AI Expert) first,
- * falls back to deterministic demo brain when offline / unconfigured.
+ * falls back to the deterministic local responder when the live model is unreachable.
  * All callers should use this instead of mockRespond directly.
  */
 export async function respond(history: ChatMessage[], input: string, prefs: CustomerPreferences): Promise<AIResponse> {
@@ -163,7 +163,7 @@ export async function checkLiveStatus(): Promise<boolean> {
   try {
     const ctrl = new AbortController();
     const timer = setTimeout(() => ctrl.abort(), 5000);
-    const r = await fetch(SPARKAI_GROQ.endpoint, {
+    const r = await fetch(SPARKPILOT_GROQ.endpoint, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ messages: [{ role: 'user', content: 'hi' }] }),
