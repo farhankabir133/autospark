@@ -26,6 +26,7 @@ const PaymentSuccessPage = lazyWithRetry(() => import('./pages/PaymentSuccessPag
 const PaymentFailPage = lazyWithRetry(() => import('./pages/PaymentFailPage'));
 const PaymentCancelPage = lazyWithRetry(() => import('./pages/PaymentCancelPage'));
 const ThankYouPage = lazyWithRetry(() => import('./pages/ThankYouPage'));
+const SparkAIPage = lazyWithRetry(() => import('./pages/SparkAIPage').then(m => ({ default: m.SparkAIPage })));
 
 const NotFound = () => (
   <div className="min-h-[60vh] flex flex-col items-center justify-center p-8 text-center">
@@ -66,6 +67,7 @@ function App() {
             <Route path="/payment/fail" element={<Navigate to="/payment-fail" replace />} />
             <Route path="/payment/cancel" element={<Navigate to="/payment-cancel" replace />} />
             <Route path="/thank-you" element={<Suspense fallback={<RouteFallback />}><ThankYouPage /></Suspense>} />
+            <Route path="/sparkai" element={<Suspense fallback={<RouteFallback />}><SparkAIPage /></Suspense>} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </Layout>

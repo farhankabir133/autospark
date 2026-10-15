@@ -28,6 +28,12 @@ export default defineConfig({
       },
       // during local development forward /api/* to the proxy server
       proxy: {
+        '/api/sparkai': {
+          target: 'http://localhost:8787',
+          changeOrigin: true,
+          secure: false,
+          ws: false,
+        },
         '/api/agent': {
           target: 'http://localhost:8787',
           changeOrigin: true,

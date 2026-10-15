@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import { ChevronLeft, ChevronRight, Phone, MessageCircle, Calculator, Fuel, Settings, Calendar, Gauge } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Phone, MessageCircle, Calculator, Fuel, Settings, Calendar, Gauge, Sparkles } from 'lucide-react';
+import { openSparkAI } from '../sparkai/components/openSparkAI';
 import { useLanguage } from '../contexts/LanguageContext';
 import { useTheme } from '../contexts/ThemeContext';
 import { Button } from '../components/ui/Button';
@@ -318,6 +319,15 @@ export const VehicleDetailsPage = () => {
                     <span>{t('vehicle.whatsapp')}</span>
                   </a>
                 </div>
+                {/* Ask SparkAI — right-side assistant entry point for this vehicle */}
+                <button
+                  onClick={() => openSparkAI(`I'm interested in the ${vehicle.brand_name} ${vehicle.model} (${vehicle.year}, ৳${Number(vehicle.price).toLocaleString()}). Is it a good fit for me?`)}
+                  className="w-full flex items-center justify-center space-x-2 px-4 py-3 rounded-lg text-white font-semibold transition bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400"
+                  aria-label={`Ask SparkAI about the ${vehicle.brand_name} ${vehicle.model}`}
+                >
+                  <Sparkles className="h-5 w-5" aria-hidden />
+                  <span>{language === 'en' ? 'Ask SparkAI about this car' : 'এই গাড়ি সম্পর্কে SparkAI-কে জিজ্ঞাসা করুন'}</span>
+                </button>
                 <button
                   onClick={() => setShowEMICalculator(!showEMICalculator)}
                   className="w-full flex items-center justify-center space-x-2 px-4 py-3 border-2 border-blue-600 text-blue-600 hover:bg-blue-600 hover:text-white rounded-lg transition-colors"

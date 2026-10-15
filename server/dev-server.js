@@ -227,6 +227,50 @@ app.get('/health', (req, res) => {
   res.json({ status: 'ok', port: PORT });
 });
 
+// --- SparkAI → Groq proxy (keeps GROQ_API_KEY server-side) ---
+const GROQ_URL = 'https://api.groq.com/openai/v1/chat/completions';
+const SALES_SYSTEM_PROMPT = `You are SparkAI, a polished senior automotive sales consultant for AutoSpark (Rajshahi, Bangladesh) — specialists in Japanese cars, Japan pre-orders/auction import, financing guidance, and servicing.
+PERSONA: Warm, confident, consultative, premium-dealership tone. Concise (40-90 words typical), scannable. Match customer language (English/Bangla/mixed). Use ৳ lakh formatting. End with ONE clear next step/question.
+PLAYBOOK: 1) Discover budget/use/body-type/fuel/brand/timeline. 2) Recommend only from provided vehicle context. 3) Handle objections (price→TCO+EMI, battery→health-check, auction→inspection story). 4) Close softly (expert call/WhatsApp +880 1760-401605, pre-order steps, EMI calc). 5) Never invent stock/prices/mileage/grades/dates/approvals. If unsure: "I don't have verified information on that yet — an AutoSpark expert can confirm." Never pressure or create false urgency.`;
+
+async function handleSparkAI(req, res) {
+  try {
+    const apiKey = process.env.GROQ_API_KEY;
+    if (!apiKey) return res.status(500).json({ error: 'GROQ_API_KEY not set in server env (.env).' });
+    const { messages, prefs, context } = req.body ?? {};
+    if (!Array.isArray(messages) || !messages.length) return res.status(400).json({ error: 'messages[] required' });
+    const slim = messages.slice(-12).map((m) => ({ role: m.role === 'assistant' ? 'assistant' : 'user', content: String(m.content || '').slice(0, 2000) }));
+    const model = process.env.GROQ_MODEL || 'openai/gpt-oss-20b';
+    const groqRes = await fetch(GROQ_URL, {
+      method: 'POST',
+      headers: { Authorization: `Bearer ${apiKey}`, 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        model, temperature: 0.6, max_tokens: 700,
+        messages: [
+          { role: 'system', content: SALES_SYSTEM_PROMPT },
+          ...(context ? [{ role: 'system', content: `Verified vehicle context (demo — never claim as live stock):\n${String(context).slice(0, 4000)}` }] : []),
+          ...(prefs ? [{ role: 'system', content: `Known customer prefs: ${JSON.stringify(prefs).slice(0, 800)}` }] : []),
+          ...slim,
+        ],
+      }),
+    });
+    if (!groqRes.ok) {
+      const t = await groqRes.text().catch(() => '');
+      console.error('[sparkai] groq http', groqRes.status, t.slice(0, 300));
+      return res.status(502).json({ error: 'AI provider error' });
+    }
+    const data = await groqRes.json();
+    const text = data?.choices?.[0]?.message?.content?.trim() || '';
+    if (!text) return res.status(502).json({ error: 'Empty AI response' });
+    return res.json({ text, model: data?.model || model });
+  } catch (e) {
+    console.error('[sparkai] error', e.message);
+    return res.status(500).json({ error: e.message });
+  }
+}
+app.post('/api/sparkai/chat', handleSparkAI);
+app.post('/api/agent', handleSparkAI);
+
 // Start server
 app.listen(PORT, () => {
   console.log(`🚀 Local payment server running on http://localhost:${PORT}`);
