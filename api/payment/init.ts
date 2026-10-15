@@ -1,6 +1,6 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
-import { corsOrigin, setCors, validateInitPayload, newTranId } from './_helpers';
-import { upsertOrder } from '../_db';
+import { corsOrigin, setCors, validateInitPayload, newTranId } from './_helpers.js';
+import { upsertOrder } from '../_db.js';
 
 export default async function handler(request: VercelRequest, response: VercelResponse) {
   const origin = corsOrigin(request.headers.origin as string | undefined);

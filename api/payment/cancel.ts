@@ -1,6 +1,6 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
-import { corsOrigin } from './_helpers';
-import { updateOrderStatus } from '../_db';
+import { corsOrigin } from './_helpers.js';
+import { updateOrderStatus } from '../_db.js';
 
 export default async function handler(
   request: VercelRequest,
