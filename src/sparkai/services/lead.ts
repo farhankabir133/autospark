@@ -14,9 +14,15 @@ export const LeadSchema = z.object({
 
 export type LeadFormValues = z.infer<typeof LeadSchema>;
 
-/** Demo lead adapter — simulates backend; distinguishes submit vs WhatsApp vs expert notify. */
-export async function submitLeadDemo(values: LeadFormValues): Promise<{ ok: boolean; reference: string }> {
-  await new Promise((r) => setTimeout(r, 900));
-  if (values.name.toLowerCase().includes('fail')) throw new Error('Demo backend rejected the submission. Please retry.');
-  return { ok: true, reference: `SPARK-DEMO-${Date.now().toString(36).toUpperCase()}` };
+export async function submitLead(values: LeadFormValues): Promise<{ ok: boolean; reference: string }> {
+  const r = await fetch('/api/lead/submit', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(values),
+  });
+  if (!r.ok) {
+    const data = await r.json().catch(() => ({}));
+    throw new Error(data.error || 'Submission failed. Please retry.');
+  }
+  return r.json();
 }

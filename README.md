@@ -146,6 +146,9 @@ npm test            # If tests are added
 ## Deployment
 
 - The project builds to a static bundle via Vite (`npm run build`) and can be deployed to any static host (Netlify, Vercel, GitHub Pages) with Supabase providing the backend. Ensure environment variables are set in the deployment platform.
+- **Vercel (recommended):** automatic CI/CD via GitHub Actions (`.github/workflows/deploy.yml`) — pushes to `main` deploy to production, pull requests get preview deploys. The serverless functions in `api/` provide the Groq-powered SparkAI assistant, lead capture, and SSLCommerz payments.
+- Full setup, environment variables, database migrations, and troubleshooting: **[DEPLOYMENT.md](./DEPLOYMENT.md)**
+- API routes are typechecked separately: `npm run typecheck:all`
 
 ---
 

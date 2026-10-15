@@ -1,5 +1,6 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
 import { corsOrigin, setCors, validateInitPayload, newTranId } from './_helpers';
+import { upsertOrder } from '../_db';
 
 export default async function handler(request: VercelRequest, response: VercelResponse) {
   const origin = corsOrigin(request.headers.origin as string | undefined);
@@ -15,7 +16,7 @@ export default async function handler(request: VercelRequest, response: VercelRe
   }
 
   try {
-    const { cart, total_amount, customer_name, mobile, email, address, thana, district } = request.body ?? {};
+    const { cart, customer_name, mobile, email, address, thana, district } = request.body ?? {};
     const check = validateInitPayload(request.body ?? {});
     if (!check.ok) {
       setCors(response, origin);
@@ -38,6 +39,20 @@ export default async function handler(request: VercelRequest, response: VercelRe
       ? cart.map((item: any) => String(item.name || 'Item').slice(0, 60)).join(', ').slice(0, 200)
       : 'Order';
     const safeEmail = typeof email === 'string' && email.includes('@') ? email.slice(0, 100) : 'customer@autosparkbd.com';
+
+    await upsertOrder({
+      tran_id,
+      status: 'pending',
+      amount,
+      customer_name: String(customer_name),
+      mobile: String(mobile),
+      email: safeEmail,
+      address: String(address),
+      thana: String(thana),
+      district: String(district),
+      cart: Array.isArray(cart) ? cart : [],
+      source: 'web',
+    });
 
     const params = new URLSearchParams();
     params.append('store_id', STORE_ID);

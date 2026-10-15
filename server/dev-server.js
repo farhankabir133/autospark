@@ -1,5 +1,22 @@
 import express from 'express';
 import cors from 'cors';
+import fs from 'node:fs';
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+
+try {
+  const envPath = path.join(__dirname, '..', '.env');
+  if (fs.existsSync(envPath)) {
+    for (const line of fs.readFileSync(envPath, 'utf8').split(/\r?\n/)) {
+      const m = line.match(/^\s*([A-Z0-9_]+)\s*=\s*(.*)\s*$/i);
+      if (m && !process.env[m[1]]) process.env[m[1]] = m[2].replace(/^["']|["']$/g, '');
+    }
+  }
+} catch (e) {
+  console.warn('[dev-server] .env load skipped:', e.message);
+}
 
 const app = express();
 const PORT = 8787;
@@ -270,6 +287,19 @@ async function handleSparkAI(req, res) {
 }
 app.post('/api/sparkai/chat', handleSparkAI);
 app.post('/api/agent', handleSparkAI);
+
+app.post('/api/lead/submit', (req, res) => {
+  const { name, whatsapp, language, interest, budgetRange, timeline, notes, consent } = req.body ?? {};
+  if (!name || name.trim().length < 2) return res.status(400).json({ error: 'Name is required' });
+  if (!whatsapp || whatsapp.trim().length < 10) return res.status(400).json({ error: 'Valid WhatsApp number is required' });
+  if (!interest || interest.trim().length < 2) return res.status(400).json({ error: 'Interest/vehicle is required' });
+  if (!budgetRange) return res.status(400).json({ error: 'Budget range is required' });
+  if (!timeline) return res.status(400).json({ error: 'Timeline is required' });
+  if (!consent) return res.status(400).json({ error: 'Consent is required' });
+  const reference = `SPARK-${Date.now().toString(36).toUpperCase()}`;
+  console.log('Lead submitted:', { name, whatsapp, interest, budgetRange, timeline, reference });
+  return res.status(200).json({ ok: true, reference });
+});
 
 // Start server
 app.listen(PORT, () => {

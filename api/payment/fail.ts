@@ -1,5 +1,6 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
-import { corsOrigin, setCors } from './_helpers';
+import { corsOrigin } from './_helpers';
+import { updateOrderStatus } from '../_db';
 
 export default async function handler(
   request: VercelRequest,
@@ -21,8 +22,9 @@ export default async function handler(
 
     console.log('Payment Failed:', String(tran_id ?? '').slice(0, 40));
 
-    // Acknowledge the callback
-    // In production, update order status to "failed" in database (idempotent by tran_id)
+    if (typeof tran_id === 'string' && tran_id) {
+      await updateOrderStatus(tran_id, 'failed');
+    }
 
     // Return JSON response
     return response
@@ -34,7 +36,7 @@ export default async function handler(
         tran_id: typeof tran_id === 'string' ? tran_id.slice(0, 80) : tran_id,
         timestamp: new Date().toISOString(),
       });
-  } catch (error) {
+  } catch {
     console.error('Payment fail handler error');
     return response
       .status(500)

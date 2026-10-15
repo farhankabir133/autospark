@@ -1,5 +1,6 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
-import { corsOrigin, setCors } from './_helpers';
+import { corsOrigin } from './_helpers';
+import { updateOrderStatus } from '../_db';
 
 export default async function handler(
   request: VercelRequest,
@@ -21,7 +22,9 @@ export default async function handler(
 
     console.log('Payment Cancelled:', String(tran_id ?? '').slice(0, 40));
 
-    // User cancelled the payment on SSLCommerz gateway
+    if (typeof tran_id === 'string' && tran_id) {
+      await updateOrderStatus(tran_id, 'cancelled');
+    }
 
     // Return JSON response
     return response

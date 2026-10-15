@@ -8,6 +8,7 @@ export interface AIResponse {
   followUp?: string;
   prefs?: Partial<CustomerPreferences>;
   intent?: ConversationIntent;
+  isLive?: boolean;
 }
 
 const hasBn = (t: string) => /[\u0980-\u09FF]/.test(t);
@@ -153,8 +154,26 @@ async function liveRespond(history: ChatMessage[], input: string, prefs: Custome
 export async function respond(history: ChatMessage[], input: string, prefs: CustomerPreferences): Promise<AIResponse> {
   const next = parsePrefs(input, prefs);
   const live = await liveRespond(history, input, next);
-  if (live) return { ...live, prefs: next };
-  return mockRespond(history, input, prefs);
+  if (live) return { ...live, prefs: next, isLive: true };
+  return { ...mockRespond(history, input, prefs), isLive: false };
+}
+
+/** Check if Groq API is reachable (for UI status indicator). */
+export async function checkLiveStatus(): Promise<boolean> {
+  try {
+    const ctrl = new AbortController();
+    const timer = setTimeout(() => ctrl.abort(), 5000);
+    const r = await fetch(SPARKAI_GROQ.endpoint, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ messages: [{ role: 'user', content: 'hi' }] }),
+      signal: ctrl.signal,
+    });
+    clearTimeout(timer);
+    return r.ok;
+  } catch {
+    return false;
+  }
 }
 
 export function estimateFinance(priceLakh: number, downPct: number, annualRatePct: number | null, months: number) {

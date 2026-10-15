@@ -1,8 +1,7 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
 import { corsOrigin, setCors, validateWithSSLCommerz } from './_helpers';
+import { updateOrderStatus } from '../_db';
 
-// Authoritative server-to-server IPN handler. Validates val_id, checks amount,
-// and is idempotent (callers must dedupe tran_id in DB; repeated IPN returns same result).
 export default async function handler(request: VercelRequest, response: VercelResponse) {
   const origin = corsOrigin(request.headers.origin as string | undefined);
   if (request.method === 'OPTIONS') {
@@ -22,10 +21,21 @@ export default async function handler(request: VercelRequest, response: VercelRe
     }
     const check = await validateWithSSLCommerz(String(val_id));
     const verified = check.valid && String(status ?? '').toUpperCase() !== 'FAILED';
-    console.log('[payment/ipn]', { tran: String(tran_id).slice(0, 40), verified });
-    // TODO: upsert order by tran_id with idempotency guard (status paid check) here.
+    const amountOk = !Number.isFinite(Number(amount)) || !Number.isFinite(Number(check.amount)) || Number(check.amount) === Number(amount);
+    const tran = String(tran_id).slice(0, 40);
+
+    if (verified && amountOk) {
+      await updateOrderStatus(tran, 'paid', {
+        val_id: String(val_id),
+        gateway_status: String(check.raw?.status ?? status ?? 'VALID'),
+      });
+    } else if (!verified) {
+      await updateOrderStatus(tran, 'failed', { val_id: String(val_id), gateway_status: String(status ?? 'FAILED') });
+    }
+
+    console.log('[payment/ipn]', { tran, verified, amountOk });
     setCors(response, origin);
-    return response.status(200).json({ received: true, verified, tran_id });
+    return response.status(200).json({ received: true, verified: verified && amountOk, tran_id });
   } catch {
     setCors(response, origin);
     return response.status(500).json({ error: 'Server error' });

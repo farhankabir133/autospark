@@ -69,6 +69,7 @@ export function SparkAIApp() {
   const [filters, setFilters] = useState<{ maxBudgetLakh?: number; hybrid?: boolean; make?: string }>({});
   const [preorderStep, setPreorderStep] = useState(0);
   const [toast, setToast] = useState<string | null>(null);
+  const [aiLive, setAiLive] = useState<boolean | null>(null);
   const listRef = useRef<HTMLDivElement>(null);
   const stickRef = useRef(true);
 
@@ -100,6 +101,7 @@ export function SparkAIApp() {
     setInput('');
     try {
       const r = await respond(conv.messages, clean, conv.preferences);
+      setAiLive(r.isLive !== false);
       const asst: ChatMessage = { id: uid(), role: 'assistant', text: r.text, createdAt: now(), status: 'sent', vehicles: r.vehicles };
       patch(conv.id, (c) => ({ ...c, preferences: { ...c.preferences, ...r.prefs }, messages: [...c.messages, asst] }));
       if (r.followUp === 'compare' && r.vehicles?.length) setCompare(r.vehicles.slice(0, 2));
@@ -201,7 +203,7 @@ export function SparkAIApp() {
             <div className="min-w-0">
               <p className="font-bold text-sm leading-tight truncate">{conv?.title || 'SparkAI'}</p>
               <p className="text-[11px] opacity-60 flex items-center gap-1.5">
-                <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" /> AI sales expert · replies instantly
+                <span className={`w-1.5 h-1.5 rounded-full ${aiLive === false ? 'bg-amber-500' : 'bg-emerald-500'}`} /> {aiLive === false ? 'Demo mode · AI offline' : 'AI sales expert · replies instantly'}
               </p>
             </div>
             <div className="ml-auto flex items-center gap-2"><DemoBadge /></div>

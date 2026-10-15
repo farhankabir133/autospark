@@ -1,5 +1,6 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
 import { corsOrigin, setCors, validateWithSSLCommerz } from './_helpers';
+import { updateOrderStatus } from '../_db';
 
 export default async function handler(request: VercelRequest, response: VercelResponse) {
   const origin = corsOrigin(request.headers.origin as string | undefined);
@@ -33,6 +34,7 @@ export default async function handler(request: VercelRequest, response: VercelRe
       return response.status(402).json({ error: 'Amount mismatch', tran_id });
     }
     console.log('[payment/success] verified', { tran_id: String(tran_id).slice(0, 40) });
+    await updateOrderStatus(tran_id, 'paid', { val_id, gateway_status: String(check.raw?.status ?? 'VALID') });
     setCors(response, origin);
     return response.status(200).json({ success: true, message: 'Payment verified', tran_id, timestamp: new Date().toISOString() });
   } catch {

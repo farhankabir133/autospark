@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-import { LeadSchema, LeadFormValues, submitLeadDemo } from '../services/lead';
+import { LeadSchema, LeadFormValues, submitLead } from '../services/lead';
 import { SInput, SButton } from './ui';
 
 const input = (reg: object, label: string, err?: string, extra?: React.ReactNode) => (
@@ -29,7 +29,7 @@ export function LeadForm({ interestDefault = '', onDone }: { interestDefault?: s
       onSubmit={handleSubmit(async (v) => {
         setError(null);
         try {
-          const r = await submitLeadDemo(v as LeadFormValues);
+          const r = await submitLead(v as LeadFormValues);
           setOk(r.reference);
           onDone(r.reference);
         } catch (e) {
@@ -69,7 +69,7 @@ export function LeadForm({ interestDefault = '', onDone }: { interestDefault?: s
       </label>
       {errors.consent && <span role="alert" className="block text-red-500 text-xs font-medium">{errors.consent.message}</span>}
       {error && <p role="alert" className="text-xs font-semibold text-red-500 bg-red-500/10 border border-red-500/30 rounded-xl px-3 py-2">{error}</p>}
-      {ok && <p role="status" className="text-xs font-semibold text-emerald-600 bg-emerald-500/10 border border-emerald-500/30 rounded-xl px-3 py-2">Submitted! Reference {ok} — an expert will follow up. (Demo submission, not stored.)</p>}
+      {ok && <p role="status" className="text-xs font-semibold text-emerald-600 bg-emerald-500/10 border border-emerald-500/30 rounded-xl px-3 py-2">Submitted! Reference {ok} — an expert will follow up shortly.</p>}
       <SButton type="submit" disabled={isSubmitting}>{isSubmitting ? 'Submitting…' : 'Request expert callback'}</SButton>
     </form>
   );
