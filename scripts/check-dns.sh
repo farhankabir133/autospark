@@ -3,7 +3,10 @@ set -euo pipefail
 
 DOMAIN="autosparkbd.com"
 REPORT_FILE="scripts/dns-report.txt"
-EXPECTED=("185.199.108.153" "185.199.109.153" "185.199.110.153" "185.199.111.153")
+# Vercel apex IPs (anycast). Apex must return one of these.
+EXPECTED=("216.198.79.1" "64.29.17.1" "76.76.21.21")
+# Vercel CNAME target suffix for www
+EXPECTED_CNAME_SUFFIX="vercel-dns.com."
 
 mkdir -p scripts
 : > "$REPORT_FILE"
@@ -67,6 +70,6 @@ if [ $mismatch -eq 1 ]; then
   echo "RESULT: MISMATCH DETECTED" | tee -a "$REPORT_FILE"
   exit 2
 else
-  echo "RESULT: All authoritative NS returned expected GitHub Pages IPs." | tee -a "$REPORT_FILE"
+  echo "RESULT: All authoritative NS returned expected Vercel IPs." | tee -a "$REPORT_FILE"
   exit 0
 fi
