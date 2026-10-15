@@ -7,8 +7,10 @@ export const ALLOWED_ORIGINS = new Set([
   'http://127.0.0.1:5173',
 ]);
 
+const VERCEL_APP_ORIGIN_RE = /^https:\/\/autospark-bd(-[a-z0-9-]+)?\.vercel\.app$/i;
+
 export function corsOrigin(reqOrigin: string | undefined): string {
-  if (reqOrigin && ALLOWED_ORIGINS.has(reqOrigin)) return reqOrigin;
+  if (reqOrigin && (ALLOWED_ORIGINS.has(reqOrigin) || VERCEL_APP_ORIGIN_RE.test(reqOrigin))) return reqOrigin;
   return 'https://autosparkbd.com';
 }
 
