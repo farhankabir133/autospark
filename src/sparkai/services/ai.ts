@@ -1,6 +1,7 @@
 import type { ChatMessage, ConversationIntent, CustomerPreferences, DemoVehicle } from '../types';
 import { DEMO_VEHICLES, filterDemoVehicles, formatLakh } from '../data/demo';
 import { SPARKPILOT_GROQ } from '../config';
+import { buildKbPayload } from '../kb';
 
 export interface AIResponse {
   text: string;
@@ -51,7 +52,7 @@ export async function mockRespond(_history: ChatMessage[], input: string, prefs:
     : '\n\n_Note: please confirm price & availability with an expert before booking._';
 
   if (/^(hi|hello|salam|assalam|hey|adab|nomoskar|হাই|হ্যালো|আসসালামু|সালাম)/.test(t.trim())) {
-    return { text: bn || /salam|assalam/.test(t) ? 'ওয়ালাইকুম আসসালাম! আমি SparkPilot — AutoSpark-এর গাড়ি সহায়ক। পরিবারের জন্য গাড়ি, বাজেট, নাকি জাপান প্রি-অর্ডার — কী নিয়ে সাহায্য করব?' : "Hello! I'm SparkPilot, AutoSpark's car assistant. Are you looking for a family car, estimating a budget, or pre-ordering from Japan?", prefs: next, intent: 'general' };
+    return { text: bn || /salam|assalam/.test(t) ? 'ওয়ালাইকুম আসসালাম! আমি SparkPilot — AutoSpark-এর সেলস ও সার্ভিস এক্সপার্ট। AutoSpark-এর গাড়ি বিক্রি ও কার সার্ভিস — সবকিছু জানি। কী জানতে চান?' : "Hello! I'm SparkPilot — I know everything about AutoSpark car sales and car services. What would you like to know?", prefs: next, intent: 'general' };
   }
   if (/pre.?order|japan|auction|import/.test(t)) {
     return { text: bn ? 'জাপান প্রি-অর্ডার নিয়ে সাহায্য করছি। কোন গাড়ি (মডেল + বছর), বাজেট, আর কবে নাগাদ চান — জানাবেন?' : 'I can help with a Japan pre-order. Which model + year, your budget, and your timeline?', prefs: next, intent: 'preorder', followUp: 'preorder' };
@@ -117,22 +118,35 @@ function detectIntent(t: string): ConversationIntent {
   return 'general';
 }
 
+/** Groq free-tier TPM can throttle mid-conversation — wait and retry (up to 2). */
+const RATE_LIMIT_WAIT_MS = 18000;
+const RATE_LIMIT_RETRIES = 2;
+
 /** Live Groq call via server proxy. Returns null on any failure (caller falls back). */
 async function liveRespond(history: ChatMessage[], input: string, prefs: CustomerPreferences): Promise<AIResponse | null> {
   const ctrl = new AbortController();
-  const timer = setTimeout(() => ctrl.abort(), 25000);
+  const timer = setTimeout(() => ctrl.abort(), 70000);
   try {
     const msgs = [...history.slice(-10).map((m) => ({ role: m.role, content: m.text })), { role: 'user', content: input }];
+    // Candidates only drive the chat's vehicle cards — the KB (not this list) is
+    // what SparkPilot recommends from, so no conflicting context is sent.
     const candidates = filterDemoVehicles({ maxBudgetLakh: prefs.budgetLakh, hybrid: prefs.hybrid, bodyType: prefs.bodyType, make: prefs.manufacturer }).slice(0, 6);
-    const context = (candidates.length ? candidates : DEMO_VEHICLES.slice(0, 6))
-      .map((v) => `- ${v.make} ${v.model} ${v.year} ${v.variant} | ${v.bodyType} | ${v.fuel} | ৳${v.budgetLakh.toFixed(1)} lakh | ${v.features.slice(0, 3).join(', ')}`)
-      .join('\n');
-    const r = await fetch(SPARKPILOT_GROQ.endpoint, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ messages: msgs, prefs, context }),
-      signal: ctrl.signal,
-    });
+    // Dual knowledge base: route to Car Sales KB and/or Car Services KB per the conversation.
+    const kb = buildKbPayload(input, history);
+    const doFetch = () =>
+      fetch(SPARKPILOT_GROQ.endpoint, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ messages: msgs, prefs, kb }),
+        signal: ctrl.signal,
+      });
+    let r = await doFetch();
+    for (let attempt = 0; r.status === 429 && attempt < RATE_LIMIT_RETRIES; attempt++) {
+      // Rate limited (tokens-per-minute) — cool down, then retry.
+      await new Promise((res) => setTimeout(res, RATE_LIMIT_WAIT_MS));
+      if (ctrl.signal.aborted) return null;
+      r = await doFetch();
+    }
     if (!r.ok) return null;
     const data = await r.json();
     const text = String(data?.text || '').trim();
@@ -155,7 +169,7 @@ export async function respond(history: ChatMessage[], input: string, prefs: Cust
   const next = parsePrefs(input, prefs);
   const live = await liveRespond(history, input, next);
   if (live) return { ...live, prefs: next, isLive: true };
-  return { ...mockRespond(history, input, prefs), isLive: false };
+  return { ...(await mockRespond(history, input, next)), isLive: false };
 }
 
 /** Check if Groq API is reachable (for UI status indicator). */

@@ -6,11 +6,12 @@ import {
 } from 'lucide-react';
 import { useTheme } from '../../contexts/ThemeContext';
 import type { ChatMessage, Conversation, ConversationIntent, DemoVehicle } from '../types';
-import { STARTER_ACTIONS, DEMO_VEHICLES, filterDemoVehicles } from '../data/demo';
+import { DEMO_VEHICLES, filterDemoVehicles } from '../data/demo';
 import { respond } from '../services/ai';
 import { SPARKPILOT_CONFIG } from '../config';
 import { SparkPilotLogo, SparkMark } from './Logo';
 import { SButton, Card, DemoBadge, useDark } from './ui';
+import { WelcomeCard } from './WelcomeCard';
 import { VehicleCard, VehicleComparison, ExpertHandoff } from './Vehicles';
 import { BudgetPlanner } from './Finance';
 import { LeadForm } from './LeadForm';
@@ -19,8 +20,8 @@ const uid = () => Math.random().toString(36).slice(2, 10);
 const now = () => Date.now();
 
 const GREETING: ChatMessage = {
-  id: 'greet', role: 'assistant', createdAt: now(),
-  text: "Hello! I'm SparkPilot — let's find the right car for you.\n\nTell me what you're looking for, and I'll help you explore options, understand your budget, and connect with an AutoSpark expert when you're ready.",
+  id: 'greet', role: 'assistant', createdAt: now(), kind: 'welcome',
+  text: "Hi, I'm SparkPilot — I know everything about AutoSpark car sales and car services. What would you like to know?",
 };
 
 function newConversation(): Conversation {
@@ -203,7 +204,7 @@ export function SparkPilotApp() {
             <div className="min-w-0">
               <p className="font-bold text-sm leading-tight truncate">{conv?.title || 'SparkPilot'}</p>
               <p className="text-[11px] opacity-60 flex items-center gap-1.5">
-                <span className={`w-1.5 h-1.5 rounded-full ${aiLive === false ? 'bg-amber-500' : 'bg-emerald-500'}`} /> {aiLive === false ? 'Connecting to AI expert…' : 'AI sales expert · replies instantly'}
+                <span className={`w-1.5 h-1.5 rounded-full ${aiLive === false ? 'bg-amber-500' : 'bg-emerald-500'}`} /> {aiLive === false ? 'Connecting to AI expert…' : 'Sales & service expert · replies instantly'}
               </p>
             </div>
             <div className="ml-auto flex items-center gap-2"><DemoBadge /></div>
@@ -215,22 +216,10 @@ export function SparkPilotApp() {
             className="flex-1 overflow-y-auto px-3 sm:px-5 py-4 space-y-4"
             aria-label="Messages"
           >
-            {conv?.messages.length === 1 && (
-              <div className="text-center max-w-lg mx-auto pt-2 pb-1">
-                <SparkMark size={52} />
-                <h1 className="mt-3 text-xl sm:text-2xl font-extrabold tracking-tight">Let&rsquo;s find the right car for you.</h1>
-                <p className="text-sm opacity-70 mt-1.5">Tell me what you&rsquo;re looking for, and I&rsquo;ll help you explore options, understand your budget, and connect with an AutoSpark expert when you&rsquo;re ready.</p>
-                <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 mt-4" role="group" aria-label="Starter actions">
-                  {STARTER_ACTIONS.map((a) => (
-                    <button key={a.id} onClick={() => send(intentMessage(a.intent))} className={`rounded-xl border px-3 py-2.5 text-xs font-semibold min-h-[48px] transition ${dark ? 'border-white/10 bg-white/[0.03] hover:bg-white/[0.07]' : 'border-slate-200 bg-slate-50 hover:bg-slate-100'}`}>
-                      {a.label}
-                    </button>
-                  ))}
-                </div>
-              </div>
-            )}
-
             {conv?.messages.map((m) => (
+              m.kind === 'welcome' ? (
+                <WelcomeCard key={m.id} onAsk={send} reduceMotion={reduceMotion} />
+              ) : (
               <motion.div key={m.id} initial={reduceMotion ? false : { opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} className={`flex gap-2.5 ${m.role === 'user' ? 'justify-end' : 'justify-start'}`}>
                 {m.role === 'assistant' && <SparkMark size={28} />}
                 <div className={`max-w-[85%] sm:max-w-[75%] rounded-2xl px-3.5 py-2.5 text-sm leading-relaxed whitespace-pre-wrap ${m.role === 'user' ? 'bg-gradient-to-r from-cyan-500 to-blue-600 text-white rounded-br-md' : dark ? 'bg-white/[0.05] border border-white/10 rounded-bl-md' : 'bg-slate-100 border border-slate-200 rounded-bl-md'}`}>
@@ -255,6 +244,7 @@ export function SparkPilotApp() {
                   </div>
                 </div>
               </motion.div>
+              )
             ))}
 
             {busy && (
@@ -269,7 +259,7 @@ export function SparkPilotApp() {
 
           {/* Quick replies */}
           <div className="px-3 sm:px-5 pb-1 flex gap-1.5 overflow-x-auto" role="group" aria-label="Quick replies">
-            {['Family car under 25 lakh', 'Hybrid SUV options', 'Compare Axio vs Vezel', 'Japan pre-order', 'Talk to expert'].map((q) => (
+            {['Family car under 25 lakh', 'Hybrid SUV options', 'Car service pricing', 'Japan pre-order', 'Talk to expert'].map((q) => (
               <button key={q} onClick={() => send(q)} disabled={busy} className={`shrink-0 text-[11px] font-semibold rounded-full border px-3 py-1.5 min-h-[32px] disabled:opacity-40 ${dark ? 'border-white/10 hover:bg-white/5' : 'border-slate-300 hover:bg-slate-100'}`}>{q}</button>
             ))}
           </div>
@@ -297,7 +287,7 @@ export function SparkPilotApp() {
                 ? <button type="button" aria-label="Stop" onClick={() => setBusy(false)} className="p-3 rounded-xl bg-red-500/15 text-red-500"><Square className="w-4 h-4" /></button>
                 : <button type="submit" aria-label="Send message" disabled={!input.trim()} className="p-3 rounded-xl bg-gradient-to-r from-cyan-500 to-blue-600 text-white disabled:opacity-40 min-w-[48px] min-h-[48px] flex items-center justify-center"><Send className="w-4 h-4" /></button>}
             </div>
-            <p className="text-[10px] opacity-50 mt-1.5 px-1 flex items-center gap-1"><Sparkles className="w-3 h-3" /> SparkPilot sales expert — prices & availability confirmed by an AutoSpark expert before booking.</p>
+            <p className="text-[10px] opacity-50 mt-1.5 px-1 flex items-center gap-1"><Sparkles className="w-3 h-3" /> SparkPilot sales & service expert — prices & availability confirmed by an AutoSpark expert before booking.</p>
           </form>
         </section>
 

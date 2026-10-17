@@ -10,6 +10,8 @@ export interface ChatMessage {
   status?: 'sending' | 'sent' | 'failed';
   vehicles?: DemoVehicle[];
   actions?: QuickAction[];
+  /** Renders as the rich welcome card instead of a chat bubble. */
+  kind?: 'welcome';
 }
 
 export interface QuickAction {

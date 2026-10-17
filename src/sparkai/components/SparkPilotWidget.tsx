@@ -7,13 +7,14 @@ import { respond } from '../services/ai';
 import { SPARKPILOT_CONFIG, buildWhatsAppUrl } from '../config';
 import { SparkMark } from './Logo';
 import { DemoBadge } from './ui';
+import { WelcomeCard } from './WelcomeCard';
 import { SPARKPILOT_OPEN_EVENT } from './openSparkPilot';
 import type { ChatMessage, CustomerPreferences } from '../types';
 
 const uid = () => Math.random().toString(36).slice(2, 10);
 const SEED: ChatMessage = {
-  id: 'seed', role: 'assistant', createdAt: Date.now(),
-  text: "Hi! I'm SparkPilot, AutoSpark's sales assistant. Ask me about this product — price, compatibility, budget — or anything about Japanese cars.",
+  id: 'seed', role: 'assistant', createdAt: Date.now(), kind: 'welcome',
+  text: "Hi, I'm SparkPilot — I know everything about AutoSpark car sales and car services. What would you like to know?",
 };
 
 /**
@@ -84,7 +85,7 @@ export function SparkPilotWidget() {
             <SparkMark size={36} />
             <span className="text-left leading-tight">
               <span className={`block text-[13px] font-extrabold ${dark ? 'text-white' : 'text-slate-900'}`}>Ask SparkPilot</span>
-              <span className="block text-[10px] font-medium opacity-60">AutoSpark expert AI</span>
+              <span className="block text-[10px] font-medium opacity-60">Sales &amp; service expert</span>
             </span>
             {unread && <span className="absolute -top-1 -right-1 w-3.5 h-3.5 rounded-full bg-red-500 border-2 border-white" aria-label="New message" />}
           </span>
@@ -132,6 +133,9 @@ export function SparkPilotWidget() {
 
               <div ref={listRef} className="flex-1 overflow-y-auto px-3.5 py-3 space-y-3" aria-label="Messages" aria-live="off">
                 {messages.map((m) => (
+                  m.kind === 'welcome' ? (
+                    <WelcomeCard key={m.id} compact onAsk={(t) => void send(t)} reduceMotion={reduceMotion} />
+                  ) : (
                   <div key={m.id} className={`flex gap-2 ${m.role === 'user' ? 'justify-end' : 'justify-start'}`}>
                     {m.role === 'assistant' && <SparkMark size={26} />}
                     <div className={`max-w-[85%] rounded-2xl px-3 py-2 text-[13px] leading-relaxed whitespace-pre-wrap ${
@@ -155,6 +159,7 @@ export function SparkPilotWidget() {
                       )}
                     </div>
                   </div>
+                  )
                 ))}
                 {busy && (
                   <div className="flex gap-2" aria-label="SparkPilot is typing">
@@ -169,7 +174,7 @@ export function SparkPilotWidget() {
               </div>
 
               <div className="px-3 pb-1 flex gap-1.5 overflow-x-auto" role="group" aria-label="Quick replies">
-                {['Price?', 'Compatible with my car?', 'Talk to expert'].map((q) => (
+                {['Find my ideal car', 'Car services & pricing', 'Talk to expert'].map((q) => (
                   <button key={q} onClick={() => void send(q)} disabled={busy} className={`shrink-0 text-[11px] font-semibold rounded-full border px-3 py-1.5 disabled:opacity-40 ${dark ? 'border-white/10 hover:bg-white/5' : 'border-slate-300 hover:bg-slate-100'}`}>{q}</button>
                 ))}
               </div>
